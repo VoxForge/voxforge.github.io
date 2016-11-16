@@ -1,0 +1,28 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+title:
+  en: VoxForge - Free Speech... Recognition
+  fr: VoxForge - Voix Libre
+  es: VoxForge - libertad de expresión
+languagesLocal:
+  en: Languages
+  fr: Langues
+  es: Idiomas
+email: contact@voxforge.org
+index:
+  en: home
+  fr: accueil
+  es: boenosdias
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "http://voxforge.org" # the base hostname & protocol for your site
+collections:
+  faqs:
+    output: true
+    permalink: /:collection/:path/
+    title: FAQs
