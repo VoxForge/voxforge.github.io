@@ -60,7 +60,7 @@
             <a rel="alternate" 
                hreflang="{{ my_page.lang }}" 
                href="{{ my_page.url | prepend: site.baseurl }}">
-                  {{ my_page.lang }}
+                  {{ site.languageName[my_page.lang] }}
             </a>
         {% endfor %}
       </div>
