@@ -4,6 +4,7 @@ title:  What is an Acoustic Model?
 categories: faq
 lang: en
 date: 2010-01-01
+redirect_from: "/home/docs/faq/faq/what-is-an-acoustic-model"
 ---
 An acoustic model is a file that contains statistical representations of each of the distinct sounds that makes up a word.  Each of these statistical representations is assigned a label called a [phoneme](http://en.wikipedia.org/wiki/Phoneme). The English language has about 40 distinct sounds that are useful for speech recognition, and thus we have 40 different [phonemes](http://en.wikipedia.org/wiki/Phoneme).
 

@@ -4,6 +4,7 @@ title:  Project Gutenberg and Librivox Copyright Status
 categories: faq java
 lang: en
 date: 2010-01-01
+redirect_from: "/home/docs/faq/faq/project-gutenberg-and-librivox-copyright-status"
 ---
 **LibriVox**
 
