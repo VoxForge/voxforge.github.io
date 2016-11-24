@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: faq_entry
 title:  "Welcome to Jekyll!"
 ref: welcome
 date: 2016-02-29 09:48:44 +0100
