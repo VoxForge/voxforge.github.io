@@ -3,7 +3,7 @@ layout: faq_list
 title: Frequently Asked Questions
 lang: en
 ref: faq
-permalink: /faq
+permalink: /en/faq
 ---
 
 
