@@ -26,7 +26,6 @@ index:
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://voxforge.org" # the base hostname & protocol for your site
 collections:
-  faq:
+  faqCol:
     output: true
-    permalink: /:collection/:path/
     title: FAQs
