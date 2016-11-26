@@ -1,6 +1,6 @@
 ---
 layout: faq_list
-title: preguntas frecuentesS
+title: preguntas frecuentes
 lang: es
 ref: faq
 permalink: /es/faq
