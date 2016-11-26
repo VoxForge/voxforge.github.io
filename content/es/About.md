@@ -1,8 +1,8 @@
 ---
 layout: page
-title: About
+title: Acerca de
 weight: 15
-menu: A propos
+menu: Acerca de
 ref: about
 lang: es
 permalink: /es/about

@@ -1,11 +1,11 @@
 ---
 layout: page
-title: Download
-menu: Download
+title: Downloads
+menu: Downloads
 weight: 8
-ref: download
+ref: downloads
 lang: es
-permalink: es/download
+permalink: es/downloads
 ---
 
 spanish page

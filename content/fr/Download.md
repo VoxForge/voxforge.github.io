@@ -1,10 +1,10 @@
 ---
 layout: page
-title: Download
-menu: Download
-ref: download
+title: Downloads
+menu: Downloads
+ref: downloads
 lang: fr
-permalink: fr/download
+permalink: fr/downloads
 weight: 9
 ---
 

@@ -3,9 +3,10 @@ layout: page
 title: About
 weight: 10
 menu: About
-permalink: /about
 ref: about
 lang: en
+permalink: /en/about
+redirect_from: "/home/about"
 ---
 
 VoxForge was set up to collect transcribed speech for use in [Open Source](http://en.wikipedia.org/wiki/Open_source) [Speech Recognition Engines](http://en.wikipedia.org/wiki/Speech_Recognition) ("SRE"s) such as such as [](http://www.ece.msstate.edu/research/isip/projects/speech/index.html)[ISIP](http://www.ece.msstate.edu/research/isip/projects/speech/index.html), [HTK](http://htk.eng.cam.ac.uk/), [Julius](http://julius.sourceforge.jp/en_index.php?q=en/index.html) and [Sphinx](http://cmusphinx.sourceforge.net/html/cmusphinx.php).  We will categorize and make available all submitted audio files (also called a 'Speech Corpus") and Acoustic Models in [GPL](/home/docs/faq/faq/what-is-gpl) format. 

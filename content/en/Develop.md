@@ -4,8 +4,9 @@ title: Develop
 menu: Dev
 weight: 8
 ref: develop
-permalink: /dev
 lang: en
+permalink: /en/dev
+redirect_from: "/home/dev"
 ---
 ## Development
 

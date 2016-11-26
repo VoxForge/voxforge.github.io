@@ -6,6 +6,7 @@ weight: 1
 ref: home
 lang: en
 permalink: /
+redirect_from: "/home/"
 ---
 
 VoxForge was set up to collect transcribed speech for use with [Free](/home/docs/faq/faq/what-is-free-software) and  [Open Source](/home/docs/faq/faq/what-is-open-source-software) [Speech Recognition Engines](/home/docs/faq/faq/what-is-the-difference-between-a-speech-recognition-engine-and-a-speech-recognition-system) (on Linux, Windows and Mac). 
