@@ -166,8 +166,8 @@ click the following link:
 
 -or-
 
-*   [Julius 64-bit binaries](/content/en/Create/Howto/julius-standard-alsa-4.3.1.tar.gz) from VoxForge (compiled with: --with-mictype=alsa)
-*   [Julius 32-bit binaries](/content/en/Create/Howto/julius-standard-alsa-4.3.1.i686.zip) from VoxForge (compiled with: --with-mictype=alsa)
+*   [Julius 64-bit binaries](/content/en/AcousticModel/Howto/julius-standard-alsa-4.3.1.tar.gz) from VoxForge (compiled with: --with-mictype=alsa)
+*   [Julius 32-bit binaries](/content/en/AcousticModel/Howto/julius-standard-alsa-4.3.1.i686.zip) from VoxForge (compiled with: --with-mictype=alsa)
 
 and save it to your '/home/yourusename/voxforge/bin' directory.
 

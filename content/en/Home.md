@@ -24,6 +24,3 @@ The reason for this is that Free and Open Source ('FOSS') projects are required 
 [Record yourself reading some text](http://www.voxforge.org/home/read) and upload your recordings to VoxForge.
 
 [Other Options](/home/submit).
-
-<div class="content"><a name="idr_Hvr1XmY3MyJSHAkx1Icg" id="idr_Hvr1XmY3MyJSHAkx1Icg"></a><a name="idbHiw5HCY3WiRmaNg6mhRwQ" id="idbHiw5HCY3WiRmaNg6mhRwQ"></a>
-
