@@ -14,7 +14,7 @@ very large list of words
 and their probability of occurrence in a given sequence.&nbsp; They are
 used in dictation applications.&nbsp; Grammars are a much smaller file
 containing sets of predefined
-combinations of words.&nbsp; Grammars<strong> </strong>are used in <a href="/home/docs/faq/faq/what-is-telephony-ivr">IVR</a> or desktop <a href="/home/docs/faq/faq/what-is-a-desktop-command-and-control-application">Command and Control</a>
+combinations of words.&nbsp; Grammars<strong> </strong>are used in <a href="/faq/what-is-telephony-ivr">IVR</a> or desktop <a href="/faq/what-is-a-desktop-command-and-control-application">Command and Control</a>
 applications.&nbsp;&nbsp; Each word in a Language
 Model or Grammar has an associated list of <a href="http://en.wikipedia.org/wiki/Phoneme">phonemes</a> (which correspond to the distinct sounds that make up a word).</li>
 <li><strong>Acoustic Model</strong> - Contains a statistical
@@ -37,7 +37,7 @@ command into your microphone and the computer does something, or you
 dictate something to the computer and it types it out the
 corresponding text on your screen.&nbsp; </p>
 <p>An SRS typically includes a
-Speech Recognition Engine and a <a href="/home/docs/faq/faq/what-is-a-dialog-manager">Dialog
+Speech Recognition Engine and a <a href="/faq/what-is-a-dialog-manager">Dialog
 Manager</a> (and may or may not
 include a Text to Speech Engine). 
 </p>
