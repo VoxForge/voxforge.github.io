@@ -6,13 +6,18 @@
   <body>
 
     {% include header.html %}
-    {% include faqLink.html %}
+<div class="wrapper">
 
+<div class="faq-link">
+    <a href="{{ site.baseurl }}/{{ page.lang }}/faq"><img src="{{ site.baseurl }}/images/faq-icon.jpg" width=20 height=20 alt="" title="FAQ - Frequently Asked Questions"/> </a>
+</div><!--faq-link -->
     <div class="page-content">
       <div class="wrapper">
+<h1>
+    <a href="{{ site.baseurl }}/{{ page.lang }}/faq">Frequently Asked Questions </a>
+</h1>
         {{ content }}
-      </div>
-    </div>
+    </div>!-- page-content -->
 
     {% include footer.html %}
 
