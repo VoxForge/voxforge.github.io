@@ -4,7 +4,7 @@ title: What is the difference between a Speech Recognition Engine and a Speech R
 date: 2010-01-01
 categories: faq
 lang: en
-redirect_from: /home/docs/faq/faq/what-is-open-source-software
+redirect_from: /home/docs/faq/faq/what-is-the-difference-between-a-speech-recognition-engine-and-a-speech-recognition-system
 ---
 <p><strong>Speech Recognition Engines</strong> ("SRE"s) are made up of the following components:<br>
 </p>

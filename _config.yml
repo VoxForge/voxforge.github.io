@@ -7,19 +7,27 @@
 
 # Site settings
 title:
+  bg: VoxForge - Bulgarian
+  ca: VoxForge - Catalan
   en: VoxForge - Free Speech... Recognition
-  fr: VoxForge - Voix Libre
   es: VoxForge - libertad de expresión
+  fr: VoxForge - Voix Libre
 languagesLocal:
+  bg: Език
+  ca: Idioma
   en: Languages
   fr: Langues
   es: Idiomas
 languageName:
+  bg: Bulgarian
+  ca: Catalan
   en: English
   fr: Français
   es: Español
-email: contact@voxforge.org
+email: cgontact@voxforge.org
 index:
+  bg: home
+  ca: home
   en: home
   fr: accueil
   es: boenosdias

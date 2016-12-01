@@ -10,7 +10,7 @@ layout: default
 
   <div class="post-content" itemprop="articleBody">
     <ul>
-      {% assign faqs=site.faq | where:"lang", page.lang %}
+      {% assign faqs=site.faq | where:"lang", page.lang | sort: 'title' %}
       {% for post in faqs %}
         <li><a href="{{ post.url }}">{{ post.title }}</a></li>
       {% endfor %}
