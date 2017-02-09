@@ -45,7 +45,8 @@ index:
   fr: accueil
   es: boenosdias
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://voxforge.org" # the base hostname & protocol for your site
+#url: "http://voxforge.org" # the base hostname & protocol for your site
+url: "http://voxforge.github.io" # the base hostname & protocol for your site
 collections:
   faqfolder:
     output: true
