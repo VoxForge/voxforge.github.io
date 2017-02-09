@@ -6,6 +6,6 @@ weight: 4
 ref: listen
 lang: en
 permalink: /en/listen
-redirect: /home/listen
+redirect_from: /home/listen
 ---
 
