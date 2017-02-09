@@ -9,7 +9,7 @@ permalink: /en/listen
 redirect_from: /home/listen
 ---
 The Audio listing below below comes from the [VoxForge repository website](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/)<br>
-(use your browser's refesh button to return to root folder)<br>
+(use your browser's refresh button, or switch to another page and back, to return to root folder)<br>
 
 <html>
   <head>
@@ -26,4 +26,4 @@ The Audio listing below below comes from the [VoxForge repository website](http:
 </html>
 
 
-[VoxForge repository]
+
