@@ -9,32 +9,45 @@
 title:
   bg: VoxForge - Bulgarian
   ca: VoxForge - Catalan
+  de: VoxForge - German
   en: VoxForge - Free Speech... Recognition
   es: VoxForge - libertad de expresión
   fr: VoxForge - Voix Libre
+# word 'language' in local language
 languagesLocal:
   bg: Език
   ca: Idioma
+  de: Sprachen
   en: Languages
   fr: Langues
   es: Idiomas
+# localized language name
 languageName:
-  bg: Bulgarian
+  bg: Български
   ca: Catalan
+  de: Deutsch
   en: English
   fr: Français
   es: Español
-email: cgontact@voxforge.org
+languageEnglish:
+  bg: Bulgarian
+  ca: Catalan
+  de: German
+  en: English
+  fr: French
+  es: Spanish
+email: contact@voxforge.org
 index:
   bg: home
   ca: home
   en: home
+  de: homeindex???
   fr: accueil
   es: boenosdias
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://voxforge.org" # the base hostname & protocol for your site
 collections:
-  faq:
+  faqfolder:
     output: true
     title: FAQs
     permalink: /faq/:path/ # this is for faq item path

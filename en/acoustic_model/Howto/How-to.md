@@ -1,7 +1,8 @@
 ---
-layout: page
+layout: tutorial
 title: How-to Create Acoustic Model - with Script
-ref: develop
+weight: 3
+ref: htkjulius_howto
 lang: en
 permalink: /how-to/
 redirect_from: /how-to

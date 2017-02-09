@@ -1,8 +1,8 @@
 ---
-layout: page
+layout: tutorial
 title: Linux - Download Required Software
-weight: 8
-ref: develop
+weight: 1
+ref: htkjulius_howto
 lang: en
 permalink: /how-to/download
 redirect_from: /home/dev/acousticmodels/linux/create/htkjulius/how-to/download

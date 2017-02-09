@@ -9,6 +9,13 @@ permalink: /
 redirect_from: "/home/"
 ---
 
+---
+
+**<font color="red">Notice: We are in process of transferring VoxForge website to github... This site is not complete, please use: </font> [VoxForge.org](http://voxforge.org).**
+
+---
+
+
 VoxForge was set up to collect transcribed speech for use with [Free](faq/what-is-free-software) and  [Open Source](faq/what-is-open-source-software) [Speech Recognition Engines](faq/what-is-the-difference-between-a-speech-recognition-engine-and-a-speech-recognition-system) (on Linux, Windows and Mac). 
 
 We will make available all submitted audio files under the [GPL](faq/what-is-gpl) license, and then 'compile' them into acoustic models for use with [Open Source](faq/what-is-open-source-software) speech recognition engines such as [CMU Sphinx](http://cmusphinx.sourceforge.net/html/cmusphinx.php), [ISIP](http://www.isip.piconepress.com/projects/speech), [Julius](http://julius.sourceforge.jp/en_index.php) ([github](https://github.com/julius-speech/julius)) and [HTK](http://htk.eng.cam.ac.uk/) (note: HTK has distribution restrictions).

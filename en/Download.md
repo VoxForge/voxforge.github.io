@@ -19,7 +19,6 @@ redirect_from: /home/downloads
             *   [Audio](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/)
             *   [Lexicon](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Lexicon/)
             *   [Prompts](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Prompts/)
-    *   [Metrics (Alpha)](/home/downloads/metrics)
 
 
 ## QuickStart download

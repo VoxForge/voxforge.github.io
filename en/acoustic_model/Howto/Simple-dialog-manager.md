@@ -1,8 +1,8 @@
 ---
-layout: page
+layout: tutorial
 title: Simple Dialog Manager
-weight: 8
-ref: develop
+weight: 5
+ref: htkjulius_howto
 lang: en
 permalink: /how-to/simple-dialog-manager
 redirect_from: /simple-dialog-manager2
