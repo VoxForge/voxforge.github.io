@@ -15,8 +15,8 @@ Create Acoustic Model by 'compiling' your speech audio files into a [Speaker Dep
 #### Linux
 
 *   Create speaker dependant acoustic model from scratch & run simple dialog manager:
-    *   [How-to - using a script](/how-to)
-    *   [Tutorial - step-by-step](/tutorial) (with explanations)[  
+    *   [Recipe - using a script](/en/recipe)
+    *   [Tutorial - step-by-step](/en/tutorial) (with explanations)[  
         ](http://www.voxforge.org/home/dev/acousticmodels/linux/create/htkjulius/tutorial)
 *   To improve the recognition rates of the acoustic model you created in the how-to or tutorial, you need to train your acoustic model with many more hours of your speech.  A short-cut approach is to 'adapt' the VoxForge s_peaker independent a_coustic model to the characteristics of your voice:
     *   [Adapt Pre-existing Acoustic Model to Your Voice](http://www.voxforge.org/home/dev/acousticmodels/linux/adapt/htkjulius)

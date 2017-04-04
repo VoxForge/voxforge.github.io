@@ -4,10 +4,9 @@ title: Linux - Download Required Software
 weight: 1
 ref: htkjulius_howto
 lang: en
-permalink: /how-to/download
+permalink: /recipe/download
 redirect_from: /home/dev/acousticmodels/linux/create/htkjulius/how-to/download
 ---
-[Click here for the Windows version of this How-to ](/home/dev/acousticmodels/windows/create/htkjulius/how-to/download) |
 
 # VoxForge directory
 
@@ -49,12 +48,13 @@ click the following links:
 
 *   [HTK source code (tar+gzip archive)](http://htk.eng.cam.ac.uk/ftp/software/HTK-3.4.1.tar.gz)
 
-*   [htkbook.pdf  
-    ](http://htk.eng.cam.ac.uk/ftp/software/HTK-samples-3.4.1.tar.gz)
+*   [htkbook.pdf](http://htk.eng.cam.ac.uk/ftp/software/HTK-samples-3.4.1.tar.gz)
 
 and save them to your new bin directory.
 
 ### Step 3 - Unpack you source files
+
+!!!!!! need newest version of HTK 3.5alpha...
 
 Extract the files using:
 
@@ -71,6 +71,8 @@ this should create the following directory in your bin folder:
 
 ### Step 4 - Compile & Install HTK
 
+!!!!! todo also need to install HDecode for Neural Network compile...
+
 ### Compiler version
 
 If you have a newer version of the gcc compiler (version 4 or above), you will need to install gcc version 3.4 compatibility modules so that HTK will compile properly. Use gcc's version command to see which version is installed on your system:
@@ -82,7 +84,7 @@ If you have a newer version of the gcc compiler (version 4 or above), you will n
     ...
 
     Thread model: posix
-    **gcc version 4.8.3** 20140911 (Red Hat 4.8.3-7) (GCC)
+    **gcc version 5.4.0** 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.4)
 
 If you have version 4.0 or above (I have version 4.8.3) use yum to install the required files to your system:
 
@@ -241,7 +243,7 @@ The VoxForge acoustic model creation toolkit is written in Julia.
 
 ### Step 1 - Download Linux version of Julia
 
-    #yum install julia
+    $ sudo apt install julia
 
 ### Step 2 - testing
 
@@ -255,7 +257,7 @@ Audacity is a free, easy-to-use, multi-track audio editor and recorder.
 
 Use the following command to download and install Audacity (as superuser):
 
-    #yum install audacity 
+    $ sudo apt install audacity 
 
 [Click here to download Audacity](http://audacity.sourceforge.net/) from its web site.
 

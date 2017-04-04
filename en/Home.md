@@ -24,7 +24,7 @@ We will make available all submitted audio files under the [GPL](faq/what-is-gpl
 
 Most [acoustic models](faq/what-is-an-acoustic-model) used by 'Open Source' speech recognition (or Speech-to-Text) engines are [closed source](faq/what-is-closed-source-software).  They do not give you access to the speech audio and transcriptions (i.e. the [speech corpus](faq/what-is-a-speech-corpus-or-speech-corpora)) used to create the acoustic model. 
 
-The reason for this is that Free and Open Source ('FOSS') projects are required to purchase large [speech corpora](faq/what-is-a-speech-corpus-or-speech-corpora) with restrictive licensing.  Although there are a few instances of small FOSS speech corpora that could be used to create acoustic models, the vast majority of corpora (especially large corpora best suited to building good acoustic models) must be purchased under restrictive licenses.  
+The reason for this is that Free and Open Source ('FOSS') projects are required to purchase large [speech corpora](faq/what-is-a-speech-corpus-or-speech-corpora) with restrictive licensing.  As of 2015, there is finally an excellent, large English corpus suitable for creating acoustic models [LibriSpeech ASR Corpus](http://www.openslr.org/12/).  The VoxForge corpus was used to help segment [Librivox audiobooks](https://librivox.org/) to create the corpus.  So the open source community has made good progress with English, but we still need speech samples from as many different computer environments as possible.
 
 ## How Can You Help?
 

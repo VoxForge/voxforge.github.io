@@ -1,9 +1,9 @@
 ---
 layout: faq_list
 title: Frequently Asked Questions
-lang: bg
+lang: el
 ref: faq
-permalink: /bg/faq
+permalink: /el/faq
 ---
 
 

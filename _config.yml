@@ -10,6 +10,7 @@ title:
   bg: VoxForge - Bulgarian
   ca: VoxForge - Catalan
   de: VoxForge - German
+  el: VoxForge - Greek
   en: VoxForge - Free Speech... Recognition
   es: VoxForge - libertad de expresión
   fr: VoxForge - Voix Libre
@@ -18,6 +19,7 @@ languagesLocal:
   bg: Език
   ca: Idioma
   de: Sprachen
+  el: Γλώσσες
   en: Languages
   fr: Langues
   es: Idiomas
@@ -26,6 +28,7 @@ languageName:
   bg: Български
   ca: Catalan
   de: Deutsch
+  el: Ελληνικά
   en: English
   fr: Français
   es: Español
@@ -33,6 +36,7 @@ languageEnglish:
   bg: Bulgarian
   ca: Catalan
   de: German
+  el: Greek
   en: English
   fr: French
   es: Spanish
@@ -40,6 +44,8 @@ email: contact@voxforge.org
 index:
   bg: home
   ca: home
+  de: home
+  el: Σπίτι
   en: home
   de: homeindex???
   fr: accueil

@@ -53,7 +53,7 @@ activate.  Click the **Upload** button to upload your entire submission
 to the VoxForge repository as a single zip file.
 
 **Repeat** the process (multiple submissions are encouraged!)
-
+<div>
 <applet mayscript="mayscript" style="border: 1px solid rgb(153,153,153);" name="VoxForge.org Speech Submission Application" code="speechrecorder/RecorderApplet.class" width="950" height="1050">
  <param value="http://read.voxforge1.org/speech/" name="codebase"> 
  <param value="speechrecorder.jar" name="archive">
@@ -66,7 +66,7 @@ to the VoxForge repository as a single zip file.
  <param value="" name="cookie">
  <param value="EN" name="language">
 
-<br><br>
+<br>
 <p><b>Your browser does not support Java applets, you can use Java Webstart:</b> <a href="http://read.voxforge1.org/speech/SpeechSubmission.jnlp" onclick="return launchApplication('SpeechSubmission.jnlp');">click to launch this app as webstart</a></p>
 
 <p>If your browser will not auto-start the SpeechSubmission application, <a href="https://www.java.com/en/download/installed.jsp"> make sure you have a current java installed</a>, and then download the jnlp file and run:</p>
@@ -75,7 +75,7 @@ $ javaws SpeechSubmission.jnlp
 </pre>
 <p>from command line.</p>
 </applet>
-
+</div>
 
   [Information on the Java Security Warning pop-up]: /home/read2/java-security-warning
   [Java Applet Troubleshooting Guide]: /home/read2/java

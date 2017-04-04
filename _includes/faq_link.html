@@ -3,8 +3,29 @@
 <div class="wrapper">
 
 <div class="faq-link">
-    <a href="{{ site.baseurl }}/{{ page.lang }}/faq"><img src="{{ site.baseurl }}/images/faq-icon.jpg" width=20 height=20 alt="" title="FAQ - Frequently Asked Questions"/> </a>
+<form method="get" action="http://www.google.com/search" >
+<input name="as_q" type="text" title="Google Search"/> 
+<input value="20" name="num" type="hidden" />
+<input value="en" name="hl" type="hidden" />
+<input value="ISO-8859-1" name="ie" type="hidden" />
+<input value="Site Search" name="btnG" type="hidden" />
+<input name="as_oq" type="hidden" />
+<input name="as_eq" type="hidden" />
+<input name="lr" type="hidden" />
+<input value="i" name="as_ft" type="hidden" />
+<input name="as_filetype" type="hidden" />
+<input value="all" name="as_qdr" type="hidden" />
+<input value="any" name="as_occt" type="hidden" />
+<input value="i" name="as_dt" type="hidden" />
+<input value="www.voxforge.org" name="as_sitesearch" type="hidden" />
+<input value="off" name="safe" type="hidden" />
+
+<input type="image" src="{{ site.baseurl }}/images/search.jpg" name="image" width="20" height="20" title="Search VoxForge Site"/>
+
+<a href="{{ site.baseurl }}/{{ page.lang }}/faq"><img src="{{ site.baseurl }}/images/faq-icon.jpg" width=20 height=20 alt="" title="FAQ - Frequently Asked Questions"/> </a>
+</form>
 </div><!--faq-link -->
+
 </div><!--wrapper -->
 
 

@@ -9,7 +9,7 @@ permalink: /en/listen
 redirect_from: /home/listen
 ---
 The Audio listing below below comes from the [VoxForge repository website](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/)<br>
-(use your browser's refresh button, or switch to another page and back, to return to root folder)<br>
+(to return to root folder: click your browser's refresh button, or switch to another page and come back)<br>
 
 <html>
   <head>
@@ -19,8 +19,8 @@ The Audio listing below below comes from the [VoxForge repository website](http:
 
 
 <br>
-        <iframe sandbox src="http://www.repository.voxforge1.org/downloads/SpeechCorpus/display/original/" width="500" height="800">
-            Alternative text for browsers that do not understand IFrames.
+        <iframe sandbox src="http://www.repository.voxforge1.org/display/en/Trunk/Audio/Original/16kHz_16bit" width="500" height="800">
+            Click here [VoxForge repository website](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/) to listen to audio
         </iframe>
    </body>
 </html>
