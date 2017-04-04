@@ -1,11 +1,11 @@
 ---
 layout: default
-menu: Home
-title: Home
-ref: home
+title: how-to step-1
+ref: how-to-step-1
 lang: en
-permalink: en/step-1
-redirect_from: /how-to/data-prep/step-1
+permalink: /recipe/step-1
+redirect_from: /home/dev/acousticmodels/linux/create/htkjulius/how-to/data-prep/step-1
+
 ---
 
 Step 1 - Task Grammar
@@ -24,29 +24,29 @@ SENT: DIAL_V DIGIT
 Still in your 'voxforge/howto' folder, create a file called [sample.voca], and add the following:
 
 <pre>
- % NS_B                  
- &lt;s&gt;        sil      
- % NS_E                   
- &lt;/s&gt;        sil     
- % CALL_V                 
- PHONE        f ow n       
- CALL        k ao l        
- % DIAL_V                 
- DIAL        d ay ah l     
- % NAME_N                 
- STEVE        s t iy v     
- YOUNG        y ah ng      
- % DIGIT                   
- FIVE        f ay v        
- FOUR        f ao r        
- NINE        n ay n        
- EIGHT        ey t         
- OH        ow              
- ONE        w ah n         
- SEVEN        s eh v ah n  
- SIX        s ih k s       
- THREE        th r iy      
- TWO        t uw           
+ % NS_B
+ &lt;s&gt;        sil
+ % NS_E
+ &lt;/s&gt;        sil
+ % CALL_V
+ PHONE        f ow n
+ CALL        k ao l
+ % DIAL_V
+ DIAL        d ay ah l
+ % NAME_N
+ STEVE        s t iy v
+ YOUNG        y ah ng
+ % DIGIT
+ FIVE        f ay v
+ FOUR        f ao r
+ NINE        n ay n
+ EIGHT        ey t
+ OH        ow
+ ONE        w ah n
+ SEVEN        s eh v ah n
+ SIX        s ih k s
+ THREE        th r iy
+ TWO        t uw
  ZERO        z iy r ow
 </pre>
 
@@ -74,14 +74,14 @@ Now making triplet list[6/6]
 ---
 generated: sample.dfa sample.term sample.dict
 
-This creates 3 files: [sample.dfa], [sample.term] and [sample.dict].
+</pre>
+
+This creates 3 files: [sample.dfa], [sample.term] and [sample.dict] .
 
   [sample.grammar]: https://github.com/VoxForge/develop/raw/master/howto/sample.grammar
   [sample.voca]: https://github.com/VoxForge/develop/raw/master/howto/sample.voca
   [mkdfa.jl]: https://raw.githubusercontent.com/VoxForge/develop/master/bin/mkdfa.jl
   [sample.dfa]: https://raw.githubusercontent.com/VoxForge/develop/master/howto/sample.dfa
   [sample.term]: https://raw.githubusercontent.com/VoxForge/develop/master/howto/sample.term
-  []: http://en.wikipedia.org/wiki/Finite_automaton
   [sample.dict]: https://raw.githubusercontent.com/VoxForge/develop/master/howto/sample.dict
-  [Error when running julia ../bin/mkdfa.jl]: /home/dev/acousticmodels/linux/create/htkjulius/how-to/data-prep/step-1/comments/error-when-running-julia-../bin/mkdfa.jl#q3-NU8_aoGp9gndZHT3_xQ
 
