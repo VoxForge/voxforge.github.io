@@ -40,16 +40,13 @@ Com podeu ajudar?
 [Enregistreu-vos llegint unes línies de text] i envieu aquestes
 gravacions a VoxForge.
 
-O exploreu [altres opcions] de com enviar gravacions.
-
   [motors de reconeixement de veu]: http://ca.wikipedia.org/wiki/Reconeixement_de_la_parla
   [codi lliure]: http://ca.wikipedia.org/wiki/Programari_lliure
   [llicència GPL]: http://www.gnu.org/licenses/gpl-3.0.ca.html
   [models acústics]: http://ca.wikipedia.org/wiki/Model_ac%C3%BAstic
   [Sphinx]: http://cmusphinx.sourceforge.net
   [Julius]: http://julius.sourceforge.jp/en_index.php
-  [Kaldi]: http://kaldi.sourceforge.net/
+  [Kaldi]: https://github.com/kaldi-asr/kaldi
   [HTK]: http://htk.eng.cam.ac.uk/
   [corpus de veu]: http://ca.wikipedia.org/wiki/Corpus_de_veu
-  [Enregistreu-vos llegint unes línies de text]: http://www.voxforge.org/ca/read
-  [altres opcions]: http://www.voxforge.org/home/submit
+  [Enregistreu-vos llegint unes línies de text]: /ca/read

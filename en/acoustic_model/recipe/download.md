@@ -46,15 +46,15 @@ Create a new directory in your voxforge directory called 'bin', it should have t
 
 click the following links:
 
-*   [HTK source code (tar+gzip archive)](http://htk.eng.cam.ac.uk/ftp/software/HTK-3.4.1.tar.gz)
+*   [HTK source code (tar+gzip archive)](http://htk.eng.cam.ac.uk/ftp/software/HTK-3.5.beta-2.tar.gz)
 
-*   [htkbook.pdf](http://htk.eng.cam.ac.uk/ftp/software/HTK-samples-3.4.1.tar.gz)
+*   [htkbook.pdf](http://htk.eng.cam.ac.uk/ftp/software/htkbook-3.5.alpha-1.pdf)
+
+*   [HDecode](http://htk.eng.cam.ac.uk/ftp/software/hdecode/HDecode-3.5.beta-1.tar.gz)
 
 and save them to your new bin directory.
 
-### Step 3 - Unpack you source files
-
-!!!!!! need newest version of HTK 3.5alpha...
+### Step 3 - Unpack your source files
 
 Extract the files using:
 
@@ -63,92 +63,36 @@ Extract the files using:
     -or-
 
 *   use tar from the command line for the following file:
-    *   tar -xvzf HTK-3.4.1.tar.gz
+    *   tar -xvzf HTK-3.5.beta-2.tar.gz
 
-this should create the following directory in your bin folder:
+this should create the following directories in your bin folder:
 
         voxforge/bin/htk
+        voxforge/bin/htk(2)
+
+Copy the HTKLVRec sub-directory in /htk(2) to /htk, then delete the /htk(2) directory.
 
 ### Step 4 - Compile & Install HTK
 
-!!!!! todo also need to install HDecode for Neural Network compile...
+#### Compile 
 
-### Compiler version
+Review the README included with HTK-3.5. Then execute the following commands:
 
-If you have a newer version of the gcc compiler (version 4 or above), you will need to install gcc version 3.4 compatibility modules so that HTK will compile properly. Use gcc's version command to see which version is installed on your system:
+    cd HTKLib && make -f MakefileCPU all && cd ..
+    cd HLMLib && make -f MakefileCPU all && cd ..
+    cd HTKTools && make -f MakefileCPU all && cd ..
+    cd HLMTools && make -f MakefileCPU all && cd ..
 
-    $ gcc -v
-
-    Using built-in specs.
-
-    ...
-
-    Thread model: posix
-    **gcc version 5.4.0** 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.4)
-
-If you have version 4.0 or above (I have version 4.8.3) use yum to install the required files to your system:
-
-    $su
-
-    #yum install compat-gcc-34-c++ compat-gcc-34
-
-(you may also need x11 development libraries:  yum install libx11-devel)
-
-### 32-bit Systems
-
-
-After unpacking the sources, open a command line terminal and go to the /home/username/voxforge/bin/htk directory where you downloaded your files. 
- 
-#### configure 
- 
-The default location for binaries is "/usr/local", which will put the tools in "/usr/local/bin".  You need to change this default location using the "./configure" script to specify where you want the binaries installed:
- 
-    $./configure --prefix=/home/**username**/voxforge/bin/htk
- 
-This directs the make command to put all your binaries in the following folder:
- 
-    /home/**username**/voxforge/bin/htk/bin.linux
-
-
-### 64-bit System
-
-#### configure 
-
-The default location for binaries is "/usr/local" which will put the tools in "/usr/local/bin".  You need to change this default location using the "./configure" script to specify where you want the binaries installed:
- 
-   $ linux32 bash
- 
-   $./configure CC=gcc34 --prefix=/home/**username**/voxforge/bin/htk
-
-This directs the make command to put all your binaries in the following folder:
- 
-   /home/**username**/voxforge/bin/htk/bin.linux
-
-### make 
+#### Install
 
 To build the libraries and binaries, execute the following:
 
-    $make
+    cd HTKLib && make -f MakefileCPU install && cd ..
+    cd HLMLib && make -f MakefileCPU install && cd ..
+    cd HTKTools && make -f MakefileCPU install && cd ..
+    cd HLMTools && make -f MakefileCPU install && cd ..
 
-
-Rnning the following command will install them: 
-
-    $make install
-
-If you get the following error
-
-    make[1]: Entering directory `/home/username/voxforge/bin/htk/HLMTools'
-    Makefile:77: *** missing separator (did you mean TAB instead of 8 spaces?).  Stop.
-    make[1]: Leaving directory `/home/username/voxforge/bin/htk/HLMTools'
-
-you need to fix a minor bug in an HTK Makefile
-
-$ gedit /home/username/voxforge/bin/htk/HLMTools/Makefile
-
-    mkinstalldir:
-        if [ ! -d $(bindir) -a X_ = X_yes ] ; then mkdir -p $(bindir) ; fi
-
-find line 77 and replace the leading spaces with a tab (make sure your editor acutally puts in a tab character), and re-run make.
+This install the HTK executables in the bin.cpu folder.
 
 ### Step 5 - testing
 
@@ -164,27 +108,13 @@ Julius is a large vocabulary continuous speech recognition (LVCSR) engine.  Juli
 
 click the following link: 
 
-*   get current binaries from [Julius web site](https://github.com/julius-speech/julius/releases) (32-bit binaries compiled with: --with-mictype=oss)
-
--or-
-
-*   [Julius 64-bit binaries](/content/en/AcousticModel/julius-standard-alsa-4.3.1.tar.gz) from VoxForge (compiled with: --with-mictype=alsa)
-*   [Julius 32-bit binaries](/content/en/AcousticModel/julius-standard-alsa-4.3.1.i686.zip) from VoxForge (compiled with: --with-mictype=alsa)
+*   get a current version from [Julius web site](https://github.com/julius-speech/julius/releases) 
 
 and save it to your '/home/yourusename/voxforge/bin' directory.
 
 ([to compile Julius from source](/faq/how-to-compile-julius-from-source)) 
 
-If you get the following error when you run julius:
-
-    ### read waveform input
-    Stat: adin_oss: device name = /dev/dsp (application default)
-    Error: adin_oss: failed to open /dev/dsp
-    failed to begin input stream
-
-use the VoxForge version of Julius compiled with alsa.
-
-### Step 2 - Extract Julius 
+### Step 2 - Extract Source Files
 
 Extract the file using:
 
@@ -196,7 +126,25 @@ Extract the file using:
 
         tar -xvzf julius-4.3.1.tar.gz
 
-this should create a julius-4.3.1 directory in your bin folder.
+this should create a julius-4.4.2.1 directory in your bin folder.
+
+### Step 3 - Compile & Install
+
+#### Install Pre-requisites 
+
+Linux  (tested on Ubuntu-14.04)
+
+  sudo apt-get install build-essential zlib1g-dev libsdl2-dev
+  sudo apt-get libasound2-dev
+
+#### Compile
+
+  ./configure
+  make
+
+#### Install
+
+  sudo make install
 
 ### Step 3 - testing
 
@@ -206,7 +154,7 @@ See testing in the 'Update Your User Path' section.
 
 To update your user path (which tells your command line where to search for _executable files_)  you need to add the following directories your user path variable:
 
-*   /home/**yourusename**/voxforge/bin/htk/bin
+*   /home/**yourusename**/voxforge/bin/htk/bin.cpu
 *   /home/**yourusename**/voxforge/bin/julius-4.3.1-linuxbin/bin
 
 To do this, edit your '.bash_profile' file in your home directory (in Fedora you need to show 'hidden files' in Nautilus - so you can display file names with a period in front of them). You do this by adding the listed paths, separated by a colon (":") to the end of the PATH variable as follows (all one line, no spaces):
