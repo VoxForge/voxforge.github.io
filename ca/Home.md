@@ -1,7 +1,7 @@
 ---
 layout: default
 menu: Principal
-title: Home
+title: Casa
 ref: home
 lang: ca
 permalink: ca/principal

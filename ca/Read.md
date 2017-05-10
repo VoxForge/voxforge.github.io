@@ -1,9 +1,9 @@
 ---
-layout: page_read
+layout: page
 title: Contribuïu mitjançant la lectura de frases
 menu: Llegiu
-weight: 3
 ref: read
+weight: 3
 lang: ca
 permalink: /ca/read
 ---
@@ -32,11 +32,12 @@ Un cop hagueu completat l'enregistrament de les deu frases, s'activarà el botó
 
 Us agraïm que **repetiu** aquest procés tants cops com volgueu (com més millor!)
 
--   [En quant a l'avís de seguretat de Java] (en anglès)
--   [Guia de debugat de l'applet Java] (en anglès)
--   [Altres opcions per enviar gravacions] (en anglès)
+---
 
+<a href="http://read.voxforge1.org/speech/SpeechSubmission.jnlp" onclick="return launchApplication('SpeechSubmission.jnlp');">Llançar l'aplicació VoxForge com un Programa d'inici de Java WebStart</a><br>
 
-  [En quant a l'avís de seguretat de Java]: http://www.voxforge.org/home/read2/java-security-warning
-  [Guia de debugat de l'applet Java]: http://www.voxforge.org/home/read2/java
-  [Altres opcions per enviar gravacions]: http://www.voxforge.org/home/submit
+[Ajuda amb el llançament de Java Web Start Programes del navegador o de línia d'ordres](/faq/java-webstart-and-voxforge-speechsubmission-application)
+
+---
+
+[comprovar que el volum del micròfon sigui adequat]

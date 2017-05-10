@@ -57,7 +57,7 @@ to the VoxForge repository as a single zip file.
 
   [Information on the Java Security Warning pop-up]: /home/read2/java-security-warning
   [Java Applet Troubleshooting Guide]: /home/read2/java
-  [record a test recording]: http://www.voxforge.org/home/read/recording-how-to
+  [record a test recording]: /faq/recording-how-to
   [Firefox]: http://www.mozilla.org/en-US/firefox/products/
   [Seamonkey]: http://www.seamonkey-project.org/
   [do not read the punctuation marks out loud]: /faq/punctuation/

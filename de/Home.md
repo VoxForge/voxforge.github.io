@@ -1,7 +1,7 @@
 ---
 layout: default
 menu: Wilkommen
-title: Home
+title: Wilkommen - Deutsch
 ref: home
 lang: de
 permalink: de/home
@@ -19,6 +19,6 @@ Modelle 'kompiliert'.
   [Open Source]: /faq/what-is-open-source-software
   [GPL]: /faq/what-is-gpl
   [Sphinx]: http://cmusphinx.sourceforge.net/html/cmusphinx.php
-  [ISIP]: http://www.ece.msstate.edu/research/isip/projects/speech/index.html
+  [ISIP]: https://www.isip.piconepress.com/projects/speech/
   [Julius]: http://julius.sourceforge.jp/en_index.php?q=en/index.html
   [HTK]: http://htk.eng.cam.ac.uk/

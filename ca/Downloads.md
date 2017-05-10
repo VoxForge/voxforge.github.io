@@ -15,15 +15,12 @@ Si us plau, [contribuïu alguna gravacó de veu].
 Dipòsit de gravacions de veu:
 
 [Speech Corpus]
-
-[Audio]
-
-[Lexicon]
-
-[Prompts]
+* [àudio]
+* [diccionari de pronunciació]
+* [indicacions]
 
   [contribuïu alguna gravacó de veu]: read
   [Speech Corpus]: http://www.repository.voxforge1.org/downloads/ca/Trunk/
-  [Audio]: http://www.repository.voxforge1.org/downloads/ca/Trunk/Audio/
-  [Lexicon]: http://www.repository.voxforge1.org/downloads/ca/Trunk/Lexicon
-  [Prompts]: http://www.repository.voxforge1.org/downloads/ca/Trunk/Prompts/
+  [àudio]: http://www.repository.voxforge1.org/downloads/ca/Trunk/Audio/
+  [diccionari de pronunciació]: http://www.repository.voxforge1.org/downloads/ca/Trunk/Lexicon
+  [indicacions]: http://www.repository.voxforge1.org/downloads/ca/Trunk/Prompts/

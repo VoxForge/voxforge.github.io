@@ -1,14 +1,14 @@
 ---
 layout: page
-title: Listen to Catalan Speech Audio
+title: Escoltar àudio de veu català
 menu:  Escolteu
-weight: 4
 ref: listen
+weight: 4
 lang: ca
 permalink: /ca/listen
 ---
-The Audio listing below below comes from the [VoxForge repository website](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/)<br>
-(to return to root folder: click your browser's refresh button, or switch to another page and come back)<br>
+El llistat d'àudio per sota de sota ve de la [ pàgina web del repositori VoxForge](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/)<br>
+(per tornar a la carpeta arrel: feu clic al botó d'actualització del navegador, o canviar a una altra pàgina i tornar)<br>
 
 <html>
   <head>
@@ -18,7 +18,7 @@ The Audio listing below below comes from the [VoxForge repository website](http:
 
 
 <br>
-        <iframe sandbox src="http://www.repository.voxforge1.org/display/ca/Trunk/Audio/Original/48kHz_16bit" width="500" height="800">
+        <iframe sandbox src="http://www.repository.voxforge1.org/display/ca/Trunk/Audio/Original" width="500" height="800">
             Click here [VoxForge repository website](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/) to listen to audio
         </iframe>
    </body>

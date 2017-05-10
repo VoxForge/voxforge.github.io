@@ -47,5 +47,5 @@ download the .[jnlp][Java Webstart] file to your computer first, and then run it
 $ javaws SpeechSubmission.jnlp
 
 [Java Webstart]: https://en.wikipedia.org/wiki/Java_Web_Start
-[VoxForge read page]: http://voxforge.org/home/read
+[VoxForge read page]: /home/read
 
