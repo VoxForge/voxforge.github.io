@@ -1,0 +1,865 @@
+fr-sb-1  S’ils sont les protecteurs de la clique, ils en sont aussi les prisonniers.
+fr-sb-2  En raison du prestige, immense, de son auteur, parvenu au faîte de sa gloire littéraire.
+fr-sb-3  Les guerres dont vous parlez ont eu lieu à visage découvert.
+fr-sb-4  Ces rectifications sont modérées dans leur teneur et dans leur étendue.
+fr-sb-5  Hitler y mit la Gestapo, et contre nous, la Gestapo pesait lourd.
+fr-sb-6  En passant chez lui, Elias ne consulta pas ses messages.
+fr-sb-7  Comme dans le désert, le temps avait perdu ses droits.
+fr-sb-8  En moi la crainte et la curiosité se livraient bataille.
+fr-sb-9  Il serait difficile d’imaginer plus triomphante canaille.
+fr-sb-10  Il prit mon geste pour une moquerie à l’égard de la municipalité.
+fr-sb-11  Alors, quand tout semble perdu, un homme se dresse.
+fr-sb-12  J’ai déjà décrit l’aspect de cette masse colossale enfouie dans le sol.
+fr-sb-13  Aussi, malgré des yeux clairs et un tympan bien tendu, sont-ils tous sourds et aveugles.
+fr-sb-14  Je ne veux pas de rapport, Elias, je veux des explications.
+fr-sb-15  Là où l'eau était toujours plus accessible que les banques de données.
+fr-sb-16  Voilà vingt ans, Marseille fêta le deux mille cinq centième anniversaire de sa fondation.
+fr-sb-17  Il emmena un homme et une femme, une cuisse et un bras.
+fr-sb-18  C’est une voix qui s’élève au-dessus des intérêts particuliers.
+fr-sb-19  À peine avait-il commencé sa harangue qu’un spectacle imprévu le figea dans ses attitudes.
+fr-sb-20  Il arrivera au vrai magasin avec son nom peint sur la vitre de la porte.
+fr-sb-21  Le droit de vote des membres du Parlement est personnel.
+fr-sb-22  Écoutez, c’est moi, le port de Marseille, qui vous parle.
+fr-sb-23  On couche avec la fille du voisin, croyant coucher avec sa femme.
+fr-sb-24  Ce jet de feu devint invisible un quart d’heure après minuit environ.
+fr-sb-25  Ne posez pas de questions stupides et attendez que je vous explique.
+fr-sb-26  Un charbonnier de quai est moins ouvrier encore qu’un docker.
+fr-sb-27  Leur métier est de remonter en pirogue les fleuves difficiles.
+fr-sb-28  On ouvrit le ventre de l’autre, il s’en échappa douze boîtes en fer-blanc.
+fr-sb-29  Les articles des journaux avaient préparé les esprits à admettre cette idée.
+fr-sb-30  Les documents défilèrent au rythme des instructions neurales du commissaire.
+fr-sb-31  Echanger des pensées était bien plus reposant que d’utiliser son larynx.
+fr-sb-32  Tu verras les pays où ils ont apporté le chemin de fer.
+fr-sb-33  Les pas du professeur derrière lui le rassuraient.
+fr-sb-34  Il prit le professeur par le bras et le mena à ses quartiers.
+fr-sb-35  Alors commencera pour lui le cycle de l’émigrant du Levant.
+fr-sb-36  Nous annonçâmes notre malheur par des signaux de détresse.
+fr-sb-37  Mais cette hospitalité est toujours des plus élémentaires.
+fr-sb-38  Tes succès étaient si grands que, de ton vivant, les longues figures t'ont dédaigné.
+fr-sb-39  Voici du blé qui arrive droit du centre de la France.
+fr-sb-40  C’est le plus beau champ pour grandes manoeuvres policières.
+fr-sb-41  Tu verras des arbres alignés à l’infini ainsi que les soldats d’une armée immense.
+fr-sb-42  Tous ceux qui ont voyagé aux pays de la drogue l’ont entendu nommer.
+fr-sb-43  Ils vont jusqu’à minuit et n’en savent pas davantage.
+fr-sb-44  Mon deuxième message, c’est que vous devez toujours croire en vous et en la France.
+fr-sb-45  Le Président de la République est élu pour cinq ans au suffrage universel direct.
+fr-sb-46  À ne considérer que les souliers si bien cirés, ces messieurs ne doivent pas marcher.
+fr-sb-47  Pourtant, si les torturés sont vides, la Résistance ne l’est pas encore.
+fr-sb-48  Il y apprend à négocier, à connaître d'autres usages.
+fr-sb-49  Il porta la main à son front et la douleur s'intensifia.
+fr-sb-50  Perfusé par sa combinaison, il était nourri et adapté au rythme de la planète.
+fr-sb-51  Le Gouvernement détermine et conduit la politique de la nation.
+fr-sb-52  Tous ont bien un métier, seulement ils ne l’exercent que lorsqu’ils vont se promener.
+fr-sb-53  Tes rondeurs, ton embonpoint n'étaient plus que des souvenirs.
+fr-sb-54  La forme républicaine du Gouvernement ne peut faire l'objet d'une révision.
+fr-sb-55  Peut-être les gaz dégagés causèrent-ils de graves incommodités aux Martiens.
+fr-sb-56  Vous auriez tout de suite remarqué les nouveaux...
+fr-sb-57  Il pouvait maintenant raconter ce qui était arrivé.
+fr-sb-58  Il ne s’abrite pas dans un vague faubourg plus ou moins retiré et maritime.
+fr-sb-59  L’enjeu : c’est la paix, c’est la sécurité du monde.
+fr-sb-60  Et du coup, le malheureux écrivain passa pour un imposteur...
+fr-sb-61  L’intensité lumineuse diminua et le projecteur holographique sortit de son socle.
+fr-sb-62  La guerre de l’opium est une guerre de francs-tireurs et d’hommes masqués.
+fr-sb-63  Quant aux odeurs du quartier, elles restent encore à définir.
+fr-sb-64  Quelques-uns s’en allèrent et d’autres arrivèrent pendant que j’étais là.
+fr-sb-65  On lui a abandonné ce coin du vieux Marseille ; c’est son jardin public.
+fr-sb-66  S’ils portaient des cartons, ces cartons seraient de deux couleurs : verts et noirs.
+fr-sb-67  Ils passent leur existence à avancer ou à reculer leurs aiguilles.
+fr-sb-68  Il va sans dire que toutes les communications sont coupées malgré nos signaux répétés.
+fr-sb-69  Ce dénouement doit beaucoup au geste inouï du 13 janvier 1898.
+fr-sb-70  Il est là pour servir des verres et non la police.
+fr-sb-71  Elles sont les tables du voyage, comme les autres étaient les tables de la loi.
+fr-sb-72  Le compte rendu intégral des débats est publié au Journal officiel.
+fr-sb-73  Les portes et les murs ont l’air d’être en goguette.
+fr-sb-74  On le caréna encore, et on lui donna un nouveau doublage.
+fr-sb-75  Lorsque l’être passa devant Wilson, il ralentit un court instant.
+fr-sb-76  C’est à se demander jusqu’où, parfois, les pouvoirs publics vont dans l’inutilité.
+fr-sb-77  Si vous ne faites partie ni des sédentaires ni du flot vous n’êtes plus rien.
+fr-sb-78  Comme dans ce monde-là le fumier ne manque pas, les terres sont grasses.
+fr-sb-79  La zone d'identification de retour de mission était chargée d'appareils.
+fr-sb-80  À part cela et ma terrible stupéfaction, rien d’autre n’était changé.
+fr-sb-81  Elle est le commencement d’une vie nouvelle dans les grandes villes.
+fr-sb-82  La République continue d'avoir besoin de telles tribunes.
+fr-sb-83  Elias s'adossa au vaisseau et alluma une cigarette.
+fr-sb-84  S’agissant des échéances électorales, j’aurai l’occasion d’exprimer mes choix personnels.
+fr-sb-85  Ils connaissaient bien ce terrain, que les Allemands ne connaissaient pas du tout.
+fr-sb-86  Quand on fut dans la chambre meublée, le professeur décadenassa une petite valise.
+fr-sb-87  Le bleu des trams de Marseille est à l’intérieur des voitures.
+fr-sb-88  Le 13 janvier 1898, la République était bien en péril.
+fr-sb-89  Ce qui s'était passé dans la ville, Elias n'était pas sûr de vouloir le savoir.
+fr-sb-90  Voilà, pendus aux portes, les moutons aux fesses vieilles et talées.
+fr-sb-91  Elle sert des viatiques, après renseignements, aux « frères de la côte ».
+fr-sb-92  Marie ne conçoit pas que l'on puisse perfectionner ailleurs son savoir.
+fr-sb-93  Ce sont des mécaniciens, des médecins, des intendants, des capitaines.
+fr-sb-94  De même que le vieillard retombe en enfance, elles sont revenues à l’humidité.
+fr-sb-95  Et ils se rassoient comme des chiens vont se coucher.
+fr-sb-96  Il peut déléguer certains de ses pouvoirs aux ministres.
+fr-sb-97  Il chercha dans la composition de l'air des signes d'activité biologique.
+fr-sb-98  Le commandant leva la main, faisant signe à Elias de patienter un instant.
+fr-sb-99  Marseille est une ville heureuse où passent beaucoup de malheureux.
+fr-sb-100  Si je voyais un chien flairer ces sacs, j’irais tirer les oreilles au chien.
+fr-sb-101  Ils ne sont pas de quart, ce soir, ils se donnent tout entiers...
+fr-sb-102  Vous sentirez se poser sur vous des regards dont vous n’avez encore nulle idée.
+fr-sb-103  La France ne connaît de Marseille que Marius et le mistral...
+fr-sb-104  Il nomme aux emplois civils et militaires de l'État.
+fr-sb-105  Et bien sûr, tous les gars ressentent la même chose maintenant.
+fr-sb-106  La force même ne fut pas dédaignée en certaines occasions.
+fr-sb-107  Les procédures étaient toujours plus longues lors d'une première visite.
+fr-sb-108  L’homme aux pieds gonflés tenta de se relever à l’aide de sa canne.
+fr-sb-109  Il ne s’agit pas d’hommes en peine, pataugeant dans la malchance.
+fr-sb-110  Certains de ces mots sont déjà accentués dans des dictionnaires.
+fr-sb-111  Cela n’a rien appris à personne de voir la Canebière sur carte postale.
+fr-sb-112  C’est du moins ce que finit par me dire le prospecteur qui m’accompagnait.
+fr-sb-113  Au moment où elle parut en pleine lumière, elle eut des reflets de cuir mouillé.
+fr-sb-114  Ce nouveau monde, il faut le prendre à bras-le-corps.
+fr-sb-115  Les chefs de bande viennent y choisir les « hommes de barre ».
+fr-sb-116  Le 9 mars, cent hommes des Glières vont attaquer Entremont pour délivrer des prisonniers.
+fr-sb-117  Le cinéma et la télévision puisent dans ton oeuvre comme à une source intarissable.
+fr-sb-118  Mes amis les marins vont aussi d’escale en escale.
+fr-sb-119  Eric Wilson, commandant d’avant-poste aguerri, se sentait désespérément seul.
+fr-sb-120  Les ordonnances sont prises en Conseil des ministres après avis du Conseil d'État.
+fr-sb-121  Faites le voyage de Marseille, jeunes gens de France ; vous irez voir le phare.
+fr-sb-122  Wilson laissa échapper un sifflement d’exaspération.
+fr-sb-123  Il y a toujours sept jours, pour nous, dans une semaine.
+fr-sb-124  Sans la comprendre, ils regardent notre bousculade d’égoïstes.
+fr-sb-125  Marseille, prise au fait, n’en croyait pas ses yeux.
+fr-sb-126  Le plus beau port de France, cela n’intéresse personne.
+fr-sb-127  La fille se penchait en arrière et l'entraînait avec lui.
+fr-sb-128  Tu repars après-demain avec moi, j’ai une voiture sur le bateau.
+fr-sb-129  Et alors je commençai à vivre comme si je lisais dans un roman.
+fr-sb-130  La France est une République indivisible, laïque, démocratique et sociale.
+fr-sb-131  La neige, le flux et le reflux des sirènes dans la nuit préhistorique.
+fr-sb-132  Qui dit foire aux puces ne veut d’ailleurs pas dire puces.
+fr-sb-133  Il est indispensable que la douane ait de petits succès.
+fr-sb-134  Impuissant, il reconnecta sa perfusion et s'endormit immédiatement.
+fr-sb-135  Elles étaient calleuses, noires, enduites de sang coagulé.
+fr-sb-136  Il était clair qu’il n’avait pas beaucoup dormi la nuit précédente.
+fr-sb-137  Le voilà qui repart sur la Méditerranée, dans l’autre sens.
+fr-sb-138  On ne sait pas ce qu’il peut y avoir dans cette diable de Chose.
+fr-sb-139  Au même moment, une sorte de bruit pareil à un sifflement devint perceptible.
+fr-sb-140  Cet appel à la vigilance, tous les républicains doivent le faire leur.
+fr-sb-141  Ce sont les maisons-mères de tous les acolytes de la brigade mobile de la pègre.
+fr-sb-142  Hors session, le Parlement est réuni spécialement à cet effet.
+fr-sb-143  Je la crierai, cette vérité, de toute la force de ma révolte d'honnête homme ».
+fr-sb-144  Il est un généralissime des contrebandiers de l’opium.
+fr-sb-145  La Résistance n’échappait à l’éparpillement qu’en gravitant autour du Non du 18 juin.
+fr-sb-146  Sur cent de ces bars, soixante-quinze sont des repaires.
+fr-sb-147  Ces gens parlent des langues différentes et n'ont pas beaucoup de religion.
+fr-sb-148  Ces changements font toujours l'objet d'une mention en marge de l'acte de naissance.
+fr-sb-149  J’ai amené un chimiste, un jours, jusqu’ici, un chimiste des plus savant.
+fr-sb-150  Sagement, les émigrants suivent les péripéties de l’écran.
+fr-sb-151  Sur la station d’Andrea, les journées étaient longues et tranquilles.
+fr-sb-152  Pour le même voyage, les uns dépensent une fortune, les autres gagnent quelques francs.
+fr-sb-153  Autour de moi quelques personnes se trouvaient disséminées.
+fr-sb-154  Le Président du Sénat est élu après chaque renouvellement partiel.
+fr-sb-155  Et non, un système externe est toujours nécessaire pour les changements de statut.
+fr-sb-156  Décide de demeurer activement saisi de la question.
+fr-sb-157  Contrarié, il relança le processus et réécrit son message.
+fr-sb-158  Il se délasse du bateau, des longues traversées, de la vie entre hommes.
+fr-sb-159  C’était en partie pour cela que Wilson appréciait tant le professeur.
+fr-sb-160  Un souvenir lui revint soudain si puissamment qu'il en fut physiquement ébranlé.
+fr-sb-161  Dans les ports, la nuit prend un air de complicité.
+fr-sb-162  Le quartier a même une caisse internationale d’encouragement au crime.
+fr-sb-163  Tu serais le préfet des Bouches-du-Rhône que tu n’aurais pas plus de chances.
+fr-sb-164  Elias sortit du vaisseau baigné dans un flot d'irréalité.
+fr-sb-165  Ce n’est pas ça qui manque, les « chaluts », dans le golfe Persique.
+fr-sb-166  Le maquis nourrit le troupeau, abrite le gibier et, parfois, les bandits.
+fr-sb-167  En janvier 44, les maquis de l’Ain sont harcelés par trois divisions.
+fr-sb-168  Des millions que tu avais gagnés, il ne restait qu'une pièce de 20 francs.
+fr-sb-169  Car l'Europe n'a plus le choix, elle doit s'unir ou décliner.
+fr-sb-170  Il avait deux cent vingt-sept francs et une petite fille de sept ans.
+fr-sb-171  Il avait pris son chapeau et se préparait à sortir.
+fr-sb-172  Un jour, vous le savez, la terre cessa d'être le centre de l'univers.
+fr-sb-173  On est censé attendre vos collègues et se laisser vivre en attendant.
+fr-sb-174  Sa démarche vive et altière s'accordait avec son visage radieux.
+fr-sb-175  Ils s’en vont, par la grande route de l’eau, mendier une patrie.
+fr-sb-176  À moi le charbon, les matières grasses, les cacahuètes.
+fr-sb-177  Les autres magistrats du siège sont nommés sur son avis conforme.
+fr-sb-178  Il se demandait simplement s'il y avait quelqu'un au bout de cette main.
+fr-sb-179  Elle continue sur le champ de bataille de Marseille.
+fr-sb-180  Le jeune ingénieur, confondu, ne trouvait rien à répondre.
+fr-sb-181  Pendant tout ce temps les Martiens se préparaient.
+fr-sb-182  Il venait de remarquer l'insigne accroché au veston du deuxième homme.
+fr-sb-183  Aucun cumul ou combinaison entre les différents noms d'usage n'est possible.
+fr-sb-184  C’est le rendez-vous de tous les français qui sont connus ailleurs qu’en France.
+fr-sb-185  L'authentification basée sur sa composition sanguine fut plutôt longue.
+fr-sb-186  La France doit affirmer l’exigence d’une Europe puissance.
+fr-sb-187  Fier d’avoir combattu sans relâche l’insécurité et fait reculer la délinquance.
+fr-sb-188  Dans un télescope elle semble encore plus profonde.
+fr-sb-189  Il tourna lentement sa tête en direction d'Elias et sourit.
+fr-sb-190  En face, des cris allemands, poussés par leurs camarades de l’ouest.
+fr-sb-191  La France a une vue magnifique sur tout le reste du monde.
+fr-sb-192  Au seuil de cette demeure, je vais jusqu’à sentir de la considération.
+fr-sb-193  Il y a de pauvres Arabes, de pauvres nègres, de pauvres Blancs.
+fr-sb-194  Epais et poisseux, le liquide n'avait pas d'odeur particulière.
+fr-sb-195  Emilie, une jeune fille rencontrée la veille, ouvrit une conversation vocale.
+fr-sb-196  Pas une minute, je n’ai cessé d’agir pour servir cette France magnifique.
+fr-sb-197  Je ne connais pas les armes de l’écu de Marseille.
+fr-sb-198  Pour travailler, ils se promènent environ trois cents jours par an.
+fr-sb-199  Consciencieusement, il saupoudra ses souliers, son pantalon, son gilet, sa veste.
+fr-sb-200  Les « marins » étaient autour de leur table, au café-glacier.
+fr-sb-201  Il ne provoquait d’ailleurs l’attention d’aucun des mangeurs.
+fr-sb-202  Je vous admire et je vous aime Et vous m’aurez quand vous voudrez.
+fr-sb-203  Maintenant que je sais tout, ce café-là est sacré pour moi.
+fr-sb-204  Le garçon du restaurant finit par ne plus faire attention à votre commande.
+fr-sb-205  Il nous expliqua qu’alors il en sortit de toutes les maisons.
+fr-sb-206  C’est tout bonnement incroyable – et il se dirigea vers la porte.
+fr-sb-207  Un petit succès de la douane précède toujours un grand coup du Père.
+fr-sb-208  Permettez-moi de souffler légèrement sur votre cuisse.
+fr-sb-209  Je ne crois pas que dans notre monde l'esprit d'aventure risque de disparaître.
+fr-sb-210  Les hommes sont en casquette, mais de belles casquettes fraîches et valant cher.
+fr-sb-211  Un chiffon sépare, seul, le box de chaque famille.
+fr-sb-212  Le Chinois s’inclina plus respectueusement encore que tout à l’heure.
+fr-sb-213  La Canebière compta immédiatement un nombre beaucoup plus respectable de maisons.
+fr-sb-214  Cela signifie qu’il doit être quelque part entre Maurice et Madagascar.
+fr-sb-215  Si ce n’est pas au son du piano, ce sera au souffle du mistral.
+fr-sb-216  La connaissance et l'archivage de tout ce qui se fait et se dit.
+fr-sb-217  Des patriotes se sont rendus compte qu'ils étaient colonisés, dominés, exploités.
+fr-sb-218  Dans notre histoire, l’extrémisme a déjà failli nous conduire à l’abîme.
+fr-sb-219  Il lui sembla tomber sur la terre à environ cent cinquante kilomètres vers l’est.
+fr-sb-220  Il n'avait de toute façon pas d'autre choix que d'accepter.
+fr-sb-221  Du reste, le fermier se montra de bonne composition.
+fr-sb-222  Les ventres de perroquet, c’est pour amuser la douane.
+fr-sb-223  Quatre bateaux, sortis par la passe opposée, prenaient le large, lentement, vers le Sud.
+fr-sb-224  De souche terrienne, le père de Jean Monnet s'oriente vers le négoce.
+fr-sb-225  Quel peuple voudrait tolérer une tyrannie pareille !...
+fr-sb-226  Il la laissa partir, porté par un sentiment de futilité.
+fr-sb-227  Ils s’occupaient de l’entretien comme un seul homme et ils le faisaient bien.
+fr-sb-228  En une semaine de vol, Elias s’était habitué au silence du vaisseau désert.
+fr-sb-229  Puis ils ralentirent leur rythme et un son s’échappa de l’orifice formé.
+fr-sb-230  Servir la France, servir la paix, c’est l’engagement de toute ma vie.
+fr-sb-231  L'immense majorité de ces peuples a vaincu l'oppresseur et aujourd'hui vit librement.
+fr-sb-232  On ne sait plus guère, aujourd’hui, que tout commença par un mystère de légende.
+fr-sb-233  Répondre signifiait accepter que l’homme ne soit qu’un animal.
+fr-sb-234  Zola comparaît au mois de février 1898 devant la Cour d'Assises.
+fr-sb-235  Quand je revins à la lande, le soleil se couchait.
+fr-sb-236  Aucune section du peuple ni aucun individu ne peut s'en attribuer l'exercice.
+fr-sb-237  Il faut n’avoir jamais porté un casque colonial pour ignorer ce phénomène incomparable.
+fr-sb-238  Vous êtes bien gentil, mais je voudrais aller voir ma soeur.
+fr-sb-239  Et voici les hommes des barils de ciment, ils se secouent.
+fr-sb-240  Le Parlement comprend l'Assemblée nationale et le Sénat.
+fr-sb-241  Et leur visage est quadrillé telle la carapace de l’alligator.
+fr-sb-242  Le 13 février, les messages codés de la BBC annoncent le premier parachutage.
+fr-sb-243  Et alors commence l'histoire de la domination anglo-saxonne au Québec.
+fr-sb-244  Il pensait et comprit immédiatement combien les édiles s’étaient égarés.
+fr-sb-245  Il n’y a pas de puces dans les ports, il n’y a que des rats.
+fr-sb-246  Les saletés qu’ils ont dans les cheveux viennent de Pondichéry.
+fr-sb-247  La promenade terminée, ils n’ont plus rien à faire.
+fr-sb-248  Celui qui chausserait des bottes d’égoutier pourrait seul s’y promener comme chez lui.
+fr-sb-249  Les pieds dans l’humus, ils ont déroulé les routes à travers les jungles échevelées.
+fr-sb-250  J’ai connu de beaux espoirs et des matinées plus magnifiques encore.
+fr-sb-251  La langue commune qui deviendra la leur rassemblera un jour tous ces morceaux.
+fr-sb-252  Il dit au garçon d’hôtel d’aller dans le quartier et de lui ramener deux tatoués.
+fr-sb-253  C’étaient les départs pour la Chine, les arrivées des Indes.
+fr-sb-254  Et puis les gars en bas, tous les gars, ils font un excellent travail.
+fr-sb-255  Le Président de la République est le chef des armées.
+fr-sb-256  Sur la Canebière, il n’y a que des gens qui sont de la fête.
+fr-sb-257  Le train n’allait qu’à cent trente-quatre kilomètres de là, à Beyrouth.
+fr-sb-258  Je reportai les yeux vers le cylindre et une irrésistible terreur s’empara de moi.
+fr-sb-259  Le sommet du cylindre continuait à se dévisser de l’intérieur.
+fr-sb-260  Plus tard, il entra dans le nid de la bête anéantie.
+fr-sb-261  Il ajoutait : « C'est aujourd'hui seulement que l'affaire commence ».
+fr-sb-262  Les Patriotes québécois ne se battent pas pour un titre mais des faits.
+fr-sb-263  C’est trois rues qui forment une espèce d’H crochu et bancal.
+fr-sb-264  Je crois que vous feriez mieux de venir vous-même monsieur.
+fr-sb-265  Colonisés, nous le sommes politiquement, socialement et économiquement.
+fr-sb-266  Ils sont habillés proprement et groupés, assis sur trois lits.
+fr-sb-267  L’indifférence coupable des contemporains ne la désarme pas.
+fr-sb-268  Celle-ci leva les cils et une expression admirative se dessina sur son visage.
+fr-sb-269  Je descendis dans le trou et je crus sentir un faible mouvement sous mes pieds.
+fr-sb-270  Vers onze heures trente, la matinée terminée, les dockers repassent place de la Joliette.
+fr-sb-271  Autant dire qu’il était le plus malin et le moins vertueux.
+fr-sb-272  Les uns désertent les pays trop habités, les autres les terres ingrates.
+fr-sb-273  Le hangar exhale de plus en plus les senteurs des ports à venir.
+fr-sb-274  Personne ne paraît s’être préoccupé de rechercher, cette nuit-là, la masse tombée.
+fr-sb-275  Pourtant, Elias recevait leur présence, par la vue ou le toucher.
+fr-sb-276  En effet, le miroir démontre sa générosité lorsqu’il révèle la parité.
+fr-sb-277  Elle est prise à Bruxelles en 1911 lors du Congrès Solvay.
+fr-sb-278  C’est pourquoi il paraît prudent de lui en faire grâce.
+fr-sb-279  Il était suivi de vingt-sept personnes des deux sexes.
+fr-sb-280  Dans un élan de naïveté, Elias venait de leur confirmer son inadaptation à la planète.
+fr-sb-281  C'était lui, ses yeux, ses anciens semblables, leurs radars, qui étaient aveugles.
+fr-sb-282  Ecoutez, je sais pas ce qui vous prend, mais on n’a pas le choix.
+fr-sb-283  Alors, comme un éclair, la vérité se fit jour dans son esprit.
+fr-sb-284  Les rues vont à la manière des lignes d’une patte d’oie.
+fr-sb-285  Et lui-même ne songeait plus à ces détails insignifiants.
+fr-sb-286  Aussitôt la dame retira sa cuisse, disant qu’elle n’avait pas d’argent.
+fr-sb-287  Il semblait que chacun d’eux fût soudain et momentanément changé en flamme.
+fr-sb-288  La séquence changea d'angle, et il vit une jolie brune approcher.
+fr-sb-289  Et cette tristesse environnante, née de ce qui était survenu sur cette planète.
+fr-sb-290  Elle spécifia qu’une réponse erronée signifiait la mort immédiate et rapide.
+fr-sb-291  On allume les quatre énormes bûchers de sapin préparés.
+fr-sb-292  L’aviation s’en va, remplacée par le pilonnage méticuleux de l’artillerie.
+fr-sb-293  J’ai cru qu’il allait sortir un centimètre pour mesurer la longueur exacte de mon nez.
+fr-sb-294  Viennent ensuite les journaux hollandais, puis les allemands, puis les hongrois.
+fr-sb-295  On me répondit qu’il était en face, au café, avec son chien.
+fr-sb-296  Et que l’instant où je te vois Est ma distraction unique.
+fr-sb-297  Ils ne prennent effet qu'après avoir été ratifiés ou approuvés.
+fr-sb-298  Cela ne ressemblait guère au professeur d’être si évasif.
+fr-sb-299  Vous pensez qu’à force de rôder dans la Méditerranée, je connais l’histoire.
+fr-sb-300  En elles s'unissent les savoirs de la physique, de la chimie, de la biologie.
+fr-sb-301  Le mouvement doit se construire avec tous : salariés, étudiants, lycéens.
+fr-sb-302  La bouche pâteuse, il songea que c’était quand même un sacré relâchement.
+fr-sb-303  On apprend à être mécanicien, chaudronnier ou maçon.
+fr-sb-304  Son principe est : gouvernement du peuple, par le peuple et pour le peuple.
+fr-sb-305  Un après-midi, j’ai fait la paire avec un commissaire du port.
+fr-sb-306  C’est tous les deux vendredis que les Messageries Maritimes partent pour la Chine.
+fr-sb-307  C’est comme une espèce de rendez-vous dans la lune.
+fr-sb-308  Le visage rayonnant, un large sourire aux lèvres, il respirait la joie et l’énergie.
+fr-sb-309  On a fait, voilà deux ans, une exposition coloniale à Marseille.
+fr-sb-310  Le Président de la République préside le Conseil des ministres.
+fr-sb-311  D'autres, avant lui, avaient nourri le rêve d'unir pacifiquement les peuples de l'Europe.
+fr-sb-312  Le bureau du Congrès est celui de l'Assemblée Nationale.
+fr-sb-313  Les semaines de séance sont fixées par chaque assemblée.
+fr-sb-314  C’est comme si l’on peignait une cour d’assises avec son prévenu, ses juges, ses avocats.
+fr-sb-315  D’ailleurs, autant dire que les manger ainsi c’est presque les cueillir sur le dattier.
+fr-sb-316  On part pour tous les océans, l’Atlantique, l’Indien, le Pacifique.
+fr-sb-317  À eux tous ils représentent toutes les mers, tous les cieux, tous les climats.
+fr-sb-318  Maintenant que j’avais tourné le dos, je n’osais plus regarder en arrière.
+fr-sb-319  Il ne voulait pas affronter le désespoir de sa situation.
+fr-sb-320  Les alliages de métal se matérialisèrent sous ses yeux.
+fr-sb-321  Chaque année ils lancent de nouveaux courriers sur les mers.
+fr-sb-322  Il jeta un regard désabusé au commandant qui le lui rendit.
+fr-sb-323  Jusqu’à ce que les sirènes antiaériennes d’Annecy emplissent lentement la nuit.
+fr-sb-324  L'on abandonna pas pour autant le processus assimilatoire.
+fr-sb-325  Ce ne sont que quelques voix de raison, noyées dans le vacarme antisémite.
+fr-sb-326  Ils comprirent tous que l’être parlait, d’un langage tout à fait compréhensible.
+fr-sb-327  Ils ont dédaigné d’apprendre le jeu de la lutte pour la vie.
+fr-sb-328  Il ne s'étonna pas qu'on ne lui porte aucune attention.
+fr-sb-329  Il y a longtemps qu’elle voit ensevelir les tués et les vieilles.
+fr-sb-330  Sur cette cuisse, deux grands yeux nous regardaient.
+fr-sb-331  Sans être uniforme, le désert ne se laissait pourtant pas observer en détail.
+fr-sb-332  Les conditions de vie, de travail et d’études se dégradent de plus en plus.
+fr-sb-333  J’ai longtemps cherché le moyen d’approcher le Père.
+fr-sb-334  Elle donne son avis sur les sanctions disciplinaires concernant les magistrats du parquet.
+fr-sb-335  Je suis le plus merveilleux kaléidoscope des côtes.
+fr-sb-336  Il se reprit froidement et analysa ce phénomène étrange d'invisibilité absolue.
+fr-sb-337  Elle en fait un des hauts lieux de la physique nucléaire.
+fr-sb-338  Rien de mieux pour vous garder un homme sur les rails.
+fr-sb-339  À ce moment, quelque parent laissé au pays recevra un chèque de Rio.
+fr-sb-340  La collection des Dieux existe et son plagiat est un crime.
+fr-sb-341  Le vide était par nature quelque chose d’angoissant.
+fr-sb-342  Cette façon d’agir avec les éléphants me paraît un peu légère.
+fr-sb-343  Elle est alors présidée par le procureur général près la Cour de Cassation.
+fr-sb-344  Wilson se leva et alla servir deux verres de bourbon.
+fr-sb-345  Permission d’enjamber les refuges, d’entamer les trottoirs.
+fr-sb-346  Son coeur pressait contre sa poitrine, prêt à éclater de joie.
+fr-sb-347  Déjà le soleil s’enveloppait à l’horizon d’une légère buée d’or.
+fr-sb-348  Regardez, les deux yeux de madame sont déjà dans ma croûte.
+fr-sb-349  Je lui conseillerais toutefois d’ouvrir aussi son parapluie.
+fr-sb-350  Les colonialistes ne lâcheront pas si facilement un tel morceau de choix.
+fr-sb-351  Il reçut les instructions par transmission neurale.
+fr-sb-352  Lors du référendum, vous avez exprimé vos doutes, vos inquiétudes, vos attentes.
+fr-sb-353  D’autant plus que des caisses ont le ventre ouvert et que j’ai un peu faim.
+fr-sb-354  Des zones d'ombre subsistaient, mais cela n'avait pas d'importance.
+fr-sb-355  Les gars de l'équipe de terrain jouaient souvent aux cartes.
+fr-sb-356  Je les ai tous rencontrés une heure avant la mise en caisson.
+fr-sb-357  Mais jusqu’ici, le problème n’a pas eu de solution industrielle.
+fr-sb-358  On sait bien qu’il est difficile à un adulte de modifier sa façon d’écrire.
+fr-sb-359  Tendant son bras, il toucha une étoffe, puis de la peau.
+fr-sb-360  Il assure la représentation des collectivités territoriales de la République.
+fr-sb-361  Inutile de refaire le passé et de se ronger les sangs.
+fr-sb-362  Mais vous voici ; grâce à vous le monde entier va savoir.
+fr-sb-363  Où allait-il, cet homme âgé, piétinant sur ce chemin.
+fr-sb-364  L’opulence et la richesse future de la ville dépendait de la réponse à donner.
+fr-sb-365  Puis il parla dans un analyseur vocal, des électrodes collées sur sa poitrine.
+fr-sb-366  Sur les ponts, aux salons, dans les escaliers, plus d’accompagnateurs que de voyageurs.
+fr-sb-367  Ils avaient atterri à proximité de l'endroit où aurait dû se trouver la capitale.
+fr-sb-368  C’est le plus singulier des rendez-vous, un rendez-vous avec personne.
+fr-sb-369  La terre nous tire vers le passé, la mer les pousse vers le futur.
+fr-sb-370  Un instant après, il marchait dans le couloir principal, détendu.
+fr-sb-371  Ils sont là, entravés, entre des caisses de raisin et des boîtes d’ananas.
+fr-sb-372  Quand il aura mangé les oranges, la caisse lui servira de valise.
+fr-sb-373  Le scrutin est ouvert sur convocation du Gouvernement.
+fr-sb-374  Le commandant était agenouillé devant un identificateur rétinien.
+fr-sb-375  Véritable coup de tonnerre, ce «J’Accuse » l'est à plus d'un titre.
+fr-sb-376  C’est en lui qu’est l’accomplissement final du miracle.
+fr-sb-377  Elle reste, croyez-le bien Mesdames et Messieurs, à l'ordre du jour.
+fr-sb-378  Plutôt mourir que de rabaisser l’homme à l’animal.
+fr-sb-379  Passée l'heure du déjeuner, il se fit violence et s'habilla enfin.
+fr-sb-380  Mais il ne lit pas mes pensées, pas du tout, remarqua alors Wilson.
+fr-sb-381  Il préside les conseils et les comités supérieurs de la Défense nationale.
+fr-sb-382  Ils ne vont pas au travail, ils viennent chercher de l’embauche.
+fr-sb-383  A quarante ans, tu as cessé de surveiller ta ligne.
+fr-sb-384  Les hommes escortaient le visiteur et lui présentaient la base sous toutes ses coutures.
+fr-sb-385  Il était debout sur le cylindre qui devait être maintenant considérablement refroidi.
+fr-sb-386  La révision est définitive après avoir été approuvée par référendum.
+fr-sb-387  Le présent Traité est ouvert à la signature de tous les États.
+fr-sb-388  Je jette les yeux de tous côtés, je me vois seul sur le pont.
+fr-sb-389  Ce n’était pas fait pour embarasser l’homme qui tint l’Autriche-Hongrie en échec.
+fr-sb-390  Il était tout seul dans la pièce avec une lampe à pétrole.
+fr-sb-391  Ces efforts ne tardèrent pas à donner un résultat appréciable.
+fr-sb-392  À six heures du soir, il se leva et me donna rendez-vous pour huit heures.
+fr-sb-393  Les décisions du Conseil Constitutionnel ne sont susceptibles d'aucun recours.
+fr-sb-394  Ils ne savent faire à Marseille que ce qu’ils font dans leur village.
+fr-sb-395  Tous ses moyens de communication lui furent retirés.
+fr-sb-396  Ils se forment et exercent leur activité librement.
+fr-sb-397  Qu’il soit sans crainte : ce n’est pas encore pour le brûler.
+fr-sb-398  On y tient aussi bureaux de renseignements, d’embauchage, de débauche et de débauchage.
+fr-sb-399  J’ajoute qu’à ce même moment un gouverneur des colonies débarquait.
+fr-sb-400  Le rêve de tout malfaiteur international est de devenir patron de bar à Marseille.
+fr-sb-401  Le Président est nommé par le Président de la République.
+fr-sb-402  Au fronton du Panthéon, la reconnaissance de la patrie s'inscrit dans la pierre.
+fr-sb-403  Un animal satisfait d’agrandir son territoire de chasse.
+fr-sb-404  Il est vrai que ce n’est pas l’époque des arrivées d’Égypte et d’Algérie.
+fr-sb-405  Cette nourriture est si indispensable que son prix n’a même pas suivi celui du pain.
+fr-sb-406  Les membres du Gouvernement ont accès aux deux assemblées.
+fr-sb-407  Elle a de l’air, de l’eau et tout ce qui est nécessaire aux existences animées.
+fr-sb-408  Évidemment, un docker est un homme qui coltine des ballots dans les docks.
+fr-sb-409  C’est à se coiffer en pleine chapelle et à commettre un péché mortel.
+fr-sb-410  Où les femmes sont en chemise Même dans le sein des hivers.
+fr-sb-411  C’est là où le peuple des mers vient se remonter le coeur.
+fr-sb-412  Le Président de la République veille au respect de la Constitution.
+fr-sb-413  Le « J’Accuse » de Zola fait passer l'Affaire du particulier à l'universel.
+fr-sb-414  Alors, commence l'une des grandes aventures scientifiques du siècle.
+fr-sb-415  Quand tout cela fut occupé, il arriva encore deux mille sept cents Arméniens.
+fr-sb-416  Obéissant au cycle jour/nuit classique, les lumières des couloirs s’étaient tamisées.
+fr-sb-417  Le Panthéon qui t'accueille ce soir donne raison à l'auteur de La Dame aux camélias.
+fr-sb-418  Colonisé, le peuple québécois l'est donc politiquement.
+fr-sb-419  Le Président de la République négocie et ratifie les traités.
+fr-sb-420  Elles s’inscrivent dans cette tradition de réfection progressive permanente.
+fr-sb-421  Non mon frère, lui dis-je, nous mourrons ensemble quand les forces m'abandonneront.
+fr-sb-422  Je vis un gamin emmener la brouette de provisions.
+fr-sb-423  Elle statue dans un délai d’un mois, à bulletins secrets, sur la destitution.
+fr-sb-424  C’est le marché offert par la France aux vendeurs du vaste monde.
+fr-sb-425  Émile Zola, enfin, au-delà de cet idéal, prend la défense de la République.
+fr-sb-426  La nouvelle littérature s'est ralliée à ton génie.
+fr-sb-427  Le Président de l'Assemblée nationale est élu pour la durée de la législature.
+fr-sb-428  Il s'essuya sur son pantalon et extirpa une oeillère d'analyse de sa poche.
+fr-sb-429  Elle disputera, comme les autres, la timbale de fer-blanc attachée à la fontaine.
+fr-sb-430  Cependant l’objet était un peu trop gros pour que cette idée pût me rassurer.
+fr-sb-431  Le bon usage a été le guide permanent de la réflexion.
+fr-sb-432  Pour l'atteindre, il lui faut d'abord venir à bout de sa pauvreté.
+fr-sb-433  À ce même endroit, j’ai sorti mon soufflet et j’ai saupoudré ses vêtements.
+fr-sb-434  Aux trois tables de marbre, il n’y a plus de place.
+fr-sb-435  Son intelligence, sa docilité, son ardeur au travail, étaient incomparables.
+fr-sb-436  La fille voulait lui faire croire qu'elle agissait de son propre chef.
+fr-sb-437  Je veux que vous m’accompagniez au moins jusqu’à midi.
+fr-sb-438  Il y a une espèce d’école du soir pour malfaiteurs scientifiques.
+fr-sb-439  Pourtant, le 11 janvier 1898, le sommet de l'injustice est atteint.
+fr-sb-440  L'usage de l'apostrophe sera également supprimé par la soudure.
+fr-sb-441  Pendant qu’ils tournent sur cette piste, cette piste tourne autour de la terre.
+fr-sb-442  Il se leva, serra la main à tout le monde, mais pas à moi.
+fr-sb-443  On l’attendit une demi-heure, mais il ne reparut pas.
+fr-sb-444  Anna avait maintenant dix-sept ans et, lui, son automobile à la porte.
+fr-sb-445  Le ministre de la Justice en est le vice-président de droit.
+fr-sb-446  Le coeur du commandant le plus fatigué de l’univers manqua un battement.
+fr-sb-447  Les colonialistes ont pourtant oublié une chose, essentielle pourtant.
+fr-sb-448  Un courrier de haute mer est une image complète du monde.
+fr-sb-449  L’être déclara parler un Terrien objectif, accordant leur véritable sens aux mots.
+fr-sb-450  Les crépissages les plus pieux n’arrivent pas à voiler la vieillesse de leur face.
+fr-sb-451  Rien n’est perdu, parce que cette guerre est une guerre mondiale.
+fr-sb-452  Tous les regards étaient tournés vers le professeur.
+fr-sb-453  Wilson fut soudain frappé par l’immense fatigue qui creusait le visage du professeur.
+fr-sb-454  Quelques minutes à peine s'étaient écoulées lorsqu'il ouvrit les yeux.
+fr-sb-455  C’est de permettre à chacun, à chaque jeune, d’avoir sa chance.
+fr-sb-456  A cette même fin, des séances supplémentaires sont de droit.
+fr-sb-457  Ce qui s'était passé dans l'espace le hantait et l'effrayait.
+fr-sb-458  Les hommes qu’elles réunissent vivent exactement le contraire de la vie des autres hommes.
+fr-sb-459  Elias pénétra dans ses quartiers et s'affaissa devant son ordinateur.
+fr-sb-460  Ils poussent, liturgiquement, de longs gémissements.
+fr-sb-461  Il le trouva en effet, peu après l’aurore et non loin des carrières de sable.
+fr-sb-462  Il fallut donc pour un certain temps se ménager les Canadiens-français.
+fr-sb-463  Tu étais sûr de passer à la postérité par ton théâtre.
+fr-sb-464  Ils embarquent les femmes, ils les internent, ils troquent le produit des vols...
+fr-sb-465  Le Conseil constitutionnel est consulté à leur sujet.
+fr-sb-466  Il s’agit d’une espèce d’individus de l’Amérique du Sud.
+fr-sb-467  Son passé défilait à nouveau devant ses yeux, privé de sa substance.
+fr-sb-468  Avec le miroir, selon les Guaranis, il n’y pas création.
+fr-sb-469  Il enjambe les tables, renverse les siphons, me met la main au collet.
+fr-sb-470  Il passe par Gibraltar et, doucement, il s’amène sur la Méditerranée.
+fr-sb-471  Il ne tressaillit pas en entendent parler d’évolution aboutie.
+fr-sb-472  Les avions d'observations se tiendront à quelques miles du point d'impact de la bombe.
+fr-sb-473  Les deux mille sept cents Arméniens commencèrent à se fâcher.
+fr-sb-474  La police prétend que cela ne lui facilite pas beaucoup la tâche.
+fr-sb-475  Pas un instant, vous n’avez cessé d’habiter mon coeur et mon esprit.
+fr-sb-476  Tout le monde connaît l’effet que produit cette obscurité par une glaciale nuit d’étoiles.
+fr-sb-477  Dans ce cas nul ne peut recevoir délégation de plus d'un mandat.
+fr-sb-478  L’Arménien est un habitant de Marseille, ni plus ni moins.
+fr-sb-479  Tu ne peux imaginer ce que je vais encore te dévoiler.
+fr-sb-480  Soudain, un nouveau souffle, manifestement né d'un mouvement rapide, le heurta.
+fr-sb-481  Fier surtout d’avoir montré que, contre le chômage, il n’y avait pas de fatalité.
+fr-sb-482  On ne parlait que diamants, carats, centaines de livres sterling.
+fr-sb-483  Il véhicule les microbes de toutes les mauvaises combines.
+fr-sb-484  Le gazon et le sable alentour semblaient avoir été bouleversés par une soudaine explosion.
+fr-sb-485  Les uns calculent mieux que d’autres, alors ils reviennent millionnaires.
+fr-sb-486  Apporte-moi du boeuf frigorifié, je t’enverrai de la moutarde.
+fr-sb-487  Il est suspendu de l'ordre de la Légion d'honneur.
+fr-sb-488  Il en est de même qui s’aventurent jusqu’à la bordure du trottoir.
+fr-sb-489  C’est un port, l’un des plus beaux du bord des eaux.
+fr-sb-490  Enfin, il y a la révolution écologique qui s’engage.
+fr-sb-491  Je ne suis pas responsable de ce problème, un point c’est tout.
+fr-sb-492  Il n’y avait rien à faire, strictement rien à faire.
+fr-sb-493  Leur vie courante est justement ce qui fait l’extraordinaire des autres vies.
+fr-sb-494  Il a eu son accident la veille du départ et on m’a débauché.
+fr-sb-495  Il était à soixante millions de kilomètres dans l’espace.
+fr-sb-496  Le monde était dans une sécurité et une tranquillité parfaites.
+fr-sb-497  Il vérifia sa perfusion : elle n'injectait plus rien.
+fr-sb-498  Une image floue et mouvante se formait et se déformait dans son esprit.
+fr-sb-499  Son esprit s’engourdissait, éprouvait des difficultés à dissimuler la colère.
+fr-sb-500  Elles ont déterminé un mouvement d'équité sociale qui ne s'arrêtera pas.
+fr-sb-501  Il se retourna et reconnut ce faisant que le poids était une simple main posée.
+fr-sb-502  Vous contemplerez de nouveaux signes dans le ciel et de nouveaux fruits sur la terre.
+fr-sb-503  Les yeux dans les yeux, les clients les interrogent sur le temps.
+fr-sb-504  Il avança d'un pas et la pression s'accentua un court instant.
+fr-sb-505  Le visiteur était un univers de bonnes intentions.
+fr-sb-506  Un peu plus tard, il fonde le comité d'action pour les Etats Unis d'Europe.
+fr-sb-507  Et maintenant les scientifiques étaient en chemin, sans que l’on puisse les prévenir.
+fr-sb-508  Les patriotes disent NON AU COLONIALISME, NON À L'EXPLOITATION.
+fr-sb-509  La température de sa peau se modifia sensiblement.
+fr-sb-510  Le vote ne peut avoir lieu que quarante-huit heures après son dépôt.
+fr-sb-511  Tenez, voilà ce jeune Levantin assis dans la cour.
+fr-sb-512  Question de parler, question de sentir, question de rêver.
+fr-sb-513  Inconnu à 8 heures du soir, à minuit tu étais célèbre.
+fr-sb-514  Ces lieux-là doivent être indispensables à la bonne marche de la marine.
+fr-sb-515  Le professeur s’écarta légèrement et indiqua le sofa d’un geste éreinté.
+fr-sb-516  De tout temps, la science a pris la société de vitesse.
+fr-sb-517  Sa physionomie ne démentait pas l’impression que produisait son langage.
+fr-sb-518  À chaque annonce de départ, ils se lèvent et se mettent en marche.
+fr-sb-519  Dans Vingt ans après, Charles Ier, roi d'Angleterre, va mourir.
+fr-sb-520  Ces deux noms magiques de l’âge moderne flamboient à l’entrée du port de Marseille.
+fr-sb-521  Je vis l’étonnement faire place à l’horreur sur les faces des gens qui m’entouraient.
+fr-sb-522  Il y parvint peu de temps après, preuve qu’il possédait des ressources.
+fr-sb-523  Il ne possédait plus rien que l’histoire de sa vie.
+fr-sb-524  Le présent Traité sera soumis à la ratification des États signataires.
+fr-sb-525  L’armement qui attend leurs compagnons ne comprend que des armes légères.
+fr-sb-526  Suintant de mépris, il pensa à ceux qu'il venait de quitter.
+fr-sb-527  Nous sommes partis tous les deux dans ce labyrinthe marseillais.
+fr-sb-528  Les premiers descendront à la cloche, une demi-heure avant le dernier coup de sirène.
+fr-sb-529  L’homme aux pieds bien à plat hausse les épaules et monte au bar.
+fr-sb-530  Il est peut-être bien l’homme le plus mystérieux de Marseille.
+fr-sb-531  Seul l'angélisme le plus aberrant peut faire croire le contraire.
+fr-sb-532  Une fois propre et vêtu, Wilson se dirigea vers le réfectoire.
+fr-sb-533  J’essaye de m’en expliquer avec une espèce de gardien de quai.
+fr-sb-534  Les autres incompatibilités sont fixées par une loi organique.
+fr-sb-535  Réfléchissez, monsieur Méré, et mettez-vous à ma place !...
+fr-sb-536  Il assure le bonheur d’une partie du Bottin mondain.
+fr-sb-537  Je ne suis pas avare et j’aime vos aises, nous irons en taxi.
+fr-sb-538  Le temps armait les griffes de l’animal car il fallait répondre.
+fr-sb-539  Naturellement il leur était absolument impossible de faire quoi que ce soit.
+fr-sb-540  Au-delà de nos côtes, nous possédons le deuxième empire de la terre.
+fr-sb-541  Il se vit quelques minutes auparavant, absorbé par son assistant personnel.
+fr-sb-542  Les procès sont à huit clos et les exécutions à l’air libre.
+fr-sb-543  Grâce aussi, et je le mesure bien, aux efforts considérables que vous avez consentis.
+fr-sb-544  Si vous aviez connu vos hommes au début, rien de tout cela ne serait arrivé.
+fr-sb-545  Alors il s’aperçut que très lentement le sommet circulaire tournait sur sa masse.
+fr-sb-546  Comme première mission dans l'espace, on avait vu mieux.
+fr-sb-547  On y lirait dessus les noms de tout le planisphère terrestre.
+fr-sb-548  Totalement dominé par sa curiosité, il lécha le bout d'un de ses doigts.
+fr-sb-549  Il resta là, interdit, dubitatif au sujet de ce qui venait d'arriver.
+fr-sb-550  Je ne solliciterai pas vos suffrages pour un nouveau mandat.
+fr-sb-551  Au-delà de ce temps, vous comblez la mesure et manquez de tact.
+fr-sb-552  Ils ne portent pas de petits cartons, mais ce n’est là qu’un détail.
+fr-sb-553  Et ce n’est pas seuls que nous ferons face aux bouleversements économiques du monde.
+fr-sb-554  Ainsi ne pourrez-vous m’accuser de visions superficielles.
+fr-sb-555  Le Président de la République est garant de l'indépendance de l'autorité judiciaire.
+fr-sb-556  Les modalités d'application du présent article sont fixées par une loi organique.
+fr-sb-557  Malgré son intelligence, il avait beaucoup de mal à s'habituer à la capitale.
+fr-sb-558  Il découvre que la confiance et l'entraide font plus que l'égoïsme et le secret.
+fr-sb-559  Un paquebot de la ligne de Chine terminait sa manoeuvre d’accostage.
+fr-sb-560  Et il vit, sans plus avoir les moyens de réaliser ce qu'il voyait.
+fr-sb-561  Seul à vivre cette réalité, seul face à tous les autres.
+fr-sb-562  Je l’avais d’abord mis au milieu de la rue principale.
+fr-sb-563  Le lendemain matin, à sept heures, je serais docker.
+fr-sb-564  Il sentit le front de la fille se poser contre le sien.
+fr-sb-565  Ce jour, on embarquait de la jeunesse en uniforme pour le Maroc et autre Syrie.
+fr-sb-566  Après, c’est le tour des journaux tchécoslovaques.
+fr-sb-567  L'emblème national est le drapeau tricolore, bleu, blanc, rouge.
+fr-sb-568  La peau se déplaça sous ses doigts et il parcourut un visage.
+fr-sb-569  Et la conversation s'arrêtait sur cet abîme d'incompréhension mutuelle.
+fr-sb-570  Le Conseil Supérieur de la Magistrature est présidé par le Président de la République.
+fr-sb-571  L’homme aux pieds gonflés s’approcha de l’animal étrange.
+fr-sb-572  Regarde le couloir de ta chambre il y a dix minutes, mon chou.
+fr-sb-573  Mon quatrième message, c’est que la France n’est pas un pays comme les autres.
+fr-sb-574  Les députés à l'Assemblée Nationale sont élus au suffrage direct.
+fr-sb-575  Il ne fallait pas commencer à penser comme le professeur.
+fr-sb-576  Non loin, se trouvaient d’innombrables bicyclettes.
+fr-sb-577  Ce bleu est celui des habits de toile des ouvriers sans profession, les dockers.
+fr-sb-578  Toute cette visqueuse crapule est bien nourrie, bien rasée, bien fringuée.
+fr-sb-579  Il regardait les murs, le ciment du sol, la rampe de l’escalier.
+fr-sb-580  Il y a une rue principale et de chaque côté des tentacules.
+fr-sb-581  On respire, dans ces couloirs, l’atmosphère des salles de jeux.
+fr-sb-582  C’était une note plaintive qui ondulait et se répercutait partout autour des hommes.
+fr-sb-583  Ce n’est que son gérant, celui qui fait de la prison quand il le faut.
+fr-sb-584  Et il y en a de plus en plus, presque un par jour.
+fr-sb-585  Après un tel voyage, il a mérité de changer de linge.
+fr-sb-586  Mais, devant m’embarquer prochainement, j’ai eu peur pour mes côtes.
+fr-sb-587  C’était peut-être un civil, mais il était ce qu’il était.
+fr-sb-588  La Haute Cour est présidée par le Président de l’Assemblée nationale.
+fr-sb-589  Même si mon rôle est mineur, j'ai peur de mal interpréter, mal analyser...
+fr-sb-590  La France, mes chers compatriotes, je l’aime passionnément.
+fr-sb-591  Et dans les premières années du XXe siècle vint la grande désillusion.
+fr-sb-592  A chaque mouvement, il devait déposer une requête et attendre la réponse.
+fr-sb-593  Les flancs de l’un deux étaient même complètement sourds à l’éloquence des palefreniers.
+fr-sb-594  Un émigrant est, au contraire, un froid calculateur.
+fr-sb-595  Elles se déroulent aujourd'hui avec une force et une majesté puissantes.
+fr-sb-596  Nous fournissons la main-d'oeuvre, ils encaissent les profits.
+fr-sb-597  Tout à coup, il s’arrêta, mit son chapeau et sortit.
+fr-sb-598  Cela ne traduirait pas les passions que soulève une cause populaire.
+fr-sb-599  L'Assemblée nationale ne peut être dissoute pendant l'exercice des pouvoirs exceptionnels.
+fr-sb-600  Il est assisté par le Conseil Supérieur de la Magistrature.
+fr-sb-601  Ce n’est pas signe de mal de mer, mais de franchise.
+fr-sb-602  Sur bien des points il est hésitant et incohérent, y compris chez les plus cultivés.
+fr-sb-603  Dans le couloir-véranda du premier étage, tout un groupe se lève.
+fr-sb-604  Ils peuvent se faire assister par des commissaires du Gouvernement.
+fr-sb-605  Cette pensée disparut de l’esprit de Wilson aussi vite qu’elle était arrivée.
+fr-sb-606  Le brillant simple figure uniquement la moitié d’un brillant double.
+fr-sb-607  Ceux-là ne peuvent cacher leur profession, ce sont les charbonniers.
+fr-sb-608  Tout État partie au présent Traité peut proposer des amendements au Traité.
+fr-sb-609  Il dispose de l'administration et de la force armée.
+fr-sb-610  On sent ici que la paresse est élevée à la dignité d’une revendication.
+fr-sb-611  Ils sont enfermés derrière leur zinc comme dans le box d’une cour d’assises.
+fr-sb-612  Tous ces braves, ces jeunes, les uns après les autres avaient précédé l’ancêtre.
+fr-sb-613  Cet animal de compatriote est en effet un voluptueux.
+fr-sb-614  Dans l’univers libre, des forces immenses n’ont pas encore donné.
+fr-sb-615  Il achètera pour vingt francs de marchandises non périssables.
+fr-sb-616  La phrase se trouvait être singulièrement appropriée.
+fr-sb-617  Ces trois tables sont celles des officiers de la marine au long cours.
+fr-sb-618  Chaque jour désormais, on te porta, dans un fauteuil, sur la plage.
+fr-sb-619  C'est ce que l'un de ses collaborateurs nommera "l'économie concertée".
+fr-sb-620  Il ouvrit le lien et lança la séquence vidéo proposée.
+fr-sb-621  Les autres grandes nations font cependant davantage.
+fr-sb-622  L’inspection terminée, ils regagnent la pièce de derrière, leur niche de chien.
+fr-sb-623  Il se promène lentement dans l’immense boîte à musique.
+fr-sb-624  A quelque étape que ce soit d'un surprenant parcours, on s'étonne.
+fr-sb-625  Il se redressa, se frotta les yeux, et s'adossa à nouveau.
+fr-sb-626  Mais Wilson éprouvait aussi de la compassion à son égard.
+fr-sb-627  Et ce n'est pas mon caporal actuel qui m'y aurait aidé.
+fr-sb-628  L’idée ne m’était pas encore venue que les éléphants étaient une vulgaire marchandise.
+fr-sb-629  Elias porta le regard autour de lui avec lenteur et se mit à marcher.
+fr-sb-630  Cela le blessait dans son orgueil, mais il ne pouvait pas faire autrement.
+fr-sb-631  Le peuple qui, désormais, vivra cloîtré entre ses frontières périra d’anémie.
+fr-sb-632  Même face à la plus bizarre des situations qu’il ait jamais eu à affronter.
+fr-sb-633  Voici du thé qui arrive droit de Ceylan, mais il n’est pas infusé...
+fr-sb-634  Nous avions des voies d'eau, qu' heureusement nos pompes franchissaient.
+fr-sb-635  Phare français, il balaye de sa lumière les cinq parties de la terre.
+fr-sb-636  L'Allemagne et le Luxembourg, la Belgique, les Pays Bas et l'Italie s'y rallièrent.
+fr-sb-637  Au premier étage, une chambre d’hommes : douze lits, douze hommes.
+fr-sb-638  J’étais sur ce chemin qui domine le bassin de la Joliette.
+fr-sb-639  Le mot camarade passa fugitivement dans son esprit et disparut.
+fr-sb-640  De toutes façons, ce doit être une raison comme ça.
+fr-sb-641  Même à cette première rencontre, je fus saisi de dégoût et d’épouvante.
+fr-sb-642  On dirait qu’elles veulent toutes aboutir au coin d’un oeil.
+fr-sb-643  Pour eux, l’année n’est pas divisée en jours, en semaines, en mois, mais en voyages.
+fr-sb-644  C’est un acte que l’on n’accomplit pas avec ses allures de tous les jours.
+fr-sb-645  Il en est qui empoisonnent : ils travaillent aux matières périssables.
+fr-sb-646  Il est possible que, sous le microscope, les infusoires fassent de même.
+fr-sb-647  Vous verrez tous les Orients—le proche, le grand, l’extrême.
+fr-sb-648  C’est à croire qu’ils ont fait le chemin à pied depuis le village natal.
+fr-sb-649  Leur regard est sans éclat et leur maintien timide.
+fr-sb-650  Les uns sont de la fête, les autres n’en sont pas.
+fr-sb-651  Mais l'oeuvre de Piere et Marie Curie est continue.
+fr-sb-652  Banquier à San Francisco, il mène une mission économique en Chine.
+fr-sb-653  Vous êtes illustre, monsieur, dans tous les ports.
+fr-sb-654  Cependant peu d’étrangers n’ont davantage entendu parler de vous.
+fr-sb-655  La devise de la République est Liberté, Égalité, Fraternité.
+fr-sb-656  Il dit que, dans son idée, c’est la ville merveilleuse.
+fr-sb-657  Vous avez même droit à deux ou trois jours de villégiature.
+fr-sb-658  Sa prorogation au-delà de douze jours ne peut être autorisée que par le Parlement.
+fr-sb-659  Le carton vert désignerait ceux qui embarquent, le carton noir ceux qui débarquent.
+fr-sb-660  Une minute plus tard, il avait le contact de cette jolie brune.
+fr-sb-661  L’homme s’agitait, la bête retenait son souffle, préparait ses griffes.
+fr-sb-662  À la Libération le Général de Gaulle appelle Jean Monnet au redressement du pays.
+fr-sb-663  Elle doit à tout prix être complétée par la révolution sociale.
+fr-sb-664  Toutes les plus hautes figures spirituelles de l’humanité ont dit Non à César.
+fr-sb-665  Les cartes postales contre les glaces sont comme lui : elles viennent de loin.
+fr-sb-666  L’Arménien est une plante qui ne pousse qu’entre les pavés d’une cité.
+fr-sb-667  Ainsi ai-je découvert une peuplade non encore représentée à la Société des Nations.
+fr-sb-668  Maintenant, nous voici dans le hangar de la longue traversée.
+fr-sb-669  Le Premier ministre dirige l'action du Gouvernement.
+fr-sb-670  Un être massif le tenait fermement bien qu'inutilement.
+fr-sb-671  On passe là-dedans les plus immondes des matières grasses.
+fr-sb-672  Dans l’instant il ne cherche qu’à surprendre les lézards.
+fr-sb-673  Marie, seule femme, est au milieu d'eux, reconnue comme leur égale.
+fr-sb-674  Vous me replongez tout simplement dans le néant !...
+fr-sb-675  Transformé malgré tout, il ne put voir le vaisseau qu'après l'avoir durement heurté.
+fr-sb-676  En tout cas, cela sentirait beaucoup moins mauvais.
+fr-sb-677  J’entendis un bourdonnement particulier qui venait du trou.
+fr-sb-678  Mon commissaire fut vexé dans son orgueil professionnel.
+fr-sb-679  On ne sent plus sur ses épaules le poids du quotidien.
+fr-sb-680  Les fenêtres hautes des maisons s’éclairaient quand les gens allaient se coucher.
+fr-sb-681  Certains, malgré leur ancienneté en français, n'ont pas encore subi cette évolution.
+fr-sb-682  C’est le quartier le plus accueillant pour les gens en peine.
+fr-sb-683  Dans l’après-midi, l’aspect de la lande avait grandement changé.
+fr-sb-684  Une erreur qu'il n'avait jamais vue auparavant apparu sur la dalle graphique.
+fr-sb-685  L’apôtre, comme tous les apôtres, prêchait dans le désert.
+fr-sb-686  La fripouille passe et repasse devant vous reniflant et réfléchissant.
+fr-sb-687  Vous l’imaginez, c’est avec beaucoup d’émotion que je m’adresse à vous ce soir.
+fr-sb-688  Le premier avion, invisible, fait clignoter son signal.
+fr-sb-689  Il effaça les rapports de données et continua sa marche.
+fr-sb-690  Soudain il disparut et je m’imaginai qu’un faible cri venait jusqu’à moi.
+fr-sb-691  La rencontre de cet homme éminent fut un éclair dans mon brouillard.
+fr-sb-692  En quelques mois, ses efforts portent leurs fruits.
+fr-sb-693  On vient leur apprendre que leurs papiers ne sont pas suffisants.
+fr-sb-694  L'environnement était toujours aussi indescriptible, même intérieurement.
+fr-sb-695  Je vous ferai voir des oiseaux qui plongent et des poissons qui volent.
+fr-sb-696  La France, c’est une Nation engagée pour la justice et pour la paix.
+fr-sb-697  Elles dérobent le génie De leurs mollets sous de longs bas.
+fr-sb-698  Il s'assit en tailleur et, sans raison particulière, ferma les yeux.
+fr-sb-699  Elias n'avait cessé de marcher depuis qu'il était sorti du vaisseau.
+fr-sb-700  Puis il planta sa bêche, saisit vivement sa jaquette et sortit sur la route.
+fr-sb-701  Tout dans l’âme de la France dit non à l’extrémisme.
+fr-sb-702  À la gare de Damas, un matin, j’ai réellement entendu pleurer.
+fr-sb-703  Il commande à une armée de mer et à une armée de terre.
+fr-sb-704  Les membres du Parlement et le Gouvernement ont le droit d'amendement.
+fr-sb-705  Les prétendants ne manquent pas, je vous l’assure !...
+fr-sb-706  Il y a six ans maintenant que le cataclysme s’est abattu sur nous.
+fr-sb-707  Chacun des parents peut mettre en oeuvre ce droit.
+fr-sb-708  Et, tous les trois, dans notre cas, ne font qu’une même et sale volaille.
+fr-sb-709  Ils ont été jusqu’à s’attaquer au grand corps de la terre.
+fr-sb-710  Au pays qui l’a vu naître, tous les hommes doivent être bouchers.
+fr-sb-711  Assistée de deux escadrilles de chasseurs et de bombardiers.
+fr-sb-712  Je hais la littérature, les chuchotements et la parole.
+fr-sb-713  L’ignorance des Français sur les choses de la mer est considérable.
+fr-sb-714  Nous les attendons au kiosque, place de la Bourse.
+fr-sb-715  Voilà pourquoi les soldats de son équipe d'exploration seraient restés là-bas.
+fr-sb-716  Ce n’est pas une moquerie, c’est un ordre de ma femme.
+fr-sb-717  Puis il se dispersèrent, retournant à leur manutention.
+fr-sb-718  Le sang de notre peuple coula alors au bénéfice de la finance coloniale.
+fr-sb-719  Le miroir ne produit pas des images il induit une réflexion.
+fr-sb-720  Chez nous on ne veut connaître la mer que pour y prendre des bains.
+fr-sb-721  Un ami « fumeur » qui venait de débarquer était assis sur la Canebière.
+fr-sb-722  Elias avait ingéré tellement de stimulants que l'authentification échoua.
+fr-sb-723  Selon leur tempérament, elles sont restées droites, ou bien ont pris du ventre.
+fr-sb-724  Le coeur serré d'angoisse, je détourne mes regards vers la mer.
+fr-sb-725  En voulant arracher leur secret aux acides mystérieux, j’ai brûlé mes deux yeux bleus.
+fr-sb-726  Mais, il ne suffit pas de refuser une situation, il faut encore y remédier.
+fr-sb-727  La cigarette s'échappa de ses lèvres et s'écrasa au sol dans une gerbe d'étincelles.
+fr-sb-728  Dans tous les ports du monde où j’ai rôdé, j’ai vu la chose.
+fr-sb-729  Merci, j'ai bien dormi et j'espère qu'il en est de même pour vous.
+fr-sb-730  Le suffrage peut être direct ou indirect dans les conditions prévues par la Constitution.
+fr-sb-731  Si bien que, tout en restant porte du Sud, Marseille est maintenant porte du Nord.
+fr-sb-732  Puis il les compta une quatrième, une cinquième et une sixième fois.
+fr-sb-733  La loi organique peut autoriser exceptionnellement la délégation de vote.
+fr-sb-734  Dans le même voyage, l’homme de terre et l’homme de mer ont deux buts différents.
+fr-sb-735  Je vous conduirai vers toutes les merveilles des hommes et de la nature.
+fr-sb-736  Vous préparez votre monnaie et vous allongez le bras.
+fr-sb-737  On ne sait pas son nom, mais on l’appelle le Père.
+fr-sb-738  La destitution est prononcée par le Parlement constitué en Haute Cour.
+fr-sb-739  Que la plus discutable femme Est belle par quelque côté.
+fr-sb-740  C’est pourquoi nous soutenons l’appel pour la journée du 7 mars.
+fr-sb-741  Au contact, l’internationalisme perd de sa force d’idée.
+fr-sb-742  Il vient ici, vous le savez, pour entendre de la musique.
+fr-sb-743  Aucun amendement n'est recevable sauf accord du Gouvernement.
+fr-sb-744  Aucune collectivité territoriale ne peut exercer une tutelle sur une autre.
+fr-sb-745  Elias était bien dans le bureau du commissaire aux affaires spatiales.
+fr-sb-746  Un siècle après l'Affaire, elle doit se poursuivre.
+fr-sb-747  Peut-être bien a-t-il six, ou même sept kilomètres.
+fr-sb-748  Des évaluations informatiques l’ont confirmé de manière absolue.
+fr-sb-749  Le Président de la République a le droit de faire grâce.
+fr-sb-750  Toute l’Italie est derrière Gênes pour le pousser.
+fr-sb-751  Wilson, qui avait déjà emboîté le pas au soldat, se retourna brusquement.
+fr-sb-752  Il réfléchit sans trêve et aucun doute ne parvient à la troubler.
+fr-sb-753  Un instant plus tard, deux d'entre elles étaient sur lui.
+fr-sb-754  Ce soir, il a organisé, en leur honneur, une séance de cinéma.
+fr-sb-755  Il ne savait comment exprimer sa reconnaissance et sa joie.
+fr-sb-756  Une jeune fille entra, portant un plateau chargé d’un verre.
+fr-sb-757  Vous savez bien ce qui se passe quand on sort de la routine.
+fr-sb-758  Que celui qui ne connaît pas votre vie fasse le dégoûté.
+fr-sb-759  Il m’a conduit, ensuite, à l’établissement des chanteuses.
+fr-sb-760  Il ouvrit le cercle de soldats en demandant s’il pouvait visiter la station.
+fr-sb-761  La situation avait rarement été aussi tendue entre eux.
+fr-sb-762  Le frisson était venu de l'extérieur, sans qu'il puisse mieux se le représenter.
+fr-sb-763  J'y rencontrai heureusement l'aumônier, qui me donna l'absolution.
+fr-sb-764  Mais je suis fier du travail que nous avons accompli ensemble.
+fr-sb-765  Le couchant devint crépuscule avant que rien d’autre ne se fût produit.
+fr-sb-766  La conséquence de cette mauvaise disposition est facile à prévoir.
+fr-sb-767  Tous, je l’atteste, ne sont aussi mariés qu’une fois.
+fr-sb-768  Ils étaient quatre réveillés, son commandant, lui, et deux techniciens.
+fr-sb-769  Peu de temps après, le visiteur déclara qu’il lui fallait s’interrompre.
+fr-sb-770  Les partis et groupements politiques concourent à l'expression du suffrage.
+fr-sb-771  Être mineur, forgeron, ébéniste, c’est avoir un métier.
+fr-sb-772  Le premier grand combat du Peuple de la Nuit s’engage.
+fr-sb-773  C’est dimanche, et les églises n’ont pas été édifiées pour les chiens.
+fr-sb-774  Il se replie en continuant à combattre, est pris à revers et tué.
+fr-sb-775  J’ai ma correspondance à terminer pour l’heure de la poste.
+fr-sb-776  Les enfants des écoles sont conduits dans les grands ports et confrontés avec l’horizon.
+fr-sb-777  Et il faut le faire sans jamais brader notre modèle français.
+fr-sb-778  Avec une petite équipe, dans de modestes locaux, prendra forme une grande idée.
+fr-sb-779  Il est vital de poursuivre la construction européenne.
+fr-sb-780  Il y met en pratique cette patience reçue en héritage.
+fr-sb-781  Certains de comprendre l’époque qui vient, ces pays sortent de chez eux.
+fr-sb-782  Les Français établis hors de France sont représentés au Sénat.
+fr-sb-783  Nous, trio d’innocents, nous nous promenâmes le long du bord.
+fr-sb-784  Vous allez voir combien drôles sont les habitudes de ces habitués.
+fr-sb-785  Quand vous les aurez tous achetés, il en paraîtra de nouveaux.
+fr-sb-786  C’est là qu’ils se retrouvent quand ils débarquent.
+fr-sb-787  Un prof de collège ne croirait pas à tes excuses, songea Wilson.
+fr-sb-788  Il examine les réclamations et proclame les résultats du scrutin.
+fr-sb-789  Il ne devrait donc pas prendre au singulier la marque du pluriel.
+fr-sb-790  Le miroir ne peut vivre en bonne intelligence avec la parole.
+fr-sb-791  Eric, si seulement nous avions tout interrompu plus tôt.
+fr-sb-792  À force de tanguer, de rouler, peut-être ne peuvent-ils plus s’en passer.
+fr-sb-793  Alfred Dreyfus est condamné à la déportation à vie.
+fr-sb-794  Un opérateur de cinéma s’acharnait à prendre la scène.
+fr-sb-795  Après deux heures et demie de descente, ils atteignent le village qu’alertent les chiens.
+fr-sb-796  À la rigueur, une semaine entière ne fera pas scandale.
+fr-sb-797  Le but du premier est d’arriver, le but du deuxième est de repartir.
+fr-sb-798  Ce ne sont pas les peaux de bique qui manqueront cet hiver.
+fr-sb-799  Le Conseil Constitutionnel se renouvelle par tiers tous les trois ans.
+fr-sb-800  Ils auraient déjà pu repartir, seulement on les voulait jusqu’à Madagascar.
+fr-sb-801  J’aurais pu me renseigner, je pense même que je l’aurais dû.
+fr-sb-802  Peut-être la transformation avait-elle échouée parce qu'il était hautement inadaptable.
+fr-sb-803  L'état de siège est décrété en Conseil des ministres.
+fr-sb-804  Le deuxième était tout noir, avec un haut château dominant son avant.
+fr-sb-805  La révolution nationale, dans son essence, ne souffre aucun compromis.
+fr-sb-806  Je ne vois pas quel autre spectacle serait plus magnifique.
+fr-sb-807  Si j’avais été un homme sérieux, je me serais rendu à la chambre de Commerce.
+fr-sb-808  Il faut que la FRANCE, ce jour-là, soit présente à la victoire.
+fr-sb-809  Encore fallut-il l'indispensable vertu de persévérance pour cimenter l'Europe.
+fr-sb-810  Il était recroquevillé, la tête entre les épaules.
+fr-sb-811  Il aurait bien voulu ne pas passer par cette étape, mais c'était obligatoire.
+fr-sb-812  Il n’y a pas de chaises, les chrétiens sont debout...
+fr-sb-813  Je trouvai, à sa place, des curieux et un sergent de ville.
+fr-sb-814  Devenir l’animal en quête de toutes les questions.
+fr-sb-815  Pas un homme politique ; pas un journaliste ; pas même un avocat.
+fr-sb-816  Wilson se réveilla en sursaut et consulta sa montre.
+fr-sb-817  Il lave d’avance de tout soupçon les quelques éminents collaborateurs qu’il peut avoir.
+fr-sb-818  Mais j’éprouvai de la difficulté à reprendre mes investigations abstraites.
+fr-sb-819  Une photographie contrarie les inclinations de la Nature.
+fr-sb-820  Il était habillé à la chinoise : camisole, robe et pantoufles.
+fr-sb-821  Ils doivent respecter les principes de la souveraineté nationale et de la démocratie.
+fr-sb-822  Ce sont des nomades français, arabes, syriens, espagnols, belges, italiens.
+fr-sb-823  On s'appuiera sur ces tendances quand elles existent pour introduire plus de régularité.
+fr-sb-824  Nous ne devons pas craindre les évolutions du monde.
+fr-sb-825  Cette France qui, croyez-moi, n’a pas fini d’étonner le monde.
+fr-sb-826  Les travaux antérieurs de Pierre ne sont pas étrangers à ce choix.
+fr-sb-827  Nos compatriotes calmés ne cherchent pas des bateaux, sur un rivage, mais des casinos.
+fr-sb-828  La déclaration de guerre est autorisée par le Parlement.
+fr-sb-829  Si j’avais été un citoyen courageux, je vous aurais parlé de Marseille marseillais.
+fr-sb-830  Et Elias marchait dans une direction bien précise.
+fr-sb-831  Le mariage n'opère aucun changement du nom des époux.
+fr-sb-832  La borne d'identification clignota et signala un échec de la procédure.
+fr-sb-833  Le gros des unités allemandes est appelé en Normandie.
+fr-sb-834  Les hommes soigneux réparent leurs habits ingrats.
+fr-sb-835  Il n’en est pas de pareilles dans tout le reste de la France.
+fr-sb-836  Tout cela, c’est grâce à vous, grâce à votre talent, grâce à votre créativité.
+fr-sb-837  Nouvelle attaque des gardes, de nouveau repoussée.
+fr-sb-838  On voit que les uns et les autres Sortent de chez le bon faiseur.
+fr-sb-839  Mais ce n’était guère le moment d’engager une conversation bien nette.
+fr-sb-840  Il avait résisté à l'isolation et s'était dévoilé en tentant d’alerter sa civilisation.
+fr-sb-841  Pendant un moment cette cavité circulaire sembla parfaitement noire.
+fr-sb-842  Le premier écho des Glières ne fut pas celui des explosions.
+fr-sb-843  On rencontre des ouvriers parmi les dockers, ce sont justement des ouvriers sans travail.
+fr-sb-844  Le matin de l'arrivée, Elias resta longtemps devant les écrans de contrôles.
+fr-sb-845  Dans un miroir, la parole se révèle comme essentiellement dépourvue de sens.
+fr-sb-846  C’est là où tous les hommes de l’intérieur des navires viennent entendre de la musique.
+fr-sb-847  Ledit commandant tourna les talons immédiatement et se mit à courir.
+fr-sb-848  C’est un fragment de charbon cristallisé, pas autre chose.
+fr-sb-849  Si cette mort avait décrit un cercle entier, j’aurais été certainement tué par surprise.
+fr-sb-850  Au plus profond de soi, chacun perçoit qu’une naissance se déclare.
+fr-sb-851  Il avance donc, le bâton touche-à-tout, tâtonnant le caillou.
+fr-sb-852  Ces gens qui n'étaient pas plus que de simples présences.
+fr-sb-853  Dans les petites villes, la nuit est le signal du repos.
+fr-sb-854  Nul doute que sa chute n’ait produit une grande flamme subite.
+fr-sb-855  Sur ses talons, Wilson tenta de revenir à sa hauteur.
+fr-sb-856  Elles peuvent recevoir tout ou partie du produit des impositions de toutes natures.
+fr-sb-857  Chacun reste dans son coin, même pour peler les pommes de terre.
+fr-sb-858  Ses yeux glissaient de l’être, au commandant, au première classe, et ainsi de suite.
+fr-sb-859  Moi, je le sais, parce que la mort connaît le murmure des siècles.
+fr-sb-860  Pas de désert, pas de dénivelé, par de mur poisseux.
+fr-sb-861  Puis il emboîta le pas aux soldats, suivi de près par le professeur.
+fr-sb-862  C’est sur ces cinq points que portent les présentes propositions.
+fr-sb-863  Donne-moi de ce que tu as, tu auras de ce que j’ai.
+fr-sb-864  Le Président de la République nomme le Premier ministre.
+fr-sb-865  Je vous ferai prévenir pour la prochaine escarmouche.

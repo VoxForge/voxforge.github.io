@@ -1,0 +1,218 @@
+001 Este indivíduo assiste televisão demais.
+002 Hoje é onze de julho.
+003 Meu avô é muito velho.
+004 Onde mora o seu cunhado?
+005 Quais esportes você pratica?
+006 Tem cerveja gratuita, vinho e caipirinhas.
+007 Não agüento esta umidade.
+008 Ele ganhou muitos milhões na loteria.
+009 A que horas é a nova novela venezuelana?
+010 Faça o telefonema daquele orelhão.
+011 Qual é a sua função?
+012 Nós desejamos um quarto com ar condicionado.
+013 Esta comida é ruim, mas aquela é pior.
+014 Tem muitos pingüins no zoológico.
+015 Quando foi fundada a Academia Militar?
+016 Meu filho é advogado.
+017 Somos portugueses orgulhosos.
+018 Pode me ensinar a tocar um instrumento?
+019 Conheço uma jornalista humilde.
+020 O senhor tem que trabalhar hoje?
+021 Aquela mulher é portuguesa.
+022 Vou cumprir.
+023 Vamos comprar um carro que funciona.
+024 Os funcionários chegam tarde todos os dias.
+025 O céu está azul.
+026 Não estou acostumado.
+027 A perna dói.
+028 Sempre quis ter um bom trabalho.
+029 Fernando deixou de fumar.
+030 Minha filha quer ser atriz.
+031 Comprei um presentinho para a minha mãe.
+032 Ele trabalhou lá por três anos e meio.
+033 Você está em que série?
+034 Não compreendo.
+035 Olha só!
+036 Ele tinha um álbum enorme.
+037 É preciso confirmar o vôo.
+038 Eu jogava futebol melhor do que meus amigos.
+039 Por que ele recebeu uma punição tão forte?
+040 Quem vai ganhar o Mundial?
+041 Eu quero viajar ao Canadá.
+042 Abra a janela.
+043 Fechem os livros.
+044 Temos quatro tias.
+045 Quem está aí?
+046 O senhor gosta de café com leite?
+047 Elizabete dançou a noite toda.
+048 As crianças são bonitinhas.
+049 Eu moro numa rua tranqüila.
+050 Você gosta de música?
+051 O que você prefere?
+052 Os brasileiros comem arroz com feijão.
+053 Vocês alugaram um carro ou foram de ônibus?
+054 O rapaz ficou sendo o namorado dela.
+055 O irmão dela tem muita inveja.
+056 Nossa casa tem três dormitórios confortáveis.
+057 O senhor quer cama de casal ou de solteiro?
+058 Boa sorte.
+059 Lave as mãos antes de almoçar.
+060 Esta cidade tem muitos alemães.
+061 Elas têm muita saudade do Brasil.
+062 Eu não sabia que você tocava violão.
+063 Quando é o seu aniversário?
+064 De quem é a caneta?
+065 No casamento havia muitas flores.
+066 Pode me dar o seu endereço?
+067 Nós não mentimos nunca.
+068 Por que você comprou essa revista?
+069 Está chovendo e eu esqueci o meu guarda-chuva
+070 Eu pago a conta e vocês deixam a gorjeta.
+071 Eu e Pedro andamos a cavalo nos sábados.
+072 Na festa, todo mundo estava muito contente.
+073 Meu pai tem que fazer escala no Rio de Janeiro.
+074 Quando eu era criança, não gostava de morangos.
+075 Onde é o aeroporto?
+076 São duas e meia da tarde.
+077 Hoje é segunda-feira.
+078 Qual é a data de hoje?
+079 Não se queixe.
+080 Como vai?
+081 Ana Maria é uma moça de sorte.
+082 Ela deu o fora no namorado.
+083 Joãozinho vai dar uma festa em agosto.
+084 Por que vocês me deram o bolo ontem à noite?
+085 O relógio na parede está adiantado.
+086 Quantos pastéis você comprou?
+087 Este abacaxi é gostoso.
+088 Onde fica a estação do trem?
+089 Até logo.
+090 Eu tenho trinta anos.
+091 Tudo bem?
+092 Não gosto disso.
+093 Eu gostaria de comer um acarajé.
+094 Vou tomar um pouquinho d'água.
+095 Para onde a senhora quer ir?
+096 Que horas são?
+097 Amanhã é sexta.
+098 Cabral chegou ao Brasil em mil e quinhentos.
+099 Não posso. É impossível.
+100 O que você fez ontem?
+101 Jantei com a minha família.
+102 Eu morei na Bahia há muito tempo.
+103 Escrevi uma carta para eles na semana passada.
+104 Eu te disse.
+105 Ele estava caminhando para a livraria quando a conheceu.
+106 Fomos para a praia.
+107 Anteontem eu fui ao cinema.
+108 Os senhores acordaram cedo?
+109 Diga-me a verdade!
+110 Que tempo está fazendo?
+111 Vai chover no fim-de-semana.
+112 A senhora sabe falar a língua japonesa?
+113 Preciso tomar alguma bebida.
+114 Você tem que passar pela alfândega.
+115 Posso pagar com cheque?
+116 Estou com frio.
+117 Os computadores não me interessam.
+118 Quando você chegou?
+119 Qual é o número do seu telefone?
+120 Roberto não canta mal.
+121 Eu prefiro arroz.
+122 Onde fica o banheiro?
+123 Quando você soube disso?
+124 Elas são muito simpáticas.
+125 Minha irmã tem quinze anos.
+126 Nas férias, sempre íamos à praia.
+127 Você se sente mal?
+128 Tenho dor de cabeça.
+129 Está com febre?
+130 Alugamos um apartamento na cidade.
+131 Vou tomar banho.
+132 A conta, por favor.
+133 O que você está fazendo?
+134 Chame-me quando puder.
+135 Paulo nunca faz toda a tarefa.
+136 Faz um ano que saí de São Paulo.
+137 Quero que vocês me visitem
+138 Não se preocupe.
+139 Vende-se pão na esquina.
+140 Fala-se português em Moçambique.
+141 Muito obrigado.
+142 Vamos para Salvador amanhã.
+143 Margarida passou em casa ontem.
+144 Siga em frente para pegar o ônibus.
+145 A padaria fica ao lado do museu.
+146 Moramos perto do hospital.
+147 Sinto muito. Não tenho mais dinheiro.
+148 Ela esteve quatro vezes em Lisboa.
+149 Não pude estar na aula quinta-feira.
+150 Ele não quis dizer nada.
+151 Maria não me conhece.
+152 Você sabe onde fica um bom restaurante?
+153 Geralmente não bebemos muita cerveja.
+154 Eram oito horas da noite.
+155 Jorge foi embora.
+156 Estou triste.
+157 Eles são muito inteligentes.
+158 Estamos com sono.
+159 Ela é alta e bonita.
+160 Ele freqüenta o barzinho.
+161 Eu sou do Brasil.
+162 Tchauzinho.
+163 Quantos anos você tem?
+164 Fica longe daqui.
+165 O que vocês querem fazer?
+166 A aula é às nove e vinte e cinco.
+167 Para onde você foi nas férias?
+168 Está chovendo.
+169 Ótimo.
+170 Acho que sim.
+171 Estou bem, obrigado.
+172 Aonde você vai?
+173 Fale mais devagar, por favor.
+174 Pode me ajudar?
+175 Quanto custa?
+176 Preciso de uma passagem de ida e volta.
+177 Queremos fazer uma reserva.
+178 O trem vai chegar adiantado.
+179 A que horas sai o avião?
+180 Este hotel é barato.
+181 Podemos ficar em casa.
+182 Não aceitam cartões de crédito.
+183 Estamos no quarto setecentos e vinte.
+184 Ela mora no quinto andar.
+185 Procuro um apartamento com móveis.
+186 Se eu tivesse dinheiro, eu viajaria pelo mundo inteiro.
+187 Houve um acidente grave na rodovia.
+188 É importante ter mais tempo.
+189 Vá com pressa.
+190 O que você quer fazer no futuro?
+191 João sabe escrever à máquina.
+192 Eu sei falar português e inglês.
+193 Quanto tempo faz que você está esperando aqui?
+194 Ele foi presidente do país durante quatro anos.
+195 Alguém sabe a que horas começa o jantar?
+196 Qual é o seu nome?
+197 Eles moram aqui desde os anos setenta.
+198 Por que você está sorrindo?
+199 Passamos pelo parque para chegar em casa.
+200 Que dia é o exame?
+201 O presidente da república faz advertência ao ministro da justiça
+202 O jovem atacante convenceu fácil na partida contra o méxico
+203 O zorro é outro dos filmes muito procurados nas locadoras atualmente
+204 A primeira maior guerra de todas foi entre o bem e o mal o ceu e a terra
+205 E melhor nunca engomar os lençóis azuis debaixo de sol
+206 Eu prefiro ser essa metamorfose ambulante
+207 do que ter aquela velha opinião formada sobre tudo
+208 primeiro de abril de mil novecentos e dez
+209 segunda-feira
+210 terça-feira
+211 quarta-feira
+212 quinta-feira
+213 sexta-feira
+214 sábado
+215 domingo
+216 não
+217 sim
+218 zero um dois tres quatro cinco seis sete oito nove dez
