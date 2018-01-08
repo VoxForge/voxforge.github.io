@@ -5,6 +5,8 @@
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # 'jekyll serve'. If you change this file, please restart the server process.
 
+exclude: [fix_md_script]
+highlighter: none
 # Site settings
 title:
   bg: VoxForge - Bulgarian
@@ -58,5 +60,5 @@ collections:
     output: true
     title: FAQs
     permalink: /faq/:path/ # this is for faq item path
-gems:
+plugins:
   - jekyll-redirect-from

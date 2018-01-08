@@ -27,10 +27,10 @@ Create Acoustic Model by 'compiling' your speech audio files into a [Speaker Dep
 
 ## Other Dev Pages
 
-*   [Convert Audio to MP3 and Compare Results with Original Wav](dev/mp3-compare)</span>
-*   [How to Manually Segment an Audio Book (Draft)](dev/mansegaudio)</span>
-*   [Automated Audio Segmentation Using Forced Alignment (Draft)](dev/autoaudioseg)</span>
-*   [Documentation](docs)</span>
+*   [Convert Audio to MP3 and Compare Results with Original Wav](dev/mp3-compare)
+*   [How to Manually Segment an Audio Book (Draft)](dev/mansegaudio)
+*   [Automated Audio Segmentation Using Forced Alignment (Draft)](dev/autoaudioseg)
+*   [Documentation](docs)
 
 
 
