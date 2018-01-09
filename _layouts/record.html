@@ -15,7 +15,7 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>{{ page.title }}</h1>
+        <h1>{{ site.supportedLanguages[page.language_id] }}</h1>
       </header>
       <section class="top-display">
 
@@ -28,14 +28,14 @@
 	    <div id="profile-display">
 	      <div class="readme">
 
-          <label for="username">{{ page.username }}</label>
+          <label for="username">{{ page.username_label }}</label>
           <input id="username" 
-                 placeholder={{ page.username }} value="" 
+                 placeholder={{ page.username_label }} value="" 
                  type="text">
           <div id=anonymous_instructions_display>
-            <small>(leave blank to submit anonymously)</small></br></br>
+            <small>{{ page.anonymous_submission }}</small></br></br>
           </div>
-      <button style="background: #cedfe8;" onclick="speakerCharacteristics()">Speaker Characteristics:</button>
+      <button style="background: #cedfe8;" onclick="speakerCharacteristics()">{{ page.speaker_characteristics }}</button>
 	    <div style="display: none;" id="speaker_characteristics_display">
           <label for="gender">{{ page.gender }}</label>
           <select selected name="gender" id="gender">
@@ -45,48 +45,43 @@
             {% endfor %}
           </select>
 
-          <label for="age">{{ page.age }}</label>
+          <label for="age">{{ page.age_label }}</label>
           <select type="text" id="age"/></br>
-            <option selected value="Unknown">Please Select</option>
-
+            <option selected value="Unknown">{{ page.please_select }}</option>
             {% for item in page.age_selection %}
               <option old_value="{{ item.old_value }}" value="{{ item.value }}">{{ item.value }}</option> 
             {% endfor %}
 
           </select>
 
-          <label for="language">Language:</label>
-          <select type="text" id="language">
-            <option selected value="EN">English</option>
-          </select>
-
-          <label style="display: inline;"  for="native_speaker">Native Speaker?:</label>
+          <label style="display: inline;"  for="native_speaker">{{ page.first_language_label }}?</label>
           <a href="#native_speaker_popupInfo" data-rel="popup" data-transition="pop" 
              class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-             title="someone who speaks a language as his or her first language or mother tongue.">
+             title="{{ page.native_speaker_popup_text }}">
           </a>
           <div data-role="popup" id="native_speaker_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-            <p><a href="https://simple.wikipedia.org/wiki/Native_speaker" target="_blank">Native speaker</a>: someone who speaks a language as his or her first language or mother tongue.</p>
+            <p><a href="https://simple.wikipedia.org/wiki/Native_speaker" target="_blank">{{ page.native_speaker }}</a>: {{ page.native_speaker_popup_text }}</p>
           </div>
           <select type="text" id="native_speaker"/></br>
-            <option selected value="Unknown">Please Select</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
+            <option selected value="Unknown">{{ page.please_select }}</option>
+            {% for item in page.native_speaker_selection %}
+              <option value="{{ item }}">{{ item }}</option>    
+            {% endfor %}
           </select>
 
           <div style="display: none;"  id="first_language_display">
-            <label style="display: inline;"  for="first_language">First Language:</label>
+            <label style="display: inline;"  for="first_language">{{ page.first_language_label }}</label>
             <a href="#first_language_popupInfo" data-rel="popup" data-transition="pop" 
                class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-               title="language that a person has been exposed to from birth or within the critical period.">
+               title="{{ page.first_language_popup_text }}">
             </a>
             <div data-role="popup" id="first_language_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-              <p><a href="https://en.wikipedia.org/wiki/First_language" target="_blank">First Language</a>: Language that a person has been exposed to from birth or within the critical period.</p>
+              <p><a href="https://en.wikipedia.org/wiki/First_language" target="_blank">{{ page.first_language }}</a>: {{ page.first_language_popup_text }}</p>
             </div>
             <select type="text" id="first_language"/></br>
             </select>
             <div style="display: none;"  id="first_language_other_display">
-              <label style="display: inline;"  for="first_language_other">First Language - Other:</label>
+              <label style="display: inline;"  for="first_language_other">{{ page.first_language_other_label }}</label>
               <input id="first_language_other" 
                  placeholder="First Language" value="" 
                  type="text">
@@ -98,13 +93,13 @@
                    https://en.wikipedia.org/wiki/Non-native_pronunciations_of_English )
           -->
           <div style="display: none;"  id="dialect_display">
-	            <label style="display: inline;"  for="dialect">Pronunciation Dialect:</label>
+	            <label style="display: inline;"  for="dialect">{{ page.dialect_label }}</label>
               <a href="#dialect_popupInfo" data-rel="popup" data-transition="pop" 
                 class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-                title="variety of a language that is a characteristic of a particular group of the language's speakers.">
+                title="{{ page.dialect_text }}">
               </a>
               <div data-role="popup" id="dialect_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-                <p><a href="https://en.wikipedia.org/wiki/Dialect" target="_blank">Dialect</a>: refers to a variety of a language that is a characteristic of a particular group of the language's speakers.</p>
+                <p><a href="https://en.wikipedia.org/wiki/Dialect" target="_blank">{{ page.dialect }}</a>: {{ page.dialect_text }}</p>
               </div>
               <select id="dialect">
                 <option selected value="Unknown">Please Select</option>

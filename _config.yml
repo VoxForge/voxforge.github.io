@@ -42,6 +42,9 @@ languageEnglish:
   en: English
   fr: French
   es: Spanish
+supportedLanguages:
+  EN: English
+  FR: French
 email: contact@voxforge.org
 index:
   bg: home

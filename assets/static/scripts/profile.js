@@ -50,11 +50,11 @@ Profile.prototype.div_function = function (independent_div, value, dependent_div
 
 profile.div_function('#native_speaker', "No", '#first_language_display');
 profile.div_function('#native_speaker', "Yes", '#dialect_display');
+profile.div_function('#first_language', "Other", '#first_language_other_display');
 profile.div_function('#username', true, '#anonymous_instructions_display');
 profile.div_function('#microphone', "Other", '#microphone_other_display');
 profile.div_function('#dialect', "Other", '#dialect_other_display');
 function recordingInformation() {  $("#recording_information_display").toggle(); }
-profile.div_function('#microphone', "Other", '#microphone_other_display');
 profile.div_function('#recording_location', "Other", '#recording_location_other_display');
 profile.div_function('#background_noise', "Yes", '#background_noise_display');
 profile.div_function('#noise_type', "Other", '#noise_type_other_display');
@@ -97,6 +97,7 @@ if (typeof localStorage.username !== 'undefined')
     $("#first_language_display").show();
   }
   $('#first_language').val( localStorage.first_language );
+  $('#first_language').val( localStorage.first_language_other );
   $('#dialect').val( localStorage.dialect );
   $('#dialect_other').val( localStorage.dialect_other );
   if ( $('#dialect').val()==="Other" )
@@ -159,14 +160,16 @@ Profile.prototype.toArray = function () {
   readme[i++] = 'Gender: ' +  $('#gender').val() + '\n';
 // !!!!!!
   //readme[i++] = 'Age Range: ' +  $('#age').val() + '\n';
-  readme[i++] = 'Age Range: ' +  $('#age').find(':selected').attr('old_value') + '\n';
+  var $old_value = $('#age').find(':selected').attr('old_value');
+  if ($old_value) {
+    readme[i++] = 'Age Range: ' +  $old_value + '\n';
+  } else {
+    readme[i++] = 'Age Range: ' +  $('#age').val() + '\n';
+  }
 // !!!!!!
   readme[i++] = 'Language: ' +  $('#language').val() + '\n';
   readme[i++] = 'Native Speaker: ' +  $('#native_speaker').val() + '\n';
-  if ($('#native_speaker').val() === "No") {
-    var langId = $('#first_language').val();
-    readme[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
-  } else {
+  if ($('#native_speaker').val() !== "No") {
     if ($('#dialect').val() !== "Other") {
       readme[i++] = 'Pronunciation dialect: ' + $('#dialect').val() + '\n';
       if ( $('#sub_dialect').val() ) {
@@ -175,7 +178,16 @@ Profile.prototype.toArray = function () {
     } else {
       readme[i++] =  'Pronunciation dialect: Other - ' + $('#dialect_other').val() + '\n';
     }
+  } else {
+    if ( $('#first_language').val() !== "Other") 
+    {
+      var langId = $('#first_language').val();
+      readme[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
+    } else {
+      readme[i++] = '  first language: ' + $('#first_language_other').val();
+    }
   }
+
   readme[i++] = '\nRecording Information: \n\n';
   if ($('#microphone').val() !== "Other") {
     readme[i++] = 'Microphone Type: ' + $('#microphone').val() + '\n';
@@ -226,10 +238,7 @@ Profile.prototype.toJsonString = function () {
   profile_hash["language"] = $("#language").val();
   profile_hash["native_speaker"] = $("#native_speaker").val();
 
-  if ($("#native_speaker").val() === "No") {
-    var langId = $("#first_language").val();
-    profile_hash["first_language"] = languages.getLanguageInfo(langId).name;
-  } else {
+  if ($("#native_speaker").val() !== "No") {
     if ($("#dialect").val() !== "Other") {
       profile_hash["pronunciation_dialect"] = $("#dialect").val();
       if ( $('#sub_dialect').val() ) {
@@ -238,7 +247,16 @@ Profile.prototype.toJsonString = function () {
     } else {
       profile_hash["pronunciation_dialect"] = $("#dialect_other").val() ;
     }
+  } else {
+    if ( $('#first_language').val() !== "Other") 
+    {
+      var langId = $("#first_language").val();
+      profile_hash["first_language"] = languages.getLanguageInfo(langId).name;
+    } else {
+      profile_hash["first_language"] = $("#first_language_other").val();
+    }
   }
+
   // Recording Information: 
   if ($("#microphone").val() !== "Other") {
     profile_hash["microphone"] = $("#microphone").val() ;
@@ -288,7 +306,12 @@ Profile.prototype.addProfile2Cookie = function () {
   {
     localStorage.first_language = null;
   } else {
-    localStorage.first_language = $('#first_language').val();
+    if ( $('#first_language').val() !== "Other") 
+    {
+      localStorage.first_language_other = $('#first_language').val();
+    } else {
+      localStorage.first_language_other = $('#first_language_other').val();
+    }
   }
   localStorage.dialect = $('#dialect').val();
   localStorage.dialect_other = $('#dialect_other').val();
