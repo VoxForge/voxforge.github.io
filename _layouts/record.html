@@ -54,7 +54,7 @@
 
           </select>
 
-          <label style="display: inline;"  for="native_speaker">{{ page.native_speaker.label }}?</label>
+          <label style="display: inline;"  for="native_speaker">{{ page.native_speaker.label }}</label>
           <a href="#native_speaker_popupInfo" data-rel="popup" data-transition="pop" 
              class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
              title="{{ page.native_speaker.popup_text }}">
@@ -97,7 +97,6 @@
               <div data-role="popup" id="dialect_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
                 <p><a href="{{ page.dialect.popup_link }}" target="_blank">{{ page.dialect.label }}</a>: {{ page.dialect.popup_text }}</p>
               </div>
-
               <select id="dialect">
                 <option selected value="Unknown">Please Select</option>
                 {% for region in page.dialect.selection %}
@@ -106,54 +105,37 @@
                     <option value="{{ dialect }}">{{ dialect }}</option>
                   {% endfor %}
                 {% endfor %}
- 
-              </select>
-
-              <!-- see: https://en.wikipedia.org/wiki/North_American_English_regional_phonology -->
+               </select>
               <div style="display: none;"  id="dialect_other_display">
                 <label style="display: inline;"  for="dialect_other">{{ page.dialect.other_label }}</label>
                 <input id="dialect_other" 
                    placeholder="{{ page.dialect.other_label }}" value="" 
                    type="text">
               </div>
+
               <div style="display: none;" id=sub_dialect_display>
-	              <label style="display: inline;"  for="sub_dialect">Sub Dialect:</label>
+	              <label style="display: inline;"  for="sub_dialect">{{ page.sub_dialect.label }}</label>
                 <a href="#sub_dialect_popupInfo" data-rel="popup" data-transition="pop" 
                    class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-                   title="(or regional phonology) looks at variations in the pronunciation of a spoken language">
+                   title="{{ page.popup_text.label }}">
                 </a>
                 <div data-role="popup" id="sub_dialect_popupInfo" 
                      class="ui-content" data-theme="a" style="max-width:350px;">
-                  <p><a href="https://en.wikipedia.org/wiki/North_American_English_regional_phonology" 
-                     target="_blank">Sub Dialect</a>: (or regional phonology) looks at variations in the pronunciation of a spoken language</p>
+                  <p><a href="{{ page.sub_dialect.popup_link }}" 
+                     target="_blank">{{ page.sub_dialect.label }}</a>: {{ page.sub_dialect.popup_text }}</p>
                 </div>
+
                 <select id="sub_dialect">
-                  <!-- firefox does not display selected correctly... Egde does... -->
-                  <option selected name="American English" value="Unknown">Please Select</option>
-
-                  <optgroup name="American English" label=" Western United States">
-                    <option value="Pacific Northwest">Pacific Northwest</option>
-                  </optgroup>
-                  <optgroup name="American English" label=" Greater New York City">
-                    <option value="Greater New York City">Greater New York City</option>
-                  </optgroup>
-                  <optgroup name="American English" label=" Northern and North-Central United States">
-                    <option value="North">North</option>
-                    <option value="New England">New England</option>
-                    <option value="North Central">North Central</option>
-                  </optgroup>
-                  <optgroup name="American English" label=" Southeastern United States">
-                    <option value="Midland">Midland</option>
-                    <option value="Mid-Atlantic">Mid-Atlantic</option>
-                    <option value="South">South</option>
-                    <option value="Marginal Southeast">Marginal Southeast</option>
-                  </optgroup>
-
-                  <optgroup name="Canadian English" label=" Canadian English">
-                    <option value="Atlantic">Atlantic</option>
-                    <option value="Central">Central</option>
-                    <option value="West">West</option>
-                  </optgroup>
+                   <!-- firefox does not display selected correctly... Egde does... -->
+                   <option selected name="American English" value="Unknown">{{ page.please_select }}</option>
+                   {% for dialect in page.sub_dialect.selection_dialect %}
+                     {% for region in page.sub_dialect.selection[dialect] %}
+                       <optgroup name="{{ dialect }}" label=" {{ region[0] }}">
+                       {% for dialect in region[1] %}
+                         <option value="{{ dialect }}">{{ dialect }}</option>
+                       {% endfor %}
+                     {% endfor %}
+                   {% endfor %}
                 </select>          
               </div><!--sub_dialect_display -->
           </div><!--dialect_display -->
