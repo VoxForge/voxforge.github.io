@@ -37,89 +37,83 @@
           </div>
       <button style="background: #cedfe8;" onclick="speakerCharacteristics()">{{ page.speaker_characteristics }}</button>
 	    <div style="display: none;" id="speaker_characteristics_display">
-          <label for="gender">{{ page.gender }}</label>
+          <label for="gender">{{ page.gender.label }}</label>
           <select selected name="gender" id="gender">
             <option value="Unknown">{{ page.please_select }}</option>
-            {% for item in page.gender_selection %}
+            {% for item in page.gender.selection %}
               <option value="{{ item }}">{{ item }}</option>    
             {% endfor %}
           </select>
 
-          <label for="age">{{ page.age_label }}</label>
+          <label for="age">{{ page.age.label }}</label>
           <select type="text" id="age"/></br>
             <option selected value="Unknown">{{ page.please_select }}</option>
-            {% for item in page.age_selection %}
+            {% for item in page.age.selection %}
               <option old_value="{{ item.old_value }}" value="{{ item.value }}">{{ item.value }}</option> 
             {% endfor %}
 
           </select>
 
-          <label style="display: inline;"  for="native_speaker">{{ page.first_language_label }}?</label>
+          <label style="display: inline;"  for="native_speaker">{{ page.native_speaker.label }}?</label>
           <a href="#native_speaker_popupInfo" data-rel="popup" data-transition="pop" 
              class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-             title="{{ page.native_speaker_popup_text }}">
+             title="{{ page.native_speaker.popup_text }}">
           </a>
           <div data-role="popup" id="native_speaker_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-            <p><a href="https://simple.wikipedia.org/wiki/Native_speaker" target="_blank">{{ page.native_speaker }}</a>: {{ page.native_speaker_popup_text }}</p>
+            <p><a href="{{ page.native_speaker.popup_link }}" target="_blank">{{ page.native_speaker.label }}</a>: {{ page.native_speaker.popup_text }}</p>
           </div>
           <select type="text" id="native_speaker"/></br>
             <option selected value="Unknown">{{ page.please_select }}</option>
-            {% for item in page.native_speaker_selection %}
-              <option value="{{ item }}">{{ item }}</option>    
+            {% for item in page.native_speaker.selection %}
+              <option value="{{ item }}">{{ item }}</option>
             {% endfor %}
           </select>
 
           <div style="display: none;"  id="first_language_display">
-            <label style="display: inline;"  for="first_language">{{ page.first_language_label }}</label>
+            <label style="display: inline;"  for="first_language">{{ page.first_language.label }}</label>
             <a href="#first_language_popupInfo" data-rel="popup" data-transition="pop" 
                class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-               title="{{ page.first_language_popup_text }}">
+               title="{{ page.first_language.popup_text }}">
             </a>
             <div data-role="popup" id="first_language_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-              <p><a href="https://en.wikipedia.org/wiki/First_language" target="_blank">{{ page.first_language }}</a>: {{ page.first_language_popup_text }}</p>
+              <p><a href="{{ page.first_language.popup_link }}" target="_blank">{{ page.first_language.label }}</a>: {{ page.first_language.popup_text }}</p>
             </div>
             <select type="text" id="first_language"/></br>
             </select>
             <div style="display: none;"  id="first_language_other_display">
-              <label style="display: inline;"  for="first_language_other">{{ page.first_language_other_label }}</label>
+              <label style="display: inline;"  for="first_language_other">{{ page.first_language.other_label }}</label>
               <input id="first_language_other" 
                  placeholder="First Language" value="" 
                  type="text">
             </div>
           </div><!--first_language_display-->
-          <!-- see https://en.wikipedia.org/wiki/Regional_accents_of_English
 
-                  ( https://en.wikipedia.org/wiki/List_of_dialects_of_the_English_language
-                   https://en.wikipedia.org/wiki/Non-native_pronunciations_of_English )
-          -->
           <div style="display: none;"  id="dialect_display">
-	            <label style="display: inline;"  for="dialect">{{ page.dialect_label }}</label>
+	            <label style="display: inline;"  for="dialect">{{ page.dialect.label }}</label>
               <a href="#dialect_popupInfo" data-rel="popup" data-transition="pop" 
                 class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-                title="{{ page.dialect_text }}">
+                title="{{ page.dialect.text }}">
               </a>
               <div data-role="popup" id="dialect_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-                <p><a href="https://en.wikipedia.org/wiki/Dialect" target="_blank">{{ page.dialect }}</a>: {{ page.dialect_text }}</p>
+                <p><a href="{{ page.dialect.popup_link }}" target="_blank">{{ page.dialect.label }}</a>: {{ page.dialect.popup_text }}</p>
               </div>
-
-
-
 
               <select id="dialect">
                 <option selected value="Unknown">Please Select</option>
-                {% for region in page.dialect_selection %}
+                {% for region in page.dialect.selection %}
                   <optgroup label=" {{ region[0] }}">
                   {% for dialect in region[1] %}
                     <option value="{{ dialect }}">{{ dialect }}</option>
                   {% endfor %}
                 {% endfor %}
+ 
               </select>
 
               <!-- see: https://en.wikipedia.org/wiki/North_American_English_regional_phonology -->
               <div style="display: none;"  id="dialect_other_display">
-                <label style="display: inline;"  for="dialect_other">Other Dialect:</label>
+                <label style="display: inline;"  for="dialect_other">{{ page.dialect.other_label }}</label>
                 <input id="dialect_other" 
-                   placeholder="Other Dialect" value="" 
+                   placeholder="{{ page.dialect.other_label }}" value="" 
                    type="text">
               </div>
               <div style="display: none;" id=sub_dialect_display>
