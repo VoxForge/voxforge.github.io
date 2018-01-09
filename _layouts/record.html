@@ -101,34 +101,18 @@
               <div data-role="popup" id="dialect_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
                 <p><a href="https://en.wikipedia.org/wiki/Dialect" target="_blank">{{ page.dialect }}</a>: {{ page.dialect_text }}</p>
               </div>
+
+
+
+
               <select id="dialect">
                 <option selected value="Unknown">Please Select</option>
-                <optgroup label=" British Isles">
-                  <option value="British English">England</option>
-                  <option value="Scottish English">Scotland</option>
-                  <option value="Welsh English">Wales</option>
-                  <option value="Irish English">Ireland</option>
-                </optgroup>
-                <option value="European English">European English</option>
-                <optgroup label=" North America">
-                  <option value="Canadian English">Canada</option>
-                  <option value="American English">United States</option>
-                  <option value="West Indies and Bermuda">West Indies and Bermuda</option>
-                </optgroup>
-                <optgroup label=" Southern hemisphere">
-                  <option value="Australian English">Australia</option>
-                  <option value="New Zealand English">New Zealand</option>
-                  <option value="South Atlantic English">South Atlantic</option> 
-                  <option value="South African English">South Africa</option>
-                </optgroup>
-                <optgroup label=" Asia">
-                  <option value="Indian English">India and South Asia</option>
-                  <option value="Philippine English">Phillipines</option>
-                  <option value="Hong Kong English">Hong Kong</option>   
-                  <option value="Malaysian English">Malaysia</option>
-                  <option value="Singapore English">Singapore</option>
-                </optgroup>
-                <option value="Other">Other</option>
+                {% for region in page.dialect_selection %}
+                  <optgroup label=" {{ region[0] }}">
+                  {% for dialect in region[1] %}
+                    <option value="{{ dialect }}">{{ dialect }}</option>
+                  {% endfor %}
+                {% endfor %}
               </select>
 
               <!-- see: https://en.wikipedia.org/wiki/North_American_English_regional_phonology -->

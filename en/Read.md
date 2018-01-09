@@ -19,7 +19,7 @@ gender_selection:
   - Other
 age_label: Age
 age_selection:
-  - { value: '&lt20', old_value: 'Youth' }
+  - { value: '<20', old_value: 'Youth' }
   - { value: '20 - 29', old_value: 'Adult' }
   - { value: '30 - 39', old_value: 'Adult' }
   - { value: '40 - 49', old_value: 'Adult' }
@@ -27,7 +27,7 @@ age_selection:
   - { value: '60 - 69', old_value: 'Adult' }
   - { value: '70 - 79', old_value: 'Senior' }
   - { value: '80 - 89', old_value: 'Senior' }
-  - { value: '&gt89', old_value: 'Senior' }
+  - { value: '>89', old_value: 'Senior' }
 language_id: EN
 native_speaker_label: Native Speaker
 native_speaker_popup_text: someone who speaks a language as his or her first language or mother tongue.
@@ -40,8 +40,13 @@ first_language_other_label: First Language - Other
 
 dialect_label: Pronunciation Dialect
 dialect_text: variety of a language that is a characteristic of a particular group of the language's speakers.
-
-
+dialect_selection:
+  - [British Isles, [British English, Scottish English, Welsh English, Irish English]]
+  - [European, [European English]]
+  - [North America, [Canadian English, American English, West Indies and Bermuda]]
+  - [Southern hemisphere, [Australian English, New Zealand English, South Atlantic English, South African English]]
+  - [Asia, [Indian English, Philippine English, Hong Kong English, Malaysian English,  Singapore English]]
+  - [Other, [Other]]
 please_select: Please Select
 ---
 
