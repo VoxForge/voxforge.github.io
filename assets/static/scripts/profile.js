@@ -147,7 +147,8 @@ for (var i=0;i<langscodes.length;i++){
    languages.getLanguageInfo(langscodes[i]).nativeName + ")" +  
    '</option>';
 }
-   option += '<option value="Other">Other</option>'; 
+// option += '<option value="Other">Other</option>'; 
+option += '<option value="' + other + '">' + other + '</option>'; 
 $('#first_language').append(option);
 
 // #############################################################################
