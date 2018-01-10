@@ -1,7 +1,7 @@
 ---
 layout: record
-title: Lire
-menu: Lire
+title: Read
+menu: Read
 weight: 2
 ref: read
 lang: fr
