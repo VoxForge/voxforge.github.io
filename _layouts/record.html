@@ -15,7 +15,7 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>{{ site.supportedLanguages[page.language_id] }}</h1>
+        <h1>VoxForge - {{ site.supportedLanguages[page.language_id] }}</h1>
       </header>
       <section class="top-display">
 
@@ -143,91 +143,74 @@
       </div>  <!--speaker_characteristics_display-->
 
     <!--#########################################################################-->
-        <button style="background: #cedfe8; " onclick="recordingInformation()">Recording Information:</button>
+        <button style="background: #cedfe8; " onclick="recordingInformation()">{{ page.recording_information }}</button>
 	      <div style="display: none;" id="recording_information_display">
-          <label for="microphone">Microphone Type:</label>
+          <label for="microphone">{{ page.microphone.label }}</label>
           <select type="text" id="microphone"/></br>
-            <option selected value="Unknown">Please Select</option>
-            <option value="Analog Microphone">Analog Microphone</option>
-            <option value="USB Microphone">USB Microphone</option>
-            <option value="Laptop Builtin Microphone">Laptop Builtin Microphone</option>
-            <option value="Smartphone">Smartphone</option>
-            <option value="Tablet">Tablet</option>
-            <option value="Voice Assistant">Voice Assistant (Echo, Google Home,...)</option>
-            <option value="Other">Other</option>
+            <option selected value="Unknown">{{ page.please_select }}</option>
+            {% for item in page.microphone.selection %}
+              <option value="{{ item }}">{{ item }}</option>    
+            {% endfor %}
+           </select>
+        <div style="display: none;"  id="microphone_other_display">
+          <label style="display: inline;"  for="microphone_other">Microphone Type:</label>
+          <input id="microphone_other" 
+             placeholder="{{ page.microphone.other_label }}" value="" 
+             type="text">
+        </div>
+
+        <label for="recording_location">{{ page.recording_location.label }}</label>
+        <select type="text" id="recording_location"/></br>
+          <option selected value="Unknown">{{ page.please_select }}</option>
+            {% for item in page.recording_location.selection %}
+              <option value="{{ item }}">{{ item }}</option>    
+            {% endfor %}
           </select>
-          <div style="display: none;"  id="microphone_other_display">
-            <label style="display: inline;"  for="microphone_other">Microphone Type:</label>
-            <input id="microphone_other" 
-               placeholder="Microphone Type" value="" 
+        <div style="display: none;"  id="recording_location_other_display">
+          <label style="display: inline;"  for="recording_location_other">{{ page.recording_location.other_label }}</label>
+          <input id="recording_location_other" 
+             placeholder="{{ page.recording_location.other_label }}" value="" 
+             type="text">
+        </div>
+
+        <label for="background_noise">{{ page.background_noise.label }}</label>
+        <select type="text" id="background_noise"/></br>
+          <option selected value="Unknown">{{ page.please_select }}</option>
+          {% for item in page.background_noise.selection %}
+            <option value="{{ item }}">{{ item }}</option>
+          {% endfor %}
+        </select>
+
+        <div id=background_noise_display>
+          <label for="noise_volume">{{ page.noise_volume.label }}</label>
+          <select type="text" id="noise_volume"/></br>
+            <option selected value="Unknown">{{ page.please_select }}</option>
+            {% for item in page.noise_volume.selection %}
+              <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+          </select>
+
+          <label for="noise_type">{{ page.noise_type.label }}</label>
+          <select type="text" id="noise_type"/></br>
+            <option selected value="Unknown">{{ page.please_select }}</option>
+            {% for item in page.noise_type.selection %}
+              <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+          </select>
+          <div style="display: none;"  id="noise_type_other_display">
+            <label style="display: inline;"  for="noise_type_other">{{ page.noise_volume.other_label }}</label>
+            <input id="noise_type_other" 
+               placeholder="{{ page.noise_volume.other_label }}" value="" 
                type="text">
           </div>
+         </div> <!-- background_noise_display -->
 
-          <label for="recording_location">Recording Location:</label>
-          <select type="text" id="recording_location"/></br>
-            <option selected value="Unknown">Please Select</option>
-            <option value="Inside">Inside</option>
-            <option value="Outside">Outside</option>
-            <option value="Vehicle">Vehicle</option>
-            <option value="Other">Other</option>
-            </select>
-          <div style="display: none;"  id="recording_location_other_display">
-            <label style="display: inline;"  for="recording_location_other">Other Recording Location:</label>
-            <input id="recording_location_other" 
-               placeholder="Recording Location" value="" 
-               type="text">
-          </div>
-
-          <label for="background_noise">Is There Background Noise?:</label>
-          <select type="text" id="background_noise"/></br>
-            <option selected value="Unknown">Please Select</option>
-            <option value="No">No</option>
-            <option value="Yes">Yes</option>
-          </select>
-
-          <div id=background_noise_display>
-            <label for="noise_volume">Noise Volume:</label>
-            <select type="text" id="noise_volume"/></br>
-              <option selected value="Unknown">Please Select</option>
-              <option value="Low - constant">Low - constant</option>
-              <option value="Low - intermitent">Low - intermitent</option>
-              <option value="Moderate - constant">Moderate - constant</option>
-              <option value="Moderate - intermitent">Moderate - intermitent</option>
-              <option value="Loud - constant">Loud - constant</option>
-              <option value="Loud - intermitent">Loud - intermitent</option>
-            </select>
-
-            <label for="noise_type">Noise Type:</label>
-            <select type="text" id="noise_type"/></br>
-              <option selected value="Unknown">Please Select</option>
-              <option value="Crowd">Crowd</option>
-              <option value="Electrical Equipment">Electrical Equipment</option>
-              <option value="Echos">Echos</option>
-              <option value="Fan">Fan</option>
-              <option value="Machinery">Machinery</option>
-              <option value="Nature">Nature</option>
-              <option value="Talking">Talking</option>
-              <option value="Music">Music</option>
-              <option value="Traffic">Traffic</option>
-              <option value="TV">T.V.</option>
-              <option value="Video">Video</option>
-              <option value="Weather">Weather Related (wind/rain...)</option>
-              <option value="Other">Other</option>
-            </select>
-            <div style="display: none;"  id="noise_type_other_display">
-              <label style="display: inline;"  for="noise_type_other">Describe the Type of Noise:</label>
-              <input id="noise_type_other" 
-                 placeholder="Other Noise" value="" 
-                 type="text">
-            </div>
-           </div> <!-- background_noise_display -->
-
-           <label for="license">License:</label>
+           <label for="license">{{ page.license.label }}</label>
            <select type="text" id="license"/></br>
-              <option selected value="CC0">Please Select</option>
-              <option value="CC0">CC0 - Creative Commons - No rights Reserved (default)</option>
-              <option value="CC_BY-SA">CC BY-SA - Creative Commons Attribution-ShareAlike</option>
-              <option value="GPLv3">GPLv3 - GNU General Public License</option>
+              <option selected value="CC0">{{ page.please_select }}</option>
+              {% for item in page.license.selection %}
+                <option value="{{ item }}">{{ item }}</option>
+              {% endfor %}
               </select>
 	       </div> <!-- recording_information_display -->
 	     </div><!-- readme -->
@@ -235,7 +218,7 @@
 
         </br>
 
-      <label for="noise_type">Number of prompts to read:</label>
+      <label for="noise_type">{{ page.num_prompts.label }}</label>
       <select type="number" id="max_num_prompts"/></br>
         <option selected value="10">10</option>
         <option value="15">15</option>
@@ -251,24 +234,22 @@
       <button style="display: none;" 
               id="directions-button-display" 
               style="background: #cedfe8;" 
-              onclick="directionInfo()">Instructions</button>
+              onclick="directionInfo()">{{ page.instructions.label }}</button>
       <div id="directions-display">
-        1. Press <b>Record</b> to start, saying only the sentence that appears in the box below.
+        {{ page.instructions.line1 }}
             <a href="#ms_windows_mic_popupInfo" data-rel="popup" data-transition="pop" 
                class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-               title="For the Windows Edge browser, click here to find out how to tell Windows that Edge can use your microphone.">
+               title="{{ page.instructions.edge.mouse_over_text }}">
             </a>
           <div data-role="popup" id="ms_windows_mic_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-            <p><a href="https://privacy.microsoft.com/en-us/windows-10-camera-and-privacy" target="_blank">Windows: How to give your Edge browser permission to use your microphone:</a>
-1. Go to Start, then select Settings > Privacy > Microphone.</br>
-2. Choose your preferred setting for Let apps use my microphone.</br>
-3. Under Choose apps that can use your microphone, turn on the individual setting for the Edge browser.</br>
+            <p><a href="{{ page.instructions.edge.popup.link }}" target="_blank">{{ page.instructions.edge.popup.title }}</a>
+              {{ page.instructions.edge.popup.text }}
             </p>
           </div>
         <br/>
-        2. Press <b>Stop</b> when completed. 
+        {{ page.instructions.line2 }}
         <br/>
-        3. When all the requested prompts are completed, you'll be prompted to <b>Upload</b> your recordings.
+        {{ page.instructions.line3 }}
       </div>
 
       <div class="progress-display">
@@ -304,6 +285,8 @@
 
     </div>
 <!--     <script src="static/scripts/jquery-3.2.1.js"></script> -->
+
+<!--     TODO minify and store on own server-->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="/assets/static/scripts/jquery.cookie.js"></script>
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.js"></script> 
