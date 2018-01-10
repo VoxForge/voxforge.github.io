@@ -16,7 +16,7 @@ redirect_from: "/home/"
 ---
 
 
-VoxForge collects high quality, lossless and uncompressed, speech audio for use with [Free] and [Open Source], [Speech Recognition Engines] in many spoken languages.
+VoxForge collects high quality, lossless, speech audio for use with [Free] and [Open Source], [Speech Recognition Engines] in many spoken languages.
 
 ## How Can You Help?
 
