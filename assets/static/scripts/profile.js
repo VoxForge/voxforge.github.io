@@ -47,17 +47,21 @@ Profile.prototype.div_function = function (independent_div, value, dependent_div
     already_executed_once = false;
   }
 }
+var article = document.getElementById('localized_variable');
+var yup = article.dataset.yes;
+var nope = article.dataset.no;
+var other = article.dataset.other;
 
-profile.div_function('#native_speaker', "No", '#first_language_display');
-profile.div_function('#native_speaker', "Yes", '#dialect_display');
-profile.div_function('#first_language', "Other", '#first_language_other_display');
+profile.div_function('#native_speaker', nope, '#first_language_display');
+profile.div_function('#native_speaker', yup, '#dialect_display');
+profile.div_function('#first_language', other, '#first_language_other_display');
 profile.div_function('#username', true, '#anonymous_instructions_display');
-profile.div_function('#microphone', "Other", '#microphone_other_display');
-profile.div_function('#dialect', "Other", '#dialect_other_display');
+profile.div_function('#microphone', other, '#microphone_other_display');
+profile.div_function('#dialect', other, '#dialect_other_display');
 function recordingInformation() {  $("#recording_information_display").toggle(); }
-profile.div_function('#recording_location', "Other", '#recording_location_other_display');
-profile.div_function('#background_noise', "Yes", '#background_noise_display');
-profile.div_function('#noise_type', "Other", '#noise_type_other_display');
+profile.div_function('#recording_location', other, '#recording_location_other_display');
+profile.div_function('#background_noise', yup, '#background_noise_display');
+profile.div_function('#noise_type', other, '#noise_type_other_display');
 
 var $select1 = $( '#dialect' );
 $( '#sub_dialect select' ).val("Unknown");

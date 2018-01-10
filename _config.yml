@@ -42,6 +42,7 @@ languageEnglish:
   en: English
   fr: French
   es: Spanish
+# TODO temporary until I figure out how to set up multiple languages in javascript app...
 supportedLanguages:
   EN: English
   FR: French

@@ -12,6 +12,12 @@ username_label: Username
 anonymous_submission: (leave blank to submit anonymously)
 profile_info: Profile Info
 
+# Yes and No must be in quotes, otherwise evaluates true/false
+localized_variable:
+  yup: "Yes"
+  nope: "No"
+  other: "Other"
+
 please_select: Please Select
 speaker_characteristics: Speaker Characteristics
 
@@ -167,7 +173,10 @@ instructions:
         2. Choose your preferred setting for Let apps use my microphone.</br>
         3. Under Choose apps that can use your microphone, turn on the individual setting for the Edge browser.</br>
 
-
+controls:
+  record: Record
+  stop: Stop
+  upload: Upload
 
 ---
 

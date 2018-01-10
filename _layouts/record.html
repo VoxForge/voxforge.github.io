@@ -13,11 +13,19 @@
   </head>
 
   <body>
+
     <div class="wrapper">
+      <section class="top-display">
       <header>
         <h1>VoxForge - {{ site.supportedLanguages[page.language_id] }}</h1>
       </header>
-      <section class="top-display">
+      <!-- https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes -->
+     <article
+        id="localized_variable"
+        data-yes="{{ page.localized_variable.yup }}"
+        data-no="{{ page.localized_variable.nope }}"
+        data-other="{{ page.localized_variable.other }}">
+     </article>
 
       <button style="display: none;" 
               id="profile-button-display" 
@@ -30,7 +38,7 @@
 
           <label for="username">{{ page.username_label }}</label>
           <input id="username" 
-                 placeholder={{ page.username_label }} value="" 
+                 placeholder="{{ page.username_label }}" value="" 
                  type="text">
           <div id=anonymous_instructions_display>
             <small>{{ page.anonymous_submission }}</small></br></br>
@@ -83,7 +91,7 @@
             <div style="display: none;"  id="first_language_other_display">
               <label style="display: inline;"  for="first_language_other">{{ page.first_language.other_label }}</label>
               <input id="first_language_other" 
-                 placeholder="First Language" value="" 
+                 placeholder="{{ page.first_language.label }}" value="" 
                  type="text">
             </div>
           </div><!--first_language_display-->
@@ -263,9 +271,9 @@
       <section class="main-controls">
         <canvas class="visualizer"></canvas>
         <div id="buttons">
-          <button class="record">Record</button>
-          <button class="stop">Stop</button>
-          <button class="upload">Upload</button>
+          <button class="record">{{ page.controls.record }}</button>
+          <button class="stop">{{ page.controls.stop }}</button>
+          <button class="upload">{{ page.controls.upload }}</button>
         </div>
       </section> <!-- main-controls -->
 
@@ -286,7 +294,9 @@
     </div>
 <!--     <script src="static/scripts/jquery-3.2.1.js"></script> -->
 
-<!--     TODO minify and store on own server-->
+<!--     TODO minify and store on own server
+         see: http://ixti.net/software/2012/12/30/unleash-mr-hyde-introduction-of-jekyll-assets.html
+-->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="/assets/static/scripts/jquery.cookie.js"></script>
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.js"></script> 
