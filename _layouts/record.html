@@ -206,14 +206,20 @@
             {% endfor %}
           </select>
           <div style="display: none;"  id="noise_type_other_display">
-            <label style="display: inline;"  for="noise_type_other">{{ page.noise_volume.other_label }}</label>
+            <label style="display: inline;"  for="noise_type_other">{{ page.noise_type.other_label }}</label>
             <input id="noise_type_other" 
-               placeholder="{{ page.noise_volume.other_label }}" value="" 
+               placeholder="{{ page.noise_type.other_label }}" value="" 
                type="text">
           </div>
          </div> <!-- background_noise_display -->
-
-           <label for="license">{{ page.license.label }}</label>
+           <label  style="display: inline;"  for="license">{{ page.license.label }}</label>
+           <a href="#license_popupInfo" data-rel="popup" data-transition="pop" 
+             class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
+             title="{{ page.license.popup.hover_text }}">
+           </a>
+           <div data-role="popup" id="license_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
+            <p><a href="{{ page.license.popup.link }}" target="_blank">{{ page.license.label }}</a>: {{ page.license.popup.text }}</p>
+           </div>
            <select type="text" id="license"/></br>
               <option selected value="CC0">{{ page.please_select }}</option>
               {% for item in page.license.selection %}

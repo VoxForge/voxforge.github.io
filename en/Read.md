@@ -150,8 +150,30 @@ noise_type:
 
 license:
   label: License
+  popup:
+    title: Creative Commons Licences
+    link: https://creativecommons.org/licenses/
+    hover_text: >
+      CC0 - Public Domain Dedication
+      CC BY - Attribution
+      CC BY-SA - Attribution-ShareAlike
+      GPLv3 - GNU General Public License
+    text:  > 
+      <b>CC0 - Public Domain Dedication</b> you dedicate this work to the
+      public domain by waiving all of your rights to the work worldwide
+      under copyright law</br>
+      <b>CC BY - Attribution</b>  This license lets others distribute, remix, 
+      tweak, and build upon your work, even commercially, as long as they 
+      credit you for the original creation</br>
+      <b>CC BY-SA - Attribution-ShareAlike </b>  This license lets others 
+      remix, tweak, and build upon your work even for commercial purposes, 
+      as long as they credit you and license their new creations under the 
+      identical terms.  </br>
+      <b>GPLv3 </b> similar to CC BY-SA, but made for software... used by
+      VoxForge 1.0 corpus.
   selection:
     - CC0 - Creative Commons - No rights Reserved (default)
+    - CC BY - Attribution
     - CC BY-SA - Creative Commons Attribution-ShareAlike
     - GPLv3 - GNU General Public License
 

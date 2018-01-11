@@ -127,12 +127,36 @@ noise_type:
     - Video
     - Weather Related (wind/rain...)
     - Autre
-  other_label: Type of Noise
+  other_label: Autre Type de bruit
 
 license:
   label: Licence
+  popup:
+    title: Creative Commons Licences
+    link: https://creativecommons.org/licenses/?lang=fr
+    hover_text: >
+      CC0 - Public Domain Dedication
+      CC BY - Attribution
+      CC BY-SA - Attribution-ShareAlike
+      GPLv3 - GNU General Public License
+    text:  > 
+      <b>CC0 - Pas de droit d’auteur</b> permet aux titulaires de droits de 
+      renoncer à tous leurs droits et de placer une œuvre dans le domaine 
+      public. </br>
+      <b>CC BY - Attribution</b>  Cette licence permet aux autres de distribuer,
+      remixer, arranger, et adapter votre œuvre, même à des fins commerciales, 
+      tant qu’on vous accorde le mérite de la création originale en citant 
+      votre nom.</br>
+      <b>CC BY-SA - Attribution - Partage dans les Mêmes Conditions</b>  Cette 
+      licence permet aux autres de remixer, arranger, et adapter votre œuvre, 
+      même à des fins commerciales, tant qu’on vous accorde le mérite en citant 
+      votre nom et qu’on diffuse les nouvelles créations selon des conditions 
+      identiques. </br>
+      <b>GPLv3 </b> similar to CC BY-SA, but made for software... used by
+      VoxForge 1.0 corpus.
   selection:
     - CC0 - Creative Commons - Pas de droit d’auteur (défaut)
+    - CC BY - Attribution
     - CC BY-SA - Attribution - Partage dans les Mêmes Conditions 
     - GPLv3 - GNU General Public License
 
