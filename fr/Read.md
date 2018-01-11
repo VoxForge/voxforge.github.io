@@ -2,10 +2,10 @@
 layout: record
 title: Read
 menu: Read
-weight: 2
 ref: read
 lang: fr
 permalink: /fr/read
+weight: 2
 
 username_label: Nom d'utilisateur
 anonymous_submission: (laisser vide pour soumettre anonymement)
@@ -167,7 +167,7 @@ instructions:
   label: Instructions
   line1: 1. Appuyez sur <b>Enregistrer</b> pour commencer, en disant seulement la phrase qui apparaît dans la boîte ci-dessous.
   line2: 2. Appuyez sur <b>Arrêter</b> lorsque vous avez terminé.
-  line3: 3. Lorsque toutes les invites demandées sont terminées, vous serez invité à <b>Télécharger</b> vos enregistrements.
+  line3: 3. Quand tous les enregistrements demandées sont completés, vous serez invité à les <b>Téléchargers</b>.
   edge:
     mouse_over_text: Pour le navigateur Microsoft Edge, cliquez ici pour voir comment indiquer à Windows comment Edge peut utiliser votre microphone.
     popup:

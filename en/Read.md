@@ -2,11 +2,11 @@
 layout: record
 title: Read
 menu: Read
-weight: 2
 ref: read
 lang: en
 permalink: /en/read
 redirect_from: /home/read
+weight: 2
 
 username_label: Username
 anonymous_submission: (leave blank to submit anonymously)
