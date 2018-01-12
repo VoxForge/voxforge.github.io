@@ -1,14 +1,27 @@
-// testing with Chrome: requires https; can bypass this with:
+/*
+Many thanks to Peter Warden for the open-speech-recording app
+(https://github.com/petewarden/open-speech-recording) that was used
+as a starting point.
+
+Copyright 2018 VoxForge
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+// for testing with Chrome: requires https; can bypass this with:
 // google-chrome --user-data-dir=~/temp --unsafely-treat-insecure-origin-as-secure="http://flask.voxforge1.org"
 // need Google Chrome version > 58 for wavesurfer to work correctly
-
-
-// fork getUserMedia for multiple browser versions, for the future
-// when more browsers support MediaRecorder
-//navigator.getUserMedia = ( navigator.getUserMedia ||
-//                       navigator.webkitGetUserMedia ||
-//                       navigator.mozGetUserMedia ||
-//                       navigator.msGetUserMedia);
 
 // set up basic variables for app
 var record = document.querySelector('.record');
@@ -39,15 +52,10 @@ var wavesurfer;
 var timeout_obj;
 
 // disable stop button while not recording
-
 stop.disabled = true;
 upload.disabled = true;
 
-// visualiser setup - create web audio api context and canvas
-
 var audioCtx = new (window.AudioContext || webkitAudioContext)();
-//var canvasCtx = canvas.getContext("2d");
-//var analyser = audioCtx.createAnalyser();
 
 // #############################################################################
 //main block for doing the audio recording
@@ -63,7 +71,6 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
   navigator.mediaDevices.getUserMedia = function(constraints) {
 
     // First get ahold of the legacy getUserMedia, if present
-    //var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
     var getUserMedia = ( navigator.getUserMedia ||
                          navigator.webkitGetUserMedia ||
                          navigator.mozGetUserMedia ||
@@ -85,24 +92,10 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
   }
 }
 
-console.log('getUserMedia supported.');
-
-//   var constraints = { audio: true };
-//  var onSuccess = function(stream) {
-//    setupAudioNodes(stream);
-//    record.onclick = function() { recordClicked() }
-//    stop.onclick = function() { stopClicked()  }
-//    upload.onclick = function() { saveRecordings() }
-//  }
-//  var onError = function(err) {
-//    window.alert("Could not get audio input - reason: " + err);
-//    console.log('The following error occured: ' + err);
-//  }
-//  navigator.getUserMedia( constraints, onSuccess, onError);
-
 // see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
+    console.log('getUserMedia supported.');
     setupAudioNodes(stream);
     record.onclick = function() { recordClicked() }
     stop.onclick = function() { stopClicked()  }
@@ -112,22 +105,12 @@ navigator.mediaDevices.getUserMedia(constraints)
     window.alert("Could not get audio input - reason: " + err);
     console.log('The following error occured: ' + err);
   });
-//} else {
-//  console.log('getUserMedia not supported on your browser!');
-//  document.querySelector('.info-display').innerText = 
-//	'Your device does not support the HTML5 API needed to record audio (this is a known problem on iOS)';  
-//  document.querySelector('.prompt_id').innerText = "";
-//}
-/*
-* AudioDestinationNode has no output (since it is the output, no more 
-* AudioNodes can be linked after it in the audio graph) and one input
-*/
+
 function setupAudioNodes(stream) {
   microphone = audioCtx.createMediaStreamSource(stream);
   microphoneLevel = audioCtx.createGain();
   analyser = audioCtx.createAnalyser();
   processor = audioCtx.createScriptProcessor(undefined , 2, 2);
-  //mediaStreamOutput = audioCtx.createMediaStreamDestination();
   mediaStreamOutput = audioCtx.destination;
 
   microphone.channelCount = 1;
@@ -138,6 +121,7 @@ function setupAudioNodes(stream) {
   microphone.connect(microphoneLevel); 
 
   profile.sample_rate = audioCtx.sampleRate;
+  // TODO need to validate this or at least get it from audio context somehow
   profile.sample_rate_format = "32 bit float";
   profile.channels = mediaStreamOutput.channelCount;
 
@@ -211,22 +195,21 @@ function stopClicked() {
   }, 400);
 }
 
+// reply from worker after encoding completed
 worker.onmessage = function(event) { 
   saveWorkerRecording(event.data.blob); 
-}; // reply from worker after encoding completed
+}; 
 
 // run after worker completes encoding
 function saveWorkerRecording(blob) {
   var prompt_sentence = document.querySelector('.info-display').innerText;
   var prompt_id = document.querySelector('.prompt_id').innerText;
   // prompt_sentence already has leading and trailing space???
-  //var clipName = prompt_id + " " + prompt_sentence;
   var clipName = prompt_id + prompt_sentence;
 
   var clipContainer = document.createElement('article');
   var clipLabel = document.createElement('prompt');
   var audio = document.createElement('audio');
-  // needs to be a div so that mouse controls work properly
   var waveform = document.createElement('div');
   var deleteButton = document.createElement('button');
  
@@ -381,7 +364,7 @@ function saveRecordings() {
           // must be called here because ajax is asynchronous
           // Q1: why doesnt allDone get called many times as the call stack unrolls???
           // is it becuase status no longer 200???
-          allDone(audioArray);
+          createZipFile(audioArray);
         }
       }
     };
@@ -392,7 +375,7 @@ function saveRecordings() {
   audioArrayLoop();
 }
 
-function allDone(audioArray) {
+function createZipFile(audioArray) {
   zip_worker.onmessage = zipworkerDone;
 
   var readme_blob = new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"});
@@ -413,11 +396,13 @@ function allDone(audioArray) {
   function zipworkerDone(event) { 
     if (event.data.status === "transferComplete") {
       console.log('message from worker: Upload to VoxForge server completed');
+      alert("Upload to VoxForge server completed.");
     } else if (event.data.status === "savedInBrowserStorage") {
       console.log('message from worker: problem with Internet connection, submission saved in browser storage');
       alert("No Internet connection, submission saved in browser storage.  \nIt will be uploaded next time you make a submission when Internet is up.");
     } else if (event.data.status === "foundSavedFailedUploads") {
       console.log('message from worker: found submissions saved to browser, uploading them...');
+      alert("Found saved submission(s), uploading to VoxForge server.");
     } else {
       console.log('message from worker: transfer error: ' + event.data.status);
     }
@@ -433,14 +418,8 @@ function allDone(audioArray) {
   console.log('===done allDone===');
 }
 
-
-//TODO 1. test ms edge offline save when no internet (on laptop?)
-//2. re-test changes with Android 4.4.2
-
-
 // #########################################################################
-
-// copied from https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser
+// from https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser
 function visualize() {
   var canvasCtx = canvas.getContext("2d");
 

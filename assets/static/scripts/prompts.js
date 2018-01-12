@@ -1,15 +1,35 @@
+/*
+    Copyright 2018 VoxForge
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 // #############################################################################
 
-function Prompts (filename) {
+function Prompts (language) {
+  this.language = language;
   this.max_num_prompts=3; // default maximum number of prompts
   this.list = []; // list of prompts to be read by user
   this.index=0; // pointer to position in prompt list array
   this.prompt_count = 0; // number of prompts read
   this.prompts_recorded = []; // list of prompts that have been recorded
-  this.filename = filename;
+
+  this.filename = 'PromptList_' + language + '.txt';
 }
 
-var prompts = new Prompts('PromptList_en.txt');
+//var prompts = new Prompts('PromptList_en.txt');
+var prompts = new Prompts(language);
 
 // see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
 // Note: this is a synchronous request...
@@ -22,7 +42,8 @@ jQuery.get('/assets/static/prompts/' + prompts.filename, function(data) {
 
     var sentences = data.split('\n');
     for (var i = 0; i < sentences.length; i++) {
-      var prompt_id = $('#language').val() + pad(i,4);
+//      var prompt_id = $('#language').val() + pad(i,4);
+      var prompt_id = prompts.language + pad(i,4);
       prompts.list[i] = prompt_id  + " " + sentences[i];
     }
 
