@@ -393,16 +393,29 @@ function createZipFile(audioArray) {
     audio: audioArray,
   });
 
+
+  function showUploadStatus(message) {
+    $('#upload_status_display').show();
+    $('#upload_status_display').text(message);
+    $('#upload_status_display').css({ 'color': 'green', 'font-size': '50%' });
+    setTimeout( function () {
+      //document.querySelector('.upload_status_display').innerText = "";
+      $('#upload_status_display').hide();
+      return;
+    }, 3000);
+  }
+
+  // this is a worker callback inside the worker context
   function zipworkerDone(event) { 
     if (event.data.status === "transferComplete") {
       console.log('message from worker: Upload to VoxForge server completed');
-      alert("Upload to VoxForge server completed.");
+      showUploadStatus("Upload successfull!");
     } else if (event.data.status === "savedInBrowserStorage") {
       console.log('message from worker: problem with Internet connection, submission saved in browser storage');
       alert("No Internet connection, submission saved in browser storage.  \nIt will be uploaded next time you make a submission when Internet is up.");
     } else if (event.data.status === "foundSavedFailedUploads") {
       console.log('message from worker: found submissions saved to browser, uploading them...');
-      alert("Found saved submission(s), uploading to VoxForge server.");
+      showUploadStatus("Found saved submission(s), uploading to VoxForge server.");
     } else {
       console.log('message from worker: transfer error: ' + event.data.status);
     }
