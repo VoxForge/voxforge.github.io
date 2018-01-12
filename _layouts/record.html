@@ -21,11 +21,12 @@
       </header>
       <!-- https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes -->
      <article
-        id="localized_variable"
-        data-yes="{{ page.localized_variable.yup }}"
-        data-no="{{ page.localized_variable.nope }}"
+        id="language_specific_variables"
+        data-yes="{{ page.localized_variable.lv_yes }}"
+        data-no="{{ page.localized_variable.lv_no }}"
         data-other="{{ page.localized_variable.other }}"
-        data-language="{{ page.lang }}" >
+        data-language="{{ page.lang }}" 
+        data-prompt_list_contains_id="{{ page.prompt_list_contains_id }}" >
      </article>
 
       <button style="display: none;" 

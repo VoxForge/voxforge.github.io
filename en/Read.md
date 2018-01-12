@@ -4,6 +4,7 @@ title: Read
 menu: Read
 ref: read
 lang: en
+prompt_list_contains_id: false
 permalink: /en/read
 redirect_from: /home/read
 weight: 2
@@ -14,8 +15,8 @@ profile_info: Profile Info
 
 # Yes and No must be in quotes, otherwise evaluates true/false
 localized_variable:
-  yup: "Yes"
-  nope: "No"
+  lv_yes: "Yes"
+  lv_no: "No"
   other: "Other"
 
 please_select: Please Select

@@ -4,6 +4,7 @@ title: Read
 menu: Read
 ref: read
 lang: fr
+prompt_list_contains_id: true
 permalink: /fr/read
 weight: 2
 

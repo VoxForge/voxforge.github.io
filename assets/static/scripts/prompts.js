@@ -42,9 +42,13 @@ jQuery.get('/assets/static/prompts/' + prompts.filename, function(data) {
 
     var sentences = data.split('\n');
     for (var i = 0; i < sentences.length; i++) {
-//      var prompt_id = $('#language').val() + pad(i,4);
-      var prompt_id = prompts.language + pad(i,4);
-      prompts.list[i] = prompt_id  + " " + sentences[i];
+      if (prompt_list_contains_id)
+      { // first word of prompt line is the prompt ID
+        prompts.list[i] = sentences[i];
+      } else {
+        var prompt_id = prompts.language + pad(i,4);
+        prompts.list[i] = prompt_id  + " " + sentences[i];
+      }
     }
 
     prompts.index = Math.floor((Math.random() * prompts.list.length) + 1);

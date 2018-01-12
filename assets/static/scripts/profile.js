@@ -53,6 +53,7 @@ Profile.prototype.div_function = function (independent_div, value, dependent_div
     test( $(independent_div).val()===value );
   }
 
+  // TODO this is always executed because already_executed_once is always false  !!!!!!
   if ( !already_executed_once ) 
   {
     $(independent_div).change(function () { 
@@ -61,21 +62,25 @@ Profile.prototype.div_function = function (independent_div, value, dependent_div
     already_executed_once = false;
   }
 }
-var article = document.getElementById('localized_variable');
-var yup = article.dataset.yes;
-var nope = article.dataset.no;
+
+// These are language specific variables on the Jekyll Mardown page that
+// are needed for the javascript apps
+var article = document.getElementById('language_specific_variables');
+var dataset_yes = article.dataset.yes;
+var dataset_no = article.dataset.no;
 var other = article.dataset.other;
 var language = article.dataset.language;
+var prompt_list_contains_id = article.dataset.prompt_list_contains_id;
 
-profile.div_function('#native_speaker', nope, '#first_language_display');
-profile.div_function('#native_speaker', yup, '#dialect_display');
+profile.div_function('#native_speaker', dataset_no, '#first_language_display');
+profile.div_function('#native_speaker', dataset_yes, '#dialect_display');
 profile.div_function('#first_language', other, '#first_language_other_display');
 profile.div_function('#username', true, '#anonymous_instructions_display');
 profile.div_function('#microphone', other, '#microphone_other_display');
 profile.div_function('#dialect', other, '#dialect_other_display');
 function recordingInformation() {  $("#recording_information_display").toggle(); }
 profile.div_function('#recording_location', other, '#recording_location_other_display');
-profile.div_function('#background_noise', yup, '#background_noise_display');
+profile.div_function('#background_noise', dataset_yes, '#background_noise_display');
 profile.div_function('#noise_type', other, '#noise_type_other_display');
 
 var $select1 = $( '#dialect' );
@@ -107,7 +112,6 @@ if (typeof localStorage.username !== 'undefined')
   //$('#username').val( $.cookie('username') );
   $('#gender').val( localStorage.gender );
   $('#age').val( localStorage.age );
-  $('#language').val( localStorage.language );
   $('#native_speaker').val( localStorage.native_speaker );
   if ( $('#native_speaker').val()==="Yes" )
   {
@@ -178,16 +182,14 @@ Profile.prototype.toArray = function () {
   }
   readme[i++] = '\nSpeaker Characteristics: \n\n';
   readme[i++] = 'Gender: ' +  $('#gender').val() + '\n';
-// !!!!!!
-  //readme[i++] = 'Age Range: ' +  $('#age').val() + '\n';
   var $old_value = $('#age').find(':selected').attr('old_value');
   if ($old_value) {
     readme[i++] = 'Age Range: ' +  $old_value + '\n';
   } else {
     readme[i++] = 'Age Range: ' +  $('#age').val() + '\n';
   }
-// !!!!!!
-  readme[i++] = 'Language: ' +  $('#language').val() + '\n';
+//  readme[i++] = 'Language: ' +  $('#language').val() + '\n';
+  readme[i++] = 'Language: ' +  language + '\n';
   readme[i++] = 'Native Speaker: ' +  $('#native_speaker').val() + '\n';
   if ($('#native_speaker').val() !== "No") {
     if ($('#dialect').val() !== "Other") {
@@ -255,7 +257,8 @@ Profile.prototype.toJsonString = function () {
   // Speaker Characteristics: 
   profile_hash["gender"] = $("#gender").val();
   profile_hash["age"] = $("#age").val();
-  profile_hash["language"] = $("#language").val();
+  //profile_hash["language"] = $("#language").val();
+  profile_hash["language"] = language;
   profile_hash["native_speaker"] = $("#native_speaker").val();
 
   if ($("#native_speaker").val() !== "No") {
@@ -320,7 +323,8 @@ Profile.prototype.addProfile2Cookie = function () {
 
   localStorage.gender = $('#gender').val();
   localStorage.age = $('#age').val();
-  localStorage.language = $('#language').val();
+  //localStorage.language = $('#language').val();
+  localStorage.language = language;
   localStorage.native_speaker = $('#native_speaker').val();
   if ( $('#native_speaker').val() === "Yes") 
   {
@@ -384,7 +388,7 @@ Profile.prototype.getTempSubmissionName = function () {
   }
 
   var username = $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
-  var language = $('#language').val();
+  //var language = $('#language').val();
   var d = new Date();
   var date = d.getFullYear().toString() + (d.getMonth() + 1).toString() + d.getDate().toString();
   var result = language + '-' + username + '-' + date + '-' + uuidv4();
