@@ -15,29 +15,53 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+* Class declaration
+*/
 function Profile () {}
+
+/**
+* Instantiate Profile class
+*/
 var profile = new Profile();
 
+/**
+* Set up toggles for profile and direction buttons
+*/
 function profileInfo() {  $("#profile-display").toggle(); }
+function speakerCharacteristics() {  $("#speaker_characteristics_display").toggle(); }
 function directionInfo() {  $("#directions-display").toggle(); }
+/**
+* hide buttons after user makes a submission.  No need to show user information
+* he just entered, and info is still accessible with profile button
+*/
 if ( $.cookie('all_done') ) 
 {
   $("#profile-display").hide();
   $("#profile-button-display").show();
 }
 
-function speakerCharacteristics() {  $("#speaker_characteristics_display").toggle(); }
-/*
-* see https://stackoverflow.com/questions/10570904/use-jquery-to-change-a-second-select-list-based-on-the-first-select-list-option
-* Store all #subdialect's options in a variable, filter them according 
-* to the value of the chosen option in #dialect, and set them using 
-* .html() in #subdialect:
+/**
+* These are language specific variables on the Jekyll Mardown page that
+* are needed for the javascript apps
 */
-// see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
+var article = document.getElementById('language_specific_variables');
+var dataset_yes = article.dataset.yes;
+var dataset_no = article.dataset.no;
+var other = article.dataset.other;
+var language = article.dataset.language;
+var prompt_list_contains_id = article.dataset.prompt_list_contains_id;
 
+/**
+* div_function abstracts some repetitive code for making the view of one div
+* dependent on the value of a select field.
+*
+* The value of contents of the independent_div is compared to the passed in 
+* value, and if they are equal, then the dependent_div is displayed 
+*
+* see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
+*/
 Profile.prototype.div_function = function (independent_div, value, dependent_div) {
-  var already_executed_once = false;
-
   function test ( boolean_result ) {
     if( boolean_result ){
       $(dependent_div).show();
@@ -46,32 +70,30 @@ Profile.prototype.div_function = function (independent_div, value, dependent_div
     }
   }
 
+  var already_executed_once = false;
   if ( typeof(value) === "boolean" && value === true ) { 
     // show if false; hide if true
     test( ! $(independent_div).val() );
   } else {
     test( $(independent_div).val()===value );
   }
-
-  // TODO this is always executed because already_executed_once is always false  !!!!!!
+  // TODO !!!!!! debug this conditional to make sure it is doing what it is supposed to
   if ( !already_executed_once ) 
   {
     $(independent_div).change(function () { 
         profile.div_function(independent_div, value, dependent_div); 
     } );
-    already_executed_once = false;
+    //already_executed_once = false;
+    already_executed_once = true; // TODO need to test this to make sure it 
+                                  // works correctly, because it has been working 
+                                  // ok even though it was incorrectly set????
   }
 }
 
-// These are language specific variables on the Jekyll Mardown page that
-// are needed for the javascript apps
-var article = document.getElementById('language_specific_variables');
-var dataset_yes = article.dataset.yes;
-var dataset_no = article.dataset.no;
-var other = article.dataset.other;
-var language = article.dataset.language;
-var prompt_list_contains_id = article.dataset.prompt_list_contains_id;
-
+/**
+* the value of contents of the independent_div is compared to the passed in 
+* value, and if they are equal, then the dependent_div is displayed 
+*/
 profile.div_function('#native_speaker', dataset_no, '#first_language_display');
 profile.div_function('#native_speaker', dataset_yes, '#dialect_display');
 profile.div_function('#first_language', other, '#first_language_other_display');
@@ -83,6 +105,17 @@ profile.div_function('#recording_location', other, '#recording_location_other_di
 profile.div_function('#background_noise', dataset_yes, '#background_noise_display');
 profile.div_function('#noise_type', other, '#noise_type_other_display');
 
+/**
+* This function changes the contents of a second select list based on the
+* contents of a first select list.  This is used, for example, to set the 
+* contents of the sub-dialect selection list based on the value the dialect
+* selection list.
+*
+* see https://stackoverflow.com/questions/10570904/use-jquery-to-change-a-second-select-list-based-on-the-first-select-list-option
+* Store all #subdialect's options in a variable, filter them according 
+* to the value of the chosen option in #dialect, and set them using 
+* .html() in #subdialect:
+*/
 var $select1 = $( '#dialect' );
 $( '#sub_dialect select' ).val("Unknown");
 var $select2 = $( '#sub_dialect' );
@@ -104,7 +137,14 @@ $select1.on( 'change', function() {
     $select2.prop('defaultSelected');
 } ).trigger( 'change' );
 
-// get cookie
+/**
+* refresh displayed user information with info stored in offline storage.
+* Note: not using cookies... no need to pass this info back to the server
+* with each call (which is what cookies do...)
+*
+* assumes that if the username contains something, then it make ssense to 
+* load all the remaining fields from offline storage.
+*/
 if (typeof localStorage.username !== 'undefined')
 {
   //Speaker Characteristics
@@ -157,21 +197,28 @@ if (typeof localStorage.username !== 'undefined')
   $('#license').val( localStorage.license );
 }
 
-// languages.getAllLanguageCode() return an array of all ISO 639-1 language code supported
-var langscodes = languages.getAllLanguageCode();
-var option = '';
+/**
+* fill other languages select list with stringified array the names of most 
+* ISO 639-1 language names
+*/
+var langscodes = languages.getAllLanguageCode(); // array of language codes
+var option = ''; // string
 for (var i=0;i<langscodes.length;i++){
    option += '<option value="'+ langscodes[i] + '">' +
    languages.getLanguageInfo(langscodes[i]).name + " (" +
    languages.getLanguageInfo(langscodes[i]).nativeName + ")" +  
    '</option>';
 }
-// option += '<option value="Other">Other</option>'; 
 option += '<option value="' + other + '">' + other + '</option>'; 
 $('#first_language').append(option);
 
-// #############################################################################
+/**
+* ### METHODS ##############################################
+*/
 
+/**
+* Convert profile object to array
+*/
 Profile.prototype.toArray = function () {
   var i=0;
   var readme = [];
@@ -188,7 +235,6 @@ Profile.prototype.toArray = function () {
   } else {
     readme[i++] = 'Age Range: ' +  $('#age').val() + '\n';
   }
-//  readme[i++] = 'Language: ' +  $('#language').val() + '\n';
   readme[i++] = 'Language: ' +  language + '\n';
   readme[i++] = 'Native Speaker: ' +  $('#native_speaker').val() + '\n';
   if ($('#native_speaker').val() !== "No") {
@@ -247,6 +293,9 @@ Profile.prototype.toArray = function () {
   return readme;
 };
 
+/**
+* Convert profile object to JSON string
+*/
 Profile.prototype.toJsonString = function () {
   var profile_hash = {};
   if ( $("#username").val() ) {
@@ -257,7 +306,6 @@ Profile.prototype.toJsonString = function () {
   // Speaker Characteristics: 
   profile_hash["gender"] = $("#gender").val();
   profile_hash["age"] = $("#age").val();
-  //profile_hash["language"] = $("#language").val();
   profile_hash["language"] = language;
   profile_hash["native_speaker"] = $("#native_speaker").val();
 
@@ -313,10 +361,12 @@ Profile.prototype.toJsonString = function () {
   return JSON.stringify(profile_hash,null,"  ");
 };
 
-/* 
+/**
+* add profile information to local storage
+*
 * see: https://www.electrictoolbox.com/jquery-cookies/ 
 */
-Profile.prototype.addProfile2Cookie = function () {
+Profile.prototype.addProfile2LocalStorage = function () {
   //Speaker Characteristics:
   $.cookie('username', $('#username').val());
   localStorage.username = $('#username').val();
@@ -374,6 +424,11 @@ Profile.prototype.addProfile2Cookie = function () {
   localStorage.license = $('#license').val();
 };
 
+/**
+* add profile information to local storage
+*
+* see: https://www.electrictoolbox.com/jquery-cookies/ 
+*/
 Profile.prototype.getUserName = function () {
   return $('#username').val();
 }

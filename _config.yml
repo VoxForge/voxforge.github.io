@@ -6,7 +6,6 @@
 # 'jekyll serve'. If you change this file, please restart the server process.
 
 exclude: [fix_md_script]
-highlighter: none
 # Site settings
 title:
   bg: VoxForge - Bulgarian

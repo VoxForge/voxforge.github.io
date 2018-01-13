@@ -362,8 +362,8 @@ function saveRecordings() {
           audioArrayLoop();
         } else {
           // must be called here because ajax is asynchronous
-          // Q1: why doesnt allDone get called many times as the call stack unrolls???
-          // is it becuase status no longer 200???
+          // Q1: why doesnt createZipFile get called many times as the call stack unrolls???
+          // ... because status no longer status == 200???
           createZipFile(audioArray);
         }
       }
@@ -375,6 +375,9 @@ function saveRecordings() {
   audioArrayLoop();
 }
 
+/**
+* call worker thread to create zip file and upload to VoxForge server
+*/
 function createZipFile(audioArray) {
   zip_worker.onmessage = zipworkerDone;
 
@@ -394,6 +397,9 @@ function createZipFile(audioArray) {
   });
 
 
+  /** 
+  * display upload to VoxForge server status to user
+  */
   function showUploadStatus(message) {
     $('#upload_status_display').show();
     $('#upload_status_display').text(message);
@@ -405,34 +411,40 @@ function createZipFile(audioArray) {
     }, 3000);
   }
 
-  // this is a worker callback inside the worker context
+  /**
+  * receives replies from work thread and displays status accordingly
+  *
+  * this is a worker callback inside the worker context
+  */
   function zipworkerDone(event) { 
     if (event.data.status === "transferComplete") {
       console.log('message from worker: Upload to VoxForge server completed');
       showUploadStatus("Upload successfull!");
     } else if (event.data.status === "savedInBrowserStorage") {
       console.log('message from worker: problem with Internet connection, submission saved in browser storage');
-      alert("No Internet connection, submission saved in browser storage.  \nIt will be uploaded next time you make a submission when Internet is up.");
+      alert("No Internet connection, submission saved in browser storage.  \nIt will be uploaded next time you make a submission with Internet up.");
     } else if (event.data.status === "foundSavedFailedUploads") {
       console.log('message from worker: found submissions saved to browser, uploading them...');
       showUploadStatus("Found saved submission(s), uploading to VoxForge server.");
     } else {
       console.log('message from worker: transfer error: ' + event.data.status);
     }
-
-    // location.reload(true); 
-  }; // reply from worker after encoding completed
+  };
 
   document.cookie = 'all_done=true; path=/';
-  profile.addProfile2Cookie();
+  profile.addProfile2LocalStorage();
   upload.disabled = true;
   prompts.resetIndices();
   $( '.sound-clips' ).empty();
   console.log('===done allDone===');
 }
 
-// #########################################################################
-// from https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser
+/**
+* creates an audio analyzer so can display graph that approximates a vuew meter
+* so that user knows that app can hear his voice.
+* 
+* see https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser
+*/
 function visualize() {
   var canvasCtx = canvas.getContext("2d");
 
