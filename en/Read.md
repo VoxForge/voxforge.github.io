@@ -109,8 +109,8 @@ microphone:
 recording_location:
   label: Recording Location
   selection:
-    - Inside
-    - Outside
+    - Indoors
+    - Outdoors
     - Vehicle
     - Other
   other_label: Other Recording Location
