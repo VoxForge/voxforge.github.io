@@ -50,8 +50,8 @@ if ( $.cookie('all_done') )
 var article = document.getElementById('language_specific_variables');
 var dataset_yes = article.dataset.yes;
 var dataset_no = article.dataset.no;
-var other = article.dataset.other;
-var language = article.dataset.language;
+var dataset_other = article.dataset.other;
+var dataset_language = article.dataset.language;
 var prompt_list_contains_id = article.dataset.prompt_list_contains_id;
 
 /**
@@ -97,14 +97,13 @@ Profile.showDivBasedonValue = function (independent_div, value, dependent_div, h
 
 Profile.showDivBasedonValue('#native_speaker', dataset_no, '#first_language_display', false);
 Profile.showDivBasedonValue('#native_speaker', dataset_yes, '#dialect_display', false);
-
-Profile.showDivBasedonValue('#first_language', other, '#first_language_other_display', false);
+Profile.showDivBasedonValue('#first_language', dataset_other, '#first_language_other_display', false);
 Profile.showDivBasedonValue('#username', true, '#anonymous_instructions_display', false);
-Profile.showDivBasedonValue('#microphone', other, '#microphone_other_display', false);
-Profile.showDivBasedonValue('#dialect', other, '#dialect_other_display', false);
-Profile.showDivBasedonValue('#recording_location', other, '#recording_location_other_display', false);
+Profile.showDivBasedonValue('#microphone', dataset_other, '#microphone_other_display', false);
+Profile.showDivBasedonValue('#dialect', dataset_other, '#dialect_other_display', false);
+Profile.showDivBasedonValue('#recording_location', dataset_other, '#recording_location_other_display', false);
 Profile.showDivBasedonValue('#background_noise', dataset_yes, '#background_noise_display', false);
-Profile.showDivBasedonValue('#noise_type', other, '#noise_type_other_display', false);
+Profile.showDivBasedonValue('#noise_type', dataset_other, '#noise_type_other_display', false);
 
 /**
 * This function changes the contents of a second select list based on the
@@ -146,57 +145,10 @@ $select1.on( 'change', function() {
 * assumes that if the username contains something, then it make ssense to 
 * load all the remaining fields from offline storage.
 */
-if (typeof localStorage.username !== 'undefined')
-{
-  //Speaker Characteristics
-  $('#username').val( localStorage.username );
-  //$('#username').val( $.cookie('username') );
-  $('#gender').val( localStorage.gender );
-  $('#age').val( localStorage.age );
-  $('#native_speaker').val( localStorage.native_speaker );
-  if ( $('#native_speaker').val()==="Yes" )
-  {
-    $("#sub_dialect_display").show();
-  } else {
-    $("#first_language_display").show();
-  }
-  $('#first_language').val( localStorage.first_language );
-  $('#first_language').val( localStorage.first_language_other );
-  $('#dialect').val( localStorage.dialect );
-  $('#dialect_other').val( localStorage.dialect_other );
-  if ( $('#dialect').val()==="Other" )
-  {
-    $("#dialect_other_display").show();
-  }
-  $('#sub_dialect').val( localStorage.dialect_other );
-  //Recording Information:
-  $('#microphone').val( localStorage.microphone );
-  $('#microphone_other').val( localStorage.microphone_other );
-  if ( $('#microphone').val()==="Other" )
-  {
-    $("#microphone_other_display").show();
-  }
-
-  $('#recording_location').val( localStorage.recording_location );
-  $('#recording_location_other').val( localStorage.recording_location_other );
-  if ( $('#recording_location').val()==="Other" )
-  {
-    $("#recording_location_other_display").show();
-  }
-  $('#background_noise').val( localStorage.background_noise );
-  if ( $('#background_noise').val()==="Yes" )
-  {
-    $("#background_noise_display").show();
-  }
-  $('#noise_volume').val( localStorage.noise_volume );
-  $('#noise_type').val( localStorage.noise_type );
-  $('#noise_type_other').val( localStorage.noise_type_other );
-  if ( $('#noise_type').val()==="Other" )
-  {
-    $("#noise_type_other_display").show();
-  }
-  $('#license').val( localStorage.license );
+if (typeof localStorage.username !== 'undefined') {
+  profile.getProfileFromLocalStorage();
 }
+
 
 /**
 * fill other languages select list with stringified array the names of most 
@@ -210,7 +162,7 @@ for (var i=0;i<langscodes.length;i++){
    languages.getLanguageInfo(langscodes[i]).nativeName + ")" +  
    '</option>';
 }
-option += '<option value="' + other + '">' + other + '</option>'; 
+option += '<option value="' + dataset_other + '">' + dataset_other + '</option>'; 
 $('#first_language').append(option);
 
 /**
@@ -239,7 +191,7 @@ Profile.prototype.toArray = function () {
   readme[i++] = 'Language: ' +  language + '\n';
   readme[i++] = 'Native Speaker: ' +  $('#native_speaker').val() + '\n';
   if ($('#native_speaker').val() !== "No") {
-    if ($('#dialect').val() !== "Other") {
+    if ($('#dialect').val() !== dataset_other) {
       readme[i++] = 'Pronunciation dialect: ' + $('#dialect').val() + '\n';
       if ( $('#sub_dialect').val() ) {
         readme[i++] = '  sub-dialect: ' + $('#sub_dialect').val() + '\n';
@@ -248,7 +200,7 @@ Profile.prototype.toArray = function () {
       readme[i++] =  'Pronunciation dialect: Other - ' + $('#dialect_other').val() + '\n';
     }
   } else {
-    if ( $('#first_language').val() !== "Other") 
+    if ( $('#first_language').val() !== dataset_other) 
     {
       var langId = $('#first_language').val();
       readme[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
@@ -258,12 +210,12 @@ Profile.prototype.toArray = function () {
   }
 
   readme[i++] = '\nRecording Information: \n\n';
-  if ($('#microphone').val() !== "Other") {
+  if ($('#microphone').val() !== dataset_other) {
     readme[i++] = 'Microphone Type: ' + $('#microphone').val() + '\n';
   } else {
     readme[i++] = 'Microphone Type: Other - ' + $('#microphone_other').val() + '\n';
   }
-  if ($('#recording_location').val() !== "Other") {
+  if ($('#recording_location').val() !== dataset_other) {
     readme[i++] = 'Recording Location: ' + $('#recording_location').val() + '\n';
   } else {
     readme[i++] = 'Recording Location: Other - ' + $('#recording_location_other').val() + '\n';
@@ -271,7 +223,7 @@ Profile.prototype.toArray = function () {
   readme[i++] = 'Background Noise: ' + $('#background_noise').val() + '\n';
   if ($('#background_noise').val() === "Yes") {
     readme[i++] = 'Noise Volume: ' + $('#noise_volume').val() + '\n';
-    if ($('#noise_type').val() !== "Other") {
+    if ($('#noise_type').val() !== dataset_other) {
       readme[i++] = 'Noise Type: ' + $('#noise_type').val() + '\n';
     } else {
       readme[i++] = 'Noise Type: Other - ' + $('#noise_type_other').val() + '\n';
@@ -311,7 +263,7 @@ Profile.prototype.toJsonString = function () {
   profile_hash["native_speaker"] = $("#native_speaker").val();
 
   if ($("#native_speaker").val() !== "No") {
-    if ($("#dialect").val() !== "Other") {
+    if ($("#dialect").val() !== dataset_other) {
       profile_hash["pronunciation_dialect"] = $("#dialect").val();
       if ( $('#sub_dialect').val() ) {
         profile_hash["sub_dialect"] = $("#sub_dialect").val();
@@ -320,7 +272,7 @@ Profile.prototype.toJsonString = function () {
       profile_hash["pronunciation_dialect"] = $("#dialect_other").val() ;
     }
   } else {
-    if ( $('#first_language').val() !== "Other") 
+    if ( $('#first_language').val() !== dataset_other) 
     {
       var langId = $("#first_language").val();
       profile_hash["first_language"] = languages.getLanguageInfo(langId).name;
@@ -330,12 +282,12 @@ Profile.prototype.toJsonString = function () {
   }
 
   // Recording Information: 
-  if ($("#microphone").val() !== "Other") {
+  if ($("#microphone").val() !== dataset_other) {
     profile_hash["microphone"] = $("#microphone").val() ;
   } else {
     profile_hash["microphone"] = $("#microphone_other").val() ;
   }
-  if ($("#recording_location").val() !== "Other") {
+  if ($("#recording_location").val() !== dataset_other) {
     profile_hash["recording_location"] = $("#recording_location").val() ;
   } else {
     profile_hash["recording_location"] = $("#recording_location_other").val() ;
@@ -343,7 +295,7 @@ Profile.prototype.toJsonString = function () {
   profile_hash["background_noise"] = $("#background_noise").val() ;
   if ($("#background_noise").val() === "Yes") {
     profile_hash["noise_volume"] = $("#noise_volume").val() ;
-    if ($("#noise_type").val() !== "Other") {
+    if ($("#noise_type").val() !== dataset_other) {
       profile_hash["noise_type"] = $("#noise_type").val() ;
     } else {
       profile_hash["noise_type"] = $("#noise_type_other").val() ;
@@ -364,8 +316,6 @@ Profile.prototype.toJsonString = function () {
 
 /**
 * add profile information to local storage
-*
-* see: https://www.electrictoolbox.com/jquery-cookies/ 
 */
 Profile.prototype.addProfile2LocalStorage = function () {
   //Speaker Characteristics:
@@ -381,7 +331,7 @@ Profile.prototype.addProfile2LocalStorage = function () {
   {
     localStorage.first_language = null;
   } else {
-    if ( $('#first_language').val() !== "Other") 
+    if ( $('#first_language').val() !== dataset_other) 
     {
       localStorage.first_language_other = $('#first_language').val();
     } else {
@@ -393,14 +343,14 @@ Profile.prototype.addProfile2LocalStorage = function () {
   localStorage.sub_dialect = $('#sub_dialect').val();
   // Recording Information:
   localStorage.microphone = $('#microphone').val();
-  if ( $('#microphone').val() !== "Other") 
+  if ( $('#microphone').val() !== dataset_other) 
   {
     localStorage.microphone_other = null;
   } else {
     localStorage.microphone_other = $('#microphone_other').val();
   }
   localStorage.recording_location = $('#recording_location').val();
-  if ( $('#recording_location').val() !== "Other") 
+  if ( $('#recording_location').val() !== dataset_other) 
   {
     localStorage.recording_location_other = null;
   } else {
@@ -411,7 +361,7 @@ Profile.prototype.addProfile2LocalStorage = function () {
   {
     localStorage.noise_volume = $('#noise_volume').val();
     localStorage.noise_type = $('#noise_type').val();
-    if ( $('#recording_location').val() !== "Other") 
+    if ( $('#recording_location').val() !== dataset_other) 
     {
       localStorage.noise_type_other = null;
     } else {
@@ -426,9 +376,62 @@ Profile.prototype.addProfile2LocalStorage = function () {
 };
 
 /**
-* add profile information to local storage
-*
-* see: https://www.electrictoolbox.com/jquery-cookies/ 
+* get profile information from local storage
+*/
+Profile.prototype.getProfileFromLocalStorage = function () {
+  //Speaker Characteristics
+  $('#username').val( localStorage.username );
+  //$('#username').val( $.cookie('username') );
+  $('#gender').val( localStorage.gender );
+  $('#age').val( localStorage.age );
+  $('#native_speaker').val( localStorage.native_speaker );
+  if ( $('#native_speaker').val()==="Yes" )
+  {
+    $("#sub_dialect_display").show();
+  } else {
+    $("#first_language_display").show();
+  }
+  $('#first_language').val( localStorage.first_language );
+  $('#first_language').val( localStorage.first_language_other );
+  $('#dialect').val( localStorage.dialect );
+  $('#dialect_other').val( localStorage.dialect_other );
+  if ( $('#dialect').val() === dataset_other )
+  {
+    $("#dialect_other_display").show();
+  }
+  $('#sub_dialect').val( localStorage.dialect_other );
+  //Recording Information:
+  $('#microphone').val( localStorage.microphone );
+  $('#microphone_other').val( localStorage.microphone_other );
+  if ( $('#microphone').val() === dataset_other )
+  {
+    $("#microphone_other_display").show();
+  }
+
+  $('#recording_location').val( localStorage.recording_location );
+  $('#recording_location_other').val( localStorage.recording_location_other );
+  if ( $('#recording_location').val() === dataset_other )
+  {
+    $("#recording_location_other_display").show();
+  }
+  $('#background_noise').val( localStorage.background_noise );
+  if ( $('#background_noise').val()==="Yes" )
+  {
+    $("#background_noise_display").show();
+  }
+  $('#noise_volume').val( localStorage.noise_volume );
+  $('#noise_type').val( localStorage.noise_type );
+  $('#noise_type_other').val( localStorage.noise_type_other );
+  if ( $('#noise_type').val() === dataset_other )
+  {
+    $("#noise_type_other_display").show();
+  }
+  $('#license').val( localStorage.license );
+}
+
+
+/**
+* return username user entered into input field
 */
 Profile.prototype.getUserName = function () {
   return $('#username').val();
