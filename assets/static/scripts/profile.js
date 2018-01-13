@@ -367,7 +367,8 @@ Profile.prototype.updateScreen = function (json_object) {
 }
 
 /**
-* get profile information from local storage
+* get profile information from local storage and if it exists, return parsed
+* JSON object, otherwise return null.
 */
 Profile.prototype.getProfileFromLocalStorage = function () {
   var retrievedObject = localStorage.getItem(dataset_language);
