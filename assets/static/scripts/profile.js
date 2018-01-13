@@ -61,8 +61,9 @@ var prompt_list_contains_id = article.dataset.prompt_list_contains_id;
 */
 
 /**
-* div_function makes the view of one div dependent on the value of a select 
-* field in another div
+* showDivBasedonValue makes the view of one div dependent on the value of a select 
+* field in another div, and attaches an event handler to independent div so that
+* any changes in it are reflected in dependent div
 *
 * The value of contents of the independent_div is compared to the passed in 
 * value, and if they are equal, then the dependent_div is displayed 
