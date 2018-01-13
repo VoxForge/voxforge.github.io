@@ -34,7 +34,7 @@ function Prompts (language) {
 /**
 * Instantiate Prompt class
 */
-var prompts = new Prompts(language);
+var prompts = new Prompts(dataset_language);
 
 /**
 * read prompts file from same origina as script
