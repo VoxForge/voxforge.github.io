@@ -53,15 +53,22 @@ var language = article.dataset.language;
 var prompt_list_contains_id = article.dataset.prompt_list_contains_id;
 
 /**
-* div_function abstracts some repetitive code for making the view of one div
-* dependent on the value of a select field.
+* ### STATIC METHODS ##############################################
+*
+* see: https://stackoverflow.com/questions/7694501/class-vs-static-method-in-javascript
+*/
+
+/**
+* div_function makes the view of one div dependent on the value of a select 
+* field in another div
 *
 * The value of contents of the independent_div is compared to the passed in 
 * value, and if they are equal, then the dependent_div is displayed 
 *
 * see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
 */
-Profile.prototype.div_function = function (independent_div, value, dependent_div) {
+//Profile.prototype.div_function = function (independent_div, value, dependent_div) {
+Profile.div_function = function (independent_div, value, dependent_div) {
   function test ( boolean_result ) {
     if( boolean_result ){
       $(dependent_div).show();
@@ -81,7 +88,7 @@ Profile.prototype.div_function = function (independent_div, value, dependent_div
   if ( !already_executed_once ) 
   {
     $(independent_div).change(function () { 
-        profile.div_function(independent_div, value, dependent_div); 
+        Profile.div_function(independent_div, value, dependent_div); 
     } );
     //already_executed_once = false;
     already_executed_once = true; // TODO need to test this to make sure it 
@@ -94,16 +101,16 @@ Profile.prototype.div_function = function (independent_div, value, dependent_div
 * the value of contents of the independent_div is compared to the passed in 
 * value, and if they are equal, then the dependent_div is displayed 
 */
-profile.div_function('#native_speaker', dataset_no, '#first_language_display');
-profile.div_function('#native_speaker', dataset_yes, '#dialect_display');
-profile.div_function('#first_language', other, '#first_language_other_display');
-profile.div_function('#username', true, '#anonymous_instructions_display');
-profile.div_function('#microphone', other, '#microphone_other_display');
-profile.div_function('#dialect', other, '#dialect_other_display');
+Profile.div_function('#native_speaker', dataset_no, '#first_language_display');
+Profile.div_function('#native_speaker', dataset_yes, '#dialect_display');
+Profile.div_function('#first_language', other, '#first_language_other_display');
+Profile.div_function('#username', true, '#anonymous_instructions_display');
+Profile.div_function('#microphone', other, '#microphone_other_display');
+Profile.div_function('#dialect', other, '#dialect_other_display');
 function recordingInformation() {  $("#recording_information_display").toggle(); }
-profile.div_function('#recording_location', other, '#recording_location_other_display');
-profile.div_function('#background_noise', dataset_yes, '#background_noise_display');
-profile.div_function('#noise_type', other, '#noise_type_other_display');
+Profile.div_function('#recording_location', other, '#recording_location_other_display');
+Profile.div_function('#background_noise', dataset_yes, '#background_noise_display');
+Profile.div_function('#noise_type', other, '#noise_type_other_display');
 
 /**
 * This function changes the contents of a second select list based on the
