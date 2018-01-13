@@ -30,7 +30,9 @@ var profile = new Profile();
 */
 function profileInfo() {  $("#profile-display").toggle(); }
 function speakerCharacteristics() {  $("#speaker_characteristics_display").toggle(); }
-function directionInfo() {  $("#directions-display").toggle(); }
+function recordingInformation() {  $("#recording_information_display").toggle(); }
+function directionsInfo() {  $("#directions-display").toggle(); }
+
 /**
 * hide buttons after user makes a submission.  No need to show user information
 * he just entered, and info is still accessible with profile button
@@ -67,8 +69,7 @@ var prompt_list_contains_id = article.dataset.prompt_list_contains_id;
 *
 * see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
 */
-//Profile.prototype.div_function = function (independent_div, value, dependent_div) {
-Profile.div_function = function (independent_div, value, dependent_div) {
+Profile.showDivBasedonValue = function (independent_div, value, dependent_div, handler_already_created) {
   function test ( boolean_result ) {
     if( boolean_result ){
       $(dependent_div).show();
@@ -77,44 +78,36 @@ Profile.div_function = function (independent_div, value, dependent_div) {
     }
   }
 
-  var already_executed_once = false;
   if ( typeof(value) === "boolean" && value === true ) { 
     // show if false; hide if true
     test( ! $(independent_div).val() );
   } else {
     test( $(independent_div).val()===value );
   }
-  // TODO !!!!!! debug this conditional to make sure it is doing what it is supposed to
-  if ( !already_executed_once ) 
+
+  // only need to create event handler on first call to this function
+  if ( ! handler_already_created ) 
   {
-    $(independent_div).change(function () { 
-        Profile.div_function(independent_div, value, dependent_div); 
+    $(independent_div).change(function () { // creates an event handler
+        Profile.showDivBasedonValue(independent_div, value, dependent_div, true); 
     } );
-    //already_executed_once = false;
-    already_executed_once = true; // TODO need to test this to make sure it 
-                                  // works correctly, because it has been working 
-                                  // ok even though it was incorrectly set????
   }
 }
 
-/**
-* the value of contents of the independent_div is compared to the passed in 
-* value, and if they are equal, then the dependent_div is displayed 
-*/
-Profile.div_function('#native_speaker', dataset_no, '#first_language_display');
-Profile.div_function('#native_speaker', dataset_yes, '#dialect_display');
-Profile.div_function('#first_language', other, '#first_language_other_display');
-Profile.div_function('#username', true, '#anonymous_instructions_display');
-Profile.div_function('#microphone', other, '#microphone_other_display');
-Profile.div_function('#dialect', other, '#dialect_other_display');
-function recordingInformation() {  $("#recording_information_display").toggle(); }
-Profile.div_function('#recording_location', other, '#recording_location_other_display');
-Profile.div_function('#background_noise', dataset_yes, '#background_noise_display');
-Profile.div_function('#noise_type', other, '#noise_type_other_display');
+Profile.showDivBasedonValue('#native_speaker', dataset_no, '#first_language_display', false);
+Profile.showDivBasedonValue('#native_speaker', dataset_yes, '#dialect_display', false);
+
+Profile.showDivBasedonValue('#first_language', other, '#first_language_other_display', false);
+Profile.showDivBasedonValue('#username', true, '#anonymous_instructions_display', false);
+Profile.showDivBasedonValue('#microphone', other, '#microphone_other_display', false);
+Profile.showDivBasedonValue('#dialect', other, '#dialect_other_display', false);
+Profile.showDivBasedonValue('#recording_location', other, '#recording_location_other_display', false);
+Profile.showDivBasedonValue('#background_noise', dataset_yes, '#background_noise_display', false);
+Profile.showDivBasedonValue('#noise_type', other, '#noise_type_other_display', false);
 
 /**
 * This function changes the contents of a second select list based on the
-* contents of a first select list.  This is used, for example, to set the 
+* contents of a first select list.  This is used to set the 
 * contents of the sub-dialect selection list based on the value the dialect
 * selection list.
 *
