@@ -80,10 +80,10 @@ sub_dialect:
   label: Sub Dialect
   popup_link: https://en.wikipedia.org/wiki/North_American_English_regional_phonology
   popup_text: (or regional phonology) looks at variations in the pronunciation of a spoken language
-  selection_dialect: # this is an array that keeps elements in order
+  selection_dialect: # this is array that keeps elements in order
     - American English
     - Canadian English
-  selection: # this is a hash that keys on dialect
+  selection: # this is hash that keys on dialect
     American English:
       - [Western United States, [Pacific Northwest]]
       - [Greater New York City, [Greater New York City]]

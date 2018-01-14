@@ -37,9 +37,9 @@ function Prompts (language) {
 var prompts = new Prompts(dataset_language);
 
 /**
-* read prompts file from same origina as script
-* may bee to set up a flask page that serves prompts from a huge list and keeps 
-* track of which one have been already submitted
+* read prompts file from same origin as script location
+* may need to set up a flask page on repository server that serves prompts 
+* from a huge list and keeps track of which one have been already submitted
 * 
 * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
 * Note: this is a synchronous request...
@@ -53,7 +53,7 @@ jQuery.get('/assets/static/prompts/' + prompts.filename, function(data) {
 
   var sentences = data.split('\n');
   for (var i = 0; i < sentences.length; i++) {
-    if (prompt_list_contains_id)
+    if (dataset_prompt_list_contains_id)
     { // first word of prompt line is the prompt ID
       prompts.list[i] = sentences[i];
     } else {
@@ -61,19 +61,18 @@ jQuery.get('/assets/static/prompts/' + prompts.filename, function(data) {
       prompts.list[i] = prompt_id  + " " + sentences[i];
     }
   }
-
-  prompts.index = Math.floor((Math.random() * prompts.list.length) + 1);
 });
+prompts.index = Math.floor((Math.random() * prompts.list.length) + 1);
 
 /**
 * updates the current number of prompts that the user selected from dropdown
 */
 $('#max_num_prompts').click(function () { 
-    prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
+  prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
 
-    updateProgress();
+  updateProgress();
 
-    console.log('max_num_prompts:' + prompts.max_num_prompts);
+  console.log('max_num_prompts:' + prompts.max_num_prompts);
 });
 
 /**

@@ -18,7 +18,11 @@
 /**
 * Class declaration
 */
-function Profile () {}
+function Profile () {
+  //profile.sample_rate
+  //profile.sample_rate_format/
+  //profile.channels /
+}
 
 /**
 * Instantiate Profile class
@@ -37,6 +41,7 @@ function directionsInfo() {  $("#directions-display").toggle(); }
 * hide buttons after user makes a submission.  No need to show user information
 * he just entered, and info is still accessible with profile button
 */
+// TODO does this ever get executed?
 if ( $.cookie('all_done') ) 
 {
   $("#profile-display").hide();
@@ -45,14 +50,19 @@ if ( $.cookie('all_done') )
 
 /**
 * These are language specific variables on the Jekyll Mardown page that
-* are needed for the javascript apps
+* javascript apps need
 */
 var article = document.getElementById('language_specific_variables');
 var dataset_yes = article.dataset.yes;
 var dataset_no = article.dataset.no;
 var dataset_other = article.dataset.other;
 var dataset_language = article.dataset.language;
-var prompt_list_contains_id = article.dataset.prompt_list_contains_id;
+var dataset_prompt_list_contains_id;
+if (article.dataset.prompt_list_contains_id.toUpperCase() == "TRUE") {
+  dataset_prompt_list_contains_id = true;
+} else {
+  dataset_prompt_list_contains_id = false;
+}
 
 /**
 * ### STATIC METHODS ##############################################
@@ -138,7 +148,6 @@ $select1.on( 'change', function() {
 } ).trigger( 'change' );
 
 
-
 /**
 * fill other languages select list with stringified array the names of most 
 * ISO 639-1 language names
@@ -155,11 +164,89 @@ option += '<option value="' + dataset_other + '">' + dataset_other + '</option>'
 $('#first_language').append(option);
 
 /**
+* update user screen
+*/
+Profile.updateScreen = function (json_object) {
+  //Speaker Characteristics
+  $('#username').val( json_object.username );
+  if (json_object.username) {
+    $('#anonymous_instructions_display').hide();
+  }
+  $('#gender').val( json_object.gender );
+  $('#age').val( json_object.age );
+  $('#native_speaker').val( json_object.native_speaker );
+  if ( $('#native_speaker').val()==="Yes" )
+  {
+    $("#sub_dialect_display").show();
+  } else {
+    $("#first_language_display").show();
+  }
+  $('#first_language').val( json_object.first_language );
+  $('#first_language').val( json_object.first_language_other );
+  $('#dialect').val( json_object.dialect );
+  $('#dialect_other').val( json_object.dialect_other );
+  if ( $('#dialect').val() === dataset_other )
+  {
+    $("#dialect_other_display").show();
+  }
+  $('#sub_dialect').val( json_object.dialect_other );
+  //Recording Information:
+  $('#microphone').val( json_object.microphone );
+  $('#microphone_other').val( json_object.microphone_other );
+  if ( $('#microphone').val() === dataset_other )
+  {
+    $("#microphone_other_display").show();
+  }
+
+  $('#recording_location').val( json_object.recording_location );
+  $('#recording_location_other').val( json_object.recording_location_other );
+  if ( $('#recording_location').val() === dataset_other )
+  {
+    $("#recording_location_other_display").show();
+  }
+  $('#background_noise').val( json_object.background_noise );
+  if ( $('#background_noise').val()==="Yes" )
+  {
+    $("#background_noise_display").show();
+  }
+  $('#noise_volume').val( json_object.noise_volume );
+  $('#noise_type').val( json_object.noise_type );
+  $('#noise_type_other').val( json_object.noise_type_other );
+  if ( $('#noise_type').val() === dataset_other )
+  {
+    $("#noise_type_other_display").show();
+  }
+  $('#license').val( json_object.license );
+}
+
+/**
+* get profile information from local storage and if it exists, return parsed
+* JSON object, otherwise return null.
+*/
+Profile.getProfileFromLocalStorage = function () {
+  var retrievedObject = localStorage.getItem(dataset_language);
+  // boolean expression. Second part is evaluated only if left one is true. 
+  // therefore if retrievedObject is null, that is all that gets returned
+  return retrievedObject && JSON.parse(retrievedObject);
+}
+
+/**
+* refresh displayed user information with info stored in offline storage.
+* Note: not using cookies... no need to pass this info back to the server
+* with each call (which is what cookies do...)
+*/
+//if (typeof localStorage.dataset_language !== 'undefined') {
+var parsedLocalStorageObject;
+if ( parsedLocalStorageObject = Profile.getProfileFromLocalStorage() ) {
+  Profile.updateScreen(parsedLocalStorageObject);
+}
+
+/**
 * ### METHODS ##############################################
 */
 
 /**
-* Convert profile object to array
+* Convert profile object to hash and array
 */
 Profile.prototype.createHashArray = function () {
   var profile_hash = {};
@@ -262,18 +349,19 @@ Profile.prototype.createHashArray = function () {
   profile_hash["license"] = $("#license").val();
 
   profile_array[i++] = '\nFile Info: \n\n';
-  // see https://www.pmtonline.co.uk/blog/2004/11/04/what-does-the-bit-depth-and-sample-rate-refer-to/
+
   profile_array[i++] = 'File type: wav\n';
   profile_hash["file_type"] = "wav";
 
-  profile_array[i++] = 'Sample Rate: ' + profile.sample_rate + '\n';
-  profile_hash["sample_rate"] = profile.sample_rate;
+  // see https://www.pmtonline.co.uk/blog/2004/11/04/what-does-the-bit-depth-and-sample-rate-refer-to/
+  profile_array[i++] = 'Sample Rate: ' + this.sample_rate + '\n';
+  profile_hash["sample_rate"] = this.sample_rate;
 
-  profile_array[i++] = 'Sample Rate Format (bit depth): ' + profile.sample_rate_format + '\n';
-  profile_hash["sample_rate_format"] = profile.sample_rate_format;
+  profile_array[i++] = 'Sample Rate Format (bit depth): ' + this.sample_rate_format + '\n';
+  profile_hash["sample_rate_format"] = this.sample_rate_format;
 
-  profile_array[i++] = 'Number of channels: ' + profile.channels + '\n';
-  profile_hash["channels"] = profile.channels;
+  profile_array[i++] = 'Number of channels: ' + this.channels + '\n';
+  profile_hash["channels"] = this.channels;
 
   return {
     array: profile_array,
@@ -282,7 +370,8 @@ Profile.prototype.createHashArray = function () {
 };
 
 /**
-* Convert profile object to JSON string, with line feeds after every key value line
+* Convert profile object to JSON string, with line feeds after every key 
+* value line
 */
 Profile.prototype.toJsonString = function () {
   var profile_data = this.createHashArray();
@@ -291,7 +380,8 @@ Profile.prototype.toJsonString = function () {
 }
 
 /**
-* Convert profile object to JSON string, with line feeds after every key value line
+* Convert profile object to JSON string, with line feeds after every key 
+* value line
 */
 Profile.prototype.toArray = function () {
   var profile_data = this.createHashArray();
@@ -308,99 +398,17 @@ Profile.prototype.addProfile2LocalStorage = function () {
 };
 
 /**
-* update user screen
-*/
-Profile.prototype.updateScreen = function (json_object) {
-  //Speaker Characteristics
-  $('#username').val( json_object.username );
-  if (json_object.username) {
-    $('#anonymous_instructions_display').hide();
-  }
-  $('#gender').val( json_object.gender );
-  $('#age').val( json_object.age );
-  // TODO how to deal with language when user might make submissions in more than
-  // one language... need to key different json_object attributes based on language
-  // !!!!!!
-  $('#native_speaker').val( json_object.native_speaker );
-  if ( $('#native_speaker').val()==="Yes" )
-  {
-    $("#sub_dialect_display").show();
-  } else {
-    $("#first_language_display").show();
-  }
-  $('#first_language').val( json_object.first_language );
-  $('#first_language').val( json_object.first_language_other );
-  $('#dialect').val( json_object.dialect );
-  $('#dialect_other').val( json_object.dialect_other );
-  if ( $('#dialect').val() === dataset_other )
-  {
-    $("#dialect_other_display").show();
-  }
-  $('#sub_dialect').val( json_object.dialect_other );
-  //Recording Information:
-  $('#microphone').val( json_object.microphone );
-  $('#microphone_other').val( json_object.microphone_other );
-  if ( $('#microphone').val() === dataset_other )
-  {
-    $("#microphone_other_display").show();
-  }
-
-  $('#recording_location').val( json_object.recording_location );
-  $('#recording_location_other').val( json_object.recording_location_other );
-  if ( $('#recording_location').val() === dataset_other )
-  {
-    $("#recording_location_other_display").show();
-  }
-  $('#background_noise').val( json_object.background_noise );
-  if ( $('#background_noise').val()==="Yes" )
-  {
-    $("#background_noise_display").show();
-  }
-  $('#noise_volume').val( json_object.noise_volume );
-  $('#noise_type').val( json_object.noise_type );
-  $('#noise_type_other').val( json_object.noise_type_other );
-  if ( $('#noise_type').val() === dataset_other )
-  {
-    $("#noise_type_other_display").show();
-  }
-  $('#license').val( json_object.license );
-}
-
-/**
-* get profile information from local storage and if it exists, return parsed
-* JSON object, otherwise return null.
-*/
-Profile.prototype.getProfileFromLocalStorage = function () {
-  var retrievedObject = localStorage.getItem(dataset_language);
-  // boolean expression. Second part is evaluated only if left one is true. 
-  return retrievedObject && JSON.parse(retrievedObject);
-}
-
-/**
-* refresh displayed user information with info stored in offline storage.
-* Note: not using cookies... no need to pass this info back to the server
-* with each call (which is what cookies do...)
-*
-* assumes that if the username contains something, then it make ssense to 
-* load all the remaining fields from offline storage.
-*/
-//if (typeof localStorage.dataset_language !== 'undefined') {
-var parsedLocalStorageObject;
-if (parsedLocalStorageObject = profile.getProfileFromLocalStorage()) {
-  profile.updateScreen(parsedLocalStorageObject);
-}
-
-
-/**
 * return username user entered into input field
 */
 Profile.prototype.getUserName = function () {
   return $('#username').val();
 }
 
+/**
+* submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
+* see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+*/
 Profile.prototype.getTempSubmissionName = function () {
-  //submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
-  // see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
   function uuidv4() {
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
