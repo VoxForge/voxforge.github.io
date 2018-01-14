@@ -13,8 +13,8 @@ anonymous_submission: (laisser vide pour soumettre anonymement)
 profile_info: Profil
 
 localized_variable:
-  yup: "Oui"
-  nope: "Non"
+  lv_yes: "Oui"
+  lv_no: "Non"
   other: "Autre"
 
 please_select: Veuillez Sélectionnez

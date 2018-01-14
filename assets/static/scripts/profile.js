@@ -20,8 +20,8 @@
 */
 function Profile () {
   //profile.sample_rate
-  //profile.sample_rate_format/
-  //profile.channels /
+  //profile.sample_rate_format
+  //profile.channels
 }
 
 /**
