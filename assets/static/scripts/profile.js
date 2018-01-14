@@ -33,8 +33,14 @@ var profile = new Profile();
 * Set up toggles for profile and direction buttons
 */
 function profileInfo() {  $("#profile-display").toggle(); }
-function speakerCharacteristics() {  $("#speaker_characteristics_display").toggle(); }
-function recordingInformation() {  $("#recording_information_display").toggle(); }
+function speakerCharacteristics() {  
+  $("#speaker_characteristics_display").toggle(); 
+  $("#recording_information_display").hide();
+}
+function recordingInformation() {  
+  $("#recording_information_display").toggle(); 
+  $("#speaker_characteristics_display").hide(); 
+}
 function directionsInfo() {  $("#directions-display").toggle(); }
 
 /**
