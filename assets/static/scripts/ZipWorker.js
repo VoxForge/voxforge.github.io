@@ -87,6 +87,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
       xhr.upload.addEventListener("abort", transferFailed);
 
       xhr.open('POST', uploadURL, true); // async
+      xhr.setRequestHeader("Content-type", "application/zip"); // this is set by default, just want to make it explicit
       xhr.send(zip_file_in_memory);
     }
 
@@ -102,7 +103,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
       });
     }
 
-    // !!!!!! CORS - for cross origina resource sharing
+    // !!!!!! CORS - for cross origin resource sharing
     // send cookie across to a different domain
     // see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
