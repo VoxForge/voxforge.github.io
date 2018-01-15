@@ -400,6 +400,7 @@ Profile.prototype.toArray = function () {
 */
 Profile.prototype.addProfile2LocalStorage = function () {
   $.cookie('username', $('#username').val());
+  $.cookie('language', dataset_language);
   localStorage.setItem(dataset_language, this.toJsonString());
 };
 

@@ -80,10 +80,6 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
             return;
           }
         }
-      // !!!!!! CORS - for cross origina resource sharing
-      // send cookie across to a different domain
-      xhr.withCredentials = true;
-      // !!!!!!
 
       xhr.upload.addEventListener("error", transferFailed);
       // firefox thinks a break in internet is ca transferCancelled event??
@@ -91,6 +87,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
       xhr.upload.addEventListener("abort", transferFailed);
 
       xhr.open('POST', uploadURL, true); // async
+      xhr.withCredentials = true;
       xhr.send(zip_file_in_memory);
     }
 
@@ -105,6 +102,13 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
           console.log('saveSubmissionLocally It failed!', err);
       });
     }
+
+    // !!!!!! CORS - for cross origina resource sharing
+    // send cookie across to a different domain
+    // see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+    //xhr.withCredentials = true;
+    // !!!!!!
 
     xhr.upload.addEventListener("progress", updateProgress);
     xhr.upload.addEventListener("load", function(event) {
@@ -182,8 +186,8 @@ function checkForSavedFailedUploads() {
     }
 
   localforage.length().then(function(numberOfKeys) {
-    console.log('numberOfKeys: ' + numberOfKeys);
     if (numberOfKeys > 0) {
+      console.log('number of submissions saved in browser storage: ' + numberOfKeys);
       foundSavedSubmission(numberOfKeys);
     }
   }).catch(function(err) {
