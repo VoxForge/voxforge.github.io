@@ -87,7 +87,6 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
       xhr.upload.addEventListener("abort", transferFailed);
 
       xhr.open('POST', uploadURL, true); // async
-      xhr.withCredentials = true;
       xhr.send(zip_file_in_memory);
     }
 
