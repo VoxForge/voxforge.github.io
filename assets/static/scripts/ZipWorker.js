@@ -88,6 +88,8 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
 
       xhr.open('POST', uploadURL, true); // async
       xhr.setRequestHeader("Content-type", "application/zip"); // this is set by default, just want to make it explicit
+      // https://en.wikipedia.org/wiki/XMLHttpRequest 
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // Tells server that this call is made for ajax purposes.
       xhr.send(zip_file_in_memory);
     }
 
@@ -103,10 +105,18 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
       });
     }
 
+    // see: https://stackoverflow.com/questions/11601149/browsers-not-sending-back-cookies-when-using-cors-xhr
+    // browser settings were blocking third-party cookies (Chrome > Settings 
+    // > Advanced Settings > Privacy and security > Content Settings > Cookies 
+    // > Block third-party cookies). 
+    // Unblocking solved the problem!
+
     // !!!!!! CORS - for cross origin resource sharing
     // send cookie across to a different domain
     // see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+
+//https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
     xhr.withCredentials = true;
     // !!!!!!
 
