@@ -19,6 +19,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+https://www.acunetix.com/websitesecurity/cross-site-scripting/
+How Cross-site Scripting works
+In order to run malicious JavaScript code in a victim’s browser, 
+an attacker must first find a way to inject a payload into a web page that 
+the victim visits. 
+In order for an XSS attack to take place the vulnerable website needs 
+to ***directly include user input in its pages***. An attacker can then 
+insert a string that will be used within the web page and treated as
+code by the victim’s browser.
+This app does not display other users' input in its pages, so no XSS 
+vulnerability...
+TODO make sure the inclusion of external prompts text files is not a 
+vector for XSS
+
+*/
+
+
+
+
 // for testing with Chrome: requires https; can bypass this with:
 // google-chrome --user-data-dir=~/temp --unsafely-treat-insecure-origin-as-secure="http://flask.voxforge1.org"
 // need Google Chrome version > 58 for wavesurfer to work correctly

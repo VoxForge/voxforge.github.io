@@ -80,6 +80,10 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
             return;
           }
         }
+      // !!!!!! CORS - for cross origina resource sharing
+      // send cookie across to a different domain
+      xhr.withCredentials = true;
+      // !!!!!!
 
       xhr.upload.addEventListener("error", transferFailed);
       // firefox thinks a break in internet is ca transferCancelled event??

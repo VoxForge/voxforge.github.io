@@ -114,7 +114,8 @@ Profile.showDivBasedonValue = function (independent_div, value, dependent_div, h
 Profile.showDivBasedonValue('#native_speaker', dataset_no, '#first_language_display', false);
 Profile.showDivBasedonValue('#native_speaker', dataset_yes, '#dialect_display', false);
 Profile.showDivBasedonValue('#first_language', dataset_other, '#first_language_other_display', false);
-Profile.showDivBasedonValue('#username', true, '#anonymous_instructions_display', false);
+// true mean hide if there is something in the username field
+Profile.showDivBasedonValue('#username', true, '#anonymous_instructions_display', false); 
 Profile.showDivBasedonValue('#microphone', dataset_other, '#microphone_other_display', false);
 Profile.showDivBasedonValue('#dialect', dataset_other, '#dialect_other_display', false);
 Profile.showDivBasedonValue('#recording_location', dataset_other, '#recording_location_other_display', false);
@@ -170,7 +171,7 @@ option += '<option value="' + dataset_other + '">' + dataset_other + '</option>'
 $('#first_language').append(option);
 
 /**
-* update user screen
+* update user display
 */
 Profile.updateScreen = function (json_object) {
   //Speaker Characteristics
@@ -232,7 +233,7 @@ Profile.updateScreen = function (json_object) {
 Profile.getProfileFromLocalStorage = function () {
   var retrievedObject = localStorage.getItem(dataset_language);
   // boolean expression. Second part is evaluated only if left one is true. 
-  // therefore if retrievedObject is null, that is all that gets returned
+  // therefore if retrievedObject is null, that gets returned
   return retrievedObject && JSON.parse(retrievedObject);
 }
 
@@ -241,7 +242,6 @@ Profile.getProfileFromLocalStorage = function () {
 * Note: not using cookies... no need to pass this info back to the server
 * with each call (which is what cookies do...)
 */
-//if (typeof localStorage.dataset_language !== 'undefined') {
 var parsedLocalStorageObject;
 if ( parsedLocalStorageObject = Profile.getProfileFromLocalStorage() ) {
   Profile.updateScreen(parsedLocalStorageObject);
@@ -341,9 +341,9 @@ Profile.prototype.createHashArray = function () {
     }
   }
 
-  profile_hash["Audio Recording Software:"] = 
-    profile_array[i++] = 
-      'Audio Recording Software: VoxForge Javascript speech submission application\n';
+
+  profile_array[i++] = 'Audio Recording Software: VoxForge Javascript speech submission application\n';
+  profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application\n';
 
   profile_array[i++] = 'O/S: ' +  platform.os + '\n';
   profile_hash["os"] = platform.os.toString();

@@ -111,15 +111,17 @@
               <div data-role="popup" id="dialect_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
                 <p><a href="{{ page.dialect.popup_link }}" target="_blank">{{ page.dialect.label }}</a>: {{ page.dialect.popup_text }}</p>
               </div>
-              <select id="dialect">
-                <option selected value="Unknown">Please Select</option>
-                {% for region in page.dialect.selection %}
-                  <optgroup label=" {{ region[0] }}">
-                  {% for dialect in region[1] %}
-                    <option value="{{ dialect }}">{{ dialect }}</option>
+              <div id=dialect_display>
+                <select id="dialect">
+                  <option selected value="Unknown">Please Select</option>
+                  {% for region in page.dialect.selection %}
+                    <optgroup label=" {{ region[0] }}">
+                    {% for dialect in region[1] %}
+                      <option value="{{ dialect }}">{{ dialect }}</option>
+                    {% endfor %}
                   {% endfor %}
-                {% endfor %}
-               </select>
+                </select>
+              </div> <!-- id=dialect_display -->
               <div style="display: none;"  id="dialect_other_display">
                 <label style="display: inline;"  for="dialect_other">{{ page.dialect.other_label }}</label>
                 <input id="dialect_other" 
