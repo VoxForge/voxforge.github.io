@@ -106,7 +106,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
     // send cookie across to a different domain
     // see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    //xhr.withCredentials = true;
+    xhr.withCredentials = true;
     // !!!!!!
 
     xhr.upload.addEventListener("progress", updateProgress);
