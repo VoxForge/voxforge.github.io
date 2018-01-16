@@ -82,13 +82,14 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
         }
 
       xhr.upload.addEventListener("error", transferFailed);
-      // firefox thinks a break in internet is ca transferCancelled event??
+      // firefox thinks a break in internet is a transferCancelled event??
       //xhr.upload.addEventListener("abort", transferCancelled);
       xhr.upload.addEventListener("abort", transferFailed);
 
       xhr.open('POST', uploadURL, true); // async
       xhr.setRequestHeader("Content-type", "application/zip"); // this is set by default, just want to make it explicit
       // https://en.wikipedia.org/wiki/XMLHttpRequest 
+      // https://stackoverflow.com/questions/17478731/whats-the-point-of-the-x-requested-with-header
       xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // Tells server that this call is made for ajax purposes.
       xhr.send(zip_file_in_memory);
     }
@@ -111,15 +112,18 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
     // > Block third-party cookies). 
     // Unblocking solved the problem!
 
-    // !!!!!! CORS - for cross origin resource sharing
+    // CORS - for cross origin resource sharing
     // send cookie across to a different domain
     // see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 
 //https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
-    xhr.withCredentials = true;
-    // !!!!!!
 
+    // !!!!!!
+    // cannot sent cookies from a webworker...
+    // see https://stackoverflow.com/questions/34635057/can-i-access-document-cookie-on-web-worker
+    //xhr.withCredentials = true;
+    // !!!!!!
     xhr.upload.addEventListener("progress", updateProgress);
     xhr.upload.addEventListener("load", function(event) {
       transferSuccessful();
