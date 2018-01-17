@@ -104,7 +104,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
 
       xhr.open('POST', uploadURL, true); // async
       //xhr.setRequestHeader("Content-type", "application/zip"); // this is set by default, just want to make it explicit
-      //xhr.setRequestHeader("Content-type", "multipart/form-data"); // this is set by default, just want to make it explicit
+      xhr.setRequestHeader("Content-type", "multipart/form-data"); // this is set by default, just want to make it explicit
 
       // https://en.wikipedia.org/wiki/XMLHttpRequest 
       // https://stackoverflow.com/questions/17478731/whats-the-point-of-the-x-requested-with-header

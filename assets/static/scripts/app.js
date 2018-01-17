@@ -126,6 +126,17 @@ navigator.mediaDevices.getUserMedia(constraints)
     console.log('The following error occured: ' + err);
   });
 
+// https://stackoverflow.com/questions/1641507/detect-browser-support-for-cross-domain-xmlhttprequests
+// Detect browser support for CORS
+if ('withCredentials' in new XMLHttpRequest()) {
+    /* supports cross-domain requests */
+  window.alert("CORS supported (XHR)");
+}else{
+  //Time to retreat with a fallback or polyfill
+  window.alert("No CORS Support!");
+}
+
+
 function setupAudioNodes(stream) {
   microphone = audioCtx.createMediaStreamSource(stream);
   microphoneLevel = audioCtx.createGain();
