@@ -87,7 +87,6 @@ if (navigator.mediaDevices === undefined) {
 }
 
 var constraints = { audio: true };
-/**
 if (navigator.mediaDevices.getUserMedia === undefined) {
   navigator.mediaDevices.getUserMedia = function(constraints) {
 
@@ -111,20 +110,6 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
       getUserMedia.call(navigator, constraints, resolve, reject);
     });
   }
-}
-*/
-// First get ahold of the legacy getUserMedia, if present
-var getUserMedia = ( navigator.getUserMedia ||
-                     navigator.webkitGetUserMedia ||
-                     navigator.mozGetUserMedia ||
-                     navigator.msGetUserMedia);
-// Some browsers just don't implement it - return a rejected promise with an error
-// to keep a consistent interface
-if (!getUserMedia) {
-  console.log('getUserMedia not supported on your browser!');
-  document.querySelector('.info-display').innerText = 
-    'Your device does not support the HTML5 API needed to record audio';  
-  document.querySelector('.prompt_id').innerText = "";
 }
 
 // see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia

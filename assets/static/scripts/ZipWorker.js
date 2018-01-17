@@ -110,13 +110,13 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
       // https://stackoverflow.com/questions/17478731/whats-the-point-of-the-x-requested-with-header
       //xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // Tells server that this call is made for ajax purposes.
 
-      //xhr.send(zip_file_in_memory);
       var form = new FormData();
-      form.append('file', zip_file_in_memory, "EN_MOFO_sdf.zip");
+      form.append('file', zip_file_in_memory, "webworker_file.zip");
       form.append('username', username);
       form.append('language', language);
+      //xhr.send(form);
+      xhr.send(zip_file_in_memory); // !!!!!!
 
-      xhr.send(form);
     } // end uploadZipFileLoop
 
     function saveSubmissionLocally() {
@@ -208,12 +208,14 @@ function checkForSavedFailedUploads() {
           console.log('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
         });
         xhr.open('POST', uploadURL, true); // async
-        //xhr.send(zip_file_in_memory);
+
         var formData = new FormData();
-        //formData.append('zip_file', zip_file_in_memory);
+        form.append('file', zip_file_in_memory, "webworker_file.zip");
         formData.append('language', language);
         formData.append('username', username);
-        xhr.send(formData);
+
+        //xhr.send(formData);
+        xhr.send(zip_file_in_memory); // !!!!!!
     }
 
   localforage.length().then(function(numberOfKeys) {
