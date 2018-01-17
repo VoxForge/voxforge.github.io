@@ -125,7 +125,6 @@ if (!getUserMedia) {
   document.querySelector('.info-display').innerText = 
     'Your device does not support the HTML5 API needed to record audio';  
   document.querySelector('.prompt_id').innerText = "";
-  return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
 }
 
 // see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
