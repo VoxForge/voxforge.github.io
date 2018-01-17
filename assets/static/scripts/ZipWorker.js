@@ -114,8 +114,8 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
       form.append('file', zip_file_in_memory, "webworker_file.zip");
       form.append('username', username);
       form.append('language', language);
-      //xhr.send(form);
-      xhr.send(zip_file_in_memory); // !!!!!!
+      xhr.send(form);
+      //xhr.send(zip_file_in_memory); // !!!!!!
 
     } // end uploadZipFileLoop
 
@@ -214,8 +214,8 @@ function checkForSavedFailedUploads() {
         formData.append('language', language);
         formData.append('username', username);
 
-        //xhr.send(formData);
-        xhr.send(zip_file_in_memory); // !!!!!!
+        xhr.send(formData);
+        //xhr.send(zip_file_in_memory); // !!!!!!
     }
 
   localforage.length().then(function(numberOfKeys) {
