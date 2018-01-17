@@ -5,6 +5,7 @@
 //importScripts('jszip.js', 'idb-keyval.js'); 
 importScripts('jszip.js', 'localforage.js'); 
 var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
+//var uploadURL = 'http://localhost:5000/uploadSubmissionFile';
 
 self.onmessage = function(event) {
   console.log("starting zipAndUpload web worker");
@@ -40,19 +41,43 @@ function createZipFile(self, data) {
   zip.generateAsync({type:"blob"}).then(
     function(zip_file_in_memory) {
       var xhr = new XMLHttpRequest();
+
+
+      // TODO this approach will not catch instance where user record in one language
+      // offline, it gets saved and then recrods in another language and both get
+      // uploaded under second name and language...
       uploadZipFile(
         xhr, 
         data.temp_submission_name, 
-        zip_file_in_memory
+        zip_file_in_memory,
+        data.language,
+        data.username
       );
     }
   );
 }
 
+/**
+* Notes re: cross domain cookies - which is irrelevant since they dont work in
+*  inside web workers
+    // see: https://stackoverflow.com/questions/11601149/browsers-not-sending-back-cookies-when-using-cors-xhr
+    // browser settings were blocking third-party cookies (Chrome > Settings 
+    // > Advanced Settings > Privacy and security > Content Settings > Cookies 
+    // > Block third-party cookies). 
+    // Unblocking solved the problem!
+
+    // CORS - for cross origin resource sharing
+    // send cookie across to a different domain
+    // see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+
+    //https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
+*/
+
 // see also https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp
 // See for debugging mobile: https://developer.mozilla.org/en-US/docs/Tools/Remote_Debugging/Debugging_Firefox_for_Android_with_WebIDE
 // see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
-function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
+function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, username) {
     var upload_try_count = 1;
     var max_retries = 3;
     var run_once = false;
@@ -64,6 +89,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
             console.log("transferFailed: retry # " + upload_try_count);
             setTimeout( function () {
               uploadZipFileLoop();
+      // TODO DEBUG
       //            }, 1000 * 60 * 1); // wait 1 minute for each retry
             }, 3000 ); 
             upload_try_count++;
@@ -82,17 +108,26 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
         }
 
       xhr.upload.addEventListener("error", transferFailed);
-      // firefox thinks a break in internet is a transferCancelled event??
+      // firefox thinks a break in internet connection is a transferCancelled event??
       //xhr.upload.addEventListener("abort", transferCancelled);
       xhr.upload.addEventListener("abort", transferFailed);
 
       xhr.open('POST', uploadURL, true); // async
-      xhr.setRequestHeader("Content-type", "application/zip"); // this is set by default, just want to make it explicit
+      //xhr.setRequestHeader("Content-type", "application/zip"); // this is set by default, just want to make it explicit
+      //xhr.setRequestHeader("Content-type", "multipart/form-data"); // this is set by default, just want to make it explicit
+
       // https://en.wikipedia.org/wiki/XMLHttpRequest 
       // https://stackoverflow.com/questions/17478731/whats-the-point-of-the-x-requested-with-header
-      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // Tells server that this call is made for ajax purposes.
-      xhr.send(zip_file_in_memory);
-    }
+      //xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // Tells server that this call is made for ajax purposes.
+
+      //xhr.send(zip_file_in_memory);
+      var form = new FormData();
+      form.append('file', zip_file_in_memory, "EN_MOFO_sdf.zip");
+      form.append('username', username);
+      form.append('language', language);
+
+      xhr.send(form);
+    } // end uploadZipFileLoop
 
     function saveSubmissionLocally() {
       var saved_submission_name = temp_submission_name;
@@ -105,22 +140,9 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory) {
           console.log('saveSubmissionLocally It failed!', err);
       });
     }
-
-    // see: https://stackoverflow.com/questions/11601149/browsers-not-sending-back-cookies-when-using-cors-xhr
-    // browser settings were blocking third-party cookies (Chrome > Settings 
-    // > Advanced Settings > Privacy and security > Content Settings > Cookies 
-    // > Block third-party cookies). 
-    // Unblocking solved the problem!
-
-    // CORS - for cross origin resource sharing
-    // send cookie across to a different domain
-    // see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-
-//https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
-
     // !!!!!!
-    // cannot sent cookies from a webworker...
+    //https://mortoray.com/2014/04/09/allowing-unlimited-access-with-cors/
+    // cannot send cookies from a webworker...
     // see https://stackoverflow.com/questions/34635057/can-i-access-document-cookie-on-web-worker
     //xhr.withCredentials = true;
     // !!!!!!
@@ -196,7 +218,12 @@ function checkForSavedFailedUploads() {
           console.log('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
         });
         xhr.open('POST', uploadURL, true); // async
-        xhr.send(zip_file_in_memory);
+        //xhr.send(zip_file_in_memory);
+        var formData = new FormData();
+        //formData.append('zip_file', zip_file_in_memory);
+        formData.append('language', language);
+        formData.append('username', username);
+        xhr.send(formData);
     }
 
   localforage.length().then(function(numberOfKeys) {

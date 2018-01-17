@@ -408,6 +408,7 @@ function createZipFile(audioArray) {
   zip_worker.postMessage({
     command: 'zipAndUpload',
     username: profile.getUserName(),
+    language: dataset_language,
     temp_submission_name: profile.getTempSubmissionName(),
     readme: readme_blob,
     prompts: prompts_blob,
