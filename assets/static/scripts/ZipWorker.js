@@ -58,18 +58,8 @@ function createZipFile(self, data) {
 }
 
 /**
-* Notes re: cross domain cookies - which is irrelevant since they dont work in
-*  inside web workers
-    // see: https://stackoverflow.com/questions/11601149/browsers-not-sending-back-cookies-when-using-cors-xhr
-    // browser settings were blocking third-party cookies (Chrome > Settings 
-    // > Advanced Settings > Privacy and security > Content Settings > Cookies 
-    // > Block third-party cookies). 
-    // Unblocking solved the problem!
+* Notes cross domain cookies - CORS does not work in web workers
 
-    // CORS - for cross origin resource sharing
-    // send cookie across to a different domain
-    // see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 
     //https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
 */
