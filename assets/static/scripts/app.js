@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
 https://www.acunetix.com/websitesecurity/cross-site-scripting/
-How Cross-site Scripting works
+XSS - How Cross-site Scripting works
 In order to run malicious JavaScript code in a victim’s browser, 
 an attacker must first find a way to inject a payload into a web page that 
 the victim visits. 
@@ -31,9 +31,8 @@ insert a string that will be used within the web page and treated as
 code by the victim’s browser.
 This app does not display other users' input in its pages, so no XSS 
 vulnerability...
-TODO make sure the inclusion of external prompts text files is not a 
-vector for XSS
-
+CSRF - Cross site request forgery
+TODO
 */
 
 
@@ -50,28 +49,30 @@ var upload = document.querySelector('.upload');
 var soundClips = document.querySelector('.sound-clips');
 var canvas = document.querySelector('.visualizer');
 
-// recording thread
+// recording Web Worker
 var worker = new Worker('/assets/static/scripts/EncoderWorker.js');
 // zip and upload thread
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
-// if page reloaded kill background worker threads before page reload
-// to prevent zombie worker threads in FireFox
+
+/**
+*  if page reloaded kill background worker threads before page reload
+* to prevent zombie worker threads in FireFox
+*/
 $( window ).unload(function() {
   worker.terminate();
   zip_worker.terminate();
 });
 
+/**
+* Global variable declaration
+*/
 var microphone = null;
 var microphoneLevel = null;
 var processor = undefined;  
 var analyser = null;
 var mediaStreamOutput = null;
-
 var wavesurfer;
-
 var timeout_obj;
-
-// disable stop button while not recording
 stop.disabled = true;
 upload.disabled = true;
 
@@ -80,8 +81,11 @@ var audioCtx = new (window.AudioContext || webkitAudioContext)();
 // #############################################################################
 //main block for doing the audio recording
 
-// See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-// Older browsers might not implement mediaDevices at all, so we set an empty object first
+/**
+* Older browsers might not implement mediaDevices at all, so we set an empty 
+* object first
+* see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+*/
 if (navigator.mediaDevices === undefined) {
   navigator.mediaDevices = {};
 }
@@ -95,8 +99,8 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
                          navigator.webkitGetUserMedia ||
                          navigator.mozGetUserMedia ||
                          navigator.msGetUserMedia);
-    // Some browsers just don't implement it - return a rejected promise with an error
-    // to keep a consistent interface
+    // Some browsers just don't implement it - return a rejected promise with 
+    // an error to keep a consistent interface
     if (!getUserMedia) {
       console.log('getUserMedia not supported on your browser!');
       document.querySelector('.info-display').innerText = 
@@ -112,7 +116,11 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
   }
 }
 
-// see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+/**
+* prompts the user for permission to use a media input which produces a 
+* MediaStream with tracks containing the requested types of media - i.e. audio track
+* see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+*/
 navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('getUserMedia supported.');
@@ -126,17 +134,17 @@ navigator.mediaDevices.getUserMedia(constraints)
     console.log('The following error occured: ' + err);
   });
 
-// https://stackoverflow.com/questions/1641507/detect-browser-support-for-cross-domain-xmlhttprequests
-// Detect browser support for CORS
-if ('withCredentials' in new XMLHttpRequest()) {
-    /* supports cross-domain requests */
-  window.alert("CORS supported (XHR)");
-}else{
-  //Time to retreat with a fallback or polyfill
-  window.alert("No CORS Support!");
-}
+/**
+* set up audio nodes that are connected together in a graph so that the 
+* source microphone input can be captured, and volume node can be created 
+* (currently not used), an analzer to create visually display the amplitude
+* of the captured audio, a processor to capture the raw audio, and a meidaStream Outpu
 
 
+NOT FINISHED
+
+
+*/
 function setupAudioNodes(stream) {
   microphone = audioCtx.createMediaStreamSource(stream);
   microphoneLevel = audioCtx.createGain();

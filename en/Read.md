@@ -5,7 +5,9 @@ menu: Read
 ref: read
 lang: en
 prompt_list_contains_id: false
-permalink: /en/read
+# need trailing slash for testing on localserver 
+# see: https://github.com/barryclark/jekyll-now/issues/13
+permalink: /en/read/
 redirect_from: /home/read
 weight: 2
 
