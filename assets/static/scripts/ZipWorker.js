@@ -4,8 +4,8 @@
 // see https://developers.google.com/web/fundamentals/instant-and-offline/web-storage/offline-for-pwa
 //importScripts('jszip.js', 'idb-keyval.js'); 
 importScripts('jszip.js', 'localforage.js'); 
-var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
-//var uploadURL = 'http://localhost:5000/uploadSubmissionFile';
+//var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
+var uploadURL = 'https://flask_voxforge.org:8100/uploadSubmissionFile';
 
 self.onmessage = function(event) {
   console.log("starting zipAndUpload web worker");
