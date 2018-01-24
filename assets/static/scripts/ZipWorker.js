@@ -6,6 +6,7 @@
 importScripts('jszip.js', 'localforage.js'); 
 var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
 
+
 self.onmessage = function(event) {
   console.log("starting zipAndUpload web worker");
 
