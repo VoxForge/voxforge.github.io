@@ -4,7 +4,8 @@
 // see https://developers.google.com/web/fundamentals/instant-and-offline/web-storage/offline-for-pwa
 //importScripts('jszip.js', 'idb-keyval.js'); 
 importScripts('jszip.js', 'localforage.js'); 
-var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
+//var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
+var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile';
 
 
 self.onmessage = function(event) {
@@ -97,14 +98,14 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
           }
         }
 
-      xhr.upload.addEventListener("error", transferFailed);
+      //xhr.upload.addEventListener("error", transferFailed);
       // firefox thinks a break in internet connection is a transferCancelled event??
       //xhr.upload.addEventListener("abort", transferCancelled);
-      xhr.upload.addEventListener("abort", transferFailed);
+      //xhr.upload.addEventListener("abort", transferFailed);
 
       xhr.open('POST', uploadURL, true); // async
       //xhr.setRequestHeader("Content-type", "application/zip"); // this is set by default, just want to make it explicit
-      xhr.setRequestHeader("Content-type", "multipart/form-data"); // this is set by default, just want to make it explicit
+      //xhr.setRequestHeader("Content-type", "multipart/form-data"); // this is set by default, just want to make it explicit
 
       // https://en.wikipedia.org/wiki/XMLHttpRequest 
       // https://stackoverflow.com/questions/17478731/whats-the-point-of-the-x-requested-with-header
@@ -139,7 +140,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
     xhr.upload.addEventListener("progress", updateProgress);
     xhr.upload.addEventListener("load", function(event) {
       transferSuccessful();
-      checkForSavedFailedUploads();
+      // checkForSavedFailedUploads(); !!!!!! TODO
     });
 
     uploadZipFileLoop();
