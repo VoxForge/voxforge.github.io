@@ -1,11 +1,19 @@
+// *** edit version in git/voxforge.github.io
+
+// don't edit version of this file in /var/www/html which symlinks 
+// to: ~/git/voxforge.github.io/_site
+// remember to turn on keyll to update the _site folder as stuff gets changed:
+// clear && jekyll server --incremental
+
+
 // use about:debugging#workers in firefox to get at web worker
 // use chrome for debugging webworkers, no need to mess aroung with about:...
 
 // see https://developers.google.com/web/fundamentals/instant-and-offline/web-storage/offline-for-pwa
 //importScripts('jszip.js', 'idb-keyval.js'); 
 importScripts('jszip.js', 'localforage.js'); 
-//var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
-var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile';
+var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
+//var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile';
 
 
 self.onmessage = function(event) {
