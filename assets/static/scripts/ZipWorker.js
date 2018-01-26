@@ -75,7 +75,7 @@ function createZipFile(self, data) {
     zip.file(filename, audio_blob);
   }
 
-  // inner function: create zip file in memory and puts it in a blob object
+  /* inner function: create zip file in memory and puts it in a blob object */
   zip.generateAsync({type:"blob"}).then(
     function(zip_file_in_memory) {
       var xhr = new XMLHttpRequest();
@@ -103,7 +103,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
     var max_retries = 3;
     var run_once = false;
 
-    // Inner Function: implements a recursive loop
+    /* Inner Function: implements a recursive loop */
     function uploadZipFileLoop() {
         // on failed upload, perform 2 more retries and then save submission locally
         function transferFailed(evt) {
@@ -143,8 +143,8 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
       xhr.send(form);
     } // end uploadZipFileLoop
 
-    // Inner Function: save the submission to user's browser InnoDB database using
-    // LocalForage
+    /* Inner Function: save the submission to user's browser InnoDB database using
+       LocalForage */
     function saveSubmissionLocally() {
       var saved_submission_name = temp_submission_name;
       localforage.setItem(saved_submission_name, zip_file_in_memory).then(function (value) {
@@ -194,7 +194,7 @@ function transferSuccessful(evt) {
 * is one, upload to server
 */
 function checkForSavedFailedUploads() {
-    // Inner Function: if saved submissions exist, get then upload the submission
+    /* Inner Function: if saved submissions exist, get then upload the submission */
     function foundSavedSubmission(numberOfKeys) {
       localforage.keys().then(function(savedSubmissionArray) {
         console.log('saved submissions to upload: ' + savedSubmissionArray);
@@ -207,7 +207,7 @@ function checkForSavedFailedUploads() {
       });
     }
 
-    // Inner Function: get the submission object
+    /* Inner Function: get the submission object */
     function getSubmission(saved_submission_name) {
       localforage.getItem(saved_submission_name).then(function(zip_file_in_memory) {
         console.log("uploading saved submission: " + saved_submission_name);
@@ -219,8 +219,8 @@ function checkForSavedFailedUploads() {
 
     // Inner Function: upload the submission to the VoxForge server
     function uploadSubmission(xhr, saved_submission_name, zip_file_in_memory) {
-        // Inner Function: if saved submission successfully uploaded to  
-        // VoxForge server, removeit from user's browser storage
+        /* Inner Function: if saved submission successfully uploaded to  
+           VoxForge server, removeit from user's browser storage */
         function removeSavedSubmission(saved_submission_name) {
           // only remove saved submission if upload completed successfully
           localforage.removeItem(saved_submission_name).then(function() {
@@ -251,8 +251,8 @@ function checkForSavedFailedUploads() {
         xhr.send(formData);
     }
 
-  // check localforage for any saved submissions (by counting the number of keys
-  // therein
+  /* check localforage for any saved submissions (by counting the number of keys
+     therein */
   localforage.length().then(function(numberOfKeys) {
     if (numberOfKeys > 0) {
       console.log('number of submissions saved in browser storage: ' + numberOfKeys);
