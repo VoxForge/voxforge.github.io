@@ -11,19 +11,44 @@
 
 // see https://developers.google.com/web/fundamentals/instant-and-offline/web-storage/offline-for-pwa
 //importScripts('jszip.js', 'idb-keyval.js'); 
+
+/**
+* Note cross domain cookies: cookies do not work in web workers
+    //https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
+
+// see also https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp
+// See for debugging mobile: https://developer.mozilla.org/en-US/docs/Tools/Remote_Debugging/Debugging_Firefox_for_Android_with_WebIDE
+// see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+
+//https://mortoray.com/2014/04/09/allowing-unlimited-access-with-cors/
+// cannot send cookies from a webworker...
+// see https://stackoverflow.com/questions/34635057/can-i-access-document-cookie-on-web-worker
+//xhr.withCredentials = true;
+*/
+
+// #############################################################################
+
 importScripts('jszip.js', 'localforage.js'); 
-var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
-//var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile';
+//var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
+var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile';
 
-
+/**
+* Main worker function.  This worker, running in the background, takes the text
+* and audio blob files
+* and adds them to an in memory zip object which it then attempts to upload
+* to the VoxForge server; if it cannot, it will save the submission to InnoDB
+* using localForage, and upload to server next time it performs a successful
+* upload.
+* 
+* Problem: it will only upload saved submission to server if the user tries
+* another submission... should upload in background once network connectivity
+* is detected using a service worker
+*/
 self.onmessage = function(event) {
   console.log("starting zipAndUpload web worker");
 
   var data = event.data;
   switch (data.command) {
-    case 'start':
-      console.log('Warning: start not implemented in ZipWorker');
-      break;
     case 'zipAndUpload':
       createZipFile(self, data);
       break;
@@ -33,6 +58,9 @@ self.onmessage = function(event) {
   }
 };
 
+/**
+* creates the zip file in memory
+*/
 function createZipFile(self, data) {
   var zip = new JSZip();
 
@@ -47,10 +75,10 @@ function createZipFile(self, data) {
     zip.file(filename, audio_blob);
   }
 
+  // inner function: create zip file in memory and puts it in a blob object
   zip.generateAsync({type:"blob"}).then(
     function(zip_file_in_memory) {
       var xhr = new XMLHttpRequest();
-
 
       // TODO this approach will not catch instance where user record in one language
       // offline, it gets saved and then recrods in another language and both get
@@ -67,22 +95,17 @@ function createZipFile(self, data) {
 }
 
 /**
-* Notes cross domain cookies - CORS does not work in web workers
-
-
-    //https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
+* tries to perform the actual upload of submission to voxforge server, if cannot
+* tries 2 more times and then saves to user's browser storage
 */
-
-// see also https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp
-// See for debugging mobile: https://developer.mozilla.org/en-US/docs/Tools/Remote_Debugging/Debugging_Firefox_for_Android_with_WebIDE
-// see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
 function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, username) {
     var upload_try_count = 1;
     var max_retries = 3;
     var run_once = false;
 
-    // TODO might need a more robust approach: see https://github.com/hubspot/offline
+    // Inner Function: implements a recursive loop
     function uploadZipFileLoop() {
+        // on failed upload, perform 2 more retries and then save submission locally
         function transferFailed(evt) {
           if ( upload_try_count <= max_retries ) {
             console.log("transferFailed: retry # " + upload_try_count);
@@ -106,28 +129,22 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
           }
         }
 
-      //xhr.upload.addEventListener("error", transferFailed);
+      xhr.upload.addEventListener("error", transferFailed);
       // firefox thinks a break in internet connection is a transferCancelled event??
       //xhr.upload.addEventListener("abort", transferCancelled);
-      //xhr.upload.addEventListener("abort", transferFailed);
+      xhr.upload.addEventListener("abort", transferFailed);
 
       xhr.open('POST', uploadURL, true); // async
-      //xhr.setRequestHeader("Content-type", "application/zip"); // this is set by default, just want to make it explicit
-      //xhr.setRequestHeader("Content-type", "multipart/form-data"); // this is set by default, just want to make it explicit
-
-      // https://en.wikipedia.org/wiki/XMLHttpRequest 
-      // https://stackoverflow.com/questions/17478731/whats-the-point-of-the-x-requested-with-header
-      //xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // Tells server that this call is made for ajax purposes.
 
       var form = new FormData();
       form.append('file', zip_file_in_memory, "webworker_file.zip");
       form.append('username', username);
       form.append('language', language);
       xhr.send(form);
-      //xhr.send(zip_file_in_memory); // !!!!!!
-
     } // end uploadZipFileLoop
 
+    // Inner Function: save the submission to user's browser InnoDB database using
+    // LocalForage
     function saveSubmissionLocally() {
       var saved_submission_name = temp_submission_name;
       localforage.setItem(saved_submission_name, zip_file_in_memory).then(function (value) {
@@ -139,21 +156,19 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
           console.log('saveSubmissionLocally It failed!', err);
       });
     }
-    // !!!!!!
-    //https://mortoray.com/2014/04/09/allowing-unlimited-access-with-cors/
-    // cannot send cookies from a webworker...
-    // see https://stackoverflow.com/questions/34635057/can-i-access-document-cookie-on-web-worker
-    //xhr.withCredentials = true;
-    // !!!!!!
+
     xhr.upload.addEventListener("progress", updateProgress);
     xhr.upload.addEventListener("load", function(event) {
       transferSuccessful();
-      // checkForSavedFailedUploads(); !!!!!! TODO
+      checkForSavedFailedUploads();
     });
 
     uploadZipFileLoop();
 }
 
+/** 
+* display upload progress in concole for debugging
+*/
 function updateProgress (evt) {
   if (evt.lengthComputable) {
     var percentComplete = (evt.loaded / evt.total) * 100;
@@ -163,6 +178,10 @@ function updateProgress (evt) {
   }
 }
 
+/** 
+* if the upload was successful, send a message back to calling program saying 
+* that the transfer completed successfully
+*/
 function transferSuccessful(evt) {
   console.log("transferComplete: The transfer successfully completed.");
   self.postMessage({ 
@@ -170,9 +189,12 @@ function transferSuccessful(evt) {
   });
 }
 
-// upload submissions saved to the browser (because of previous failed upload)
+/** 
+* check for saved submissions (because of previous failed upload), and if there 
+* is one, upload to server
+*/
 function checkForSavedFailedUploads() {
-
+    // Inner Function: if saved submissions exist, get then upload the submission
     function foundSavedSubmission(numberOfKeys) {
       localforage.keys().then(function(savedSubmissionArray) {
         console.log('saved submissions to upload: ' + savedSubmissionArray);
@@ -185,6 +207,7 @@ function checkForSavedFailedUploads() {
       });
     }
 
+    // Inner Function: get the submission object
     function getSubmission(saved_submission_name) {
       localforage.getItem(saved_submission_name).then(function(zip_file_in_memory) {
         console.log("uploading saved submission: " + saved_submission_name);
@@ -194,7 +217,10 @@ function checkForSavedFailedUploads() {
       });
     }
 
+    // Inner Function: upload the submission to the VoxForge server
     function uploadSubmission(xhr, saved_submission_name, zip_file_in_memory) {
+        // Inner Function: if saved submission successfully uploaded to  
+        // VoxForge server, removeit from user's browser storage
         function removeSavedSubmission(saved_submission_name) {
           // only remove saved submission if upload completed successfully
           localforage.removeItem(saved_submission_name).then(function() {
@@ -222,11 +248,11 @@ function checkForSavedFailedUploads() {
         form.append('file', zip_file_in_memory, "webworker_file.zip");
         formData.append('language', language);
         formData.append('username', username);
-
         xhr.send(formData);
-        //xhr.send(zip_file_in_memory); // !!!!!!
     }
 
+  // check localforage for any saved submissions (by counting the number of keys
+  // therein
   localforage.length().then(function(numberOfKeys) {
     if (numberOfKeys > 0) {
       console.log('number of submissions saved in browser storage: ' + numberOfKeys);
