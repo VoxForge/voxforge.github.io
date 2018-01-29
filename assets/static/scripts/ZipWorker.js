@@ -2,15 +2,13 @@
 
 // don't edit version of this file in /var/www/html which symlinks 
 // to: ~/git/voxforge.github.io/_site
-// remember to turn on keyll to update the _site folder as stuff gets changed:
+// remember to turn on jekyll to update the _site folder as stuff gets changed:
 // clear && jekyll server --incremental
 
 
 // use about:debugging#workers in firefox to get at web worker
-// use chrome for debugging webworkers, no need to mess aroung with about:...
+// use chrome for debugging webworkers, no need to mess with about:...
 
-// see https://developers.google.com/web/fundamentals/instant-and-offline/web-storage/offline-for-pwa
-//importScripts('jszip.js', 'idb-keyval.js'); 
 
 /**
 * Note cross domain cookies: cookies do not work in web workers
@@ -31,7 +29,7 @@
 importScripts('jszip.js', 'localforage.js'); 
 //var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
 var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile';
-
+var speechSubmissionAppVersion = "0.1";
 /**
 * Main worker function.  This worker, running in the background, takes the text
 * and audio blob files
@@ -122,7 +120,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
               self.postMessage({
                 status: message 
               });
-              saveSubmissionLocally();
+              saveSubmissionLocally(language, username);
               run_once = true;
             }
             return;
@@ -143,17 +141,23 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
       xhr.send(form);
     } // end uploadZipFileLoop
 
-    /* Inner Function: save the submission to user's browser InnoDB database using
-       LocalForage */
-    function saveSubmissionLocally() {
+    /* Inner Function: save the submission as a JSON object in user's browser 
+      InnoDB database using LocalForage */
+    function saveSubmissionLocally(language, username) {
       var saved_submission_name = temp_submission_name;
-      localforage.setItem(saved_submission_name, zip_file_in_memory).then(function (value) {
+      var jsonOnject = {};
+      jsonOnject['file'] = zip_file_in_memory;
+      jsonOnject['username'] = username;
+      jsonOnject['language'] = language;
+      jsonOnject['speechSubmissionAppVersion'] = speechSubmissionAppVersion;
+      //localforage.setItem(saved_submission_name, zip_file_in_memory).then(function (value) {
+      localforage.setItem(saved_submission_name, jsonOnject).then(function (value) {
         console.log('saveSubmissionLocally: saved submission to localforage browser storage using this key: ' + saved_submission_name);
         self.postMessage({ 
           status: "savedInBrowserStorage"
         });
       }).catch(function(err) {
-          console.log('saveSubmissionLocally It failed!', err);
+          console.log('saveSubmissionLocally failed!', err);
       });
     }
 
@@ -197,7 +201,7 @@ function checkForSavedFailedUploads() {
     /* Inner Function: if saved submissions exist, get then upload the submission */
     function foundSavedSubmission(numberOfKeys) {
       localforage.keys().then(function(savedSubmissionArray) {
-        console.log('saved submissions to upload: ' + savedSubmissionArray);
+        console.log('saved submissions to upload: \n' + ' - '+ savedSubmissionArray.join('\n'));
         for (var i = 0; i < savedSubmissionArray.length; i++) {
           var saved_submission_name = savedSubmissionArray[i];
           getSubmission(saved_submission_name);
@@ -209,16 +213,19 @@ function checkForSavedFailedUploads() {
 
     /* Inner Function: get the submission object */
     function getSubmission(saved_submission_name) {
-      localforage.getItem(saved_submission_name).then(function(zip_file_in_memory) {
+      //localforage.getItem(saved_submission_name).then(function(zip_file_in_memory) {
+      localforage.getItem(saved_submission_name).then(function(jsonOnject) {
         console.log("uploading saved submission: " + saved_submission_name);
-        uploadSubmission(new XMLHttpRequest(), saved_submission_name, zip_file_in_memory);
+        //uploadSubmission(new XMLHttpRequest(), saved_submission_name, zip_file_in_memory);
+        uploadSubmission(saved_submission_name, jsonOnject);
       }).catch(function(err) {
         console.log('checkForSavedFailedUpload err: ' + err);
       });
     }
 
-    // Inner Function: upload the submission to the VoxForge server
-    function uploadSubmission(xhr, saved_submission_name, zip_file_in_memory) {
+    /* Inner Function: upload the submission to the VoxForge server */
+    //function uploadSubmission(xhr, saved_submission_name, zip_file_in_memory) {
+    function uploadSubmission(saved_submission_name, jsonOnject) {
         /* Inner Function: if saved submission successfully uploaded to  
            VoxForge server, removeit from user's browser storage */
         function removeSavedSubmission(saved_submission_name) {
@@ -230,6 +237,7 @@ function checkForSavedFailedUploads() {
           });  
         }
 
+        xhr = new XMLHttpRequest();
         xhr.upload.addEventListener("progress", updateProgress);
         xhr.upload.addEventListener("load", function(event) {
           transferSuccessful();
@@ -244,11 +252,14 @@ function checkForSavedFailedUploads() {
         });
         xhr.open('POST', uploadURL, true); // async
 
-        var formData = new FormData();
-        form.append('file', zip_file_in_memory, "webworker_file.zip");
-        formData.append('language', language);
-        formData.append('username', username);
-        xhr.send(formData);
+        var form = new FormData();
+        //form.append('file', zip_file_in_memory, "webworker_file.zip");
+        //formData.append('language', language);
+        //formData.append('username', username);
+        form.append('file', jsonOnject['file'], "webworker_file.zip");
+        form.append('language', jsonOnject['language'])
+        form.append('username', jsonOnject['username'])
+        xhr.send(form);
     }
 
   /* check localforage for any saved submissions (by counting the number of keys

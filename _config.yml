@@ -5,6 +5,8 @@
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # 'jekyll serve'. If you change this file, please restart the server process.
 
+include: [submissions]
+keep_files: [submissions]
 exclude: [fix_md_script]
 # Site settings
 title:
@@ -65,3 +67,4 @@ collections:
     permalink: /faq/:path/ # this is for faq item path
 plugins:
   - jekyll-redirect-from
+
