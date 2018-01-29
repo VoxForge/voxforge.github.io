@@ -3,7 +3,8 @@
 
 <?php
 try {
-  $uploadfolder = './submissions/';
+  //$uploadfolder = './submissions/';
+  $uploadfolder = '../../public/speechsubmissions/';
   $max_size_mb = 3; // max size in megabytes
 
   $tmp_name = $_FILES['file']['tmp_name'];
