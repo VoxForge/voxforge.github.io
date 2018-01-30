@@ -1,14 +1,17 @@
 <?php
+header("Access-Control-Allow-Origin: https://voxforge.github.io");
+# header("Access-Control-Allow-Origin: https://jekyll_voxforge.org");
+header("Content-Type: multipart/form-data");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Request-Headers, x-requested-with");
+header("Access-Control-Max-Age: 1");
+
+# testing: clear && curl --include -X voxforge1.org/upload.php --header Access-Control-Request-Method:POST --header Access-Control-Request-Headers:Content-Type --header Origin:https://voxforge.github.io
 # error handling see http://php.net/manual/en/features.file-upload.php
 # make sure apache user has write permission to uploadfolder
 
 # see: https://www.w3.org/wiki/CORS_Enabled 
 
-header("Access-Control-Allow-Origin: https://voxforge.github.io");
-header("Content-Type: multipart/form-data");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Request-Headers, x-requested-with");
-header("Access-Control-Max-Age: 1");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     echo 'OPTIONS';
@@ -21,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-  //$uploadfolder = './submissions/';
+  //$uploadfolder = './submissions/'; //testing
   $uploadfolder = '../../public/speechsubmissions/';
   $max_size_mb = 3; // max size in megabytes
 

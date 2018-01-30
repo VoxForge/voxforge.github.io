@@ -27,11 +27,11 @@
 // #############################################################################
 
 importScripts('jszip.js', 'localforage.js'); 
-//var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile';
-//var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile'; // testing
+//var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile'; // Flask testing
+//var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile'; // Flask testing
 // now using PHP uploader
-//var uploadURL = '/upload.php'; // testing
-var uploadURL = 'https://flask.voxforge1.org/upload.php'; 
+//var uploadURL = 'https://jekyll2_voxforge.org/upload.php'; // test
+var uploadURL = 'https://record.voxforge1.org/upload.php'; // prod
 
 var speechSubmissionAppVersion = "0.1";
 /**

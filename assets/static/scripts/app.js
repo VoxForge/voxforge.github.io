@@ -121,6 +121,9 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 * MediaStream with tracks containing the requested types of media - i.e. audio track
 * see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 */
+
+// TODO this does not catch the case when user tries to access website with http rather than https
+// need another catch after getUserMedia call... or a seperate check to https...
 navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('getUserMedia supported.');
