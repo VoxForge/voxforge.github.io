@@ -1,7 +1,25 @@
-// error handling see http://php.net/manual/en/features.file-upload.php
-// make sure apache user has write permission to uploadfolder
-
 <?php
+# error handling see http://php.net/manual/en/features.file-upload.php
+# make sure apache user has write permission to uploadfolder
+
+# see: https://www.w3.org/wiki/CORS_Enabled 
+
+header("Access-Control-Allow-Origin: https://voxforge.github.io");
+header("Content-Type: multipart/form-data");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Request-Headers, x-requested-with");
+header("Access-Control-Max-Age: 1");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    echo 'OPTIONS';
+    exit(0);
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo 'NOT POST';
+    exit(0);
+}
+
 try {
   //$uploadfolder = './submissions/';
   $uploadfolder = '../../public/speechsubmissions/';
