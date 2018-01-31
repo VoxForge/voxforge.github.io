@@ -31,7 +31,7 @@ importScripts('jszip.js', 'localforage.js');
 //var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile'; // Flask testing
 // now using PHP uploader
 //var uploadURL = 'https://jekyll2_voxforge.org/upload.php'; // test
-var uploadURL = 'https://record.voxforge1.org/upload.php'; // prod
+var uploadURL = 'https://upload.voxforge1.org/upload.php'; // prod
 
 var speechSubmissionAppVersion = "0.1";
 /**
