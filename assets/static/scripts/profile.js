@@ -252,6 +252,25 @@ if ( parsedLocalStorageObject = Profile.getProfileFromLocalStorage() ) {
 }
 
 /**
+* remove unwanted characters from user input
+*
+* see: https://stackoverflow.com/questions/20864893/javascript-replace-all-non-alpha-numeric-characters-new-lines-and-multiple-whi
+* \W is the negation of shorthand \w for [A-Za-z0-9_] word characters (including the underscore)
+* 
+* $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
+* 
+* first replace convert sone or more spaces to underscores
+* second replace removes all non-alphanumeric characters
+* thirds removes consecutive underscores and replaces them with single underscore
+* lastly, trim string to max of length 40 characters
+*/
+Profile.cleanUserInput = function (user_input) {
+  var user_input = user_input.replace(/\s+/, '_').replace(/[^a-z0-9_\-]/gi,'').replace(/_+/g, '_');
+ 
+  return user_input.substring(0, 40);
+}
+
+/**
 * ### METHODS ##############################################
 */
 
@@ -262,7 +281,11 @@ Profile.prototype.toHash = function () {
   var profile_hash = {};
   var i=0;
 
-  profile_hash["username"] = $("#username").val() || "Anonymous";
+  if ( $('#username').val() ) {
+    profile_hash["username"] = Profile.cleanUserInput( $("#username").val() );
+  } else {
+    profile_hash["username"] = "Anonymous";
+  }
   profile_hash["gender"] = $("#gender").val();
   profile_hash["age"] = $("#age").val();
 
@@ -318,7 +341,7 @@ Profile.prototype.toTextArray = function () {
   var i=0;
 
   if ( $('#username').val() ) {
-    profile_array[i++] = 'User Name: ' + $('#username').val() + '\n';
+    profile_array[i++] = 'User Name: ' + Profile.cleanUserInput( $('#username').val() ) + '\n';
   } else {
     profile_array[i++] = 'User Name: Anonymous\n';
   }
@@ -380,7 +403,6 @@ Profile.prototype.toTextArray = function () {
     }
   }
 
-
   profile_array[i++] = 'Audio Recording Software: VoxForge Javascript speech submission application\n';
 
   profile_array[i++] = 'O/S: ' +  platform.os + '\n';
@@ -412,16 +434,14 @@ Profile.prototype.toArray = function () {
 * add profile information to local storage
 */
 Profile.prototype.addProfile2LocalStorage = function () {
-  $.cookie('username', $('#username').val());
-  $.cookie('language', dataset_language);
   localStorage.setItem(dataset_language, this.toJsonString());
 };
 
 /**
-* return username user entered into input field
+* return cleaned username user entered into input field
 */
 Profile.prototype.getUserName = function () {
-  return $('#username').val();
+  return Profile.cleanUserInput( $('#username').val() );
 }
 
 /**
@@ -435,8 +455,9 @@ Profile.prototype.getTempSubmissionName = function () {
     )
   }
 
-  var username = $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
-  //var language = $('#language').val();
+  // TODO why did you set it to toLowercase???
+  // var username = $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
+  var username = Profile.cleanUserInput( $('#username').val() ).toLowerCase();
   var d = new Date();
   var date = d.getFullYear().toString() + (d.getMonth() + 1).toString() + d.getDate().toString();
   var result = dataset_language + '-' + username + '-' + date + '-' + uuidv4();

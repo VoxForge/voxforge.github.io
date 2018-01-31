@@ -88,9 +88,9 @@ try {
   $language = strtoupper( substr($language , 0, 2) ); // set to uppercase
 
   $username = basename( $username ); // may prevent directory traversal attacks
+  $username = preg_replace  (  "/\s+/", "_", $username  ); // replace one or more spaces with single undescore
   $username = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $username  ); // remove unwanted characters
   $username = substr($username , 0, 40); // 40 character max size
-  $username = preg_replace  (  "/\s+/", "_", $username  ); // replace spaces with undescore
 
   $date =  date('Ymd');
   $threeRandomChar = substr(md5(microtime()),rand(0,26),3);
