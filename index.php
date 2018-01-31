@@ -1,4 +1,7 @@
 <?php
+# this file is to be installed on server when upload of submissions is to take 
+# place
+
 header("Access-Control-Allow-Origin: https://voxforge.github.io");
 # header("Access-Control-Allow-Origin: https://jekyll_voxforge.org");
 header("Content-Type: multipart/form-data");
