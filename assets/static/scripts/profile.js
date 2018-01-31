@@ -181,6 +181,10 @@ Profile.updateScreen = function (json_object) {
   }
   $('#gender').val( json_object.gender );
   $('#age').val( json_object.age );
+
+  // TODO implied by the page the user is on... 
+  // $('#dataset_language').val( json_object.dataset_language );
+
   $('#native_speaker').val( json_object.native_speaker );
   if ( $('#native_speaker').val()==="Yes" )
   {
@@ -189,7 +193,7 @@ Profile.updateScreen = function (json_object) {
     $("#first_language_display").show();
   }
   $('#first_language').val( json_object.first_language );
-  $('#first_language').val( json_object.first_language_other );
+  $('#first_language_other').val( json_object.first_language_other );
   $('#dialect').val( json_object.dialect );
   $('#dialect_other').val( json_object.dialect_other );
   if ( $('#dialect').val() === dataset_other )
@@ -252,127 +256,50 @@ if ( parsedLocalStorageObject = Profile.getProfileFromLocalStorage() ) {
 */
 
 /**
-* Convert profile object to hash and array
+* Convert profile form entries to hash
 */
-Profile.prototype.createHashArray = function () {
+Profile.prototype.toHash = function () {
   var profile_hash = {};
-  var profile_array = [];
   var i=0;
 
-  if ( $('#username').val() ) {
-    profile_array[i++] = 'User Name: ' + $('#username').val() + '\n';
-    profile_hash["username"] = $("#username").val();
-  } else {
-    profile_array[i++] = 'User Name: Anonymous\n';
-    profile_hash["username"] = "Anonymous";
-  }
-
-  profile_array[i++] = '\nSpeaker Characteristics: \n\n';
-
-  profile_array[i++] = 'Gender: ' +  $('#gender').val() + '\n';
+  profile_hash["username"] = $("#username").val() || "Anonymous";
   profile_hash["gender"] = $("#gender").val();
-
-  var $old_value = $('#age').find(':selected').attr('old_value');
-  if ($old_value) {
-    profile_array[i++] = 'Age Range: ' +  $old_value + '\n';
-  } else {
-    profile_array[i++] = 'Age Range: ' +  $('#age').val() + '\n';
-  }
   profile_hash["age"] = $("#age").val();
 
-  profile_array[i++] = 'Language: ' +  dataset_language + '\n';
   profile_hash["language"] = dataset_language;
-
-  profile_array[i++] = 'Native Speaker: ' +  $('#native_speaker').val() + '\n';
   profile_hash["native_speaker"] = $("#native_speaker").val();
-  if ($('#native_speaker').val() !== "No") {
-    if ($('#dialect').val() !== dataset_other) {
-      profile_array[i++] = 'Pronunciation dialect: ' + $('#dialect').val() + '\n';
-      profile_hash["pronunciation_dialect"] = $("#dialect").val();
-      if ( $('#sub_dialect').val() ) {
-        profile_array[i++] = '  sub-dialect: ' + $('#sub_dialect').val() + '\n';
-        profile_hash["sub_dialect"] = $("#sub_dialect").val();
-      }
-    } else {
-      profile_array[i++] =  'Pronunciation dialect: Other - ' + $('#dialect_other').val() + '\n';
-      profile_hash["pronunciation_dialect"] = $("#dialect_other").val();
-    }
-  } else {
-    if ( $('#first_language').val() !== dataset_other) 
-    {
-      var langId = $('#first_language').val();
-      profile_array[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
-      profile_hash["first_language"] = languages.getLanguageInfo(langId).name;
-    } else {
-      profile_array[i++] = '  first language: ' + $('#first_language_other').val();
-      profile_hash["first_language"] = $("#first_language_other").val();
-    }
-  }
+  profile_hash["first_language"] = $('#first_language').val();
+  profile_hash["first_language_other"] = $("#first_language_other").val();
+  profile_hash["dialect"] = $("#dialect").val();
+  profile_hash["dialect_other"] = $("#dialect_other").val();
+  profile_hash["sub_dialect"] = $("#sub_dialect").val();
 
-  profile_array[i++] = '\nRecording Information: \n\n';
-  if ($('#microphone').val() !== dataset_other) {
-    profile_array[i++] = 'Microphone Type: ' + $('#microphone').val() + '\n';
-    profile_hash["microphone"] = $("#microphone").val() ;
-  } else {
-    profile_array[i++] = 'Microphone Type: Other - ' + $('#microphone_other').val() + '\n';
-    profile_hash["microphone"] = $("#microphone_other").val() ;
-  }
+  profile_hash["microphone"] = $("#microphone").val() ;
+  profile_hash["microphone_other"] = $("#microphone_other").val() ;
 
-  if ($('#recording_location').val() !== dataset_other) {
-    profile_array[i++] = 'Recording Location: ' + $('#recording_location').val() + '\n';
-    profile_hash["recording_location"] = $("#recording_location").val() ;
-  } else {
-    profile_array[i++] = 'Recording Location: Other - ' + $('#recording_location_other').val() + '\n';
-    profile_hash["recording_location"] = $("#recording_location_other").val() ;
-  }
+  profile_hash["recording_location"] = $("#recording_location").val() ;
+  profile_hash["recording_location_other"] = $("#recording_location_other").val() ;
 
-  profile_array[i++] = 'Background Noise: ' + $('#background_noise').val() + '\n';
   profile_hash["background_noise"] = $("#background_noise").val() ;
+  profile_hash["noise_volume"] = $("#noise_volume").val() ;
+  profile_hash["noise_type"] = $("#noise_type").val();
+  profile_hash["noise_type_other"] = $("#noise_type_other").val();
 
-  if ($('#background_noise').val() === "Yes") {
-    profile_array[i++] = 'Noise Volume: ' + $('#noise_volume').val() + '\n';
-    profile_hash["noise_volume"] = $("#noise_volume").val() ;
-    if ($('#noise_type').val() !== dataset_other) {
-      profile_array[i++] = 'Noise Type: ' + $('#noise_type').val() + '\n';
-      profile_hash["noise_type"] = $("#noise_type").val();
-    } else {
-      profile_array[i++] = 'Noise Type: Other - ' + $('#noise_type_other').val() + '\n';
-      profile_hash["noise_type"] = $("#noise_type_other").val();
-    }
-  }
-
-
-  profile_array[i++] = 'Audio Recording Software: VoxForge Javascript speech submission application\n';
   profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
 
-  profile_array[i++] = 'O/S: ' +  platform.os + '\n';
   profile_hash["os"] = platform.os.toString();
-
-  profile_array[i++] = 'Browser: ' +  platform.name + ' ' + platform.version + '\n';
   profile_hash["browser"] = platform.version;
 
-  profile_array[i++] = '\nLicense: ' +  $('#license').val() + '\n';
   profile_hash["license"] = $("#license").val();
 
-  profile_array[i++] = '\nFile Info: \n\n';
-
-  profile_array[i++] = 'File type: wav\n';
   profile_hash["file_type"] = "wav";
 
   // see https://www.pmtonline.co.uk/blog/2004/11/04/what-does-the-bit-depth-and-sample-rate-refer-to/
-  profile_array[i++] = 'Sample Rate: ' + this.sample_rate + '\n';
   profile_hash["sample_rate"] = this.sample_rate;
-
-  profile_array[i++] = 'Sample Rate Format (bit depth): ' + this.sample_rate_format + '\n';
   profile_hash["sample_rate_format"] = this.sample_rate_format;
-
-  profile_array[i++] = 'Number of channels: ' + this.channels + '\n';
   profile_hash["channels"] = this.channels;
 
-  return {
-    array: profile_array,
-    hash: profile_hash
-  }
+  return profile_hash;
 };
 
 /**
@@ -380,19 +307,105 @@ Profile.prototype.createHashArray = function () {
 * value line
 */
 Profile.prototype.toJsonString = function () {
-  var profile_data = this.createHashArray();
-
-  return JSON.stringify(profile_data.hash ,null ,"  ");
+  return JSON.stringify(this.toHash() ,null ,"  ");
 }
+
+/**
+* Convert profile form entries to hash and array
+*/
+Profile.prototype.toTextArray = function () {
+  var profile_array = [];
+  var i=0;
+
+  if ( $('#username').val() ) {
+    profile_array[i++] = 'User Name: ' + $('#username').val() + '\n';
+  } else {
+    profile_array[i++] = 'User Name: Anonymous\n';
+  }
+
+  profile_array[i++] = '\nSpeaker Characteristics: \n\n';
+
+  profile_array[i++] = 'Gender: ' +  $('#gender').val() + '\n';
+
+  var $old_value = $('#age').find(':selected').attr('old_value');
+  if ($old_value) {
+    profile_array[i++] = 'Age Range: ' +  $old_value + '\n';
+  } else {
+    profile_array[i++] = 'Age Range: ' +  $('#age').val() + '\n';
+  }
+
+  profile_array[i++] = 'Language: ' +  dataset_language + '\n';
+
+  profile_array[i++] = 'Native Speaker: ' +  $('#native_speaker').val() + '\n';
+  if ($('#native_speaker').val() !== "No") {
+    if ($('#dialect').val() !== dataset_other) {
+      profile_array[i++] = 'Pronunciation dialect: ' + $('#dialect').val() + '\n';
+      if ( $('#sub_dialect').val() ) {
+        profile_array[i++] = '  sub-dialect: ' + $('#sub_dialect').val() + '\n';
+      }
+    } else {
+      profile_array[i++] =  'Pronunciation dialect: Other - ' + $('#dialect_other').val() + '\n';
+    }
+  } else {
+    if ( $('#first_language').val() !== dataset_other) 
+    {
+      var langId = $('#first_language').val();
+      profile_array[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
+    } else {
+      profile_array[i++] = '  first language: ' + $('#first_language_other').val();
+    }
+  }
+
+  profile_array[i++] = '\nRecording Information: \n\n';
+  if ($('#microphone').val() !== dataset_other) {
+    profile_array[i++] = 'Microphone Type: ' + $('#microphone').val() + '\n';
+  } else {
+    profile_array[i++] = 'Microphone Type: Other - ' + $('#microphone_other').val() + '\n';
+  }
+
+  if ($('#recording_location').val() !== dataset_other) {
+    profile_array[i++] = 'Recording Location: ' + $('#recording_location').val() + '\n';
+  } else {
+    profile_array[i++] = 'Recording Location: Other - ' + $('#recording_location_other').val() + '\n';
+  }
+
+  profile_array[i++] = 'Background Noise: ' + $('#background_noise').val() + '\n';
+
+  if ($('#background_noise').val() === "Yes") {
+    profile_array[i++] = 'Noise Volume: ' + $('#noise_volume').val() + '\n';
+    if ($('#noise_type').val() !== dataset_other) {
+      profile_array[i++] = 'Noise Type: ' + $('#noise_type').val() + '\n';
+    } else {
+      profile_array[i++] = 'Noise Type: Other - ' + $('#noise_type_other').val() + '\n';
+    }
+  }
+
+
+  profile_array[i++] = 'Audio Recording Software: VoxForge Javascript speech submission application\n';
+
+  profile_array[i++] = 'O/S: ' +  platform.os + '\n';
+  profile_array[i++] = 'Browser: ' +  platform.name + ' ' + platform.version + '\n';
+  profile_array[i++] = '\nLicense: ' +  $('#license').val() + '\n';
+
+  profile_array[i++] = '\nFile Info: \n\n';
+
+  profile_array[i++] = 'File type: wav\n';
+
+  // see https://www.pmtonline.co.uk/blog/2004/11/04/what-does-the-bit-depth-and-sample-rate-refer-to/
+  profile_array[i++] = 'Sample Rate: ' + this.sample_rate + '\n';
+  profile_array[i++] = 'Sample Rate Format (bit depth): ' + this.sample_rate_format + '\n';
+  profile_array[i++] = 'Number of channels: ' + this.channels + '\n';
+
+  return profile_array;
+};
+
 
 /**
 * Convert profile object to JSON string, with line feeds after every key 
 * value line
 */
 Profile.prototype.toArray = function () {
-  var profile_data = this.createHashArray();
-
-  return profile_data.array;
+  return this.toTextArray();
 }
 
 /**
