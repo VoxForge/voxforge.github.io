@@ -343,7 +343,7 @@ Profile.prototype.createHashArray = function () {
 
 
   profile_array[i++] = 'Audio Recording Software: VoxForge Javascript speech submission application\n';
-  profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application\n';
+  profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
 
   profile_array[i++] = 'O/S: ' +  platform.os + '\n';
   profile_hash["os"] = platform.os.toString();

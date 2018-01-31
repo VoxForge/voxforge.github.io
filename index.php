@@ -6,15 +6,15 @@ header("Access-Control-Allow-Origin: $allowedURL");
 header("Content-Type: multipart/form-data");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Request-Headers, x-requested-with");
-#header("Access-Control-Max-Age: 86400"); # 24hrs * 60min * 60secs = 86400
+//header("Access-Control-Max-Age: 86400"); # 24hrs * 60min * 60secs = 86400
 header("Access-Control-Max-Age: 1"); #testing
 
-# testing: clear && curl --include -X voxforge1.org/upload.php --header Access-Control-Request-Method:POST --header Access-Control-Request-Headers:Content-Type --header Origin:https://voxforge.github.io
-# error handling see http://php.net/manual/en/features.file-upload.php
-# make sure apache user has write permission to uploadfolder
-
-# see: https://www.w3.org/wiki/CORS_Enabled 
-
+/* testing: clear && curl --include -X voxforge1.org/upload.php --header Access-Control-Request-Method:POST --header Access-Control-Request-Headers:Content-Type --header Origin:https://voxforge.github.io
+ * error handling see http://php.net/manual/en/features.file-upload.php
+ * make sure apache user has write permission to uploadfolder
+ *
+ * see: https://www.w3.org/wiki/CORS_Enabled 
+ */
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   die("OPTIONS response");
 }
@@ -23,15 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   die("only POST requests are allowed");
 }
 
+// see: https://stackoverflow.com/questions/41326257/how-i-can-get-origin-of-request-with-php/41326346
 if ($_SERVER['HTTP_ORIGIN'] !== $allowedURL) {
   die("POSTing Only Allowed from $allowedURL");
 }
 
 
 try {
-  //$uploadfolder = './submissions/';
-  $uploadfolder = '../../public/speechsubmissions/';
-  $max_size_mb = 3; // max size in megabytes
+  //$uploadfolder = './submissions/'; // testing
+  $uploadfolder = '../../public/speechsubmissions/'; // prod
+  // max size should be a function of the number of prompts
+  $max_size_mb = 10; // max size in megabytes
 
   $tmp_name = $_FILES['file']['tmp_name'];
   $file_error = $_FILES['file']['error'];
@@ -82,12 +84,13 @@ try {
 
   // limits the length of the filename to 40 char + date and 3 char random code
   $language = basename( $language ); // may prevent directory traversal attacks
-  $language = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $language  );
-  $language = strtoupper( substr($language , 0, 2) );
+  $language = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $language  ); // remove unwanted characters
+  $language = strtoupper( substr($language , 0, 2) ); // set to uppercase
 
   $username = basename( $username ); // may prevent directory traversal attacks
-  $username = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $username  );
-  $username = substr($username , 0, 40);
+  $username = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $username  ); // remove unwanted characters
+  $username = substr($username , 0, 40); // 40 character max size
+  $username = preg_replace  (  "/\s+/", "_", $username  ); // replace spaces with undescore
 
   $date =  date('Ymd');
   $threeRandomChar = substr(md5(microtime()),rand(0,26),3);
