@@ -1,13 +1,13 @@
 <?php
-# this file is to be installed on server when upload of submissions is to take 
-# place
+$allowedURL = "https://voxforge.github.io";
 
-header("Access-Control-Allow-Origin: https://voxforge.github.io");
-# header("Access-Control-Allow-Origin: https://jekyll_voxforge.org");
+
+header("Access-Control-Allow-Origin: $allowedURL");
 header("Content-Type: multipart/form-data");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Request-Headers, x-requested-with");
-header("Access-Control-Max-Age: 1");
+#header("Access-Control-Max-Age: 86400"); # 24hrs * 60min * 60secs = 86400
+header("Access-Control-Max-Age: 1"); #testing
 
 # testing: clear && curl --include -X voxforge1.org/upload.php --header Access-Control-Request-Method:POST --header Access-Control-Request-Headers:Content-Type --header Origin:https://voxforge.github.io
 # error handling see http://php.net/manual/en/features.file-upload.php
@@ -15,19 +15,21 @@ header("Access-Control-Max-Age: 1");
 
 # see: https://www.w3.org/wiki/CORS_Enabled 
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    echo 'OPTIONS';
-    exit(0);
+  die("OPTIONS response");
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo 'NOT POST';
-    exit(0);
+  die("only POST requests are allowed");
 }
 
+if ($_SERVER['HTTP_ORIGIN'] !== $allowedURL) {
+  die("POSTing Only Allowed from $allowedURL");
+}
+
+
 try {
-  //$uploadfolder = './submissions/'; //testing
+  //$uploadfolder = './submissions/';
   $uploadfolder = '../../public/speechsubmissions/';
   $max_size_mb = 3; // max size in megabytes
 
