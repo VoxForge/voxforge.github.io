@@ -4,10 +4,16 @@ title: Read
 menu: Read
 ref: read
 lang: fr
+
+################################################################################
+
 prompt_list_contains_id: true
+total_number_of_prompts: 865
 # sequence number start, url to prompt file
 prompt_list_files:
-  - [ 1, /fr/prompts/001 ]
+  - id: "001"
+    sequence_start: 1
+    file_location: /fr/prompts/001
 
 permalink: /fr/read
 weight: 2
@@ -196,8 +202,9 @@ controls:
   var page_localized_no= "{{ page.localized_variable.lv_no }}";
   var page_localized_other= "{{ page.localized_variable.other }}";
   var page_language= "{{ page.lang }}";
-  var page_prompt_list_contains_id= "{{ page.prompt_list_contains_id }}";
+  var page_prompt_list_contains_id= {{ page.prompt_list_contains_id }};
   var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
+  var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
 </script>
 
 

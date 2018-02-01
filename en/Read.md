@@ -4,11 +4,24 @@ title: Read
 menu: Read
 ref: read
 lang: en
+
+################################################################################
+
 prompt_list_contains_id: false
-# sequence number start, url to prompt file
+total_number_of_prompts: 1176
 prompt_list_files:
-  - [ 1, /en/prompts/001 ]
-  - [ 595, /en/prompts/002 ]
+  - id: "001"
+    start: 1
+    file_location: /en/prompts/001
+    end: 594
+  - id: "002"
+    start: 595
+    file_location: /en/prompts/002
+    end: 895
+  - id: "003"
+    start: 896
+    file_location: /en/prompts/003
+    end: 1176
 
 # need trailing slash for testing on localserver 
 # see: https://github.com/barryclark/jekyll-now/issues/13
@@ -216,8 +229,9 @@ controls:
   var page_localized_no= "{{ page.localized_variable.lv_no }}";
   var page_localized_other= "{{ page.localized_variable.other }}";
   var page_language= "{{ page.lang }}";
-  var page_prompt_list_contains_id= "{{ page.prompt_list_contains_id }}";
+  var page_prompt_list_contains_id= {{ page.prompt_list_contains_id }};
   var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
+  var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
 </script>
 
 

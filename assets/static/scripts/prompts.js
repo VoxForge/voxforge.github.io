@@ -20,32 +20,68 @@
 /**
 * Class declaration
 */
-function Prompts (language) {
-  this.language = language;
-  this.max_num_prompts=3; // default maximum number of prompts
+function Prompts () {
+  //this.max_num_prompts=10; // default maximum number of prompts
+  this.max_num_prompts=3; // TODO testing
   this.list = []; // list of prompts to be read by user
   this.index=0; // pointer to position in prompt list array
   this.prompt_count = 0; // number of prompts read
   this.prompts_recorded = []; // list of prompts that have been recorded
-
-//  this.filename = 'PromptList_' + language + '.txt';
 }
 
 /**
 * Instantiate Prompt class
 */
-var prompts = new Prompts(page_language);
+var prompts = new Prompts();
 
 /**
-* read prompts file from same origin as script location
-* may need to set up a flask page on repository server that serves prompts 
-* from a huge list and keeps track of which one have been already submitted
-* 
+* reset prompt array and index after submission is completed
+*/
+Prompts.promptFile_count = function () {
+  return page_prompt_list_files.length;
+}
+
+/**
+TODO make sure that first and last lines dont have extra html characters (e.g. "<pre><p> at beginngig or </pre>" at end...
+* callback for jquery get to process the received prompts file
+*/
+Prompts.processPromptsFile = function (prompt_data) {
+    function pad (num, size) {
+      var s = num+"";
+      while (s.length <= size) s = "0" + s;
+      return s;
+    }
+
+  var sentences = prompt_data.split('\n');
+  for (var i = 0; i < sentences.length; i++) {
+    if (page_prompt_list_contains_id)
+    { // first word of prompt line is the prompt ID
+      prompts.list[i] = sentences[i];
+    } else {
+      var prompt_id = page_language + pad(i,4);
+      prompts.list[i] = prompt_id  + " " + sentences[i];
+    }
+  }
+}
+
+// TODO add asset to validate prompt files line counts to make sure they are same as in Markdown
+
+prompts.index = Math.floor((Math.random() * page_total_number_of_prompts) + 1);
+var prompt_url;
+var i=0;
+if (Prompts.promptFile_count <1) {
+  prompt_url = page_prompt_list_files[i]['file_location'];
+} else {
+  i++;
+  prompt_url = page_prompt_list_files[i]['file_location'];
+}
+jQuery.get(prompt_url, Prompts.processPromptsFile );
+
+/**
 * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
 * Note: this is a synchronous request...
-*/
-//jQuery.get('/assets/static/prompts/' + prompts.filename, function(data) {
-jQuery.get("/" + page_language + "/prompts/001", function(data) {
+
+jQuery.get('/assets/static/prompts/' + prompts.filename, function(data) {
   function pad (num, size) {
     var s = num+"";
     while (s.length <= size) s = "0" + s;
@@ -65,6 +101,7 @@ jQuery.get("/" + page_language + "/prompts/001", function(data) {
 
   prompts.index = Math.floor((Math.random() * prompts.list.length) + 1);
 });
+*/
 
 /**
 * updates the current number of prompts that the user selected from dropdown
