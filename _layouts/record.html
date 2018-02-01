@@ -23,16 +23,6 @@
       <div id="upload_status_display" border-style: solid;>
       </div>
 
-      <!-- https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes -->
-     <article
-        id="language_specific_variables"
-        data-yes="{{ page.localized_variable.lv_yes }}"
-        data-no="{{ page.localized_variable.lv_no }}"
-        data-other="{{ page.localized_variable.other }}"
-        data-language="{{ page.lang }}" 
-        data-prompt_list_contains_id="{{ page.prompt_list_contains_id }}" >
-     </article>
-
       <button style="display: none;" 
               id="profile-button-display" 
               style="background: #cedfe8;" 
@@ -306,7 +296,9 @@
       </section>
 
     </div>
-
+    <div id="read-page-variables">
+      {{ content }}
+    </div>
 <!--     TODO package and minify
          see: http://ixti.net/software/2012/12/30/unleash-mr-hyde-introduction-of-jekyll-assets.html
 -->

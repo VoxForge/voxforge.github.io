@@ -28,13 +28,13 @@ function Prompts (language) {
   this.prompt_count = 0; // number of prompts read
   this.prompts_recorded = []; // list of prompts that have been recorded
 
-  this.filename = 'PromptList_' + language + '.txt';
+//  this.filename = 'PromptList_' + language + '.txt';
 }
 
 /**
 * Instantiate Prompt class
 */
-var prompts = new Prompts(dataset_language);
+var prompts = new Prompts(page_language);
 
 /**
 * read prompts file from same origin as script location
@@ -44,7 +44,8 @@ var prompts = new Prompts(dataset_language);
 * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
 * Note: this is a synchronous request...
 */
-jQuery.get('/assets/static/prompts/' + prompts.filename, function(data) {
+//jQuery.get('/assets/static/prompts/' + prompts.filename, function(data) {
+jQuery.get("/" + page_language + "/prompts/001", function(data) {
   function pad (num, size) {
     var s = num+"";
     while (s.length <= size) s = "0" + s;
@@ -53,7 +54,7 @@ jQuery.get('/assets/static/prompts/' + prompts.filename, function(data) {
 
   var sentences = data.split('\n');
   for (var i = 0; i < sentences.length; i++) {
-    if (dataset_prompt_list_contains_id)
+    if (page_prompt_list_contains_id)
     { // first word of prompt line is the prompt ID
       prompts.list[i] = sentences[i];
     } else {
@@ -61,8 +62,9 @@ jQuery.get('/assets/static/prompts/' + prompts.filename, function(data) {
       prompts.list[i] = prompt_id  + " " + sentences[i];
     }
   }
+
+  prompts.index = Math.floor((Math.random() * prompts.list.length) + 1);
 });
-prompts.index = Math.floor((Math.random() * prompts.list.length) + 1);
 
 /**
 * updates the current number of prompts that the user selected from dropdown

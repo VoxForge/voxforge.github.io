@@ -5,6 +5,10 @@ menu: Read
 ref: read
 lang: fr
 prompt_list_contains_id: true
+# sequence number start, url to prompt file
+prompt_list_files:
+  - [ 1, /fr/prompts/001 ]
+
 permalink: /fr/read
 weight: 2
 
@@ -41,8 +45,9 @@ age:
     - { value: '>89', old_value: 'Senior' }
 
 language_id: FR
-# leave a space between groupings of hash/objects; otherwise liquid does not parse properly
-# Yes and No must be in quotes, otherwise evaluates true/false
+# - leave a blank line between groupings of hash/objects; otherwise liquid does 
+# not parse properly
+# - Yes and No must be in quotes, otherwise evaluates to true/false
 native_speaker:
   label: Locuteur natif?
   popup_link: https://fr.wiktionary.org/wiki/locuteur_natif
@@ -175,7 +180,7 @@ instructions:
       title: Windows - Comment autoriser votre navigateur Edge à utiliser votre microphone
       link: https://privacy.microsoft.com/en-us/windows-10-camera-and-privacy
       text:  > 
-        1. Allez dans Start, puis sélectionnez Paramètres> Confidentialité> Microphone. </br>
+        1. Sélectionnez Start, puis Paramètres> Confidentialité> Microphone. </br>
         2. Choisissez votre paramètre préféré pour Autoriser les applications à utiliser mon microphone. </br>
         3. Sous <i>Choisir les applications</i> pouvant utiliser votre microphone, activez le paramètre individuel pour le navigateur Edge. </br>
 
@@ -183,8 +188,17 @@ controls:
   record: Enregistrer
   stop: Arrêtez
   upload: Télécharger
----
 
+# script below gets loaded in {{ content }} section of layout page
+---
+<script>
+  var page_localized_yes= "{{ page.localized_variable.lv_yes }}";
+  var page_localized_no= "{{ page.localized_variable.lv_no }}";
+  var page_localized_other= "{{ page.localized_variable.other }}";
+  var page_language= "{{ page.lang }}";
+  var page_prompt_list_contains_id= "{{ page.prompt_list_contains_id }}";
+  var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
+</script>
 
 
 

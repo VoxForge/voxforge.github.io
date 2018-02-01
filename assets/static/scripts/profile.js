@@ -55,22 +55,6 @@ if ( $.cookie('all_done') )
 }
 
 /**
-* These are language specific variables on the Jekyll Mardown page that
-* javascript apps need
-*/
-var article = document.getElementById('language_specific_variables');
-var dataset_yes = article.dataset.yes;
-var dataset_no = article.dataset.no;
-var dataset_other = article.dataset.other;
-var dataset_language = article.dataset.language;
-var dataset_prompt_list_contains_id;
-if (article.dataset.prompt_list_contains_id.toUpperCase() == "TRUE") {
-  dataset_prompt_list_contains_id = true;
-} else {
-  dataset_prompt_list_contains_id = false;
-}
-
-/**
 * ### STATIC METHODS ##############################################
 *
 * see: https://stackoverflow.com/questions/7694501/class-vs-static-method-in-javascript
@@ -111,16 +95,16 @@ Profile.showDivBasedonValue = function (independent_div, value, dependent_div, h
   }
 }
 
-Profile.showDivBasedonValue('#native_speaker', dataset_no, '#first_language_display', false);
-Profile.showDivBasedonValue('#native_speaker', dataset_yes, '#dialect_display', false);
-Profile.showDivBasedonValue('#first_language', dataset_other, '#first_language_other_display', false);
+Profile.showDivBasedonValue('#native_speaker', page_localized_no, '#first_language_display', false);
+Profile.showDivBasedonValue('#native_speaker', page_localized_yes, '#dialect_display', false);
+Profile.showDivBasedonValue('#first_language', page_localized_other, '#first_language_other_display', false);
 // true mean hide if there is something in the username field
 Profile.showDivBasedonValue('#username', true, '#anonymous_instructions_display', false); 
-Profile.showDivBasedonValue('#microphone', dataset_other, '#microphone_other_display', false);
-Profile.showDivBasedonValue('#dialect', dataset_other, '#dialect_other_display', false);
-Profile.showDivBasedonValue('#recording_location', dataset_other, '#recording_location_other_display', false);
-Profile.showDivBasedonValue('#background_noise', dataset_yes, '#background_noise_display', false);
-Profile.showDivBasedonValue('#noise_type', dataset_other, '#noise_type_other_display', false);
+Profile.showDivBasedonValue('#microphone', page_localized_other, '#microphone_other_display', false);
+Profile.showDivBasedonValue('#dialect', page_localized_other, '#dialect_other_display', false);
+Profile.showDivBasedonValue('#recording_location', page_localized_other, '#recording_location_other_display', false);
+Profile.showDivBasedonValue('#background_noise', page_localized_yes, '#background_noise_display', false);
+Profile.showDivBasedonValue('#noise_type', page_localized_other, '#noise_type_other_display', false);
 
 /**
 * This function changes the contents of a second select list based on the
@@ -167,7 +151,7 @@ for (var i=0;i<langscodes.length;i++){
    languages.getLanguageInfo(langscodes[i]).nativeName + ")" +  
    '</option>';
 }
-option += '<option value="' + dataset_other + '">' + dataset_other + '</option>'; 
+option += '<option value="' + page_localized_other + '">' + page_localized_other + '</option>'; 
 $('#first_language').append(option);
 
 /**
@@ -183,7 +167,7 @@ Profile.updateScreen = function (json_object) {
   $('#age').val( json_object.age );
 
   // TODO implied by the page the user is on... 
-  // $('#dataset_language').val( json_object.dataset_language );
+  // $('#page_language').val( json_object.page_language );
 
   $('#native_speaker').val( json_object.native_speaker );
   if ( $('#native_speaker').val()==="Yes" )
@@ -196,7 +180,7 @@ Profile.updateScreen = function (json_object) {
   $('#first_language_other').val( json_object.first_language_other );
   $('#dialect').val( json_object.dialect );
   $('#dialect_other').val( json_object.dialect_other );
-  if ( $('#dialect').val() === dataset_other )
+  if ( $('#dialect').val() === page_localized_other )
   {
     $("#dialect_other_display").show();
   }
@@ -204,14 +188,14 @@ Profile.updateScreen = function (json_object) {
   //Recording Information:
   $('#microphone').val( json_object.microphone );
   $('#microphone_other').val( json_object.microphone_other );
-  if ( $('#microphone').val() === dataset_other )
+  if ( $('#microphone').val() === page_localized_other )
   {
     $("#microphone_other_display").show();
   }
 
   $('#recording_location').val( json_object.recording_location );
   $('#recording_location_other').val( json_object.recording_location_other );
-  if ( $('#recording_location').val() === dataset_other )
+  if ( $('#recording_location').val() === page_localized_other )
   {
     $("#recording_location_other_display").show();
   }
@@ -223,7 +207,7 @@ Profile.updateScreen = function (json_object) {
   $('#noise_volume').val( json_object.noise_volume );
   $('#noise_type').val( json_object.noise_type );
   $('#noise_type_other').val( json_object.noise_type_other );
-  if ( $('#noise_type').val() === dataset_other )
+  if ( $('#noise_type').val() === page_localized_other )
   {
     $("#noise_type_other_display").show();
   }
@@ -235,7 +219,7 @@ Profile.updateScreen = function (json_object) {
 * JSON object, otherwise return null.
 */
 Profile.getProfileFromLocalStorage = function () {
-  var retrievedObject = localStorage.getItem(dataset_language);
+  var retrievedObject = localStorage.getItem(page_language);
   // boolean expression. Second part is evaluated only if left one is true. 
   // therefore if retrievedObject is null, that gets returned
   return retrievedObject && JSON.parse(retrievedObject);
@@ -289,7 +273,7 @@ Profile.prototype.toHash = function () {
   profile_hash["gender"] = $("#gender").val();
   profile_hash["age"] = $("#age").val();
 
-  profile_hash["language"] = dataset_language;
+  profile_hash["language"] = page_language;
   profile_hash["native_speaker"] = $("#native_speaker").val();
   profile_hash["first_language"] = $('#first_language').val();
   profile_hash["first_language_other"] = $("#first_language_other").val();
@@ -357,11 +341,11 @@ Profile.prototype.toTextArray = function () {
     profile_array[i++] = 'Age Range: ' +  $('#age').val() + '\n';
   }
 
-  profile_array[i++] = 'Language: ' +  dataset_language + '\n';
+  profile_array[i++] = 'Language: ' +  page_language + '\n';
 
   profile_array[i++] = 'Native Speaker: ' +  $('#native_speaker').val() + '\n';
   if ($('#native_speaker').val() !== "No") {
-    if ($('#dialect').val() !== dataset_other) {
+    if ($('#dialect').val() !== page_localized_other) {
       profile_array[i++] = 'Pronunciation dialect: ' + $('#dialect').val() + '\n';
       if ( $('#sub_dialect').val() ) {
         profile_array[i++] = '  sub-dialect: ' + $('#sub_dialect').val() + '\n';
@@ -370,7 +354,7 @@ Profile.prototype.toTextArray = function () {
       profile_array[i++] =  'Pronunciation dialect: Other - ' + $('#dialect_other').val() + '\n';
     }
   } else {
-    if ( $('#first_language').val() !== dataset_other) 
+    if ( $('#first_language').val() !== page_localized_other) 
     {
       var langId = $('#first_language').val();
       profile_array[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
@@ -380,13 +364,13 @@ Profile.prototype.toTextArray = function () {
   }
 
   profile_array[i++] = '\nRecording Information: \n\n';
-  if ($('#microphone').val() !== dataset_other) {
+  if ($('#microphone').val() !== page_localized_other) {
     profile_array[i++] = 'Microphone Type: ' + $('#microphone').val() + '\n';
   } else {
     profile_array[i++] = 'Microphone Type: Other - ' + $('#microphone_other').val() + '\n';
   }
 
-  if ($('#recording_location').val() !== dataset_other) {
+  if ($('#recording_location').val() !== page_localized_other) {
     profile_array[i++] = 'Recording Location: ' + $('#recording_location').val() + '\n';
   } else {
     profile_array[i++] = 'Recording Location: Other - ' + $('#recording_location_other').val() + '\n';
@@ -396,7 +380,7 @@ Profile.prototype.toTextArray = function () {
 
   if ($('#background_noise').val() === "Yes") {
     profile_array[i++] = 'Noise Volume: ' + $('#noise_volume').val() + '\n';
-    if ($('#noise_type').val() !== dataset_other) {
+    if ($('#noise_type').val() !== page_localized_other) {
       profile_array[i++] = 'Noise Type: ' + $('#noise_type').val() + '\n';
     } else {
       profile_array[i++] = 'Noise Type: Other - ' + $('#noise_type_other').val() + '\n';
@@ -434,7 +418,7 @@ Profile.prototype.toArray = function () {
 * add profile information to local storage
 */
 Profile.prototype.addProfile2LocalStorage = function () {
-  localStorage.setItem(dataset_language, this.toJsonString());
+  localStorage.setItem(page_language, this.toJsonString());
 };
 
 /**
@@ -460,7 +444,7 @@ Profile.prototype.getTempSubmissionName = function () {
   var username = Profile.cleanUserInput( $('#username').val() ).toLowerCase();
   var d = new Date();
   var date = d.getFullYear().toString() + (d.getMonth() + 1).toString() + d.getDate().toString();
-  var result = dataset_language + '-' + username + '-' + date + '-' + uuidv4();
+  var result = page_language + '-' + username + '-' + date + '-' + uuidv4();
 
   return result;
 }

@@ -5,6 +5,11 @@ menu: Read
 ref: read
 lang: en
 prompt_list_contains_id: false
+# sequence number start, url to prompt file
+prompt_list_files:
+  - [ 1, /en/prompts/001 ]
+  - [ 595, /en/prompts/002 ]
+
 # need trailing slash for testing on localserver 
 # see: https://github.com/barryclark/jekyll-now/issues/13
 permalink: /en/read/
@@ -45,8 +50,9 @@ age:
     - { value: '>89', old_value: 'Senior' }
 
 language_id: EN
-# leave a space between groupings of hash/objects; otherwise liquid does not parse properly
-# Yes and No must be in quotes, otherwise evaluates true/false
+# - leave a blank line between groupings of hash/objects; otherwise liquid does 
+# not parse properly
+# - Yes and No must be in quotes, otherwise evaluates to true/false
 native_speaker:
   label: Native Speaker?
   popup_link: 'https://en.wikipedia.org/wiki/First_language'
@@ -203,10 +209,15 @@ controls:
   stop: Stop
   upload: Upload
 
+# script below gets loaded in {{ content }} section of layout page
 ---
-
-
-
-
+<script>
+  var page_localized_yes= "{{ page.localized_variable.lv_yes }}";
+  var page_localized_no= "{{ page.localized_variable.lv_no }}";
+  var page_localized_other= "{{ page.localized_variable.other }}";
+  var page_language= "{{ page.lang }}";
+  var page_prompt_list_contains_id= "{{ page.prompt_list_contains_id }}";
+  var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
+</script>
 
 
