@@ -7,21 +7,26 @@ lang: en
 
 ################################################################################
 
-prompt_list_contains_id: false
 total_number_of_prompts: 1176
 prompt_list_files:
   - id: "001"
     start: 0
     file_location: /en/prompts/001
     end: 594
+    contains_promptid: false
+    prefix: en
   - id: "002"
     start: 595
     file_location: /en/prompts/002
     end: 895
+    contains_promptid: false
+    prefix: en
   - id: "003"
     start: 896
     file_location: /en/prompts/003
     end: 1176
+    contains_promptid: false
+    prefix: en
 
 # need trailing slash for testing on localserver 
 # see: https://github.com/barryclark/jekyll-now/issues/13
@@ -229,7 +234,6 @@ controls:
   var page_localized_no= "{{ page.localized_variable.lv_no }}";
   var page_localized_other= "{{ page.localized_variable.other }}";
   var page_language= "{{ page.lang }}";
-  var page_prompt_list_contains_id= {{ page.prompt_list_contains_id }};
   var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
   var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
 </script>

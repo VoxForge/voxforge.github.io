@@ -23,7 +23,6 @@
 // TODO why does static method need to be decalred before its use...
 Prompts.validate_Readmd_file = function () {
   var variable_list = ['page_language', 
-                    'page_prompt_list_contains_id', 
                     'page_prompt_list_files', 
                     'page_total_number_of_prompts'];
   for (var i = 0; i < variable_list.length; i++) {
@@ -43,16 +42,28 @@ Prompts.validate_Readmd_file = function () {
       console.log("ERROR: prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
                   page_language);
     }
+    if (typeof page_prompt_list_files[i].contains_promptid === 'undefined') {
+      console.log("ERROR: prompt_list_files[" + i + "].contains_promptid not defined in read.md for language: " + 
+                  page_language);
+    }
 
     // if prompt lines already have promptid, then don't need start or end 
     // fields in read.md front matter
-    if ( ! page_prompt_list_contains_id ) {
+    if ( !  page_prompt_list_files[i].contains_promptid ) {
       if (typeof page_prompt_list_files[i].start === 'undefined') {
         console.log("ERROR: prompt_list_files[" + i + "].start not defined in read.md for language: " + 
                     page_language);
       }
+      if (typeof page_prompt_list_files[i].file_location === 'undefined') {
+        console.log("ERROR: prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
+                    page_language);
+      }
       if (typeof page_prompt_list_files[i].end === 'undefined') {
         console.log("ERROR: prompt_list_files[" + i + "].end not defined in read.md for language: " + 
+                    page_language);
+      }
+      if (typeof page_prompt_list_files[i].prefix === 'undefined') {
+        console.log("ERROR: prompt_list_files[" + i + "].prefix not defined in read.md for language: " + 
                     page_language);
       }
 
@@ -145,19 +156,30 @@ Prompts.processPromptsFile = function (prompt_data) {
       return s;
     }
 
+
+
+
+//TODO split on line ending causing empty lines to be included in sentences
+//need to remove them or skip them...
+
+
+
+
   var sentences = prompt_data.split('\n');
   for (var i = 0; i < sentences.length; i++) {
-    if (page_prompt_list_contains_id)
+    if (page_prompt_list_files[prompts.random_prompt_file].contains_promptid)
     { // first word of prompt line is the prompt ID
       prompts.list[i] = sentences[i];
     } else {
-      var prompt_id = page_language + pad( i + page_prompt_list_files[prompts.random_prompt_file].start, 5 );
+      var start_promptId = page_prompt_list_files[prompts.random_prompt_file].start;
+      var prefix = page_prompt_list_files[prompts.random_prompt_file].prefix;
+      var prompt_id = prefix + pad( i + start_promptId, 5 );
       prompts.list[i] = prompt_id  + " " + sentences[i];
     }
   }
 
   var num_of_prompts = page_prompt_list_files[prompts.random_prompt_file].end - page_prompt_list_files[prompts.random_prompt_file].start;
-  if (num_of_prompts !==  sentences.length) {
+  if (num_of_prompts !==  prompts.list.length) {
     console.log("Warning: number of prompts in prompt_list_files[" + prompts.random_prompt_file + "] (end - start) in read.md not same as prompt file line counts for language: " + 
                 page_language);
   }
