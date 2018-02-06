@@ -12,8 +12,9 @@ total_number_of_prompts: 865
 # sequence number start, url to prompt file
 prompt_list_files:
   - id: "001"
-    sequence_start: 1
+    start: 1
     file_location: /fr/prompts/001
+    end: 865
 
 permalink: /fr/read
 weight: 2

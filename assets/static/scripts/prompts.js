@@ -20,6 +20,7 @@
 /**
 * verify that read.md entries contain valid data
 */
+// TODO why does static method need to be decalred before its use...
 Prompts.validate_Readmd_file = function () {
   var variable_list = ['page_language', 
                     'page_prompt_list_contains_id', 
@@ -87,6 +88,7 @@ Prompts.validate_Readmd_file = function () {
 * Jekyll front-matter uses YAML to define data structures... prompt_list_files
 * in read.md file gets converted to an array.
 */
+// TODO why does static method need to be decalred before its use...
 Prompts.get_promptFile_count = function () {
   if (typeof page_prompt_list_files.length === 'undefined') {
     console.log("WARNING: page_prompt_list_files.length not defined in read.md for language: " + 
@@ -125,8 +127,10 @@ var prompts = new Prompts();
 * callback for jquery get to process the received prompts file
 *
 * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
-* prototype methods will not work with callback???
 */
+// prototype methods will not work with callback???
+// TODO might be something to do with this variable not being the same in call back
+// see: https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
 Prompts.processPromptsFile = function (prompt_data) {
     function pad (num, size) {
       var s = num+"";
