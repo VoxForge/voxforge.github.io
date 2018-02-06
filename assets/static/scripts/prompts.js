@@ -27,6 +27,8 @@ function Prompts () {
   this.index=0; // pointer to position in prompt list array
   this.prompt_count = 0; // number of prompts read
   this.prompts_recorded = []; // list of prompts that have been recorded
+
+  this.index = Math.floor((Math.random() * page_total_number_of_prompts) + 1);
 }
 
 /**
@@ -64,18 +66,40 @@ Prompts.processPromptsFile = function (prompt_data) {
   }
 }
 
-// TODO add asset to validate prompt files line counts to make sure they are same as in Markdown
+// TODO add assert to validate prompt files line counts to make sure they are same as in Markdown
+// TODO add asserts to prompt file start and end locations
 
-prompts.index = Math.floor((Math.random() * page_total_number_of_prompts) + 1);
+prompt.index = 600;
 var prompt_url;
 var i=0;
-if (Prompts.promptFile_count <1) {
+if (Prompts.promptFile_count == 1) {
+  $.get(page_prompt_list_files[i]['file_location'], 
+             Prompts.processPromptsFile );
+} else if (Prompts.promptFile_count == 2) {
+  var text_of_first_file = "";
+  var text_of_second_file = "";
+  var promise1 = $.get(page_prompt_list_files[i]['file_location'], 
+    function( data ) {
+        text_of_first_file = data;
+  });
+   var promise2 = $.get(page_prompt_list_files[i+1]['file_location'], 
+    function( data ) {
+        text_of_second_file = data;
+  });
+  // wait for gets to return to merge the files and call prompt processing
+  Promise.all([promise1, promise2]).then(function(values) {
+    var merged_text_files = text_of_first_file + text_of_second_file;
+    Prompts.processPromptsFile( merged_text_files );
+  }
+} else {
+  while ( (prompt.index + max_num_prompts) < page_prompt_list_files[i]['end'] ) {
+    i++;
+  }
   prompt_url = page_prompt_list_files[i]['file_location'];
 } else {
-  i++;
-  prompt_url = page_prompt_list_files[i]['file_location'];
+  console.log("Error in Jekyll Read.md file");
 }
-jQuery.get(prompt_url, Prompts.processPromptsFile );
+
 
 /**
 * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
