@@ -39,39 +39,45 @@ Prompts.validate_Readmd_file = function () {
       console.log("ERROR: prompt_list_files[" + i + "].id not defined in read.md for language: " + 
                   page_language);
     }
-    if (typeof page_prompt_list_files[i].start === 'undefined') {
-      console.log("ERROR: prompt_list_files[" + i + "].start not defined in read.md for language: " + 
-                  page_language);
-    }
     if (typeof page_prompt_list_files[i].file_location === 'undefined') {
       console.log("ERROR: prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
                   page_language);
     }
-    if (typeof page_prompt_list_files[i].end === 'undefined') {
-      console.log("ERROR: prompt_list_files[" + i + "].end not defined in read.md for language: " + 
-                  page_language);
-    }
-    // numeric validations
-    if (page_prompt_list_files[i].start <  0 || page_prompt_list_files[i].start > page_total_number_of_prompts) {
-      console.log("ERROR: prompt_list_files[" + i + "].start outside valid range read.md for language: " + 
-                  page_language);
-    }
-    if (page_prompt_list_files[i].end <  0 || page_prompt_list_files[i].end > page_total_number_of_prompts) {
-      console.log("ERROR: prompt_list_files[" + i + "].start outside valid range read.md for language: " + 
-                  page_language);
-    }
-    // check against previous prompt file entry
-    if (i-1 >= 0) {
-      if (page_prompt_list_files[i].start <=  page_prompt_list_files[i-1].end) {
-        console.log("ERROR: prompt_list_files[" + i + "].start greater than prompt_list_files[" + (i-1) + "].end read.md for language: " + 
+
+    // if prompt lines already have promptid, then don't need start or end 
+    // fields in read.md front matter
+    if ( ! page_prompt_list_contains_id ) {
+      if (typeof page_prompt_list_files[i].start === 'undefined') {
+        console.log("ERROR: prompt_list_files[" + i + "].start not defined in read.md for language: " + 
                     page_language);
       }
-    }
-    // check against next prompt file entry
-    if (i+1 < page_prompt_list_files.length) {
-      if (page_prompt_list_files[i].end >=  page_prompt_list_files[i+1].start) {
-        console.log("ERROR: prompt_list_files[" + i + "].end greater than prompt_list_files[" + (i+1) + "].start read.md for language: " + 
+      if (typeof page_prompt_list_files[i].end === 'undefined') {
+        console.log("ERROR: prompt_list_files[" + i + "].end not defined in read.md for language: " + 
                     page_language);
+      }
+
+      // numeric validations
+      if (page_prompt_list_files[i].start <  0 || page_prompt_list_files[i].start > page_total_number_of_prompts) {
+        console.log("ERROR: prompt_list_files[" + i + "].start outside valid range read.md for language: " + 
+                    page_language);
+      }
+      if (page_prompt_list_files[i].end <  0 || page_prompt_list_files[i].end > page_total_number_of_prompts) {
+        console.log("ERROR: prompt_list_files[" + i + "].start outside valid range read.md for language: " + 
+                    page_language);
+      }
+      // check against previous prompt file entry
+      if (i-1 >= 0) {
+        if (page_prompt_list_files[i].start <=  page_prompt_list_files[i-1].end) {
+          console.log("ERROR: prompt_list_files[" + i + "].start greater than prompt_list_files[" + (i-1) + "].end read.md for language: " + 
+                      page_language);
+        }
+      }
+      // check against next prompt file entry
+      if (i+1 < page_prompt_list_files.length) {
+        if (page_prompt_list_files[i].end >=  page_prompt_list_files[i+1].start) {
+          console.log("ERROR: prompt_list_files[" + i + "].end greater than prompt_list_files[" + (i+1) + "].start read.md for language: " + 
+                      page_language);
+        }
       }
     }
   }
@@ -116,6 +122,7 @@ function Prompts () {
   this.random_prompt_file = Math.floor((Math.random() * Prompts.get_promptFile_count())); // zero indexed
   console.log("random_prompt_file= " + this.random_prompt_file);
   console.log("start prompt id= " + page_prompt_list_files[this.random_prompt_file].start);
+  console.log("end prompt id= " + page_prompt_list_files[this.random_prompt_file].end);
 }
 
 /**
@@ -144,7 +151,7 @@ Prompts.processPromptsFile = function (prompt_data) {
     { // first word of prompt line is the prompt ID
       prompts.list[i] = sentences[i];
     } else {
-      var prompt_id = page_language + pad( i + page_prompt_list_files[prompts.random_prompt_file].start, 4 );
+      var prompt_id = page_language + pad( i + page_prompt_list_files[prompts.random_prompt_file].start, 5 );
       prompts.list[i] = prompt_id  + " " + sentences[i];
     }
   }

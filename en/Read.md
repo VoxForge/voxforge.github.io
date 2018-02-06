@@ -11,7 +11,7 @@ prompt_list_contains_id: false
 total_number_of_prompts: 1176
 prompt_list_files:
   - id: "001"
-    start: 1
+    start: 0
     file_location: /en/prompts/001
     end: 594
   - id: "002"
