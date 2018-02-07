@@ -22,81 +22,55 @@
 */
 // TODO why does static method need to be declared before its use...
 Prompts.validate_Readmd_file = function () {
+  var MAX_NUM_PROMPTS_IN_FILE = 2000;
+
   var variable_list = ['page_language', 
                     'page_prompt_list_files', 
                     'page_total_number_of_prompts'];
   for (var i = 0; i < variable_list.length; i++) {
     if (typeof variable_list[i] === 'undefined') {
-      console.log("ERROR: " + variable_list + " not defined in read.md for language: " + 
+      console.warn(variable_list + " not defined in read.md for language: " + 
                   page_language);
     }
   }
   // validate contents of page_prompt_list_files array
+  var num_prompts_calc = 0;
   for (var i = 0; i < page_prompt_list_files.length; i++) {
     // check for undefined fields
     if (typeof page_prompt_list_files[i].id === 'undefined') {
-      console.log("ERROR: prompt_list_files[" + i + "].id not defined in read.md for language: " + 
+      console.warn("prompt_list_files[" + i + "].id not defined in read.md for language: " + 
                   page_language);
     }
     if (typeof page_prompt_list_files[i].file_location === 'undefined') {
-      console.log("ERROR: prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
+      console.warn("prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
                   page_language);
     }
     if (typeof page_prompt_list_files[i].contains_promptid === 'undefined') {
-      console.log("ERROR: prompt_list_files[" + i + "].contains_promptid not defined in read.md for language: " + 
+      console.warn("prompt_list_files[" + i + "].contains_promptid not defined in read.md for language: " + 
+                  page_language);
+    }
+    if (typeof page_prompt_list_files[i].file_location === 'undefined') {
+      console.warn("prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
+                  page_language);
+    }
+    if (typeof page_prompt_list_files[i].number_of_prompts === 'undefined') {
+      console.warn("prompt_list_files[" + i + "].number_of_prompts not defined in read.md for language: " + 
                   page_language);
     }
 
-    // if prompt lines already have promptid, then don't need start or end 
+    // if prompt lines already have promptid, then don't need start or prefix
     // fields in read.md front matter
     if ( !  page_prompt_list_files[i].contains_promptid ) {
       if (typeof page_prompt_list_files[i].start === 'undefined') {
-        console.log("ERROR: prompt_list_files[" + i + "].start not defined in read.md for language: " + 
-                    page_language);
-      }
-      if (typeof page_prompt_list_files[i].file_location === 'undefined') {
-        console.log("ERROR: prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
-                    page_language);
-      }
-      if (typeof page_prompt_list_files[i].end === 'undefined') {
-        console.log("ERROR: prompt_list_files[" + i + "].end not defined in read.md for language: " + 
-                    page_language);
-      }
-      if (typeof page_prompt_list_files[i].prefix === 'undefined') {
-        console.log("ERROR: prompt_list_files[" + i + "].prefix not defined in read.md for language: " + 
+        console.warn("prompt_list_files[" + i + "].start not defined in read.md for language: " + 
                     page_language);
       }
 
-      // numeric validations
-      if (page_prompt_list_files[i].start <  0 || page_prompt_list_files[i].start > page_total_number_of_prompts) {
-        console.log("ERROR: prompt_list_files[" + i + "].start outside valid range read.md for language: " + 
+      if (typeof page_prompt_list_files[i].prefix === 'undefined') {
+        console.warn("prompt_list_files[" + i + "].prefix not defined in read.md for language: " + 
                     page_language);
-      }
-      if (page_prompt_list_files[i].end <  0 || page_prompt_list_files[i].end > page_total_number_of_prompts) {
-        console.log("ERROR: prompt_list_files[" + i + "].start outside valid range read.md for language: " + 
-                    page_language);
-      }
-      // check against previous prompt file entry
-      if (i-1 >= 0) {
-        if (page_prompt_list_files[i].start <=  page_prompt_list_files[i-1].end) {
-          console.log("ERROR: prompt_list_files[" + i + "].start greater than prompt_list_files[" + (i-1) + "].end read.md for language: " + 
-                      page_language);
-        }
-      }
-      // check against next prompt file entry
-      if (i+1 < page_prompt_list_files.length) {
-        if (page_prompt_list_files[i].end >=  page_prompt_list_files[i+1].start) {
-          console.log("ERROR: prompt_list_files[" + i + "].end greater than prompt_list_files[" + (i+1) + "].start read.md for language: " + 
-                      page_language);
-        }
       }
     }
-  }
-
-  var last_prompt_file = page_prompt_list_files.length-1;
-  if (page_prompt_list_files[last_prompt_file].end > page_total_number_of_prompts) {
-    console.log("ERROR: prompt_list_files[" + i + "].end should be less than or equal to page_total_number_of_prompts in read.md for language: " + 
-                page_language);
   }
 }
 
@@ -108,7 +82,7 @@ Prompts.validate_Readmd_file = function () {
 // TODO why does static method need to be declared before its use...
 Prompts.get_promptFile_count = function () {
   if (typeof page_prompt_list_files.length === 'undefined') {
-    console.log("WARNING: page_prompt_list_files.length not defined in read.md for language: " + 
+    console.warn("page_prompt_list_files.length not defined in read.md for language: " + 
                 page_language);
   }
 
@@ -133,7 +107,6 @@ function Prompts () {
   this.random_prompt_file = Math.floor((Math.random() * Prompts.get_promptFile_count())); // zero indexed
   console.log("random_prompt_file= " + this.random_prompt_file);
   console.log("start prompt id= " + page_prompt_list_files[this.random_prompt_file].start);
-  console.log("end prompt id= " + page_prompt_list_files[this.random_prompt_file].end);
 }
 
 /**
@@ -142,7 +115,7 @@ function Prompts () {
 var prompts = new Prompts();
 
 /**
-* callback for jquery get to process the received prompts file
+* callback (for jquery 'get') to process the received prompts file
 *
 * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
 */
@@ -170,9 +143,8 @@ Prompts.processPromptsFile = function (prompt_data) {
     }
   }
 
-  var num_of_prompts = page_prompt_list_files[prompts.random_prompt_file].end - page_prompt_list_files[prompts.random_prompt_file].start;
-  if (num_of_prompts !==  prompts.list.length) {
-    console.log("Warning: number of prompts in prompt_list_files[" + prompts.random_prompt_file + "] (end - start) in read.md not same as prompt file line counts for language: " + 
+  if (page_prompt_list_files[prompts.random_prompt_file].number_of_prompts !=  prompts.list.length) {
+    console.warn("number of prompts in prompt_list_files[" + prompts.random_prompt_file + "] in read.md not same as prompt file line counts for language: " + 
                 page_language);
   }
 
@@ -184,7 +156,7 @@ Prompts.processPromptsFile = function (prompt_data) {
 $.get(page_prompt_list_files[prompts.random_prompt_file]['file_location'], 
       Prompts.processPromptsFile
 ).fail(function() {
-  console.log("Error: cannot find prompts file on VoxForge server: " + 
+  console.warn("cannot find prompts file on VoxForge server: " + 
               page_prompt_list_files[prompts.random_prompt_file]['file_location']);
 });
 
@@ -202,10 +174,6 @@ $('#max_num_prompts').click(function () {
 /**
 * ### METHODS ##############################################
 */
-
-
-
-
 
 /**
 * reset prompt array and index after submission is completed

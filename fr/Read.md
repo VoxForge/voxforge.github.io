@@ -13,6 +13,7 @@ prompt_list_files:
   - id: "001"
     file_location: /fr/prompts/001
     contains_promptid: true
+    number_of_prompts: 865
 
 permalink: /fr/read
 weight: 2

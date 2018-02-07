@@ -12,19 +12,19 @@ prompt_list_files:
   - id: "001"
     start: 0
     file_location: /en/prompts/001
-    end: 594
+    number_of_prompts: 594
     contains_promptid: false
     prefix: en
   - id: "002"
-    start: 595
+    start: 594
     file_location: /en/prompts/002
-    end: 895
+    number_of_prompts: 300
     contains_promptid: false
     prefix: en
   - id: "003"
-    start: 896
+    start: 894
     file_location: /en/prompts/003
-    end: 1176
+    number_of_prompts: 282
     contains_promptid: false
     prefix: en
 
