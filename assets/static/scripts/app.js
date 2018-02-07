@@ -33,26 +33,13 @@ This app does not display other users' input in its pages, so no XSS
 vulnerability...
 
 TODO: CSRF - Cross site request forgery
-*/
-
-
-
 
 // for testing with Chrome: requires https; can bypass this with:
 // google-chrome --user-data-dir=~/temp --unsafely-treat-insecure-origin-as-secure="http://flask.voxforge1.org"
 // need Google Chrome version > 58 for wavesurfer to work correctly
+*/
 
-// set up basic variables for app
-var record = document.querySelector('.record');
-var stop = document.querySelector('.stop');
-var upload = document.querySelector('.upload');
-var soundClips = document.querySelector('.sound-clips');
-var canvas = document.querySelector('.visualizer');
-
-// recording Web Worker
-var worker = new Worker('/assets/static/scripts/EncoderWorker.js');
-// zip and upload thread
-var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
+// #############################################################################
 
 /**
 *  if page reloaded kill background worker threads before page reload
@@ -76,10 +63,22 @@ var timeout_obj;
 stop.disabled = true;
 upload.disabled = true;
 
-var audioCtx = new (window.AudioContext || webkitAudioContext)();
+// set up basic variables for app
+var record = document.querySelector('.record');
+var stop = document.querySelector('.stop');
+var upload = document.querySelector('.upload');
+var soundClips = document.querySelector('.sound-clips');
+var canvas = document.querySelector('.visualizer');
 
+// recording Web Worker
+var worker = new Worker('/assets/static/scripts/EncoderWorker.js');
+// zip and upload thread
+var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
+
+var audioCtx = new (window.AudioContext || webkitAudioContext)();
+var RECORDING_TIMEOUT = 15000; // 15 seconds
 // #############################################################################
-//main block for doing the audio recording
+/* main block for doing the audio recording */
 
 /**
 * Older browsers might not implement mediaDevices at all, so we set an empty 
@@ -119,11 +118,9 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 /**
 * prompts the user for permission to use a media input which produces a 
 * MediaStream with tracks containing the requested types of media - i.e. audio track
+*
 * see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 */
-
-// TODO this does not catch the case when user tries to access website with http rather than https
-// need another catch after getUserMedia call... or a seperate check to https...
 navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('getUserMedia supported.');
@@ -140,13 +137,9 @@ navigator.mediaDevices.getUserMedia(constraints)
 /**
 * set up audio nodes that are connected together in a graph so that the 
 * source microphone input can be captured, and volume node can be created 
-* (currently not used), an analzer to create visually display the amplitude
-* of the captured audio, a processor to capture the raw audio, and a meidaStream Outpu
-
-
-NOT FINISHED
-
-
+* (currently not used), an analyzer to create visually display the amplitude
+* of the captured audio, a processor to capture the raw audio, and 
+* a destination audiocontext to capture audio
 */
 function setupAudioNodes(stream) {
   microphone = audioCtx.createMediaStreamSource(stream);
@@ -172,6 +165,9 @@ function setupAudioNodes(stream) {
   console.log('microphoneLevel.gain.value: ' + microphoneLevel.gain.value);
 }
 
+/**
+* captures audio buffer data from processor worker
+*/
 function getBuffers(event) {
   var buffers = [];
   for (var ch = 0; ch < 2; ++ch)
@@ -179,7 +175,11 @@ function getBuffers(event) {
   return buffers;
 }
 
+/**
+* user has clicked record... connect required audio nodes
+*
 //see https://github.com/higuma/wav-audio-encoder-js 
+*/
 function recordClicked() {
   // hide profile info; otherwise recorded audio will not display properly 
   // at bottom of page
@@ -208,45 +208,84 @@ function recordClicked() {
   record.disabled = true;
 }
 
-function stopClicked() {
-  // delay stop of recording after user hits stop so they don't cut off
-  // their speech too early
-  setTimeout( function () {
-    $('.info-display').hide();
-
-    microphoneLevel.disconnect();
-    processor.disconnect();
-    worker.postMessage({ 
-      command: 'finish'
-    });
-
-    record.style.background = "";
-    record.style.color = ""; 
-    stop.disabled = true;
-    record.disabled = false;
-
-    clearTimeout(timeout_obj);
-
-    if ( prompts.maxPromptsReached() ) {
-      // to give browser enough time to process the last audio recording
-      setTimeout( function () {
-        promptToSave();
-        return;
-      }, 300);
-    }
-  }, 400);
+/**
+* update nuber of prompts recorded and total number of prompts to record
+*/
+function updateProgress() {
+  var progress = prompts.getProgressDescription();
+  document.querySelector('.progress-display').innerText = progress;
 }
 
-// reply from worker after encoding completed
+/**
+* user has clicked record... tell worker to start recording audio 
+*/
+function startRecording() {
+  document.querySelector('.progress-display').innerText = "";
+  document.querySelector('.info-display').innerText = "";
+  document.querySelector('.prompt_id').innerText = "";
+
+  var prompt = prompts.getNextPrompt();
+  if (prompt === null) {
+    askToUploadSubmission();
+    return;
+  }
+  updateProgress();
+
+  // delay display of prompt so user will not start speaking before recorder
+  // starts 
+  setTimeout( function() {
+    document.querySelector('.prompt_id').innerText = prompts.getPromptId();
+    document.querySelector('.info-display').innerText = prompts.getPromptSentence();
+  }, 250);
+
+  worker.postMessage({
+    command: 'start',
+    sampleRate: audioCtx.sampleRate,
+    numChannels: 1
+  });
+
+  console.log('recording audioCtx.sampleRate: ' + audioCtx.sampleRate);
+
+  console.log( prompts.getPromptId() + " " +  prompts.getPromptSentence() );
+  record.style.background = "";
+
+  // stop recording after 15 seconds
+  timeout_obj = setTimeout(endRecording, RECORDING_TIMEOUT);
+}
+
+/**
+* send message to worker to stop recording
+* only executed if the user tries to record more than 15secs of audio
+*/
+function endRecording() {
+  microphoneLevel.disconnect();
+  processor.disconnect();
+  worker.postMessage({ 
+    command: 'finish' 
+  });
+
+  console.log("recorder stopped");
+  record.style.background = "";
+  record.style.color = "";
+}
+
+/**
+* after parent process sends a request to the work to 'finish' recording,
+* worker sends the recorded data as an audio blob
+*/
 worker.onmessage = function(event) { 
   saveWorkerRecording(event.data.blob); 
 }; 
 
-// run after worker completes encoding
+/**
+* run after worker completes audio recording; creates a waveform display of 
+* recorded audio and displays text of associated prompt line.  User can
+* then review and if needed delete an erroneous recording.
+*/
 function saveWorkerRecording(blob) {
   var prompt_sentence = document.querySelector('.info-display').innerText;
   var prompt_id = document.querySelector('.prompt_id').innerText;
-  // prompt_sentence already has leading and trailing space???
+  // TODO prompt_sentence already has leading and trailing space???
   var clipName = prompt_id + prompt_sentence;
 
   var clipContainer = document.createElement('article');
@@ -311,66 +350,58 @@ function saveWorkerRecording(blob) {
   }
 }
 
-function updateProgress() {
-  var progress = prompts.getProgressDescription();
-  document.querySelector('.progress-display').innerText = progress;
-}
-
-function startRecording() {
-  document.querySelector('.progress-display').innerText = "";
-  document.querySelector('.info-display').innerText = "";
-  document.querySelector('.prompt_id').innerText = "";
-
-  var prompt = prompts.getNextPrompt();
-  if (prompt === null) {
-    promptToSave();
-    return;
-  }
-  updateProgress();
-
-  // delay display of prompt so user will not start speaking before recorder
-  // starts 
-  setTimeout( function() {
-    document.querySelector('.prompt_id').innerText = prompts.getPromptId();
-    document.querySelector('.info-display').innerText = prompts.getPromptSentence();
-  }, 250);
-
-  worker.postMessage({
-    command: 'start',
-    sampleRate: audioCtx.sampleRate,
-    numChannels: 1
-  });
-
-  console.log('recording audioCtx.sampleRate: ' + audioCtx.sampleRate) + ' ***may be different...depends on your hardware';
-
-  console.log( prompts.getPromptId() + " " +  prompts.getPromptSentence() );
-  record.style.background = "";
-
-  // stop recording after 15 seconds
-  timeout_obj = setTimeout(endRecording, 15000);
-}
-
-function promptToSave() {
+/**
+* display window to ask user if they want to upload their recordings to 
+* VoxForge server
+*/
+function askToUploadSubmission() {
   if (confirm('Are you ready to upload your submission?\nIf not, press cancel now,' + 
 	      ' and then press Upload once you are ready.')) {
     saveRecordings();
   }
   upload.disabled = false;
-  console.log('===done promptToSave===');
+  console.log('===done askToUploadSubmission===');
 }
 
-function endRecording() {
-  microphoneLevel.disconnect();
-  processor.disconnect();
-  worker.postMessage({ 
-    command: 'finish' 
-  });
+/**
+* user has clicked stop... disconnect recording audio nodes
+*
+* the actual stopping of recording is delayedso because some users hit it early
+* and cut off the end of their recording
+*/
+function stopClicked() {
 
-  console.log("recorder stopped");
-  record.style.background = "";
-  record.style.color = "";
+  setTimeout( function () {
+    $('.info-display').hide();
+
+    microphoneLevel.disconnect();
+    processor.disconnect();
+    worker.postMessage({ 
+      command: 'finish'
+    });
+
+    record.style.background = "";
+    record.style.color = ""; 
+    stop.disabled = true;
+    record.disabled = false;
+
+    clearTimeout(timeout_obj);
+
+    if ( prompts.maxPromptsReached() ) {
+      // to give browser enough time to process the last audio recording
+      setTimeout( function () {
+        askToUploadSubmission();
+        return;
+      }, 300);
+    }
+  }, 400);
 }
 
+/**
+* collect all recorded audio into an array (audioArray) then calls function 
+* that calls web worker that actually creates the zip file for download
+* to VoxForge server
+*/
 function saveRecordings() {
   var allClips = document.querySelectorAll('.clip');
   var clipIndex = 0;
@@ -394,7 +425,6 @@ function saveRecordings() {
       if (this.status == 200) {
         var blob = this.response;
         // add current audio blob to zip file in browser memory
-        //zip.file(prompt_id + '.wav', blob);
         audioArray.push ({
             filename: prompt_id + '.wav', 
             audioBlob: blob
@@ -418,7 +448,7 @@ function saveRecordings() {
 }
 
 /**
-* call worker thread to create zip file and upload to VoxForge server
+* call web worker to create zip file and upload to VoxForge server
 */
 function createZipFile(audioArray) {
   zip_worker.onmessage = zipworkerDone;
