@@ -105,8 +105,8 @@ function Prompts () {
   Prompts.validate_Readmd_file();
 
   this.random_prompt_file = Math.floor((Math.random() * Prompts.get_promptFile_count())); // zero indexed
-  console.log("random_prompt_file= " + this.random_prompt_file);
-  console.log("start prompt id= " + page_prompt_list_files[this.random_prompt_file].start);
+  console.log("prompt file id: " + page_prompt_list_files[this.random_prompt_file].id + " (prompt file array index: " + this.random_prompt_file + ")");
+  console.log("starting promptId: " + page_prompt_list_files[this.random_prompt_file].start);
 }
 
 /**
