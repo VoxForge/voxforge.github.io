@@ -1,17 +1,28 @@
-// *** edit version in git/voxforge.github.io
+/*
+    Copyright 2018 VoxForge
 
-// don't edit version of this file in /var/www/html which symlinks 
-// to: ~/git/voxforge.github.io/_site
-// remember to turn on jekyll to update the _site folder as stuff gets changed:
-// clear && jekyll server --incremental
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+// #############################################################################
+
+/*
 // use about:debugging#workers in firefox to get at web worker
 // use chrome for debugging webworkers, no need to mess with about:...
 
 
-/**
-* Note cross domain cookies: cookies do not work in web workers
+  Note cross domain cookies: cookies do not work in web workers
     //https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
 
 // see also https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp

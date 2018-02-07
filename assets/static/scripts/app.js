@@ -60,13 +60,13 @@ var analyser = null;
 var mediaStreamOutput = null;
 var wavesurfer;
 var timeout_obj;
-stop.disabled = true;
-upload.disabled = true;
 
 // set up basic variables for app
 var record = document.querySelector('.record');
 var stop = document.querySelector('.stop');
+stop.disabled = true;
 var upload = document.querySelector('.upload');
+upload.disabled = true;
 var soundClips = document.querySelector('.sound-clips');
 var canvas = document.querySelector('.visualizer');
 
@@ -77,6 +77,7 @@ var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
 
 var audioCtx = new (window.AudioContext || webkitAudioContext)();
 var RECORDING_TIMEOUT = 15000; // 15 seconds
+
 // #############################################################################
 /* main block for doing the audio recording */
 
