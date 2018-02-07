@@ -20,7 +20,7 @@
 /**
 * verify that read.md entries contain valid data
 */
-// TODO why does static method need to be decalred before its use...
+// TODO why does static method need to be declared before its use...
 Prompts.validate_Readmd_file = function () {
   var variable_list = ['page_language', 
                     'page_prompt_list_files', 
@@ -105,7 +105,7 @@ Prompts.validate_Readmd_file = function () {
 * Jekyll front-matter uses YAML to define data structures... prompt_list_files
 * in read.md file gets converted to an array.
 */
-// TODO why does static method need to be decalred before its use...
+// TODO why does static method need to be declared before its use...
 Prompts.get_promptFile_count = function () {
   if (typeof page_prompt_list_files.length === 'undefined') {
     console.log("WARNING: page_prompt_list_files.length not defined in read.md for language: " + 
@@ -147,7 +147,7 @@ var prompts = new Prompts();
 * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
 */
 // prototype methods will not work with callback???
-// TODO might be something to do with this variable not being the same in call back
+// TODO might be something to do with 'this' context variable not being the same in call back
 // see: https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
 Prompts.processPromptsFile = function (prompt_data) {
     function pad (num, size) {
@@ -155,26 +155,18 @@ Prompts.processPromptsFile = function (prompt_data) {
       while (s.length <= size) s = "0" + s;
       return s;
     }
-
-
-
-
-//TODO split on line ending causing empty lines to be included in sentences
-//need to remove them or skip them...
-
-
-
-
   var sentences = prompt_data.split('\n');
   for (var i = 0; i < sentences.length; i++) {
-    if (page_prompt_list_files[prompts.random_prompt_file].contains_promptid)
-    { // first word of prompt line is the prompt ID
-      prompts.list[i] = sentences[i];
-    } else {
-      var start_promptId = page_prompt_list_files[prompts.random_prompt_file].start;
-      var prefix = page_prompt_list_files[prompts.random_prompt_file].prefix;
-      var prompt_id = prefix + pad( i + start_promptId, 5 );
-      prompts.list[i] = prompt_id  + " " + sentences[i];
+    if (sentences[i] != "") { // skip empty string
+      if (page_prompt_list_files[prompts.random_prompt_file].contains_promptid)
+      { // first word of prompt line is the prompt ID
+          prompts.list[i] = sentences[i];
+      } else {
+          var start_promptId = page_prompt_list_files[prompts.random_prompt_file].start;
+          var prefix = page_prompt_list_files[prompts.random_prompt_file].prefix;
+          var prompt_id = prefix + pad( i + start_promptId, 5 );
+          prompts.list[i] = prompt_id  + " " + sentences[i];
+      }
     }
   }
 

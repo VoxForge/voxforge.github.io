@@ -53,6 +53,7 @@ language_id: FR
 # - leave a blank line between groupings of hash/objects; otherwise liquid does 
 # not parse properly
 # - Yes and No must be in quotes, otherwise evaluates to true/false
+# TODO test this with new approach to global variables...
 native_speaker:
   label: Locuteur natif?
   popup_link: https://fr.wiktionary.org/wiki/locuteur_natif
@@ -191,7 +192,7 @@ instructions:
 
 controls:
   record: Enregistrer
-  stop: Arrêtez
+  stop: Arrêter
   upload: Télécharger
 
 # script below gets loaded in {{ content }} section of layout page
