@@ -60,6 +60,12 @@ canvas {
   margin-bottom: 0.5rem;
 }
 
+.other {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
 #buttons {
   display: flex;
   flex-direction: row;

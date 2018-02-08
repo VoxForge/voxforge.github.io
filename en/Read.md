@@ -173,7 +173,7 @@ noise_type:
     - Video
     - Weather Related (wind/rain...)
     - Other
-  other_label: Type of Noise
+  other_label: Other Type of Noise
 
 license:
   label: License
