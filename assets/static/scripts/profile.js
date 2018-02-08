@@ -144,8 +144,9 @@ $select1.on( 'change', function() {
 * ISO 639-1 language names
 */
 var langscodes = languages.getAllLanguageCode(); // array of language codes
-var option = ''; // string
-for (var i=0;i<langscodes.length;i++){
+//var option = ''; // string
+var option = '<option value="Unknown">'+ page_please_select + '</option>';
+for (var i=1;i<langscodes.length;i++){
    option += '<option value="'+ langscodes[i] + '">' +
    languages.getLanguageInfo(langscodes[i]).name + " (" +
    languages.getLanguageInfo(langscodes[i]).nativeName + ")" +  

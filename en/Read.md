@@ -236,6 +236,8 @@ controls:
   var page_language= "{{ page.lang }}";
   var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
   var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
+  var page_please_select = "{{ page.please_select }}";
+
 </script>
 
 
