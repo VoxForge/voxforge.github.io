@@ -1,8 +1,8 @@
 <?php
-//$allowedURL = "https://voxforge.github.io"; // prod
-//$uploadfolder = '../../public/speechsubmissions/'; // prod
-$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
-$UPLOADFOLDER = './submissions/'; // testing
+$allowedURL = "https://voxforge.github.io"; // prod
+$uploadfolder = '../../public/speechsubmissions/'; // prod
+//$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
+//$UPLOADFOLDER = './submissions/'; // testing
 
 // max upload size should be a function of the number of prompts
 $MAX_UPLOAD_SIZE = 100 * 1024 * 1024; //100 megabytes
