@@ -4,3 +4,4 @@ _site
 *.gem
 submissions
 .jekyll-metadata
+_site_submissions

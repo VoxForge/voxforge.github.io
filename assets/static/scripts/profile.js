@@ -61,12 +61,13 @@ if ( $.cookie('all_done') )
 */
 
 /**
+* The value of contents of the independent_div is compared to the passed in 
+* value, and if they are equal, then the dependent_div is displayed, otherwise
+* it is hidden 
+*
 * showDivBasedonValue makes the view of one div dependent on the value of a select 
 * field in another div, and attaches an event handler to independent div so that
 * any changes in it are reflected in dependent div
-*
-* The value of contents of the independent_div is compared to the passed in 
-* value, and if they are equal, then the dependent_div is displayed 
 *
 * see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
 */
@@ -76,6 +77,9 @@ Profile.showDivBasedonValue = function (independent_div, value, dependent_div, h
       $(dependent_div).show();
     } else {
       $(dependent_div).hide();
+//      if (value === page_localized_other) { // trying to clear text in other field if user unselects
+//         $(dependent_div).empty();
+//      }
     }
   }
 
@@ -85,6 +89,8 @@ Profile.showDivBasedonValue = function (independent_div, value, dependent_div, h
   } else {
     test( $(independent_div).val()===value );
   }
+
+
 
   // only need to create event handler on first call to this function
   if ( ! handler_already_created ) 
@@ -98,7 +104,7 @@ Profile.showDivBasedonValue = function (independent_div, value, dependent_div, h
 Profile.showDivBasedonValue('#native_speaker', page_localized_no, '#first_language_display', false);
 Profile.showDivBasedonValue('#native_speaker', page_localized_yes, '#dialect_display', false);
 Profile.showDivBasedonValue('#first_language', page_localized_other, '#first_language_other_display', false);
-// true mean hide if there is something in the username field
+// true means hide if there is something in the username field
 Profile.showDivBasedonValue('#username', true, '#anonymous_instructions_display', false); 
 Profile.showDivBasedonValue('#microphone', page_localized_other, '#microphone_other_display', false);
 Profile.showDivBasedonValue('#dialect', page_localized_other, '#dialect_other_display', false);
@@ -160,7 +166,7 @@ $('#first_language').append(option);
 */
 Profile.updateScreen = function (json_object) {
   //Speaker Characteristics
-  $('#username').val( json_object.username );
+  $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
   if (json_object.username) {
     $('#anonymous_instructions_display').hide();
   }
@@ -178,9 +184,9 @@ Profile.updateScreen = function (json_object) {
     $("#first_language_display").show();
   }
   $('#first_language').val( json_object.first_language );
-  $('#first_language_other').val( json_object.first_language_other );
+  $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
   $('#dialect').val( json_object.dialect );
-  $('#dialect_other').val( json_object.dialect_other );
+  $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
   if ( $('#dialect').val() === page_localized_other )
   {
     $("#dialect_other_display").show();
@@ -188,14 +194,14 @@ Profile.updateScreen = function (json_object) {
   $('#sub_dialect').val( json_object.dialect_other );
   //Recording Information:
   $('#microphone').val( json_object.microphone );
-  $('#microphone_other').val( json_object.microphone_other );
+  $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
   if ( $('#microphone').val() === page_localized_other )
   {
     $("#microphone_other_display").show();
   }
 
   $('#recording_location').val( json_object.recording_location );
-  $('#recording_location_other').val( json_object.recording_location_other );
+  $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
   if ( $('#recording_location').val() === page_localized_other )
   {
     $("#recording_location_other_display").show();
@@ -207,7 +213,7 @@ Profile.updateScreen = function (json_object) {
   }
   $('#noise_volume').val( json_object.noise_volume );
   $('#noise_type').val( json_object.noise_type );
-  $('#noise_type_other').val( json_object.noise_type_other );
+  $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
   if ( $('#noise_type').val() === page_localized_other )
   {
     $("#noise_type_other_display").show();
@@ -244,15 +250,36 @@ if ( parsedLocalStorageObject = Profile.getProfileFromLocalStorage() ) {
 * 
 * $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
 * 
-* first replace convert sone or more spaces to underscores
+* first replace convert one or more spaces to underscore
 * second replace removes all non-alphanumeric characters
-* thirds removes consecutive underscores and replaces them with single underscore
+* third remove consecutive underscores and replace them with single underscore
 * lastly, trim string to max of length 40 characters
 */
-Profile.cleanUserInput = function (user_input) {
+Profile.cleanUserInputRemoveSpaces = function (user_input) {
   var user_input = user_input.replace(/\s+/, '_').replace(/[^a-z0-9_\-]/gi,'').replace(/_+/g, '_');
- 
+
   return user_input.substring(0, 40);
+}
+
+/**
+* remove unwanted characters from user input
+* 
+* removes all non-alphanumeric characters
+* trim string to max of length 80 characters
+* 
+* TODO would HTML excaping be enough? using browser's escape(str) function
+* see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/escape
+
+* https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet
+*   But HTML entity encoding doesn't work if you're putting untrusted data inside 
+*   a <script> tag anywhere, or an event handler attribute like onmouseover, or 
+*   inside CSS, or in a URL. 
+*
+*/
+Profile.cleanUserInput = function (user_input) {
+  var user_input = user_input.replace(/[^a-z0-9_\-\s]/gi,'');
+ 
+  return user_input.substring(0, 80);
 }
 
 /**
@@ -267,7 +294,7 @@ Profile.prototype.toHash = function () {
   var i=0;
 
   if ( $('#username').val() ) {
-    profile_hash["username"] = Profile.cleanUserInput( $("#username").val() );
+    profile_hash["username"] = Profile.cleanUserInputRemoveSpaces( $("#username").val() );
   } else {
     profile_hash["username"] = "Anonymous";
   }
@@ -279,19 +306,19 @@ Profile.prototype.toHash = function () {
   profile_hash["first_language"] = $('#first_language').val();
   profile_hash["first_language_other"] = $("#first_language_other").val();
   profile_hash["dialect"] = $("#dialect").val();
-  profile_hash["dialect_other"] = $("#dialect_other").val();
+  profile_hash["dialect_other"] = Profile.cleanUserInput( $("#dialect_other").val() );
   profile_hash["sub_dialect"] = $("#sub_dialect").val();
 
   profile_hash["microphone"] = $("#microphone").val() ;
-  profile_hash["microphone_other"] = $("#microphone_other").val() ;
+  profile_hash["microphone_other"] = Profile.cleanUserInput( $("#microphone_other").val() );
 
   profile_hash["recording_location"] = $("#recording_location").val() ;
-  profile_hash["recording_location_other"] = $("#recording_location_other").val() ;
+  profile_hash["recording_location_other"] = Profile.cleanUserInput( $("#recording_location_other").val() );
 
   profile_hash["background_noise"] = $("#background_noise").val() ;
   profile_hash["noise_volume"] = $("#noise_volume").val() ;
   profile_hash["noise_type"] = $("#noise_type").val();
-  profile_hash["noise_type_other"] = $("#noise_type_other").val();
+  profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
 
   profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
 
@@ -319,14 +346,14 @@ Profile.prototype.toJsonString = function () {
 }
 
 /**
-* Convert profile form entries to hash and array
+* Convert profile form entries to array
 */
 Profile.prototype.toTextArray = function () {
   var profile_array = [];
   var i=0;
 
   if ( $('#username').val() ) {
-    profile_array[i++] = 'User Name: ' + Profile.cleanUserInput( $('#username').val() ) + '\n';
+    profile_array[i++] = 'User Name: ' + Profile.cleanUserInputRemoveSpaces( $('#username').val() ) + '\n';
   } else {
     profile_array[i++] = 'User Name: Anonymous\n';
   }
@@ -352,7 +379,7 @@ Profile.prototype.toTextArray = function () {
         profile_array[i++] = '  sub-dialect: ' + $('#sub_dialect').val() + '\n';
       }
     } else {
-      profile_array[i++] =  'Pronunciation dialect: Other - ' + $('#dialect_other').val() + '\n';
+      profile_array[i++] =  'Pronunciation dialect: Other - ' + Profile.cleanUserInput( $('#dialect_other').val() ) + '\n';
     }
   } else {
     if ( $('#first_language').val() !== page_localized_other) 
@@ -360,7 +387,7 @@ Profile.prototype.toTextArray = function () {
       var langId = $('#first_language').val();
       profile_array[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
     } else {
-      profile_array[i++] = '  first language: ' + $('#first_language_other').val();
+      profile_array[i++] = '  first language: ' + Profile.cleanUserInput( $('#first_language_other').val() );
     }
   }
 
@@ -368,13 +395,13 @@ Profile.prototype.toTextArray = function () {
   if ($('#microphone').val() !== page_localized_other) {
     profile_array[i++] = 'Microphone Type: ' + $('#microphone').val() + '\n';
   } else {
-    profile_array[i++] = 'Microphone Type: Other - ' + $('#microphone_other').val() + '\n';
+    profile_array[i++] = 'Microphone Type: Other - ' + Profile.cleanUserInput( $('#microphone_other').val() ) + '\n';
   }
 
   if ($('#recording_location').val() !== page_localized_other) {
     profile_array[i++] = 'Recording Location: ' + $('#recording_location').val() + '\n';
   } else {
-    profile_array[i++] = 'Recording Location: Other - ' + $('#recording_location_other').val() + '\n';
+    profile_array[i++] = 'Recording Location: Other - ' + Profile.cleanUserInput( $('#recording_location_other').val() ) + '\n';
   }
 
   profile_array[i++] = 'Background Noise: ' + $('#background_noise').val() + '\n';
@@ -384,7 +411,7 @@ Profile.prototype.toTextArray = function () {
     if ($('#noise_type').val() !== page_localized_other) {
       profile_array[i++] = 'Noise Type: ' + $('#noise_type').val() + '\n';
     } else {
-      profile_array[i++] = 'Noise Type: Other - ' + $('#noise_type_other').val() + '\n';
+      profile_array[i++] = 'Noise Type: Other - ' + Profile.cleanUserInput( $('#noise_type_other').val() ) + '\n';
     }
   }
 
@@ -408,8 +435,7 @@ Profile.prototype.toTextArray = function () {
 
 
 /**
-* Convert profile object to JSON string, with line feeds after every key 
-* value line
+* Convert profile object to Array
 */
 Profile.prototype.toArray = function () {
   return this.toTextArray();
@@ -426,7 +452,7 @@ Profile.prototype.addProfile2LocalStorage = function () {
 * return cleaned username user entered into input field
 */
 Profile.prototype.getUserName = function () {
-  return Profile.cleanUserInput( $('#username').val() );
+  return Profile.cleanUserInputRemoveSpaces( $('#username').val() );
 }
 
 /**
@@ -442,7 +468,7 @@ Profile.prototype.getTempSubmissionName = function () {
 
   // TODO why did you set it to toLowercase???
   // var username = $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
-  var username = Profile.cleanUserInput( $('#username').val() ).toLowerCase();
+  var username = Profile.cleanUserInputRemoveSpaces( $('#username').val() ).toLowerCase();
   var d = new Date();
   var date = d.getFullYear().toString() + (d.getMonth() + 1).toString() + d.getDate().toString();
   var result = page_language + '-' + username + '-' + date + '-' + uuidv4();

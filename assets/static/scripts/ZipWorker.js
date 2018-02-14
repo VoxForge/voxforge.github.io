@@ -22,7 +22,7 @@
 // use chrome for debugging webworkers, no need to mess with about:...
 
 
-  Note cross domain cookies: cookies do not work in web workers
+  Note on cross domain cookies: cookies do not work in web workers
     //https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
 
 // see also https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp
@@ -41,8 +41,8 @@ importScripts('jszip.js', 'localforage.js');
 //var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile'; // Flask testing
 //var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile'; // Flask testing
 // now using PHP uploader
-//var uploadURL = 'https://jekyll2_voxforge.org/upload.php'; // test
-var uploadURL = 'https://upload.voxforge1.org'; // prod
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
+//var uploadURL = 'https://upload.voxforge1.org'; // prod
 
 var speechSubmissionAppVersion = "0.1";
 /**
@@ -76,11 +76,10 @@ self.onmessage = function(event) {
 */
 function createZipFile(self, data) {
   var zip = new JSZip();
-
-  zip.file("readme.txt", data.readme); // backward compatibility for VoxForge 1.0 corpus
-  zip.file("prompts.txt", data.prompts); // backward compatibility for VoxForge 1.0 corpus
-  zip.file("profile.json", data.profile);
-  zip.file("prompts.json", data.prompts_json);
+  zip.file("readme.txt", data.readme_blob); // backward compatibility for VoxForge 1.0 corpus
+  zip.file("prompts.txt", data.prompts_blob); // backward compatibility for VoxForge 1.0 corpus
+  zip.file("profile.json", data.profile_json_blob);
+  zip.file("prompts.json", data.prompts_json_blob);
 
   for (var i = 0; i < data.audio.length; i++) {
     var filename = data.audio[i].filename;

@@ -463,13 +463,12 @@ function createZipFile(audioArray) {
     username: profile.getUserName(),
     language: page_language,
     temp_submission_name: profile.getTempSubmissionName(),
-    readme: readme_blob,
-    prompts: prompts_blob,
-    profile: profile_json_blob,
-    prompts_json: prompts_json_blob,
+    readme_blob: readme_blob,
+    prompts_blob: prompts_blob,
+    profile_json_blob: profile_json_blob,
+    prompts_json_blob: prompts_json_blob,
     audio: audioArray,
   });
-
 
   /** 
   * display upload to VoxForge server status to user

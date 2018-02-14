@@ -189,7 +189,7 @@ Prompts.prototype.resetIndices = function () {
 * after returnong prompt 
 */
 Prompts.prototype.getNextPrompt = function () {
-  this.index = this.index % this.list.length
+  this.index = this.index % (this.list.length -1)
   if (this.prompt_count >= this.max_num_prompts) {
     return null;
   }
