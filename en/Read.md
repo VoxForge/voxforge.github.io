@@ -11,19 +11,19 @@ total_number_of_prompts: 1176
 prompt_list_files:
   - id: "001"
     start: 0
-    file_location: /en/prompts/001
+    file_location: /en/prompts/001/
     number_of_prompts: 594
     contains_promptid: false
     prefix: en
   - id: "002"
     start: 594
-    file_location: /en/prompts/002
+    file_location: /en/prompts/002/
     number_of_prompts: 300
     contains_promptid: false
     prefix: en
   - id: "003"
     start: 894
-    file_location: /en/prompts/003
+    file_location: /en/prompts/003/
     number_of_prompts: 282
     contains_promptid: false
     prefix: en
