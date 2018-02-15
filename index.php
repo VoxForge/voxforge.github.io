@@ -70,28 +70,6 @@ try {
 
 // ### FUNCTIONS ###############################################################
 
-function createNewFileName($username, $language, $uploadfolder) {
-  // limits the length of the filename to 40 char + date and 3 char random code
-  $language = basename( $language ); // may prevent directory traversal attacks
-  $language = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $language  ); // remove unwanted characters
-  $language = strtoupper( substr($language , 0, 2) ); // set to uppercase; 2 character max size
-
-  $username = basename( $username ); // may prevent directory traversal attacks
-  $username = preg_replace  (  "/\s+/", "_", $username  ); // replace one or more spaces with single undescore
-  $username = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $username  ); // remove unwanted characters
-  $username = substr($username , 0, 40); // 40 character max size
-
-  date_default_timezone_set('America/Toronto');
-  $date =  date('Ymd');
-  $threeRandomChar = substr(md5(microtime()),rand(0,26),3);
-  $randomNumbers = mt_rand();
-
-  $filename = $language . '-' . $username . '-' . $date . '-' . $threeRandomChar . "[" . $randomNumbers . "]" . ".zip";
-  $destination = $uploadfolder . $filename;
-
-  return $destination;
-}
-
 function errorChecking($file_error, $file_size, $tmp_name) {
   // Undefined | Multiple Files | $_FILES Corruption Attack
   // If this request falls under any of them, treat it invalid.
@@ -150,4 +128,27 @@ function get_zip_originalsize($filename) {
 
     return $size;
 }
+
+function createNewFileName($username, $language, $uploadfolder) {
+  // limits the length of the filename to 40 char + date and 3 char random code
+  $language = basename( $language ); // may prevent directory traversal attacks
+  $language = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $language  ); // remove unwanted characters
+  $language = strtoupper( substr($language , 0, 2) ); // set to uppercase; 2 character max size
+
+  $username = basename( $username ); // may prevent directory traversal attacks
+  $username = preg_replace  (  "/\s+/", "_", $username  ); // replace one or more spaces with single undescore
+  $username = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $username  ); // remove unwanted characters
+  $username = substr($username , 0, 40); // 40 character max size
+
+  date_default_timezone_set('America/Toronto');
+  $date =  date('Ymd');
+  $threeRandomChar = substr(md5(microtime()),rand(0,26),3);
+  $randomNumbers = mt_rand();
+
+  $filename = $language . '-' . $username . '-' . $date . '-' . $threeRandomChar . "[" . $randomNumbers . "]" . ".zip";
+  $destination = $uploadfolder . $filename;
+
+  return $destination;
+}
+
 ?>
