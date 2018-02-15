@@ -1,6 +1,11 @@
 <?php
-$allowedURL = "https://voxforge.github.io"; // prod
-$uploadfolder = '../../public/speechsubmissions/'; // prod
+// set voxforge1.org server to be php7.1
+// https://help.1and1.com/hosting-c37630/scripts-and-programming-languages-c85099/php-c37728/enable-error-logs-a792503.html
+// set up logging in php.ini in same folder as this script
+
+
+$ALLOWEDURL = "https://voxforge.github.io"; // prod
+$UPLOADFOLDER = '../../public/speechsubmissions/'; // prod
 //$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
 //$UPLOADFOLDER = './submissions/'; // testing
 
@@ -8,7 +13,7 @@ $uploadfolder = '../../public/speechsubmissions/'; // prod
 $MAX_UPLOAD_SIZE = 100 * 1024 * 1024; //100 megabytes
 $MAX_UNZIPPED_SIZE = 150 * 1024 * 1024; // 150 megabytes
 
-header("Access-Control-Allow-Origin: $allowedURL");
+header("Access-Control-Allow-Origin: $ALLOWEDURL");
 header("Content-Type: multipart/form-data");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Request-Headers, x-requested-with");
@@ -34,54 +39,49 @@ if ($_SERVER['HTTP_ORIGIN'] !== $ALLOWEDURL) {
   die("POSTing Only Allowed from $ALLOWEDURL");
 }
 
+// ### MAIN ####################################################################
+
 try {
   $tmp_name = $_FILES['file']['tmp_name'];
 
-  errorChecking();
-  validateZipFile($tmp_name);
+  errorChecking(
+    $_FILES['file']['error'],
+    $_FILES['file']['size'],
+    $_FILES['file']['tmp_name']
+  );
 
-  $destination = createNewFileName();
+  $destination = createNewFileName(
+    $_REQUEST['username'],
+    $_REQUEST['language'],
+    $GLOBALS['UPLOADFOLDER']
+  );
+
   if (!move_uploaded_file(
     $tmp_name,
     $destination
   )) {
     throw new RuntimeException('Failed to move submission file.');
   }
-
   echo 'submission is uploaded successfully.';
 
 } catch (RuntimeException $e) {
   echo $e->getMessage();
 }
 
-// TODO discard any non recognized files
-//
-function validateZipFile($filename) {
-  $zip = zip_open($filename);
-  if ($zip) {
-    while ($zip_entry = zip_read($zip)) {
-      echo $zip_entry;
-    }
-  }
+// ### FUNCTIONS ###############################################################
 
-  zip_close($resource);
-}
-
-function createNewFileName() {
-  $username = $_REQUEST['username'];
-  $language = $_REQUEST['language'];
-  $uploadfolder = $GLOBALS['UPLOADFOLDER'];
-
+function createNewFileName($username, $language, $uploadfolder) {
   // limits the length of the filename to 40 char + date and 3 char random code
   $language = basename( $language ); // may prevent directory traversal attacks
   $language = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $language  ); // remove unwanted characters
-  $language = strtoupper( substr($language , 0, 2) ); // set to uppercase
+  $language = strtoupper( substr($language , 0, 2) ); // set to uppercase; 2 character max size
 
   $username = basename( $username ); // may prevent directory traversal attacks
   $username = preg_replace  (  "/\s+/", "_", $username  ); // replace one or more spaces with single undescore
   $username = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $username  ); // remove unwanted characters
   $username = substr($username , 0, 40); // 40 character max size
 
+  date_default_timezone_set('America/Toronto');
   $date =  date('Ymd');
   $threeRandomChar = substr(md5(microtime()),rand(0,26),3);
   $randomNumbers = mt_rand();
@@ -92,12 +92,7 @@ function createNewFileName() {
   return $destination;
 }
 
-
-function errorChecking() {
-  $file_error = $_FILES['file']['error'];
-  $file_size = $_FILES['file']['size'];
-  $tmp_name = $_FILES['file']['tmp_name'];
-
+function errorChecking($file_error, $file_size, $tmp_name) {
   // Undefined | Multiple Files | $_FILES Corruption Attack
   // If this request falls under any of them, treat it invalid.
   if (
@@ -137,6 +132,22 @@ function errorChecking() {
   )) {
     throw new RuntimeException('Invalid file format.');
   }
+
+  $unzipped_filesize = get_zip_originalsize($tmp_name);
+  if ($unzipped_filesize > $GLOBALS['MAX_UNZIPPED_SIZE']) {
+    throw new RuntimeException('Exceeded unzipped size limit. (' + $file_size + ')');
+  }
+
 }
 
+function get_zip_originalsize($filename) {
+    $size = 0;
+    $resource = zip_open($filename);
+    while ($dir_resource = zip_read($resource)) {
+        $size += zip_entry_filesize($dir_resource);
+    }
+    zip_close($resource);
+
+    return $size;
+}
 ?>
