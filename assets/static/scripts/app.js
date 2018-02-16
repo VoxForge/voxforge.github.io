@@ -210,7 +210,7 @@ function recordClicked() {
 }
 
 /**
-* update nuber of prompts recorded and total number of prompts to record
+* update number of prompts recorded and total number of prompts to record
 */
 function updateProgress() {
   var progress = prompts.getProgressDescription();
@@ -283,57 +283,76 @@ worker.onmessage = function(event) {
 * recorded audio and displays text of associated prompt line.  User can
 * then review and if needed delete an erroneous recording.
 */
+//TODO user ability to re-record audio prompt
 function saveWorkerRecording(blob) {
-  var prompt_sentence = document.querySelector('.info-display').innerText;
-  var prompt_id = document.querySelector('.prompt_id').innerText;
-  // TODO prompt_sentence already has leading and trailing space???
-  var clipName = prompt_id + prompt_sentence;
-
   var clipContainer = document.createElement('article');
-  var clipLabel = document.createElement('prompt');
-  var audio = document.createElement('audio');
-  var waveform = document.createElement('div');
-  var deleteButton = document.createElement('button');
- 
   clipContainer.classList.add('clip');
-  clipLabel.classList.add('clip-label');
-  audio.setAttribute('controls', '');
-  deleteButton.textContent = 'Delete';
-  deleteButton.className = 'delete';
-  clipLabel.textContent = clipName;
+  var prompt_id = document.querySelector('.prompt_id').innerText;
+
+  function createClipLabel() {
+    var prompt_sentence = document.querySelector('.info-display').innerText;
+    var clipLabel = document.createElement('prompt');
+    clipLabel.classList.add('clip-label');
+    clipLabel.textContent = prompt_id + prompt_sentence;
+  
+    return clipLabel;
+  }
+
+  function createDeleteButton() {
+    var deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.className = 'delete';
+
+    deleteButton.onclick = function(e) {
+      evtTgt = e.target;
+      evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+      updateProgress();
+    }
+
+    return deleteButton;
+  }
 
   var waveform_display_id = "waveformContainer_" + prompt_id;
-  waveform.setAttribute("id", waveform_display_id);
-  waveform.setAttribute("style", 
-      "border-style: solid; min-width:100px; ");
+  function createWaveform() {
+    var waveform = document.createElement('div');
+    waveform.setAttribute("id", waveform_display_id);
+    waveform.setAttribute("style", 
+        "border-style: solid; min-width:100px; ");
 
-  var style = document.createElement('div');
-  style.setAttribute("style", "text-align: center");
+    var style = document.createElement('div');
+    style.setAttribute("style", "text-align: center");
 
-  var button_display_id = "button_" + prompt_id;
-  var button = document.createElement(button_display_id);
-  button.className = "btn btn-primary";
-  button.textContent = 'Play';
-  button.setAttribute("onclick", "wavesurfer.playPause()");
-  var i = document.createElement('i');
-  i.className = "glyphicon glyphicon-play";
-  button.appendChild(i);
+    var button_display_id = "button_" + prompt_id;
+    var button = document.createElement(button_display_id);
+    button.className = "btn btn-primary";
+    button.textContent = 'Play';
+    button.setAttribute("onclick", "wavesurfer.playPause()");
+    var i = document.createElement('i');
+    i.className = "glyphicon glyphicon-play";
+    button.appendChild(i);
 
-  style.appendChild(button);
-  waveform.appendChild(style);
+    style.appendChild(button);
+    waveform.appendChild(style);
 
-  clipContainer.appendChild(clipLabel);
-  clipContainer.appendChild(deleteButton);
-  clipContainer.appendChild(waveform);
-  clipContainer.appendChild(audio);
-
-  soundClips.insertBefore(clipContainer, soundClips.children[0]);
-
-  audio.controls = true;
+    return waveform;
+  }
 
   var audioURL = window.URL.createObjectURL(blob);
-  audio.src = audioURL;
-  console.log(prompt_id + " recorder stopped; audio: " + audioURL);
+  function createAudioPlayer() {
+    var createAudioPlayer = document.createElement('audio');
+    createAudioPlayer.setAttribute('controls', '');
+    createAudioPlayer.controls = true;
+    createAudioPlayer.src = audioURL;
+    console.log(prompt_id + " recorder stopped; audio: " + audioURL);
+
+    return createAudioPlayer;
+  }
+
+  clipContainer.appendChild(createClipLabel());
+  clipContainer.appendChild(createDeleteButton());
+  clipContainer.appendChild(createWaveform());
+  clipContainer.appendChild(createAudioPlayer());
+  soundClips.insertBefore(clipContainer, soundClips.children[0]);
 
   // see http://wavesurfer-js.org/docs/
   wavesurfer = WaveSurfer.create({
@@ -343,12 +362,6 @@ function saveWorkerRecording(blob) {
     minPxPerSec: 200
   });
   wavesurfer.load(audioURL);
-
-  deleteButton.onclick = function(e) {
-    evtTgt = e.target;
-    evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
-    updateProgress();
-  }
 }
 
 /**
@@ -367,7 +380,7 @@ function askToUploadSubmission() {
 /**
 * user has clicked stop... disconnect recording audio nodes
 *
-* the actual stopping of recording is delayedso because some users hit it early
+* the actual stopping of recording is delayed because some users hit it early
 * and cut off the end of their recording
 */
 function stopClicked() {

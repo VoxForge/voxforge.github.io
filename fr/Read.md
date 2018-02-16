@@ -4,6 +4,8 @@ title: Read
 menu: Read
 ref: read
 lang: fr
+permalink: /fr/read
+weight: 2
 
 ################################################################################
 
@@ -15,8 +17,7 @@ prompt_list_files:
     contains_promptid: true
     number_of_prompts: 865
 
-permalink: /fr/read
-weight: 2
+
 
 username_label: Nom d'utilisateur
 anonymous_submission: (laisser vide pour soumettre anonymement)

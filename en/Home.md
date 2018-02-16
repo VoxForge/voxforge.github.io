@@ -15,26 +15,32 @@ redirect_from: "/home/"
 
 ---
 
-VoxForge collects high fidelity spoken audio for use with [Free] and [Open Source], 
-[Speech Recognition Engines] in many languages.  
+VoxForge was set up to collect transcribed speech for use with [Free] and 
+[Open Source], [Speech Recognition Engines].
 
-The audio is recorded at the highest quality sampling rate available to your 
-browser/operating system.  It is recorded in WAV format, an uncompressed, lossless, 
-audio format.  Most open corpora are recorded in lossy formats (such as mp3 or vorbis).
+The audio is recorded in [WAV] audio format, a high quality [uncompressed] and 
+[lossless] format.  Most open corpora are recorded in [lossy] formats (such 
+as mp3 or vorbis).
 
-The audio collected is not necessarily 'clean speech' but is meant to
-reflect audio conditions 'in the wild' in order to create better acoustic 
-models, and to provide a better test set for evaluating [Speech Recognition Engines].
-
+The audio collected is meant to provide an wide and varied sample of different user 
+recording environments - from line noise from their audio cards, poor quality 
+microphones, and background noise of many different types.  This is not intended 
+to be a fully 'clean speech' corpus, but will contain examples of clean and 
+noisy speech, tagged as such so that acoustic model developers can extract
+the audio best suited to their needs.
 
 ## How Can You Help?
 
-[Record yourself reading some text] using the VoxForge SpeechSubmission app and upload your recordings to VoxForge.
+[Record yourself reading some text] using the SpeechSubmission app and upload 
+your recordings to the VoxForge server.
 
 
 [Free]: /faq/what-is-free-software
 [Open Source]: /faq/what-is-open-source-software
 [Speech Recognition Engines]: /faq/what-is-the-difference-between-a-speech-recognition-engine-and-a-speech-recognition-system
 [Record yourself reading some text]: /en/read
-
+[lossless]: https://en.wikipedia.org/wiki/Lossless_compression
+[lossy]: https://en.wikipedia.org/wiki/Lossy_compression
+[WAV]: https://en.wikipedia.org/wiki/WAV
+[uncompressed]: https://www.prx.org/help/posting-audio/compressed-versus-uncompressed
 

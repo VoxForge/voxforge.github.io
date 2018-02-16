@@ -8,36 +8,20 @@
 exclude: [fix_md_script]
 # Site settings
 title:
-  bg: VoxForge - Bulgarian
-  ca: VoxForge - Catalan
-  de: VoxForge - German
-  el: VoxForge - Greek
   en: VoxForge - Free Speech... Recognition
   es: VoxForge - libertad de expresión
   fr: VoxForge - Voix Libre
 # word 'language' in local language
 languagesLocal:
-  bg: Език
-  ca: Idioma
-  de: Sprachen
-  el: Γλώσσες
   en: Languages
   fr: Langues
   es: Idiomas
 # localized language name
 languageName:
-  bg: Български
-  ca: Catalan
-  de: Deutsch
-  el: Ελληνικά
   en: English
   fr: Français
   es: Español
 languageEnglish:
-  bg: Bulgarian
-  ca: Catalan
-  de: German
-  el: Greek
   en: English
   fr: French
   es: Spanish
@@ -45,14 +29,10 @@ languageEnglish:
 supportedLanguages:
   EN: English
   FR: French
+  ES: Spanish
 email: contact@voxforge.org
 index:
-  bg: home
-  ca: home
-  de: home
-  el: Σπίτι
   en: home
-  de: homeindex???
   fr: accueil
   es: boenosdias
 baseurl: "" # the subpath of your site, e.g. /blog

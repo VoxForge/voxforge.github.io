@@ -9,4 +9,7 @@ The audio collected is not necessarily 'clean speech' but is meant to
 reflect audio conditions 'in the wild' in order to create better acoustic 
 models, and to provide a better test set for evaluating [Speech Recognition Engines].
 
-
+[Free]: /faq/what-is-free-software
+[Open Source]: /faq/what-is-open-source-software
+[Speech Recognition Engines]: /faq/what-is-the-difference-between-a-speech-recognition-engine-and-a-speech-recognition-system
+[Record yourself reading some text]: /en/read

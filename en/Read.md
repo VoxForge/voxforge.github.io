@@ -4,6 +4,9 @@ title: Read
 menu: Read
 ref: read
 lang: en
+permalink: /en/read/
+redirect_from: /home/read
+weight: 2
 
 ################################################################################
 
@@ -30,9 +33,6 @@ prompt_list_files:
 
 # need trailing slash for testing on localserver 
 # see: https://github.com/barryclark/jekyll-now/issues/13
-permalink: /en/read/
-redirect_from: /home/read
-weight: 2
 
 username_label: Username
 anonymous_submission: (leave blank to submit anonymously)
