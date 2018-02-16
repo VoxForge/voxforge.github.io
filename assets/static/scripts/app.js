@@ -58,7 +58,8 @@ var microphoneLevel = null;
 var processor = undefined;  
 var analyser = null;
 var mediaStreamOutput = null;
-var wavesurfer;
+var wavesurfer = [];
+var clip_id = 0;
 var timeout_obj;
 
 // set up basic variables for app
@@ -312,9 +313,21 @@ function saveWorkerRecording(blob) {
     return deleteButton;
   }
 
+  var audioURL = window.URL.createObjectURL(blob);
+  function createAudioPlayer() {
+    var audioPlayer = document.createElement('audio');
+    audioPlayer.setAttribute('controls', '');
+    audioPlayer.controls = true;
+    audioPlayer.src = audioURL;
+    console.log(prompt_id + " recorder stopped; audio: " + audioURL);
+
+    return audioPlayer;
+  }
+
   var waveform_display_id = "waveformContainer_" + prompt_id;
-  function createWaveform() {
+  function createWaveformDisplay() {
     var waveform = document.createElement('div');
+    // hook for wavesurfer
     waveform.setAttribute("id", waveform_display_id);
     waveform.setAttribute("style", 
         "border-style: solid; min-width:100px; ");
@@ -322,11 +335,12 @@ function saveWorkerRecording(blob) {
     var style = document.createElement('div');
     style.setAttribute("style", "text-align: center");
 
+    // playbutton inside wavesurfer
     var button_display_id = "button_" + prompt_id;
     var button = document.createElement(button_display_id);
     button.className = "btn btn-primary";
-    button.textContent = 'Play';
-    button.setAttribute("onclick", "wavesurfer.playPause()");
+    button.textContent = 'Play'; 
+    button.setAttribute("onclick", "wavesurfer[" + clip_id + "].playPause()");
     var i = document.createElement('i');
     i.className = "glyphicon glyphicon-play";
     button.appendChild(i);
@@ -334,34 +348,28 @@ function saveWorkerRecording(blob) {
     style.appendChild(button);
     waveform.appendChild(style);
 
+    console.log("clip_id: " + clip_id);
+
     return waveform;
-  }
-
-  var audioURL = window.URL.createObjectURL(blob);
-  function createAudioPlayer() {
-    var createAudioPlayer = document.createElement('audio');
-    createAudioPlayer.setAttribute('controls', '');
-    createAudioPlayer.controls = true;
-    createAudioPlayer.src = audioURL;
-    console.log(prompt_id + " recorder stopped; audio: " + audioURL);
-
-    return createAudioPlayer;
   }
 
   clipContainer.appendChild(createClipLabel());
   clipContainer.appendChild(createDeleteButton());
-  clipContainer.appendChild(createWaveform());
+  clipContainer.appendChild(createWaveformDisplay());
   clipContainer.appendChild(createAudioPlayer());
+
   soundClips.insertBefore(clipContainer, soundClips.children[0]);
 
   // see http://wavesurfer-js.org/docs/
-  wavesurfer = WaveSurfer.create({
+  wavesurfer[clip_id] = WaveSurfer.create({
     container: '#' + waveform_display_id,
     scrollParent: true,
     waveColor : 'OliveDrab',
     minPxPerSec: 200
   });
-  wavesurfer.load(audioURL);
+  wavesurfer[clip_id].load(audioURL);
+
+  clip_id++;
 }
 
 /**
@@ -522,6 +530,7 @@ function createZipFile(audioArray) {
   upload.disabled = true;
   prompts.resetIndices();
   $( '.sound-clips' ).empty();
+  clip_id = 0;
   console.log('===done allDone===');
 }
 
