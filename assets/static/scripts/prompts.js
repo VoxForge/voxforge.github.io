@@ -92,6 +92,49 @@ function Prompts () {
       return page_prompt_list_files.length;
     }
 
+    /**
+    * callback (for jquery 'get') to process the received prompts file
+    *
+    * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
+    *
+    * could not get 'this' variable to work inside prototype methods used in 
+    * callback??? needed to use 'bind' function to bind Prompt object context 
+    * to callback when it gets called.
+    * see: https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
+    *   this (aka "the context") is a special keyword inside each function and its 
+    *   value only depends on how the function was called, not how/when/where it was 
+    *   defined.
+    */
+    var processPromptsFile = function (prompt_data) {
+        function pad (num, size) {
+          var s = num+"";
+          while (s.length <= size) s = "0" + s;
+          return s;
+        }
+      var sentences = prompt_data.split('\n');
+      for (var i = 0; i < sentences.length; i++) {
+        if (sentences[i] != "") { // skip empty string
+          if (page_prompt_list_files[random_prompt_file].contains_promptid)
+          { // first word of prompt line is the prompt ID
+              this.list[i] = sentences[i];
+          } else {
+              var start_promptId = page_prompt_list_files[random_prompt_file].start;
+              var prefix = page_prompt_list_files[random_prompt_file].prefix;
+              var prompt_id = prefix + pad( i + start_promptId, 5 );
+              this.list[i] = prompt_id  + " " + sentences[i];
+          }
+        }
+      }
+
+      if (page_prompt_list_files[random_prompt_file].number_of_prompts !=  this.list.length) {
+        console.warn("number of prompts in prompt_list_files[" + random_prompt_file + "] in read.md not same as prompt file line counts for language: " + 
+                    page_language);
+      }
+
+      // set random index of prompt line to present to user
+      this.index = Math.floor((Math.random() * this.list.length) + 1); // one indexed
+    }
+
   /* Main */
 
   //this.max_num_prompts=10; // default maximum number of prompts
@@ -101,27 +144,33 @@ function Prompts () {
   this.prompt_count = 0; // number of prompts read
   this.prompts_recorded = []; // list of prompts that have been recorded
   this.deleted_prompts = []; // list of prompts that have been deleted and need to be re-recorded
-  /* inner functions */
 
   validate_Readmd_file();
 
-  this.random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
-  console.log("prompt file id: " + page_prompt_list_files[this.random_prompt_file].id + " (prompt file array index: " + this.random_prompt_file + ")");
-  console.log("starting promptId: " + page_prompt_list_files[this.random_prompt_file].start);
+  var random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
+  console.log("prompt file id: " + page_prompt_list_files[random_prompt_file].id + " (prompt file array index: " + random_prompt_file + ")");
+  console.log("starting promptId: " + page_prompt_list_files[random_prompt_file].start);
+
+
+  /** 
+  * get prompts file for given language from server
+  * synchronous request... 
+  * call to bind ensures that this context of current object (i.e. Prompts)
+  * is used when the callback gets executed.  Otherwise it will use a different
+  * this context, not clear on which one... see: https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
+  */
+  $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
+        processPromptsFile.bind(this)
+  ).fail(function() {
+    console.warn("cannot find prompts file on VoxForge server: " + 
+                page_prompt_list_files[random_prompt_file]['file_location']);
+  });
 }
 
 /**
 * Instantiate Prompt class
 */
 var prompts = new Prompts();
-
-/* synchronous request... */
-$.get(page_prompt_list_files[prompts.random_prompt_file]['file_location'], 
-      prompts.processPromptsFile
-).fail(function() {
-  console.warn("cannot find prompts file on VoxForge server: " + 
-              page_prompt_list_files[prompts.random_prompt_file]['file_location']);
-});
 
 /**
 * updates the current number of prompts that the user selected from dropdown
@@ -137,49 +186,6 @@ $('#max_num_prompts').click(function () {
 /**
 * ### METHODS ##############################################
 */
-
-/**
-* callback (for jquery 'get') to process the received prompts file
-*
-* see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
-*/
-// cannot get 'this' context to work inside prototype methods used in callback???
-// therefore use 'prompt' object to update attributes... ???
-// TODO might be something to do with 'this' context variable not being the same in call back
-// see: https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
-//   this (aka "the context") is a special keyword inside each function and its 
-//   value only depends on how the function was called, not how/when/where it was 
-//   defined.
-Prompts.prototype.processPromptsFile = function (prompt_data) {
-    function pad (num, size) {
-      var s = num+"";
-      while (s.length <= size) s = "0" + s;
-      return s;
-    }
-  var sentences = prompt_data.split('\n');
-  for (var i = 0; i < sentences.length; i++) {
-    if (sentences[i] != "") { // skip empty string
-      if (page_prompt_list_files[prompts.random_prompt_file].contains_promptid)
-      { // first word of prompt line is the prompt ID
-          prompts.list[i] = sentences[i];
-      } else {
-          var start_promptId = page_prompt_list_files[prompts.random_prompt_file].start;
-          var prefix = page_prompt_list_files[prompts.random_prompt_file].prefix;
-          var prompt_id = prefix + pad( i + start_promptId, 5 );
-          prompts.list[i] = prompt_id  + " " + sentences[i];
-      }
-    }
-  }
-
-  if (page_prompt_list_files[prompts.random_prompt_file].number_of_prompts !=  prompts.list.length) {
-    console.warn("number of prompts in prompt_list_files[" + prompts.random_prompt_file + "] in read.md not same as prompt file line counts for language: " + 
-                page_language);
-  }
-
-  // set random index of prompt line to present to user
-  prompts.index = Math.floor((Math.random() * prompts.list.length) + 1); // one indexed
-}
-
 /**
 * reset prompt array and index after submission is completed
 */
