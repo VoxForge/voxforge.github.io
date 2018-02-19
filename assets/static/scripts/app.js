@@ -290,6 +290,9 @@ function saveWorkerRecording(blob) {
   clipContainer.classList.add('clip');
   var prompt_id = document.querySelector('.prompt_id').innerText;
 
+  /**
+  * displays the speech recording's transcription
+  */
   function createClipLabel() {
     var prompt_sentence = document.querySelector('.info-display').innerText;
     var clipLabel = document.createElement('prompt');
@@ -299,6 +302,10 @@ function saveWorkerRecording(blob) {
     return clipLabel;
   }
 
+  /**
+  * delete a recorded prompt; 
+  * TODO: makes more sense to let the user re-record a prompt....
+  */
   function createDeleteButton() {
     var deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete';
@@ -307,13 +314,23 @@ function saveWorkerRecording(blob) {
     deleteButton.onclick = function(e) {
       evtTgt = e.target;
       evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+
       updateProgress();
+
+      var prompt_id = document.querySelector('.prompt_id').innerText;
+      var prompt_sentence = document.querySelector('.info-display').innerText;
+      prompts.deletePrompt(prompt_id, prompt_sentence);
+      console.log("prompt deleted: " + prompt_id);
     }
 
     return deleteButton;
   }
 
   var audioURL = window.URL.createObjectURL(blob);
+  /**
+  * This creates an additional audio player that may not be really required given
+  * that Wavesurfer now works correctly.  Still usefull to let user adjust volume
+  */
   function createAudioPlayer() {
     var audioPlayer = document.createElement('audio');
     audioPlayer.setAttribute('controls', '');
@@ -324,18 +341,23 @@ function saveWorkerRecording(blob) {
     return audioPlayer;
   }
 
+  /**
+  * this just creates the container (i.e. element in the shadow DOM) to be used
+  * by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
+  * to exist before being called, so this creates the it...
+  */
   var waveform_display_id = "waveformContainer_" + prompt_id;
-  function createWaveformDisplay() {
-    var waveform = document.createElement('div');
+  function createWaveformElement() {
+    var waveformElement = document.createElement('div');
     // hook for wavesurfer
-    waveform.setAttribute("id", waveform_display_id);
-    waveform.setAttribute("style", 
+    waveformElement.setAttribute("id", waveform_display_id);
+    waveformElement.setAttribute("style", 
         "border-style: solid; min-width:100px; ");
 
     var style = document.createElement('div');
     style.setAttribute("style", "text-align: center");
 
-    // playbutton inside wavesurfer
+    // playbutton inside wavesurfer display
     var button_display_id = "button_" + prompt_id;
     var button = document.createElement(button_display_id);
     button.className = "btn btn-primary";
@@ -346,20 +368,21 @@ function saveWorkerRecording(blob) {
     button.appendChild(i);
 
     style.appendChild(button);
-    waveform.appendChild(style);
+    waveformElement.appendChild(style);
 
     console.log("clip_id: " + clip_id);
 
-    return waveform;
+    return waveformElement;
   }
 
   clipContainer.appendChild(createClipLabel());
   clipContainer.appendChild(createDeleteButton());
-  clipContainer.appendChild(createWaveformDisplay());
+  clipContainer.appendChild(createWaveformElement());
   clipContainer.appendChild(createAudioPlayer());
 
   soundClips.insertBefore(clipContainer, soundClips.children[0]);
 
+  // add waveform to waveformElement
   // see http://wavesurfer-js.org/docs/
   wavesurfer[clip_id] = WaveSurfer.create({
     container: '#' + waveform_display_id,
