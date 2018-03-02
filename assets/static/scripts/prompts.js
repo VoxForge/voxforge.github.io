@@ -151,7 +151,6 @@ function Prompts () {
   console.log("prompt file id: " + page_prompt_list_files[random_prompt_file].id + " (prompt file array index: " + random_prompt_file + ")");
   console.log("starting promptId: " + page_prompt_list_files[random_prompt_file].start);
 
-
   /** 
   * get prompts file for given language from server
   * synchronous request... 

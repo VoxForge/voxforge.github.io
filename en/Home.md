@@ -18,7 +18,7 @@ redirect_from: "/home/"
 VoxForge was set up to collect transcribed speech for use with [Free] and 
 [Open Source], [Speech Recognition Engines].
 
-The audio is recorded in [WAV] audio format, a high quality [uncompressed] and 
+The audio is recorded in [WAV] audio, a high quality [uncompressed] and 
 [lossless] format.  Most open corpora are recorded in [lossy] formats (such 
 as mp3 or vorbis).
 
