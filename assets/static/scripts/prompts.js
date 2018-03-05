@@ -143,7 +143,7 @@ function Prompts () {
   this.index=0; // pointer to position in prompt list array
   this.prompt_count = 0; // number of prompts read
   this.prompts_recorded = []; // list of prompts that have been recorded
-  this.deleted_prompts = []; // list of prompts that have been deleted and need to be re-recorded
+  this.deleted_prompts = {}; // list of prompts that have been deleted and need to be re-recorded
 
   validate_Readmd_file();
 
@@ -154,9 +154,10 @@ function Prompts () {
   /** 
   * get prompts file for given language from server
   * synchronous request... 
-  * call to bind ensures that this context of current object (i.e. Prompts)
+  * call to bind ensures that the context of current object (i.e. Prompts)
   * is used when the callback gets executed.  Otherwise it will use a different
-  * this context, not clear on which one... see: https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
+  * this context, not clear on which one... 
+  * see: https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
   */
   $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
         processPromptsFile.bind(this)
@@ -201,7 +202,7 @@ Prompts.prototype.resetIndices = function () {
 Prompts.prototype.getNextPrompt = function () {
   // are there elements in the deleted array? return one of those to be 
   // re-recorded
-  if (Array.isArray(this.deleted_prompts) && this.deleted_prompts.length) {
+  if ( ! jQuery.isEmptyObject(this.deleted_prompts) ) {
      // returns one element
      for (var key in this.deleted_prompts) {
        var promptId = key;
@@ -225,13 +226,13 @@ Prompts.prototype.getNextPrompt = function () {
 
 /**
 * add deleted prompt to array and decrement prompt count 
-* prompt is remove from DOM and then when app calls for another prompt, it looks
-* at the deleted prompmt array first and return prompts from there
+* prompt is removed from DOM and then when app calls for another prompt, it looks
+* at the deleted prompt array first and return prompts from there
 */
 Prompts.prototype.deletePrompt = function (prompt_id, prompt_sentence) {
   this.deleted_prompts[prompt_id] = prompt_sentence;
 
-  this.prompt_count--;
+  this.prompt_count = this.prompt_count - 1;
 }
 
 /**
@@ -256,9 +257,22 @@ Prompts.prototype.getPromptSentence = function () {
 }
 
 /**
-* Reverse array to that prompts are in incremental order.
+* get prompt portion of current prompt line as determined by index.
+*/
+Prompts.prototype.splitPromptSentence = function(promptLine) {
+  var promptArray = promptLine.split(/(\s+)/); // create array
+  var promptId = promptArray.shift(); // extract prompt id
+  var promptSentence =  promptArray.join(""); // make string;
+
+  return [promptId, promptSentence];
+}
+
+
+/**
+* Reverse array so that prompts are in incremental order.
 * Need to reverse array because recordings are displayed in reverse order 
-* so that most recent one was displayed first
+* so that most recent one was displayed first... less scrolling for user
+* to see most recent recording
 */
 Prompts.prototype.toArray = function () {
   var temp_array = this.prompts_recorded;
@@ -289,8 +303,7 @@ Prompts.prototype.toJsonString = function () {
 }
 
 /**
-* Convert prompt array to JSON string
-* array reversal achieved by reading array elements in reverse order
+* true when max number of prompts user wants to record is reached
 */
 Prompts.prototype.maxPromptsReached = function () {
   return this.prompt_count >= this.max_num_prompts;
@@ -298,7 +311,7 @@ Prompts.prototype.maxPromptsReached = function () {
 
 /**
 * Returns string that displays the number of promtps read and the total
-* number of promtps.
+* number of prompts.
 */
 Prompts.prototype.getProgressDescription = function () {
   return this.prompt_count + "/" + this.max_num_prompts;

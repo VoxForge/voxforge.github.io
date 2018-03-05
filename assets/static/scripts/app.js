@@ -73,7 +73,7 @@ var canvas = document.querySelector('.visualizer');
 
 // recording Web Worker
 var worker = new Worker('/assets/static/scripts/EncoderWorker.js');
-// zip and upload thread
+// zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
 
 var audioCtx = new (window.AudioContext || webkitAudioContext)();
@@ -303,8 +303,8 @@ function saveWorkerRecording(blob) {
   }
 
   /**
-  * delete a recorded prompt; 
-  * TODO: makes more sense to let the user re-record a prompt....
+  * delete a recorded prompt; which is then saved in a deleted list so user
+  * can re-record
   */
   function createDeleteButton() {
     var deleteButton = document.createElement('button');
@@ -313,14 +313,17 @@ function saveWorkerRecording(blob) {
 
     deleteButton.onclick = function(e) {
       evtTgt = e.target;
+      var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
+      
+      var promptArray = prompts.splitPromptSentence(evtTgt.parentNode.innerText)
+      var prompt_id = promptArray[0];
+      var prompt_sentence = promptArray[1];
+      prompts.deletePrompt(prompt_id, prompt_sentence);
+      console.log("prompt deleted: " + prompt_id);
+
       evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
 
       updateProgress();
-
-      var prompt_id = document.querySelector('.prompt_id').innerText;
-      var prompt_sentence = document.querySelector('.info-display').innerText;
-      prompts.deletePrompt(prompt_id, prompt_sentence);
-      console.log("prompt deleted: " + prompt_id);
     }
 
     return deleteButton;
@@ -341,12 +344,12 @@ function saveWorkerRecording(blob) {
     return audioPlayer;
   }
 
+  var waveform_display_id = "waveformContainer_" + prompt_id;
   /**
-  * this just creates the container (i.e. element in the shadow DOM) to be used
+  * this creates the container (i.e. element in the shadow DOM) to be used
   * by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
   * to exist before being called, so this creates the it...
   */
-  var waveform_display_id = "waveformContainer_" + prompt_id;
   function createWaveformElement() {
     var waveformElement = document.createElement('div');
     // hook for wavesurfer
@@ -558,7 +561,7 @@ function createZipFile(audioArray) {
 }
 
 /**
-* creates an audio analyzer so can display graph that approximates a vuew meter
+* creates an audio analyzer so can display graph that approximates a view meter
 * so that user knows that app can hear his voice.
 * 
 * see https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser

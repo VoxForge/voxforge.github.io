@@ -90,8 +90,6 @@ Profile.showDivBasedonValue = function (independent_div, value, dependent_div, h
     test( $(independent_div).val()===value );
   }
 
-
-
   // only need to create event handler on first call to this function
   if ( ! handler_already_created ) 
   {
