@@ -26,8 +26,6 @@ function Prompts () {
     * verify that read.md entries contain valid data
     */
     validate_Readmd_file = function () {
-      var MAX_NUM_PROMPTS_IN_FILE = 2000;
-
       var variable_list = ['page_language', 
                         'page_prompt_list_files', 
                         'page_total_number_of_prompts'];
@@ -93,7 +91,10 @@ function Prompts () {
     }
 
     /**
-    * callback (for jquery 'get') to process the received prompts file
+    * callback (for jquery 'get') 
+    * reads entire prompt file into memory
+    * (note prompt sentences are split into many smaller prompt files so
+    * that user does not need to read them all)
     *
     * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
     *
@@ -106,11 +107,20 @@ function Prompts () {
     *   defined.
     */
     var processPromptsFile = function (prompt_data) {
-        function pad (num, size) {
+        function pad(num, size) {
           var s = num+"";
           while (s.length <= size) s = "0" + s;
           return s;
         }
+
+        function initializePromptStack() {
+          for (var i = 0 ; i <  this.max_num_prompts; i++) { 
+            this.prompt_stack.push(this.list[this.index]);
+            this.index++;
+            this.index = this.index % (this.list.length -1)
+          }
+        }
+
       var sentences = prompt_data.split('\n');
       for (var i = 0; i < sentences.length; i++) {
         if (sentences[i] != "") { // skip empty string
@@ -133,6 +143,9 @@ function Prompts () {
 
       // set random index of prompt line to present to user
       this.index = Math.floor((Math.random() * this.list.length) + 1); // one indexed
+      // so function will use the calling 'this' context
+      var thisCall = initializePromptStack.bind(this);
+      thisCall();
     }
 
   /* Main */
@@ -141,9 +154,11 @@ function Prompts () {
   this.max_num_prompts=3; // TODO testing
   this.list = []; // list of prompts to be read by user
   this.index=0; // pointer to position in prompt list array
-  this.prompt_count = 0; // number of prompts read
+  this.prompt_count = 0; // number of prompts ueserread
   this.prompts_recorded = []; // list of prompts that have been recorded
-  this.deleted_prompts = {}; // list of prompts that have been deleted and need to be re-recorded
+  this.prompt_stack = []; // stack; makes it easier to add deleted elements for re-record
+  this.current_promptLine; // need to keep track of current prompt since no longer tracking index
+  //this.deleted_prompts = {}; // list of prompts that have been deleted and need to be re-recorded
 
   validate_Readmd_file();
 
@@ -175,7 +190,7 @@ var prompts = new Prompts();
 /**
 * updates the current number of prompts that the user selected from dropdown
 */
-$('#max_num_prompts').click(function () { 
+$('#max_num_prompts_disp').click(function () { 
   prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
 
   updateProgress();
@@ -187,79 +202,71 @@ $('#max_num_prompts').click(function () {
 * ### METHODS ##############################################
 */
 /**
+* initialize prompt stack with number of prompts chosen by user
+*/
+Prompts.prototype.initPromptStack = function () {
+  function getNext() {
+    this.index = this.index % (this.list.length -1)
+    if (this.prompt_count >= this.max_num_prompts) {
+      return null;
+    }
+    var prompt = this.list[this.index];
+
+    this.index++;
+    this.prompt_count++;
+
+    return prompt;
+  }
+
+  var promptLine = getNext();
+  while (promptLine !== null)
+  {
+    prompt_stack.push(promptLine);
+    promptLine = prompts.getNext();
+  }
+}
+
+
+
+/**
 * reset prompt array and index after submission is completed
 */
 Prompts.prototype.resetIndices = function () {
   this.index = Math.floor((Math.random() * prompts.list.length) + 1); // one indexed
   this.prompt_count = 0; // number of prompts read
   this.prompts_recorded = []; // list of prompts that have been recorded
+
+  this.prompt_stack = [];
+  this.initPromptStack();
 }
 
 /**
-* get current prompt line as determined by index.  index gets incremented
-* after returning prompt 
+* get current prompt line from stack
 */
 Prompts.prototype.getNextPrompt = function () {
-  // are there elements in the deleted array? return one of those to be 
-  // re-recorded
-  if ( ! jQuery.isEmptyObject(this.deleted_prompts) ) {
-     // returns one element
-     for (var key in this.deleted_prompts) {
-       var promptId = key;
-       var prompt_sentence = this.deleted_prompts[key];
-       delete this.deleted_prompts[key];
-       return [promptId, prompt_sentence];
-     }
-  }
-
-  this.index = this.index % (this.list.length -1)
-  if (this.prompt_count >= this.max_num_prompts) {
+  if (this.prompt_stack.length <= 0) {
     return null;
   }
-  var prompt = this.list[this.index];
 
-  this.index++;
   this.prompt_count++;
+  this.current_promptLine = this.prompt_stack.pop();
 
-  return prompt;
+  return this.current_promptLine;
 }
 
 /**
-* add deleted prompt to array and decrement prompt count 
-* prompt is removed from DOM and then when app calls for another prompt, it looks
-* at the deleted prompt array first and return prompts from there
+* add deleted prompt to stack and decrement prompt count 
 */
-Prompts.prototype.deletePrompt = function (prompt_id, prompt_sentence) {
-  this.deleted_prompts[prompt_id] = prompt_sentence;
+Prompts.prototype.movePrompt2Stack = function (promptLine) {
+  this.prompt_stack.push(promptLine);
 
   this.prompt_count = this.prompt_count - 1;
 }
 
 /**
-* get prompt id portion of current prompt line as determined by index.
+* helper function to return prompt id and prompt sentence in an array
 */
-Prompts.prototype.getPromptId = function () {
-  var prompt = this.list[this.index];
-  var prompt = prompt.split(/(\s+)/);// create array
-
-  return prompt.shift(); // return first element = prompt id
-}
-
-/**
-* get prompt portion of current prompt line as determined by index.
-*/
-Prompts.prototype.getPromptSentence = function () {
-  var prompt = this.list[this.index];
-  var prompt = prompt.split(/(\s+)/); // create array
-  prompt.shift(); // remove prompt id
-
-  return prompt.join(""); // make string;
-}
-
-/**
-* get prompt portion of current prompt line as determined by index.
-*/
-Prompts.prototype.splitPromptSentence = function(promptLine) {
+Prompts.prototype.splitPromptLine = function(promptLine) {
   var promptArray = promptLine.split(/(\s+)/); // create array
   var promptId = promptArray.shift(); // extract prompt id
   var promptSentence =  promptArray.join(""); // make string;
@@ -267,6 +274,19 @@ Prompts.prototype.splitPromptSentence = function(promptLine) {
   return [promptId, promptSentence];
 }
 
+/**
+* get prompt id portion of current prompt line as determined by index.
+*/
+Prompts.prototype.getPromptId = function () {
+  return this.splitPromptLine(this.current_promptLine)[0];
+}
+
+/**
+* get prompt portion of current prompt line as determined by index.
+*/
+Prompts.prototype.getPromptSentence = function () {
+  return this.splitPromptLine(this.current_promptLine)[1];
+}
 
 /**
 * Reverse array so that prompts are in incremental order.

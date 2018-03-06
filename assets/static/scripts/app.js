@@ -238,7 +238,7 @@ function startRecording() {
   setTimeout( function() {
     document.querySelector('.prompt_id').innerText = prompts.getPromptId();
     document.querySelector('.info-display').innerText = prompts.getPromptSentence();
-  }, 250);
+  }, 150);
 
   worker.postMessage({
     command: 'start',
@@ -315,10 +315,7 @@ function saveWorkerRecording(blob) {
       evtTgt = e.target;
       var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
       
-      var promptArray = prompts.splitPromptSentence(evtTgt.parentNode.innerText)
-      var prompt_id = promptArray[0];
-      var prompt_sentence = promptArray[1];
-      prompts.deletePrompt(prompt_id, prompt_sentence);
+      prompts.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
       console.log("prompt deleted: " + prompt_id);
 
       evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
