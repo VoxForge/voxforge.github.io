@@ -18,7 +18,7 @@
 // #############################################################################
 
 /**
-* Class declaration
+* ### Contructor ##############################################
 */
 function Prompts () {
   /* Inner functions */
@@ -91,8 +91,8 @@ function Prompts () {
     }
 
     // lexical closure of 'this' value so that when function 'processPromptsFile' 
-    // gets passed as parameter (thus being called as a reference) to $.get
-    // has access to correct 'this' context
+    // gets passed as parameter (thus being called as a reference) to $.get, it
+    // has access to correct 'this' context variable
     var self = this;
     /**
     * callback (for jquery 'get') 
@@ -165,10 +165,6 @@ function Prompts () {
   /** 
   * get prompts file for given language from server
   * synchronous request... 
-  * call to bind ensures that the context of current object (i.e. Prompts)
-  * is used when the callback gets executed.  Otherwise it will use a different
-  * this context, not clear on which one... 
-  * see: https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
   */
   $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
         processPromptsFile
@@ -177,6 +173,22 @@ function Prompts () {
                 page_prompt_list_files[random_prompt_file]['file_location']);
   });
 }
+
+/**
+* ### Static METHODS ##############################################
+*/
+
+/**
+* helper function to return prompt id and prompt sentence in an array
+*/
+Prompts.splitPromptLine = function(promptLine) {
+  var promptArray = promptLine.split(/(\s+)/); // create array
+  var promptId = promptArray.shift(); // extract prompt id
+  var promptSentence =  promptArray.join(""); // make string;
+
+  return [promptId, promptSentence];
+}
+
 
 /**
 * Instantiate Prompt class
@@ -201,24 +213,12 @@ $('#max_num_prompts_disp').click(function () {
 * initialize prompt stack with number of prompts chosen by user
 */
 Prompts.prototype.initPromptStack = function () {
-  function getNext() {
-    this.index = this.index % (this.list.length -1)
-    if (this.prompt_count >= this.max_num_prompts) {
-      return null;
-    }
-    var prompt = this.list[this.index];
+  this.prompt_stack = [];
 
+  for (var i = 0 ; i <  self.max_num_prompts; i++) { 
+    this.prompt_stack.push(self.list[self.index]);
     this.index++;
-    this.prompt_count++;
-
-    return prompt;
-  }
-
-  var promptLine = getNext();
-  while (promptLine !== null)
-  {
-    prompt_stack.push(promptLine);
-    promptLine = prompts.getNext();
+    this.index = this.index % (this.list.length -1)
   }
 }
 
@@ -230,7 +230,6 @@ Prompts.prototype.resetIndices = function () {
   this.prompt_count = 0; // number of prompts read
   this.prompts_recorded = []; // list of prompts that have been recorded
 
-  this.prompt_stack = [];
   this.initPromptStack();
 }
 
@@ -258,28 +257,17 @@ Prompts.prototype.movePrompt2Stack = function (promptLine) {
 }
 
 /**
-* helper function to return prompt id and prompt sentence in an array
-*/
-Prompts.prototype.splitPromptLine = function(promptLine) {
-  var promptArray = promptLine.split(/(\s+)/); // create array
-  var promptId = promptArray.shift(); // extract prompt id
-  var promptSentence =  promptArray.join(""); // make string;
-
-  return [promptId, promptSentence];
-}
-
-/**
 * get prompt id portion of current prompt line as determined by index.
 */
 Prompts.prototype.getPromptId = function () {
-  return this.splitPromptLine(this.current_promptLine)[0];
+  return Prompts.splitPromptLine(this.current_promptLine)[0];
 }
 
 /**
 * get prompt portion of current prompt line as determined by index.
 */
 Prompts.prototype.getPromptSentence = function () {
-  return this.splitPromptLine(this.current_promptLine)[1];
+  return Prompts.splitPromptLine(this.current_promptLine)[1];
 }
 
 /**
@@ -287,6 +275,8 @@ Prompts.prototype.getPromptSentence = function () {
 * Need to reverse array because recordings are displayed in reverse order 
 * so that most recent one was displayed first... less scrolling for user
 * to see most recent recording
+*
+* TODO if delete a prompt and rerecord, then ordering gets all messed up...
 */
 Prompts.prototype.toArray = function () {
   var temp_array = this.prompts_recorded;
@@ -324,7 +314,7 @@ Prompts.prototype.maxPromptsReached = function () {
 }
 
 /**
-* Returns string that displays the number of promtps read and the total
+* Returns string that displays the number of prompts read and the total
 * number of prompts.
 */
 Prompts.prototype.getProgressDescription = function () {

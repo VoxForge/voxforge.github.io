@@ -29,7 +29,7 @@ In order for an XSS attack to take place the vulnerable website needs
 to ***directly include user input in its pages***. An attacker can then 
 insert a string that will be used within the web page and treated as
 code by the victim’s browser.
-This app does not display other users' input in its pages, so no XSS 
+This app does not display other users' input in its pages, so no obvious XSS 
 vulnerability...
 
 TODO: CSRF - Cross site request forgery
@@ -168,21 +168,21 @@ function setupAudioNodes(stream) {
 }
 
 /**
-* captures audio buffer data from processor worker
-*/
-function getBuffers(event) {
-  var buffers = [];
-  for (var ch = 0; ch < 2; ++ch)
-    buffers[ch] = event.inputBuffer.getChannelData(ch);
-  return buffers;
-}
-
-/**
 * user has clicked record... connect required audio nodes
 *
 //see https://github.com/higuma/wav-audio-encoder-js 
 */
 function recordClicked() {
+    /**
+    * captures audio buffer data from processor worker
+    */
+    function getBuffers(event) {
+      var buffers = [];
+      for (var ch = 0; ch < 2; ++ch)
+        buffers[ch] = event.inputBuffer.getChannelData(ch);
+      return buffers;
+    }
+
   // hide profile info; otherwise recorded audio will not display properly 
   // at bottom of page
   $("#profile-display").hide();
@@ -197,6 +197,7 @@ function recordClicked() {
 
   visualize();
 
+  // reset audio web worker... clears out audio buffer 
   processor.onaudioprocess = function(event) {
     worker.postMessage({ 
       command: 'record', 
@@ -233,7 +234,7 @@ function startRecording() {
   }
   updateProgress();
 
-  // delay display of prompt so user will not start speaking before recorder
+  // delay display of prompt so user does not start speaking before recorder
   // starts 
   setTimeout( function() {
     document.querySelector('.prompt_id').innerText = prompts.getPromptId();
@@ -284,7 +285,6 @@ worker.onmessage = function(event) {
 * recorded audio and displays text of associated prompt line.  User can
 * then review and if needed delete an erroneous recording.
 */
-//TODO user ability to re-record audio prompt
 function saveWorkerRecording(blob) {
   var clipContainer = document.createElement('article');
   clipContainer.classList.add('clip');
@@ -403,9 +403,9 @@ function askToUploadSubmission() {
   if (confirm('Are you ready to upload your submission?\nIf not, press cancel now,' + 
 	      ' and then press Upload once you are ready.')) {
     saveRecordings();
+    console.log('===done askToUploadSubmission===');
   }
   upload.disabled = false;
-  console.log('===done askToUploadSubmission===');
 }
 
 /**
@@ -415,7 +415,6 @@ function askToUploadSubmission() {
 * and cut off the end of their recording
 */
 function stopClicked() {
-
   setTimeout( function () {
     $('.info-display').hide();
 
@@ -432,6 +431,7 @@ function stopClicked() {
 
     clearTimeout(timeout_obj);
 
+    // TODO does this code ever get reached???
     if ( prompts.maxPromptsReached() ) {
       // to give browser enough time to process the last audio recording
       setTimeout( function () {
