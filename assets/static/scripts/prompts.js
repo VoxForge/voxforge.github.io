@@ -215,12 +215,15 @@ $('#max_num_prompts_disp').click(function () {
 */
 Prompts.prototype.initPromptStack = function () {
   this.prompt_stack = [];
+  // TODO why is this one indexed... no longer makes sense
+  // wouldn't first element always be lost?
+  this.index = Math.floor((Math.random() * prompts.list.length) + 1); // one indexed
 
   for (var i = this.max_num_prompts -1 ; i >=0; i--) { 
     // using unshift rather than push to keep prompt elements in order
     this.prompt_stack.unshift(this.list[this.index]);
     this.index++;
-    this.index = this.index % (this.list.length -1)
+    this.index = this.index % (this.list.length -1);
   }
 }
 
@@ -228,7 +231,6 @@ Prompts.prototype.initPromptStack = function () {
 * reset prompt array and index after submission is completed
 */
 Prompts.prototype.resetIndices = function () {
-  this.index = Math.floor((Math.random() * prompts.list.length) + 1); // one indexed
   this.prompt_count = 0; // number of prompts read
   this.prompts_recorded = []; // list of prompts that have been recorded
 
