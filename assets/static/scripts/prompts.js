@@ -111,7 +111,8 @@ function Prompts () {
 
       function initializePromptStack() {
         for (var i = 0 ; i <  self.max_num_prompts; i++) { 
-          self.prompt_stack.push(self.list[self.index]);
+          // using unshift rather than push to keep prompt elements in order
+          self.prompt_stack.unshift(self.list[self.index]);
           self.index++;
           self.index = self.index % (self.list.length -1)
         }
@@ -200,7 +201,7 @@ var prompts = new Prompts();
 */
 $('#max_num_prompts_disp').click(function () { 
   prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
-
+  prompts.initPromptStack();
   updateProgress();
 
   console.log('max_num_prompts:' + prompts.max_num_prompts);
@@ -215,8 +216,9 @@ $('#max_num_prompts_disp').click(function () {
 Prompts.prototype.initPromptStack = function () {
   this.prompt_stack = [];
 
-  for (var i = 0 ; i <  self.max_num_prompts; i++) { 
-    this.prompt_stack.push(self.list[self.index]);
+  for (var i = this.max_num_prompts -1 ; i >=0; i--) { 
+    // using unshift rather than push to keep prompt elements in order
+    this.prompt_stack.unshift(this.list[this.index]);
     this.index++;
     this.index = this.index % (this.list.length -1)
   }
