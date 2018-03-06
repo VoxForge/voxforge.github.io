@@ -25,7 +25,7 @@ function Prompts () {
     /**
     * verify that read.md entries contain valid data
     */
-    validate_Readmd_file = function () {
+    function validate_Readmd_file() {
       var variable_list = ['page_language', 
                         'page_prompt_list_files', 
                         'page_total_number_of_prompts'];
@@ -81,7 +81,7 @@ function Prompts () {
     * Jekyll front-matter uses YAML to define data structures... prompt_list_files
     * in read.md file gets converted to an array.
     */
-    get_promptFile_count = function () {
+    function get_promptFile_count() {
       if (typeof page_prompt_list_files.length === 'undefined') {
         console.warn("page_prompt_list_files.length not defined in read.md for language: " + 
                     page_language);
@@ -90,62 +90,58 @@ function Prompts () {
       return page_prompt_list_files.length;
     }
 
+    // lexical closure of 'this' value so that when function 'processPromptsFile' 
+    // gets passed as parameter (thus being called as a reference) to $.get
+    // has access to correct 'this' context
+    var self = this;
     /**
     * callback (for jquery 'get') 
-    * reads entire prompt file into memory
+    * reads single prompt file into memory
     * (note prompt sentences are split into many smaller prompt files so
-    * that user does not need to read them all)
+    * that user does not need to read them all the files)
     *
     * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
-    *
-    * could not get 'this' variable to work inside prototype methods used in 
-    * callback??? needed to use 'bind' function to bind Prompt object context 
-    * to callback when it gets called.
-    * see: https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
-    *   this (aka "the context") is a special keyword inside each function and its 
-    *   value only depends on how the function was called, not how/when/where it was 
-    *   defined.
     */
-    var processPromptsFile = function (prompt_data) {
-        function pad(num, size) {
-          var s = num+"";
-          while (s.length <= size) s = "0" + s;
-          return s;
-        }
+    function processPromptsFile(prompt_data) {
+      function pad(num, size) {
+        var s = num+"";
+        while (s.length <= size) s = "0" + s;
+        return s;
+      }
 
-        function initializePromptStack() {
-          for (var i = 0 ; i <  this.max_num_prompts; i++) { 
-            this.prompt_stack.push(this.list[this.index]);
-            this.index++;
-            this.index = this.index % (this.list.length -1)
-          }
+      function initializePromptStack() {
+        for (var i = 0 ; i <  self.max_num_prompts; i++) { 
+          self.prompt_stack.push(self.list[self.index]);
+          self.index++;
+          self.index = self.index % (self.list.length -1)
         }
+      }
 
       var sentences = prompt_data.split('\n');
       for (var i = 0; i < sentences.length; i++) {
         if (sentences[i] != "") { // skip empty string
           if (page_prompt_list_files[random_prompt_file].contains_promptid)
           { // first word of prompt line is the prompt ID
-              this.list[i] = sentences[i];
+              self.list[i] = sentences[i];
           } else {
               var start_promptId = page_prompt_list_files[random_prompt_file].start;
               var prefix = page_prompt_list_files[random_prompt_file].prefix;
               var prompt_id = prefix + pad( i + start_promptId, 5 );
-              this.list[i] = prompt_id  + " " + sentences[i];
+              self.list[i] = prompt_id  + " " + sentences[i];
           }
         }
       }
 
-      if (page_prompt_list_files[random_prompt_file].number_of_prompts !=  this.list.length) {
+      if (page_prompt_list_files[random_prompt_file].number_of_prompts !=  self.list.length) {
         console.warn("number of prompts in prompt_list_files[" + random_prompt_file + "] in read.md not same as prompt file line counts for language: " + 
                     page_language);
       }
 
       // set random index of prompt line to present to user
-      this.index = Math.floor((Math.random() * this.list.length) + 1); // one indexed
+      self.index = Math.floor((Math.random() * self.list.length) + 1); // one indexed
       // so function will use the calling 'this' context
-      var thisCall = initializePromptStack.bind(this);
-      thisCall();
+      // see: http://alistapart.com/article/getoutbindingsituations
+      initializePromptStack();
     }
 
   /* Main */
@@ -175,7 +171,7 @@ function Prompts () {
   * see: https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
   */
   $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
-        processPromptsFile.bind(this)
+        processPromptsFile
   ).fail(function() {
     console.warn("cannot find prompts file on VoxForge server: " + 
                 page_prompt_list_files[random_prompt_file]['file_location']);
@@ -225,8 +221,6 @@ Prompts.prototype.initPromptStack = function () {
     promptLine = prompts.getNext();
   }
 }
-
-
 
 /**
 * reset prompt array and index after submission is completed
