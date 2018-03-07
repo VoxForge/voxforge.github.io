@@ -42,7 +42,7 @@ TODO: CSRF - Cross site request forgery
 // #############################################################################
 
 /**
-*  if page reloaded kill background worker threads before page reload
+* if page reloaded kill background worker threads before page reload
 * to prevent zombie worker threads in FireFox
 */
 $( window ).unload(function() {
@@ -168,21 +168,11 @@ function setupAudioNodes(stream) {
 }
 
 /**
-* user has clicked record... connect required audio nodes
+* user has clicked record
 *
 //see https://github.com/higuma/wav-audio-encoder-js 
 */
 function recordClicked() {
-    /**
-    * captures audio buffer data from processor worker
-    */
-    function getBuffers(event) {
-      var buffers = [];
-      for (var ch = 0; ch < 2; ++ch)
-        buffers[ch] = event.inputBuffer.getChannelData(ch);
-      return buffers;
-    }
-
   // hide profile info; otherwise recorded audio will not display properly 
   // at bottom of page
   $("#profile-display").hide();
@@ -191,24 +181,21 @@ function recordClicked() {
   $("#directions-button-display").show();
   $('.info-display').show();
 
-  microphoneLevel.connect(analyser);
-  microphoneLevel.connect(processor); 
-  processor.connect(audioCtx.destination);
+  document.querySelector('.info-display').innerText = "";
+  document.querySelector('.prompt_id').innerText = "";
 
-  visualize();
-
-  // reset audio web worker... clears out audio buffer 
-  processor.onaudioprocess = function(event) {
-    worker.postMessage({ 
-      command: 'record', 
-      buffers: getBuffers(event) 
-    });
-  };
-
-  startRecording();
-
-  stop.disabled = false;
   record.disabled = true;
+
+  var prompt = prompts.getNextPrompt();
+  if (prompt !== null) {
+    stop.disabled = false;
+
+    startRecording(prompt);
+  } else {
+    stop.disabled = true;
+
+    askToUploadSubmission();
+  }
 }
 
 /**
@@ -220,18 +207,35 @@ function updateProgress() {
 }
 
 /**
-* user has clicked record... tell worker to start recording audio 
+* connect nodes; tell worker to start recording audio 
 */
-function startRecording() {
-  document.querySelector('.progress-display').innerText = "";
-  document.querySelector('.info-display').innerText = "";
-  document.querySelector('.prompt_id').innerText = "";
+function startRecording(prompt) {
+    /**
+    * captures audio buffer data from processor worker
+    */
+    function getBuffers(event) {
+      var buffers = [];
+      for (var ch = 0; ch < 2; ++ch)
+        buffers[ch] = event.inputBuffer.getChannelData(ch);
+      return buffers;
+    }
 
-  var prompt = prompts.getNextPrompt();
-  if (prompt === null) {
-    askToUploadSubmission();
-    return;
-  }
+  document.querySelector('.progress-display').innerText = "";
+
+  microphoneLevel.connect(analyser);
+  microphoneLevel.connect(processor); 
+  processor.connect(audioCtx.destination);
+
+  visualize();
+
+  // clears out audio buffer 
+  processor.onaudioprocess = function(event) {
+    worker.postMessage({ 
+      command: 'record', 
+      buffers: getBuffers(event) 
+    });
+  };
+
   updateProgress();
 
   // delay display of prompt so user does not start speaking before recorder
@@ -241,6 +245,7 @@ function startRecording() {
     document.querySelector('.info-display').innerText = prompts.getPromptSentence();
   }, 150);
 
+  // start recording
   worker.postMessage({
     command: 'start',
     sampleRate: audioCtx.sampleRate,
@@ -257,7 +262,7 @@ function startRecording() {
 }
 
 /**
-* send message to worker to stop recording
+* disconnect audio nodes; send message to audio worker to stop recording
 * only executed if the user tries to record more than 15secs of audio
 */
 function endRecording() {
@@ -303,14 +308,17 @@ function saveWorkerRecording(blob) {
   }
 
   /**
-  * delete a recorded prompt; which is then saved in a deleted list so user
-  * can re-record
+  * create button to allow user to delete a prompt line
   */
   function createDeleteButton() {
     var deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete';
     deleteButton.className = 'delete';
 
+    /**
+    * delete a recorded prompt; which is then saved in prompt_stack so user
+    * can re-record
+    */
     deleteButton.onclick = function(e) {
       evtTgt = e.target;
       var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
@@ -320,6 +328,7 @@ function saveWorkerRecording(blob) {
 
       evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
 
+      record.disabled = false;
       updateProgress();
     }
 
@@ -403,9 +412,9 @@ function askToUploadSubmission() {
   if (confirm('Are you ready to upload your submission?\nIf not, press cancel now,' + 
 	      ' and then press Upload once you are ready.')) {
     saveRecordings();
-    console.log('===done askToUploadSubmission===');
   }
   upload.disabled = false;
+  record.disabled = true;
 }
 
 /**
@@ -418,11 +427,12 @@ function stopClicked() {
   setTimeout( function () {
     $('.info-display').hide();
 
-    microphoneLevel.disconnect();
-    processor.disconnect();
     worker.postMessage({ 
       command: 'finish'
     });
+
+    microphoneLevel.disconnect();
+    processor.disconnect();
 
     record.style.background = "";
     record.style.color = ""; 
@@ -431,7 +441,6 @@ function stopClicked() {
 
     clearTimeout(timeout_obj);
 
-    // TODO does this code ever get reached???
     if ( prompts.maxPromptsReached() ) {
       // to give browser enough time to process the last audio recording
       setTimeout( function () {
@@ -554,6 +563,7 @@ function createZipFile(audioArray) {
   prompts.resetIndices();
   $( '.sound-clips' ).empty();
   clip_id = 0;
+  record.disabled = false;
   console.log('===done allDone===');
 }
 
