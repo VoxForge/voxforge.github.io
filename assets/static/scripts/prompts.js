@@ -146,17 +146,6 @@ function Prompts () {
     }
 
   /* Main */
-
-  //this.max_num_prompts=10; // default maximum number of prompts
-  this.max_num_prompts=3; // TODO testing
-  this.list = []; // list of prompts to be read by user
-  this.index=0; // pointer to position in prompt list array
-  this.prompt_count = 0; // number of prompts ueserread
-  this.prompts_recorded = []; // list of prompts that have been recorded
-  this.prompt_stack = []; // stack; makes it easier to add deleted elements for re-record
-  this.current_promptLine; // need to keep track of current prompt since no longer tracking index
-  //this.deleted_prompts = {}; // list of prompts that have been deleted and need to be re-recorded
-
   validate_Readmd_file();
 
   var random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
@@ -174,6 +163,25 @@ function Prompts () {
                 page_prompt_list_files[random_prompt_file]['file_location']);
   });
 }
+
+// The prototype for the FadingTooltip object defines the properties of 
+// object instances, that is, the variables and methods of the object
+Prompts.prototype = {
+  max_num_prompts: 3, // TODO testing
+  list: [], // list of prompts to be read by user
+  index: 0, // pointer to position in prompt list array
+  prompt_count: 0, // number of prompts ueserread
+  prompts_recorded: [], // list of prompts that have been recorded
+  prompt_stack: [], // stack; makes it easier to add deleted elements for re-record
+  current_promptLine: null, // need to keep track of current prompt since no longer tracking index
+
+
+
+
+
+}
+
+
 
 /**
 * ### Static METHODS ##############################################
