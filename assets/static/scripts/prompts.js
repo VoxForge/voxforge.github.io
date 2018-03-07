@@ -164,7 +164,7 @@ function Prompts () {
   });
 }
 
-// The prototype for the FadingTooltip object defines the properties of 
+// The prototype for the Prompts object defines the properties of 
 // object instances, that is, the variables and methods of the object
 Prompts.prototype = {
   max_num_prompts: 3, // TODO testing
@@ -174,14 +174,7 @@ Prompts.prototype = {
   prompts_recorded: [], // list of prompts that have been recorded
   prompt_stack: [], // stack; makes it easier to add deleted elements for re-record
   current_promptLine: null, // need to keep track of current prompt since no longer tracking index
-
-
-
-
-
 }
-
-
 
 /**
 * ### Static METHODS ##############################################

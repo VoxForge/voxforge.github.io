@@ -282,15 +282,16 @@ function endRecording() {
 * worker sends the recorded data as an audio blob
 */
 worker.onmessage = function(event) { 
-  saveWorkerRecording(event.data.blob); 
+  waveFormDisplay(event.data.blob); 
 }; 
 
 /**
 * run after worker completes audio recording; creates a waveform display of 
 * recorded audio and displays text of associated prompt line.  User can
-* then review and if needed delete an erroneous recording.
+* then review and if needed delete an erroneous recording, which can then be
+* re-recorded
 */
-function saveWorkerRecording(blob) {
+function waveFormDisplay(blob) {
   var clipContainer = document.createElement('article');
   clipContainer.classList.add('clip');
   var prompt_id = document.querySelector('.prompt_id').innerText;
@@ -567,56 +568,4 @@ function createZipFile(audioArray) {
   console.log('===done allDone===');
 }
 
-/**
-* creates an audio analyzer so can display graph that approximates a view meter
-* so that user knows that app can hear his voice.
-* 
-* see https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser
-*/
-function visualize() {
-  var canvasCtx = canvas.getContext("2d");
-
-  var bufferLength = analyser.frequencyBinCount;
-  var dataArray = new Uint8Array(bufferLength);
-
-  WIDTH = canvas.width
-  HEIGHT = canvas.height;
-
-  function draw() {
-
-    requestAnimationFrame(draw);
-
-    analyser.getByteTimeDomainData(dataArray);
-
-    canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-    canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-    canvasCtx.lineWidth = 2;
-    canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
-
-    canvasCtx.beginPath();
-
-    var sliceWidth = WIDTH * 1.0 / bufferLength;
-    var x = 0;
-
-    for(var i = 0; i < bufferLength; i++) {
- 
-      var v = dataArray[i] / 128.0;
-      var y = v * HEIGHT/2;
-
-      if(i === 0) {
-        canvasCtx.moveTo(x, y);
-      } else {
-        canvasCtx.lineTo(x, y);
-      }
-
-      x += sliceWidth;
-    }
-
-    canvasCtx.lineTo(canvas.width, canvas.height/2);
-    canvasCtx.stroke();
-  }
-
-  draw();
-}
 
