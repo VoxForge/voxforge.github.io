@@ -37,12 +37,6 @@ TODO: CSRF - Cross site request forgery
 
 // #############################################################################
 
-// display variables
-var record = document.querySelector('.record');
-var stop = document.querySelector('.stop');
-var upload = document.querySelector('.upload');
-var soundClips = document.querySelector('.sound-clips');
-var canvas = document.querySelector('.visualizer');
 // constants
 var RECORDING_TIMEOUT = 15000; // 15 seconds
 var RECORDING_TIMEOUT = 2000; // 15 seconds
@@ -51,19 +45,6 @@ var RECORDING_TIMEOUT = 2000; // 15 seconds
 * Instantiate Prompt class
 */
 var prompts = new Prompts();
-
-// ### DOM HOOKS ###############################################################
-
-/**
-* updates the current number of prompts that the user selected from dropdown
-*/
-$('#max_num_prompts_disp').click(function () { 
-  prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
-  prompts.initPromptStack();
-  updateProgress();
-
-  console.log('max_num_prompts:' + prompts.max_num_prompts);
-});
 
 // finite state machine object
 var fsm;
