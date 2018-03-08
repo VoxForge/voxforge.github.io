@@ -1,8 +1,4 @@
 /*
-Many thanks to Peter Warden for the open-speech-recording app
-(https://github.com/petewarden/open-speech-recording) that was used
-as a starting point.
-
 Copyright 2018 VoxForge
 
 This program is free software: you can redistribute it and/or modify
@@ -51,11 +47,29 @@ var canvas = document.querySelector('.visualizer');
 var RECORDING_TIMEOUT = 15000; // 15 seconds
 var RECORDING_TIMEOUT = 2000; // 15 seconds
 
+/**
+* Instantiate Prompt class
+*/
+var prompts = new Prompts();
+
+// ### DOM HOOKS ###############################################################
+
+/**
+* updates the current number of prompts that the user selected from dropdown
+*/
+$('#max_num_prompts_disp').click(function () { 
+  prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
+  prompts.initPromptStack();
+  updateProgress();
+
+  console.log('max_num_prompts:' + prompts.max_num_prompts);
+});
+
 // finite state machine object
 var fsm;
 
 /**
-* Finite State Machine
+* ### Finite State Machine #####################################################
 */
 function setUpFSM() {
   var timeout_obj;
@@ -77,7 +91,21 @@ function setUpFSM() {
     methods: {
       // Transition Actions: user initiated
       onStopclicked: function() { 
-        stopClicked();
+        stop.disabled = true;
+        record.disabled = false;
+
+        $('.info-display').hide();
+        record.style.background = "";
+        record.style.color = ""; 
+        // actual stopping of recording is delayed because some users hit it
+        // early and cut off the end of their recording
+        setTimeout( function () {
+          endRecording();
+          if ( prompts.maxPromptsReached() ) {
+            fsm.maxpromptsreached();
+          }
+        }, 400);
+
         clearTimeout(timeout_obj);
       },
       onUploadclicked: function() { uploading() },
@@ -85,6 +113,8 @@ function setUpFSM() {
         record.disabled = false;
         updateProgress();
       },
+      onYesuploadmessage: function() { console.log('onyesuploadmessage')  },
+      onCanceluploadmessage: function() { console.log('oncanceluploadmessage')  },
 
       // Transition Actions: system initiated
       onRecordingtimeout: function() { 
@@ -94,8 +124,6 @@ function setUpFSM() {
         record.style.color = "";
       },
       onMaxpromptsreached: function() { console.log('onmaxpromptsreached')  },
-      onYesuploadmessage: function() { console.log('onyesuploadmessage')  },
-      onCanceluploadmessage: function() { console.log('oncanceluploadmessage')  },
 
       // States Actions: on entry
       onWaveformdisplay: function() { 
@@ -108,6 +136,7 @@ function setUpFSM() {
       onRecording: function() { 
         record.disabled = true;
         var prompt = prompts.getNextPrompt();
+        updateProgress();
         if (prompt !== null) {
           stop.disabled = false;
           recording(prompt);
@@ -147,11 +176,7 @@ function setUpFSM() {
   });
 
   record.onclick = function() { fsm.recordclicked() }
-  stop.onclick = function() { 
-    fsm.stopclicked();
-    stop.disabled = true;
-    record.disabled = false;
-  }
+  stop.onclick = function() { fsm.stopclicked(); }
   upload.onclick = function() { fsm.upload() }
 }
 
@@ -176,24 +201,3 @@ function messageToUpload() {
   fsm.canceluploadmessage();
 }
 
-/**
-* user has clicked stop... disconnect recording audio nodes
-*
-* the actual stopping of recording is delayed because some users hit it early
-* and cut off the end of their recording
-*/
-function stopClicked() {
-  setTimeout( function () {
-    $('.info-display').hide();
-
-    endRecording();
-
-    record.style.background = "";
-    record.style.color = ""; 
-
-    if ( prompts.maxPromptsReached() ) {
-      fsm.maxpromptsreached();
-
-    }
-  }, 400);
-}

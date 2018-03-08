@@ -191,23 +191,6 @@ Prompts.splitPromptLine = function(promptLine) {
   return [promptId, promptSentence];
 }
 
-
-/**
-* Instantiate Prompt class
-*/
-var prompts = new Prompts();
-
-/**
-* updates the current number of prompts that the user selected from dropdown
-*/
-$('#max_num_prompts_disp').click(function () { 
-  prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
-  prompts.initPromptStack();
-  updateProgress();
-
-  console.log('max_num_prompts:' + prompts.max_num_prompts);
-});
-
 /**
 * ### METHODS ##############################################
 */
