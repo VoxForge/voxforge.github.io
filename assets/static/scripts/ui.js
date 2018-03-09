@@ -5,6 +5,20 @@ var upload = document.querySelector('.upload');
 var soundClips = document.querySelector('.sound-clips');
 var canvas = document.querySelector('.visualizer');
 
+/** 
+* display upload to VoxForge server status to user
+*/
+function showUploadStatus(message) {
+$('#upload_status_display').show();
+$('#upload_status_display').text(message);
+$('#upload_status_display').css({ 'color': 'green', 'font-size': '50%' });
+setTimeout( function () {
+  //document.querySelector('.upload_status_display').innerText = "";
+  $('#upload_status_display').hide();
+  return;
+}, 3000);
+}
+
 /**
 * Set up toggles for profile and direction buttons
 */
@@ -29,6 +43,20 @@ if ( $.cookie('all_done') )
   $("#profile-button-display").show();
 }
 
+/**
+* hide profile info; otherwise recorded audio will not display properly 
+* at bottom of page
+*/
+function hideProfileInfo() { 
+  $("#profile-display").hide();
+  $("#profile-button-display").show();
+  $("#directions-display").hide();
+  $("#directions-button-display").show();
+  $('.info-display').show();
+
+  document.querySelector('.info-display').innerText = "";
+  document.querySelector('.prompt_id').innerText = "";
+}
 
 /**
 * ### STATIC METHODS ##############################################
@@ -47,7 +75,7 @@ if ( $.cookie('all_done') )
 *
 * see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
 */
-Profile.showDivBasedonValue = function (independent_div, value, dependent_div, handler_already_created) {
+showDivBasedonValue = function (independent_div, value, dependent_div, handler_already_created) {
   function test ( boolean_result ) {
     if( boolean_result ){
       $(dependent_div).show();
@@ -70,21 +98,21 @@ Profile.showDivBasedonValue = function (independent_div, value, dependent_div, h
   if ( ! handler_already_created ) 
   {
     $(independent_div).change(function () { // creates an event handler
-        Profile.showDivBasedonValue(independent_div, value, dependent_div, true); 
+        showDivBasedonValue(independent_div, value, dependent_div, true); 
     } );
   }
 }
 
-Profile.showDivBasedonValue('#native_speaker', page_localized_no, '#first_language_display', false);
-Profile.showDivBasedonValue('#native_speaker', page_localized_yes, '#dialect_display', false);
-Profile.showDivBasedonValue('#first_language', page_localized_other, '#first_language_other_display', false);
+showDivBasedonValue('#native_speaker', page_localized_no, '#first_language_display', false);
+showDivBasedonValue('#native_speaker', page_localized_yes, '#dialect_display', false);
+showDivBasedonValue('#first_language', page_localized_other, '#first_language_other_display', false);
 // true means hide if there is something in the username field
-Profile.showDivBasedonValue('#username', true, '#anonymous_instructions_display', false); 
-Profile.showDivBasedonValue('#microphone', page_localized_other, '#microphone_other_display', false);
-Profile.showDivBasedonValue('#dialect', page_localized_other, '#dialect_other_display', false);
-Profile.showDivBasedonValue('#recording_location', page_localized_other, '#recording_location_other_display', false);
-Profile.showDivBasedonValue('#background_noise', page_localized_yes, '#background_noise_display', false);
-Profile.showDivBasedonValue('#noise_type', page_localized_other, '#noise_type_other_display', false);
+showDivBasedonValue('#username', true, '#anonymous_instructions_display', false); 
+showDivBasedonValue('#microphone', page_localized_other, '#microphone_other_display', false);
+showDivBasedonValue('#dialect', page_localized_other, '#dialect_other_display', false);
+showDivBasedonValue('#recording_location', page_localized_other, '#recording_location_other_display', false);
+showDivBasedonValue('#background_noise', page_localized_yes, '#background_noise_display', false);
+showDivBasedonValue('#noise_type', page_localized_other, '#noise_type_other_display', false);
 
 
 /**
@@ -119,7 +147,6 @@ $select1.on( 'change', function() {
     $select2.prop('defaultSelected');
 } ).trigger( 'change' );
 
-
 /**
 * fill other languages select list with stringified array the names of most 
 * ISO 639-1 language names
@@ -136,6 +163,66 @@ for (var i=1;i<langscodes.length;i++){
 option += '<option value="' + page_localized_other + '">' + page_localized_other + '</option>'; 
 $('#first_language').append(option);
 
+
+/**
+* update user display from passed json object
+*/
+function updateUI(json_object) {
+  //Speaker Characteristics
+  $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
+  if (json_object.username) {
+    $('#anonymous_instructions_display').hide();
+  }
+  $('#gender').val( json_object.gender );
+  $('#age').val( json_object.age );
+
+  // TODO implied by the page the user is on... 
+  // $('#page_language').val( json_object.page_language );
+
+  $('#native_speaker').val( json_object.native_speaker );
+  if ( $('#native_speaker').val()==="Yes" )
+  {
+    $("#sub_dialect_display").show();
+  } else {
+    $("#first_language_display").show();
+  }
+  $('#first_language').val( json_object.first_language );
+  $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
+  $('#dialect').val( json_object.dialect );
+  $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
+  if ( $('#dialect').val() === page_localized_other )
+  {
+    $("#dialect_other_display").show();
+  }
+  $('#sub_dialect').val( json_object.dialect_other );
+  //Recording Information:
+  $('#microphone').val( json_object.microphone );
+  $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
+  if ( $('#microphone').val() === page_localized_other )
+  {
+    $("#microphone_other_display").show();
+  }
+
+  $('#recording_location').val( json_object.recording_location );
+  $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
+  if ( $('#recording_location').val() === page_localized_other )
+  {
+    $("#recording_location_other_display").show();
+  }
+  $('#background_noise').val( json_object.background_noise );
+  if ( $('#background_noise').val()==="Yes" )
+  {
+    $("#background_noise_display").show();
+  }
+  $('#noise_volume').val( json_object.noise_volume );
+  $('#noise_type').val( json_object.noise_type );
+  $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
+  if ( $('#noise_type').val() === page_localized_other )
+  {
+    $("#noise_type_other_display").show();
+  }
+  $('#license').val( json_object.license );
+}
 
 /**
 * updates the current number of prompts that the user selected from dropdown

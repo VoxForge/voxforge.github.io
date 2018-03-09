@@ -37,7 +37,7 @@
 
 // #############################################################################
 
-importScripts('jszip.js', 'localforage.js'); 
+importScripts('../lib/jszip.js', '../lib/localforage.js'); 
 //var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile'; // Flask testing
 //var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile'; // Flask testing
 // now using PHP uploader

@@ -39,16 +39,17 @@ TODO: CSRF - Cross site request forgery
 
 // constants
 var RECORDING_TIMEOUT = 15000; // 15 seconds
-var RECORDING_TIMEOUT = 2000; // 15 seconds
 
 /**
-* Instantiate Prompt class
+* Instantiate classes
 */
 var prompts = new Prompts();
+var profile = new Profile();
+var audio = new Audio();
 
 // finite state machine object
 var fsm;
-
+setUpFSM();
 /**
 * ### Finite State Machine #####################################################
 */
@@ -57,6 +58,7 @@ function setUpFSM() {
 
   fsm = new StateMachine({
     init: 'waveformdisplay',
+
     transitions: [
       { name: 'recordclicked',       from: 'waveformdisplay',          to: 'recording' },
       { name: 'stopclicked',         from: 'recording',                to: 'waveformdisplay'  },
@@ -69,6 +71,7 @@ function setUpFSM() {
       { name: 'deleteclicked',       from: 'waveformdisplay',          to: 'waveformdisplay'  },
       { name: 'deleteclicked',       from: 'maxpromptwaveformdisplay', to: 'waveformdisplay'  },
     ],
+
     methods: {
       // Transition Actions: user initiated
       onStopclicked: function() { 
@@ -81,7 +84,7 @@ function setUpFSM() {
         // actual stopping of recording is delayed because some users hit it
         // early and cut off the end of their recording
         setTimeout( function () {
-          endRecording();
+          audio.endRecording();
           if ( prompts.maxPromptsReached() ) {
             fsm.maxpromptsreached();
           }
@@ -99,7 +102,7 @@ function setUpFSM() {
 
       // Transition Actions: system initiated
       onRecordingtimeout: function() { 
-        endRecording();
+        audio.endRecording();
         console.log("recorder stopped");
         record.style.background = "";
         record.style.color = "";
@@ -120,7 +123,8 @@ function setUpFSM() {
         updateProgress();
         if (prompt !== null) {
           stop.disabled = false;
-          recording(prompt);
+          hideProfileInfo();
+          audio.record(prompt);
 
           timeout_obj = setTimeout(function(){
             fsm.recordingtimeout();
@@ -152,6 +156,12 @@ function setUpFSM() {
         upload.disabled = true;
         record.disabled = false;
         uploading();
+
+        document.cookie = 'all_done=true; path=/';
+        profile.addProfile2LocalStorage();
+        prompts.resetIndices();
+        $( '.sound-clips' ).empty();
+        audio.clip_id = 0;
       }
     }
   });

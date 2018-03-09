@@ -32,114 +32,101 @@ $( window ).unload(function() {
 * to VoxForge server
 */
 function uploading() {
-  var allClips = document.querySelectorAll('.clip');
-  var clipIndex = 0;
-  var audioArray = [];
 
-  function audioArrayLoop() {
-    var clip = allClips[clipIndex];
-    clip.style.display = 'None';
-    var audioBlobUrl = clip.querySelector('audio').src;
-    var prompt = clip.querySelector('prompt').innerText;
-    var prompt_id = prompt.split(/(\s+)/).shift();
-    prompts.prompts_recorded[clipIndex] = prompt + '\n';
+    var allClips = document.querySelectorAll('.clip');
+    var clipIndex = 0;
+    var audioArray = [];
 
-    // Ajax is asynchronous - once the request is sent script will 
-    // continue executing without waiting for the response.
-    var xhr = new XMLHttpRequest();
-    // get blob from browser memory; 
-    xhr.open('GET', audioBlobUrl, true);
-    xhr.responseType = 'blob';
-    xhr.onload = function(e) {
-      if (this.status == 200) {
-        var blob = this.response;
-        // add current audio blob to zip file in browser memory
-        audioArray.push ({
-            filename: prompt_id + '.wav', 
-            audioBlob: blob
-        });
-        clipIndex += 1;
-        if (clipIndex < allClips.length) {
-          audioArrayLoop();
-        } else {
-          // must be called here because ajax is asynchronous
-          // Q1: why doesnt createZipFile get called many times as the call stack unrolls???
-          // ... because status no longer status == 200???
-          createZipFile(audioArray);
+    /**
+    * recursive function that loops over audio clips
+    */
+    function audioArrayLoop() {
+      var clip = allClips[clipIndex];
+      clip.style.display = 'None';
+      var audioBlobUrl = clip.querySelector('audio').src;
+      var prompt = clip.querySelector('prompt').innerText;
+      var prompt_id = prompt.split(/(\s+)/).shift();
+      prompts.prompts_recorded[clipIndex] = prompt + '\n';
+
+      // Ajax is asynchronous - once the request is sent script will 
+      // continue executing without waiting for the response.
+      var xhr = new XMLHttpRequest();
+      // get blob from browser memory; 
+      xhr.open('GET', audioBlobUrl, true);
+      xhr.responseType = 'blob';
+      xhr.onload = function(e) {
+        if (this.status == 200) {
+          var blob = this.response;
+          // add current audio blob to zip file in browser memory
+          audioArray.push ({
+              filename: prompt_id + '.wav', 
+              audioBlob: blob
+          });
+          clipIndex += 1;
+          if (clipIndex < allClips.length) {
+            audioArrayLoop();
+          } else {
+            // must be called here because ajax is asynchronous
+            // Q1: why doesnt createZipFile get called many times as the call stack unrolls???
+            // ... because status no longer status == 200???
+
+            createZipFile(audioArray);
+
+          }
         }
-      }
-    };
-    xhr.send();
-    console.log('===done audioToArray===');
-  }
-  
-  audioArrayLoop();
-}
-
-/**
-* call web worker to create zip file and upload to VoxForge server
-*/
-function createZipFile(audioArray) {
-  zip_worker.onmessage = zipworkerDone;
-
-  var readme_blob = new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"});
-  var prompts_blob = new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"});
-  var profile_json_blob = new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"});
-  var prompts_json_blob = new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"});
-  zip_worker.postMessage({
-    command: 'zipAndUpload',
-    username: profile.getUserName(),
-    language: page_language,
-    temp_submission_name: profile.getTempSubmissionName(),
-    readme_blob: readme_blob,
-    prompts_blob: prompts_blob,
-    profile_json_blob: profile_json_blob,
-    prompts_json_blob: prompts_json_blob,
-    audio: audioArray,
-  });
-
-  /** 
-  * display upload to VoxForge server status to user
-  */
-  function showUploadStatus(message) {
-    $('#upload_status_display').show();
-    $('#upload_status_display').text(message);
-    $('#upload_status_display').css({ 'color': 'green', 'font-size': '50%' });
-    setTimeout( function () {
-      //document.querySelector('.upload_status_display').innerText = "";
-      $('#upload_status_display').hide();
-      return;
-    }, 3000);
-  }
-
-  /**
-  * receives replies from work thread and displays status accordingly
-  *
-  * this is a worker callback inside the worker context
-  */
-  function zipworkerDone(event) { 
-    if (event.data.status === "transferComplete") {
-      console.log('message from worker: Upload to VoxForge server completed');
-      showUploadStatus("Upload successfull!");
-    } else if (event.data.status === "savedInBrowserStorage") {
-      console.log('message from worker: problem with Internet connection, submission saved in browser storage');
-      alert("No Internet connection, submission saved in browser storage.  \nIt will be uploaded next time you make a submission with Internet up.");
-    } else if (event.data.status === "foundSavedFailedUploads") {
-      console.log('message from worker: found submissions saved to browser, uploading them...');
-      showUploadStatus("Found saved submission(s), uploading to VoxForge server.");
-    } else {
-      console.log('message from worker: transfer error: ' + event.data.status);
+      };
+      xhr.send();
+      console.log('===done audioToArray===');
     }
-  };
+    
+    /**
+    * call web worker to create zip file and upload to VoxForge server
+    */
+    function createZipFile(audioArray) {
+      zip_worker.onmessage = zipworkerDone;
 
-  document.cookie = 'all_done=true; path=/';
-  profile.addProfile2LocalStorage();
+      var readme_blob = new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"});
+      var prompts_blob = new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"});
+      var profile_json_blob = new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"});
+      var prompts_json_blob = new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"});
+      zip_worker.postMessage({
+        command: 'zipAndUpload',
+        username: profile.getUserName(),
+        language: page_language,
+        temp_submission_name: profile.getTempSubmissionName(),
+        readme_blob: readme_blob,
+        prompts_blob: prompts_blob,
+        profile_json_blob: profile_json_blob,
+        prompts_json_blob: prompts_json_blob,
+        audio: audioArray,
+      });
 
-  prompts.resetIndices();
-  $( '.sound-clips' ).empty();
-  clip_id = 0;
+      /**
+      * receives replies from work thread and displays status accordingly
+      *
+      * this is a worker callback inside the worker context
+      */
+      function zipworkerDone(event) { 
+        if (event.data.status === "transferComplete") {
+          console.log('message from worker: Upload to VoxForge server completed');
+          showUploadStatus("Upload successfull!");
+        } else if (event.data.status === "savedInBrowserStorage") {
+          console.log('message from worker: problem with Internet connection, submission saved in browser storage');
+          alert("No Internet connection, submission saved in browser storage.  \nIt will be uploaded next time you make a submission with Internet up.");
+        } else if (event.data.status === "foundSavedFailedUploads") {
+          console.log('message from worker: found submissions saved to browser, uploading them...');
+          showUploadStatus("Found saved submission(s), uploading to VoxForge server.");
+        } else {
+          console.log('message from worker: transfer error: ' + event.data.status);
+        }
+      };
 
-  console.log('===done allDone===');
+      console.log('===done createZipFile===');
+    }
+
+    audioArrayLoop();
 }
+
+
 
 

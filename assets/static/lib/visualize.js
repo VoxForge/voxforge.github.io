@@ -1,10 +1,10 @@
 /**
-* creates an audio analyzer so can display graph that approximates a view meter
-* so that user knows that app can hear his voice.
+* uses created an audio analyser so can display graph that approximates a view 
+* meter so that user knows that app can hear his voice.
 * 
 * see https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser
 */
-function visualize() {
+function visualize(analyser) {
   var canvasCtx = canvas.getContext("2d");
 
   var bufferLength = analyser.frequencyBinCount;
