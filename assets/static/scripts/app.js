@@ -56,6 +56,26 @@ var fsm = setUpFSM();
 * ### Finite State Machine #####################################################
 */
 function setUpFSM() {
+    /**
+    * update number of prompts recorded and total number of prompts to record
+    */
+    function updateProgress() {
+      var progress = prompts.getProgressDescription();
+      document.querySelector('.progress-display').innerText = progress;
+    }
+
+    /**
+    * display window to ask user if they want to upload their recordings to 
+    * VoxForge server
+    */
+    function messageToUpload() {
+      if (confirm('Are you ready to upload your submission?\nIf not, press cancel now,' + 
+	          ' and then press Upload once you are ready.')) {
+        fsm.yesuploadmessage();
+      } 
+      fsm.canceluploadmessage();
+    }
+
   var timeout_obj;
   view.setButtonDisplay(false, false, false); 
   fsm = new StateMachine({
@@ -176,23 +196,5 @@ function setUpFSM() {
   return fsm;
 }
 
-/**
-* update number of prompts recorded and total number of prompts to record
-*/
-function updateProgress() {
-  var progress = prompts.getProgressDescription();
-  document.querySelector('.progress-display').innerText = progress;
-}
 
-/**
-* display window to ask user if they want to upload their recordings to 
-* VoxForge server
-*/
-function messageToUpload() {
-  if (confirm('Are you ready to upload your submission?\nIf not, press cancel now,' + 
-	      ' and then press Upload once you are ready.')) {
-    fsm.yesuploadmessage();
-  } 
-  fsm.canceluploadmessage();
-}
 

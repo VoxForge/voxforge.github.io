@@ -75,12 +75,10 @@ function View () {
     showDivBasedonValue('#background_noise', page_localized_yes, '#background_noise_display', false);
     showDivBasedonValue('#noise_type', page_localized_other, '#noise_type_other_display', false);
 
-
     /**
     *
     * see: https://stackoverflow.com/questions/7694501/class-vs-static-method-in-javascript
     */
-
 
     /**
     * This function changes the contents of a second select list based on the
@@ -129,9 +127,6 @@ function View () {
     }
     option += '<option value="' + page_localized_other + '">' + page_localized_other + '</option>'; 
     $('#first_language').append(option);
-
-
-
 }
 
 
