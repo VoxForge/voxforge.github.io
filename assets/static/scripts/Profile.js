@@ -42,7 +42,7 @@ function Profile () {
   */
   var parsedLocalStorageObject;
   if ( parsedLocalStorageObject = getProfileFromLocalStorage() ) {
-      updateUI(parsedLocalStorageObject);
+      view.update(parsedLocalStorageObject);
   }
 }
 

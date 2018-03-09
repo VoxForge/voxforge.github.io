@@ -39,6 +39,7 @@ TODO: CSRF - Cross site request forgery
 
 // constants
 var RECORDING_TIMEOUT = 15000; // 15 seconds
+var speechSubmissionAppVersion = "0.1";
 
 /**
 * Instantiate classes
@@ -46,16 +47,17 @@ var RECORDING_TIMEOUT = 15000; // 15 seconds
 var prompts = new Prompts();
 var profile = new Profile();
 var audio = new Audio();
+var view = new View();
 
 // finite state machine object
-var fsm;
-setUpFSM();
+var fsm = setUpFSM();
+
 /**
 * ### Finite State Machine #####################################################
 */
 function setUpFSM() {
   var timeout_obj;
-
+  view.setButtonDisplay(false, false, false); 
   fsm = new StateMachine({
     init: 'waveformdisplay',
 
@@ -75,12 +77,9 @@ function setUpFSM() {
     methods: {
       // Transition Actions: user initiated
       onStopclicked: function() { 
-        stop.disabled = true;
-        record.disabled = false;
+        view.setButtonDisplay(true, false, false);
+        view.hidePromptDisplay();
 
-        $('.info-display').hide();
-        record.style.background = "";
-        record.style.color = ""; 
         // actual stopping of recording is delayed because some users hit it
         // early and cut off the end of their recording
         setTimeout( function () {
@@ -92,50 +91,57 @@ function setUpFSM() {
 
         clearTimeout(timeout_obj);
       },
-      onUploadclicked: function() { uploading() },
+
+      onUploadclicked: function() { 
+        view.setButtonDisplay(true, false, false);
+        uploading() 
+      },
+
       onDeleteclicked: function() { 
-        record.disabled = false;
+        view.setButtonDisplay(true, false, false);
         updateProgress();
       },
-      onYesuploadmessage: function() { console.log('onyesuploadmessage')  },
-      onCanceluploadmessage: function() { console.log('oncanceluploadmessage')  },
+
+      onYesuploadmessage: function() { 
+        console.log('onyesuploadmessage')  
+      },
+
+      onCanceluploadmessage: function() { 
+        console.log('oncanceluploadmessage')  
+      },
 
       // Transition Actions: system initiated
       onRecordingtimeout: function() { 
         audio.endRecording();
         console.log("recorder stopped");
-        record.style.background = "";
-        record.style.color = "";
       },
+
       onMaxpromptsreached: function() { console.log('onmaxpromptsreached')  },
 
       // States Actions: on entry
       onWaveformdisplay: function() { 
-        record.disabled = false;
-        stop.disabled = true;
-        upload.disabled = true;
+        view.setButtonDisplay(true, false, false);        
         console.log('onWaveformdisplay: waiting for user input') 
       },
 
       onRecording: function() { 
-        record.disabled = true;
         var prompt = prompts.getNextPrompt();
         updateProgress();
         if (prompt !== null) {
-          stop.disabled = false;
-          hideProfileInfo();
+          view.setButtonDisplay(false, true, false); 
+          view.hideProfileInfo();
           audio.record(prompt);
 
           timeout_obj = setTimeout(function(){
             fsm.recordingtimeout();
           }, RECORDING_TIMEOUT);
         } else {
-          stop.disabled = true;
+          view.setButtonDisplay(false, false, false); 
           messageToUpload();
         }
       },
 
-      onMaxpromptsreached:   function() { 
+      onMaxpromptsreached: function() { 
         // to give browser enough time to process the last audio recording
         setTimeout( function () {
           messageToUpload();
@@ -147,30 +153,28 @@ function setUpFSM() {
 
       onMessagetoupload: function() { 
         messageToUpload();
-        upload.disabled = false;
-        record.disabled = true;
       },
 
       onUploading: function() { 
         console.log('onUploading');
-        upload.disabled = true;
-        record.disabled = false;
-        uploading();
+        view.setButtonDisplay(true, false, false); 
+        upload();
 
-        document.cookie = 'all_done=true; path=/';
+        document.cookie = 'all_done=true; path=/'; // todo is this require anymore???
         profile.addProfile2LocalStorage();
         prompts.resetIndices();
-        $( '.sound-clips' ).empty();
         audio.clip_id = 0;
+        view.clearSoundClips();
       }
     }
   });
 
-  record.onclick = function() { fsm.recordclicked() }
-  stop.onclick = function() { fsm.stopclicked(); }
-  upload.onclick = function() { fsm.upload() }
-}
+  view.record.onclick = function() { fsm.recordclicked() }
+  view.stop.onclick = function() { fsm.stopclicked(); }
+  view.upload.onclick = function() { fsm.upload() }
 
+  return fsm;
+}
 
 /**
 * update number of prompts recorded and total number of prompts to record

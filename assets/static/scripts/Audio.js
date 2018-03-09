@@ -250,7 +250,7 @@ function Audio () {
           clipContainer.appendChild(createWaveformElement());
           clipContainer.appendChild(createAudioPlayer());
 
-          soundClips.insertBefore(clipContainer, soundClips.children[0]);
+          view.soundClips.insertBefore(clipContainer, view.soundClips.children[0]);
 
           // add waveform to waveformElement
           // see http://wavesurfer-js.org/docs/
@@ -320,7 +320,7 @@ Audio.prototype.record = function (prompt) {
     console.log('recording audioCtx.sampleRate: ' + this.audioCtx.sampleRate);
 
     console.log( prompts.getPromptId() + " " +  prompts.getPromptSentence() );
-    record.style.background = "";
+
 }
 
 

@@ -5,13 +5,13 @@
 * see https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser
 */
 function visualize(analyser) {
-  var canvasCtx = canvas.getContext("2d");
+  var canvasCtx = view.canvas.getContext("2d");
 
   var bufferLength = analyser.frequencyBinCount;
   var dataArray = new Uint8Array(bufferLength);
 
-  WIDTH = canvas.width
-  HEIGHT = canvas.height;
+  WIDTH = view.canvas.width
+  HEIGHT = view.canvas.height;
 
   function draw() {
 
@@ -44,7 +44,7 @@ function visualize(analyser) {
       x += sliceWidth;
     }
 
-    canvasCtx.lineTo(canvas.width, canvas.height/2);
+    canvasCtx.lineTo(view.canvas.width, view.canvas.height/2);
     canvasCtx.stroke();
   }
 

@@ -31,7 +31,7 @@ $( window ).unload(function() {
 * that calls web worker that actually creates the zip file for download
 * to VoxForge server
 */
-function uploading() {
+function upload() {
 
     var allClips = document.querySelectorAll('.clip');
     var clipIndex = 0;
@@ -109,13 +109,13 @@ function uploading() {
       function zipworkerDone(event) { 
         if (event.data.status === "transferComplete") {
           console.log('message from worker: Upload to VoxForge server completed');
-          showUploadStatus("Upload successfull!");
+          view.showUploadStatus("Upload successfull!");
         } else if (event.data.status === "savedInBrowserStorage") {
           console.log('message from worker: problem with Internet connection, submission saved in browser storage');
           alert("No Internet connection, submission saved in browser storage.  \nIt will be uploaded next time you make a submission with Internet up.");
         } else if (event.data.status === "foundSavedFailedUploads") {
           console.log('message from worker: found submissions saved to browser, uploading them...');
-          showUploadStatus("Found saved submission(s), uploading to VoxForge server.");
+          view.showUploadStatus("Found saved submission(s), uploading to VoxForge server.");
         } else {
           console.log('message from worker: transfer error: ' + event.data.status);
         }

@@ -1,21 +1,19 @@
 /*
-    Copyright 2018 VoxForge
+Copyright 2018 VoxForge
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-// #############################################################################
 
 /**
 * ### Contructor ##############################################
@@ -97,8 +95,8 @@ function Prompts () {
       /**
       * callback (for jquery 'get') 
       * reads single prompt file into memory
-      * (note prompt sentences are split into many smaller prompt files so
-      * that user does not need to read them all the files)
+      * (note complete prompt list is split into many smaller prompt files so
+      * that browser does not need to read them all)
       *
       * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
       */

@@ -27,7 +27,7 @@
       <button style="display: none;" 
               id="profile-button-display" 
               style="background: #cedfe8;" 
-              onclick="profileInfo()">{{ page.profile_info }}</button>
+              onclick="view.profileInfo()">{{ page.profile_info }}</button>
 
         <!-- https://learn.jquery.com/using-jquery-core/selecting-elements/ -->
 	    <div id="profile-display">
@@ -40,7 +40,7 @@
           <div id=anonymous_instructions_display>
             <small>{{ page.anonymous_submission }}</small></br></br>
           </div>
-      <button style="background: #cedfe8;" onclick="speakerCharacteristics()">{{ page.speaker_characteristics }}</button>
+      <button style="background: #cedfe8;" onclick="view.speakerCharacteristics()">{{ page.speaker_characteristics }}</button>
 	    <div style="display: none;" id="speaker_characteristics_display">
           <label for="gender">{{ page.gender.label }}</label>
           <select selected name="gender" id="gender">
@@ -156,7 +156,7 @@
       </div>  <!--speaker_characteristics_display-->
 
     <!--#########################################################################-->
-        <button style="background: #cedfe8; " onclick="recordingInformation()">{{ page.recording_information }}</button>
+        <button style="background: #cedfe8; " onclick="view.recordingInformation()">{{ page.recording_information }}</button>
 	      <div style="display: none;" id="recording_information_display">
           <label for="microphone">{{ page.microphone.label }}</label>
           <div class="other">
@@ -257,7 +257,7 @@
       <button style="display: none;" 
               id="directions-button-display" 
               style="background: #cedfe8;" 
-              onclick="directionsInfo()">{{ page.instructions.label }}</button>
+              onclick="view.directionsInfo()">{{ page.instructions.label }}</button>
       <div id="directions-display">
         {{ page.instructions.line1 }}
             <a href="#ms_windows_mic_popupInfo" data-rel="popup" data-transition="pop" 
@@ -326,8 +326,8 @@
     <script src="/assets/static/scripts/Profile.js"></script>
     <script src="/assets/static/scripts/Prompts.js"></script>
     <script src="/assets/static/scripts/Audio.js"></script>
-    <script src="/assets/static/scripts/uploading.js"></script>
-    <script src="/assets/static/scripts/ui.js"></script>
+    <script src="/assets/static/scripts/upload.js"></script>
+    <script src="/assets/static/scripts/View.js"></script>
     <script src="/assets/static/scripts/app.js"></script>
   </body>
 </html>
