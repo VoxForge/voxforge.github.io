@@ -76,58 +76,58 @@ function setUpFSM() {
       fsm.canceluploadmessage();
     }
 
-  var timeout_obj;
-  view.setButtonDisplay(false, false, false); 
+  var rec_timeout_obj;
+  view.setRSButtonDisplay(false, false); 
+  view.setUButtonDisplay(false); 
   fsm = new StateMachine({
     init: 'waveformdisplay',
 
     transitions: [
-      { name: 'recordclicked',       from: 'waveformdisplay',          to: 'recording' },
-      { name: 'stopclicked',         from: 'recording',                to: 'waveformdisplay'  },
-      { name: 'recordingtimeout',    from: 'recording',                to: 'waveformdisplay' },  
-      { name: 'uploadclicked',       from: 'maxpromptwaveformdisplay', to: 'uploading' },
-      { name: 'maxpromptsreached',   from: 'waveformdisplay',          to: 'maxpromptwaveformdisplay' }, 
-      { name: 'maxpromptsreached',   from: 'maxpromptwaveformdisplay', to: 'messagetoupload' },   
-      { name: 'yesuploadmessage',    from: 'messagetoupload',          to: 'uploading' },
-      { name: 'canceluploadmessage', from: 'messagetoupload',          to: 'maxpromptwaveformdisplay' },
+      { name: 'recordclickedltn',    from: 'waveformdisplay',          to: 'recordingltn' },
+      { name: 'recordclickedeqn',    from: 'waveformdisplay',          to: 'recordinglastprompt' },
+      { name: 'stopclicked',         from: 'recordingltn',             to: 'waveformdisplay'  },
+      { name: 'recordingtimeout',    from: 'recordingltn',             to: 'waveformdisplay' },  
+      { name: 'stopclicked',         from: 'recordinglastprompt',      to: 'maxprompts'  },
+      { name: 'recordingtimeout',    from: 'recordinglastprompt',      to: 'maxprompts'  },
+      { name: 'yesuploadmessage',    from: 'maxprompts',               to: 'uploading' },
+      { name: 'canceluploadmessage', from: 'maxprompts',               to: 'maxprompts' },
+      { name: 'uploadclicked',       from: 'maxprompts',               to: 'uploading' },
+      { name: 'uploadclicked',       from: 'waveformdisplay',          to: 'uploading' },
       { name: 'deleteclicked',       from: 'waveformdisplay',          to: 'waveformdisplay'  },
-      { name: 'deleteclicked',       from: 'maxpromptwaveformdisplay', to: 'waveformdisplay'  },
+      { name: 'deleteclicked',       from: 'maxprompts',               to: 'waveformdisplay'  },
     ],
 
     methods: {
       // Transition Actions: user initiated
       onStopclicked: function() { 
-        view.setButtonDisplay(true, false, false);
+        view.setRSButtonDisplay(true, false);
         view.hidePromptDisplay();
 
         // actual stopping of recording is delayed because some users hit it
         // early and cut off the end of their recording
         setTimeout( function () {
           audio.endRecording();
-          if ( prompts.maxPromptsReached() ) {
-            fsm.maxpromptsreached();
-          }
         }, 400);
 
-        clearTimeout(timeout_obj);
-      },
-
-      onUploadclicked: function() { 
-        view.setButtonDisplay(true, false, false);
-        uploading() 
+        clearTimeout(rec_timeout_obj);
       },
 
       onDeleteclicked: function() { 
-        view.setButtonDisplay(true, false, false);
+        view.setRSButtonDisplay(true, false);
         updateProgress();
       },
 
       onYesuploadmessage: function() { 
-        console.log('onyesuploadmessage')  
+        console.log('onYesuploadmessage')  
       },
 
       onCanceluploadmessage: function() { 
-        console.log('oncanceluploadmessage')  
+        console.log('onCanceluploadmessage')  
+      },
+
+      onUploadclicked: function() { 
+        view.setRSButtonDisplay(true, false);
+        uploading() 
       },
 
       // Transition Actions: system initiated
@@ -140,28 +140,37 @@ function setUpFSM() {
 
       // States Actions: on entry
       onWaveformdisplay: function() { 
-        view.setButtonDisplay(true, false, false);        
+        view.setRSButtonDisplay(true, false);        
         console.log('onWaveformdisplay: waiting for user input') 
       },
 
-      onRecording: function() { 
-        var prompt = prompts.getNextPrompt();
+      onRecordingltn: function() { 
+        view.setRSButtonDisplay(false, true); 
+        view.hideProfileInfo();
         updateProgress();
-        if (prompt !== null) {
-          view.setButtonDisplay(false, true, false); 
-          view.hideProfileInfo();
-          audio.record(prompt);
 
-          timeout_obj = setTimeout(function(){
-            fsm.recordingtimeout();
-          }, RECORDING_TIMEOUT);
-        } else {
-          view.setButtonDisplay(false, false, false); 
-          messageToUpload();
-        }
+        var prompt = prompts.getNextPrompt();
+        audio.record(prompt);
+
+        rec_timeout_obj = setTimeout(function(){
+          fsm.recordingtimeout();
+        }, RECORDING_TIMEOUT);
       },
 
-      onMaxpromptsreached: function() { 
+      onRecordinglastprompt: function() { 
+        view.setRSButtonDisplay(false, true); 
+        view.hideProfileInfo();
+        updateProgress();
+
+        var prompt = prompts.getNextPrompt();
+        audio.record(prompt);
+
+        rec_timeout_obj = setTimeout(function(){
+          fsm.recordingtimeout();
+        }, RECORDING_TIMEOUT);
+      },
+
+      maxprompts: function() { 
         // to give browser enough time to process the last audio recording
         setTimeout( function () {
           messageToUpload();
@@ -169,15 +178,9 @@ function setUpFSM() {
         }, 300); 
       },
 
-      onMaxpromptwaveformdisplay:   function() { console.log('onmaxpromptwaveformdisplay') },
-
-      onMessagetoupload: function() { 
-        messageToUpload();
-      },
-
       onUploading: function() { 
         console.log('onUploading');
-        view.setButtonDisplay(true, false, false); 
+        view.setUButtonDisplay(true); 
         upload();
 
         document.cookie = 'all_done=true; path=/'; // todo is this require anymore???
@@ -189,7 +192,13 @@ function setUpFSM() {
     }
   });
 
-  view.record.onclick = function() { fsm.recordclicked() }
+  view.record.onclick = function() { 
+      if ( prompts.last() ) {
+         fsm.recordclickedeqn(); // eqn = equal n; where n = maxprompts
+      } else {
+        fsm.recordclickedltn(); // ltn = less than n; where n = maxprompts
+      }
+  }
   view.stop.onclick = function() { fsm.stopclicked(); }
   view.upload.onclick = function() { fsm.upload() }
 

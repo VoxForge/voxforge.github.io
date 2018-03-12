@@ -150,7 +150,7 @@ View.prototype.showUploadStatus = function (message) {
 View.prototype.speakerCharacteristics = function () {
     $("#speaker_characteristics_display").toggle(); 
     $("#recording_information_display").hide();
-    }
+}
 
 View.prototype.profileInfo = function () {
     $("#profile-display").toggle(); 
@@ -170,8 +170,8 @@ View.prototype.directionsInfo = function () {
 // TODO does this ever get executed? see on uploading...
 if ( $.cookie('all_done') ) 
 {
-  $("#profile-display").hide();
-  $("#profile-button-display").show();
+    $("#profile-display").hide();
+    $("#profile-button-display").show();
 }
 
 /**
@@ -253,16 +253,19 @@ View.prototype.update = function (json_object) {
 * updates the current number of prompts that the user selected from dropdown
 */
 $('#max_num_prompts_disp').click(function () { 
-  prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
-  prompts.initPromptStack();
-  updateProgress();
+    prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
+    prompts.initPromptStack();
+    updateProgress();
 
-  console.log('max_num_prompts:' + prompts.max_num_prompts);
+    console.log('max_num_prompts:' + prompts.max_num_prompts);
 });
 
-View.prototype.setButtonDisplay = function (record, stop, upload) {
+View.prototype.setRSButtonDisplay = function (record, stop) {
     view.record.disabled = ! record;
     view.stop.disabled = ! stop;
+}
+
+View.prototype.setUButtonDisplay = function (upload) {
     view.upload.disabled = ! upload;
 }
 

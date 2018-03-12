@@ -300,6 +300,14 @@ Prompts.prototype.maxPromptsReached = function () {
 }
 
 /**
+* true when max number of prompts user wants to record is reached
+*/
+Prompts.prototype.last = function () {
+    return this.prompt_count == this.max_num_prompts;
+}
+
+
+/**
 * Returns string that displays the number of prompts read and the total
 * number of prompts.
 */
