@@ -282,6 +282,11 @@ View.prototype.clearSoundClips = function () {
     $( '.sound-clips' ).empty();
 }
 
+View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
+    document.querySelector('.prompt_id').innerText = getPromptId;
+    document.querySelector('.info-display').innerText = getPromptSentence;
+}
+
 /**
 * run after worker completes audio recording; creates a waveform display of 
 * recorded audio and displays text of associated prompt line.  User can
@@ -406,6 +411,16 @@ View.prototype.waveformdisplay = function (blob) {
     self.clip_id++;
 }
 
+/**
+* reset DOM variables for another submission
+*/
+View.prototype.reset = function () {
+    this.clip_id = 0;
+    this.clearSoundClips();
+    this.hideProfileInfo();
+
+    this.updateProgress();
+}
 
 /**
 * update number of prompts recorded and total number of prompts to record

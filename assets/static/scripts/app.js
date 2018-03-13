@@ -42,11 +42,16 @@ var SPEECHSUBMISSIONAPPVERSION = "0.1";
 
 var RECORDING_TIMEOUT = 15000; // 15 seconds
 var PROMPT_DISPLAY_DELAY = 150; 
-var RECORDING_STOP_DELAY = 400; 
-// upload uses DOM entries as database of audio... if browser does not have
-// enough time to process the last prompt, it will not be included in upload...
+var RECORDING_STOP_DELAY = 300; 
+
 // TODO need to create a blocking wait before upload message displays
-var PROCESS_LAST_RECORDING_DELAY = 1000; 
+
+// upload uses shadow DOM entries as database of audio... if browser does not have
+// enough time to process the last prompt, it will not be included in upload...
+// need to at least wait for RECORDING_STOP_DELAY to complete before displaying
+// upload message, because upload() reads from DOM and if not finished 
+// recording, it will miss last recording.
+var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400; 
 
 /**
 * Instantiate classes
@@ -77,10 +82,9 @@ function setUpFSM() {
 
         // delay display of prompt so user does not start speaking before recorder
         // starts 
-        setTimeout( function() {
-          document.querySelector('.prompt_id').innerText = prompts.getPromptId();
-          document.querySelector('.info-display').innerText = prompts.getPromptSentence();
-        }, PROMPT_DISPLAY_DELAY);
+        //setTimeout( function() {
+          view.displayPrompt(prompts.getPromptId(),prompts.getPromptSentence());
+        //}, PROMPT_DISPLAY_DELAY);
 
         audio.record();
 
@@ -110,6 +114,7 @@ function setUpFSM() {
         { name: 'deleteclicked',       from: 'maxprompts',               to: 'waveformdisplay'  },
         { name: 'deleteclicked',       from: 'waveformdisplay',          to: 'waveformdisplay'  },
         { name: 'uploadclicked',       from: 'waveformdisplay',          to: 'uploading' },
+        { name: 'donesubmission',      from: 'uploading',                to: 'waveformdisplay' },
       ],
 
       methods: {
@@ -120,7 +125,10 @@ function setUpFSM() {
           clearTimeout(rec_timeout_obj);
 
           // actual stopping of recording is delayed because some users hit it
-          // early and cut off the end of their recording
+          // early and cut off the end of their recording.
+          // unfortunate side-effect is that need to wait for delayed stop of
+          // recording to complete before showing upload message, otherwise
+          // will not capture last prompt recording...
           setTimeout( function () {
             audio.endRecording();
           }, RECORDING_STOP_DELAY);
@@ -140,21 +148,21 @@ function setUpFSM() {
         // States (Actions to take on entry into given state)
         onWaveformdisplay: function() { 
           view.setRSButtonDisplay(true, false);   
-          console.log('   *** onWaveformdisplay ' + this.state + " " + this.transitions() );
+          console.log('   *** onWaveformdisplay state: ' + this.state + " trans: " + this.transitions() );
         },
 
         // recording less than total number of prompts to record (less than n)
         // (ltn = less then n, where n = total number of prompts)
         onRecordingltn: function() { 
           view.setRSButtonDisplay(false, true);  
-          console.log('   *** onRecordingltn ' + this.state + " " + this.transitions() );
+          console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
           recordAudio();
         },
 
         // n = last prompt
         onRecordinglastprompt: function() {
           view.setRSButtonDisplay(false, true);  
-          console.log('   *** onRecordinglastprompt ' + this.state + " " + this.transitions() );
+          console.log('   *** onRecordinglastprompt state: ' + this.state + " trans: " + this.transitions() );
           recordAudio();
         },
 
@@ -168,11 +176,11 @@ function setUpFSM() {
               }
           }
 
-          console.log('   *** onDisplaymessage ' + this.state + " " + this.transitions() );
+          console.log('   *** onDisplaymessage state: ' + this.state + " trans: " + this.transitions() );
 
           view.setRSUButtonDisplay(false, false, false);
           // to give browser enough time to process the last audio recording
-          // this should be blocking on display of last prompt!!!!!!
+          // this should be blocking until last prompt is displayed in DOM
           setTimeout( function () {
             messageToUpload();
           }, PROCESS_LAST_RECORDING_DELAY); 
@@ -182,24 +190,31 @@ function setUpFSM() {
         // continue, or delete then upload
         onMaxprompts: function() { 
           view.setRSUButtonDisplay(false, false, true);
-          console.log('   *** onMaxprompts+ ' + this.state + " " + this.transitions() );
+          console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onUploading: function() { 
           view.setRSUButtonDisplay(false, false, false);
-          console.log('   *** onUploading ' + this.state + " " + this.transitions() );
+          console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
 
-          upload();
-
-          // TODO need to wait for upload to complete before resetting anything...
-          profile.addProfile2LocalStorage();
+          //upload();
+          //profile.addProfile2LocalStorage();
           //prompts.resetIndices();
-          //view.clip_id = 0;
-          //view.clearSoundClips();
-          //view.hideProfileInfo();
+          //view.reset();
+          //fsm.donesubmission();
 
-          view.setRSUButtonDisplay(true, false, false);
-        }
+          var promise1 =  new Promise(function(resolve, reject) {
+            resolve( upload() );
+          });
+          // need upload() to complete before continuing...
+          promise1.then(function(value) {
+            console.log('then');
+            fsm.donesubmission();
+            profile.addProfile2LocalStorage();
+            prompts.resetIndices();
+            view.reset();
+          });
+        },
       }
     });
 
@@ -210,6 +225,8 @@ function setUpFSM() {
           fsm.recordclickedltn(); // ltn = less than n; where n = maxprompts
         }
     }
+    //TODO use actual function reference instead of function calling function
+    // but might mess up this context value...
     view.stop.onclick = function() { fsm.stopclicked(); }
     view.upload.onclick = function() { fsm.uploadclicked() }
 

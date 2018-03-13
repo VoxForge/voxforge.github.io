@@ -115,7 +115,7 @@ function upload() {
           view.showUploadStatus("Upload successfull!");
         } else if (event.data.status === "savedInBrowserStorage") {
           console.log('message from worker: problem with Internet connection, submission saved in browser storage');
-          alert("No Internet connection, submission saved in browser storage.  \nIt will be uploaded next time you make a submission with Internet up.");
+          alert("\t\tSubmission saved in browser storage.\n \t\t(No Internet Connection)  \n\nIt will be uploaded next time you make a submission with Internet up.");
         } else if (event.data.status === "foundSavedFailedUploads") {
           console.log('message from worker: found submissions saved to browser, uploading them...');
           view.showUploadStatus("Found saved submission(s), uploading to VoxForge server.");

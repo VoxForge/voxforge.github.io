@@ -199,4 +199,6 @@ Audio.prototype.endRecording = function () {
 
     this.microphoneLevel.disconnect();
     this.processor.disconnect();
+
+    return "ok";
 }
