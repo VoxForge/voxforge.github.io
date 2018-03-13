@@ -44,6 +44,8 @@ var RECORDING_TIMEOUT = 15000; // 15 seconds
 var RECORDING_STOP_DELAY = 300; 
 
 // TODO need to create a blocking wait before upload message displays
+// tried using promises as a kind of semaphore between clickstop on lastprompt 
+// and displaymessage... it would still miss a prompt displayed in shadow DOM...
 
 // upload uses shadow DOM entries as database of audio... if browser does not have
 // enough time to process the last prompt, it will not be included in upload...
@@ -95,7 +97,6 @@ function setUpFSM() {
   
     //  recording timeout object
     var rec_timeout_obj;
-    var record_wait_promise;
 
     fsm = new StateMachine({
       init: 'waveformdisplay',
@@ -121,12 +122,6 @@ function setUpFSM() {
         onStopclicked: function() { 
           view.hidePromptDisplay();
 
-          function endrecording_with_delay() {
-              setTimeout( function () {
-                audio.endRecording();
-              }, RECORDING_STOP_DELAY);
-          }
-
           clearTimeout(rec_timeout_obj);
 
           // actual stopping of recording is delayed because some users hit it
@@ -134,9 +129,9 @@ function setUpFSM() {
           // unfortunate side-effect is that need to wait for delayed stop of
           // recording to complete before showing upload message, otherwise
           // will not capture last prompt recording...
-          record_wait_promise =  new Promise(function(resolve, reject) {
-            resolve ( endrecording_with_delay() );
-          });
+          setTimeout( function () {
+            audio.endRecording();
+          }, RECORDING_STOP_DELAY);
         },
 
         onDeleteclicked: function() { 
@@ -185,14 +180,10 @@ function setUpFSM() {
 
           view.setRSUButtonDisplay(false, false, false);
           // to give browser enough time to process the last audio recording
-          // this should be blocking until last prompt is displayed in DOM
-          //setTimeout( function () {
-          //  messageToUpload();
-          //}, PROCESS_LAST_RECORDING_DELAY); 
-
-          record_wait_promise.then(function(value) {
+          // TODO this should be blocking until last prompt is displayed in DOM
+          setTimeout( function () {
             messageToUpload();
-          });
+          }, PROCESS_LAST_RECORDING_DELAY); 
         },
 
         // at maximum selected prompts, cannot record anymore, must upload to 
@@ -211,7 +202,8 @@ function setUpFSM() {
           //prompts.resetIndices();
           //view.reset();
           //fsm.donesubmission();
-
+          // this seems to work OK to cause upload to complete before resetting 
+          // everything
           var promise1 =  new Promise(function(resolve, reject) {
             resolve( upload() );
           });
