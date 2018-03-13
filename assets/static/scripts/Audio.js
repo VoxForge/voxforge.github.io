@@ -86,7 +86,7 @@ function Audio () {
     }
 
     /**
-    * prompts the user for permission to use a media input which produces a 
+    * asks the user for permission to use a media input which produces a 
     * MediaStream with tracks containing the requested types of media - i.e. audio track
     *
     * see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
@@ -154,7 +154,7 @@ function Audio () {
 *
 //see https://github.com/higuma/wav-audio-encoder-js 
 */
-Audio.prototype.record = function (prompt) {
+Audio.prototype.record = function () {
     /**
     * captures audio buffer data from processor worker
     */
@@ -169,8 +169,7 @@ Audio.prototype.record = function (prompt) {
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
 
-//    visualize(this.analyser);
-    visualize2(this.analyser); // TODO debugging
+    visualize(this.analyser);
 
     // clears out audio buffer 
     this.processor.onaudioprocess = function(event) {
@@ -190,11 +189,10 @@ Audio.prototype.record = function (prompt) {
     console.log('recording audioCtx.sampleRate: ' + this.audioCtx.sampleRate);
 }
 
-
 /**
 * disconnect audio nodes; send message to audio worker to stop recording
 */
-Audio.prototype.endRecording = function (prompt) {
+Audio.prototype.endRecording = function () {
     audioworker.postMessage({ 
       command: 'finish' 
     });

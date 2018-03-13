@@ -98,7 +98,8 @@ function createZipFile(self, data) {
         data.temp_submission_name, 
         zip_file_in_memory,
         data.language,
-        data.username
+        data.username,
+        data.speechSubmissionAppVersion,
       );
     }
   );
@@ -108,7 +109,7 @@ function createZipFile(self, data) {
 * tries to perform the actual upload of submission to voxforge server, if cannot
 * tries 2 more times and then saves to user's browser storage
 */
-function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, username) {
+function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, username, speechSubmissionAppVersion) {
     var upload_try_count = 1;
     var max_retries = 3;
     var run_once = false;
@@ -127,13 +128,13 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
             upload_try_count++;
           } else {
             if ( ! run_once ) {
+              run_once = true;
               var message = "transferFailed: An error occurred while transferring the file.";
               console.log(message);
               self.postMessage({
                 status: message 
               });
               saveSubmissionLocally(language, username);
-              run_once = true;
             }
             return;
           }

@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+
 // zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
 
@@ -46,7 +48,8 @@ function upload() {
       var audioBlobUrl = clip.querySelector('audio').src;
       var prompt = clip.querySelector('prompt').innerText;
       var prompt_id = prompt.split(/(\s+)/).shift();
-      prompts.prompts_recorded[clipIndex] = prompt + '\n';
+      //prompts.prompts_recorded[clipIndex] = prompt + '\n';
+      prompts.prompts_recorded.push(prompt + '\n');
 
       // Ajax is asynchronous - once the request is sent script will 
       // continue executing without waiting for the response.
@@ -76,15 +79,12 @@ function upload() {
         }
       };
       xhr.send();
-      console.log('===done audioToArray===');
     }
     
     /**
     * call web worker to create zip file and upload to VoxForge server
     */
     function createZipFile(audioArray) {
-      zip_worker.onmessage = zipworkerDone;
-
       var readme_blob = new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"});
       var prompts_blob = new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"});
       var profile_json_blob = new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"});
@@ -99,8 +99,11 @@ function upload() {
         profile_json_blob: profile_json_blob,
         prompts_json_blob: prompts_json_blob,
         audio: audioArray,
+        speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
       });
 
+      // TODO create anonymous class
+      zip_worker.onmessage = zipworkerDone;
       /**
       * receives replies from work thread and displays status accordingly
       *

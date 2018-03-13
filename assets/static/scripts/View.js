@@ -166,17 +166,6 @@ View.prototype.directionsInfo = function () {
 }
 
 /**
-* hide buttons after user makes a submission.  No need to show user information
-* he just entered, and info is still accessible with profile button
-*/
-// TODO does this ever get executed? see on uploading...
-if ( $.cookie('all_done') ) 
-{
-    $("#profile-display").hide();
-    $("#profile-button-display").show();
-}
-
-/**
 * hide profile info; otherwise recorded audio will not display properly 
 * at bottom of page
 */
@@ -262,13 +251,27 @@ $('#max_num_prompts_disp').click(function () {
     console.log('max_num_prompts:' + prompts.max_num_prompts);
 });
 
+/**
+* set record, stop button display
+*/
 View.prototype.setRSButtonDisplay = function (record, stop) {
     view.record.disabled = ! record;
     view.stop.disabled = ! stop;
 }
 
+/**
+* set upload button display
+*/
 View.prototype.setUButtonDisplay = function (upload) {
     view.upload.disabled = ! upload;
+}
+
+/**
+* set record, stop & upload button display
+*/
+View.prototype.setRSUButtonDisplay = function (record, stop, upload) {
+    this.setRSButtonDisplay(record,stop);
+    this.setUButtonDisplay(upload);
 }
 
 View.prototype.hidePromptDisplay = function () {

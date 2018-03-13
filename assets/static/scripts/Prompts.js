@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * ### Contructor ##############################################
 */
-function Prompts () {
+function Prompts() {
     /* Inner functions */
       /**
       * verify that read.md entries contain valid data
