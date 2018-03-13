@@ -191,14 +191,18 @@ Audio.prototype.record = function () {
 
 /**
 * disconnect audio nodes; send message to audio worker to stop recording
+
+TODO need a better way to clear buffer because a recording that gets cut off
+sometimes gets partially included in next recording... some buffer is not
+getting totally cleared...
 */
 Audio.prototype.endRecording = function () {
+    this.microphoneLevel.disconnect();
+    this.processor.disconnect();
+
     audioworker.postMessage({ 
       command: 'finish' 
     });
-
-    this.microphoneLevel.disconnect();
-    this.processor.disconnect();
 
     return "ok";
 }

@@ -41,7 +41,6 @@ TODO: CSRF - Cross site request forgery
 var SPEECHSUBMISSIONAPPVERSION = "0.1";
 
 var RECORDING_TIMEOUT = 15000; // 15 seconds
-var PROMPT_DISPLAY_DELAY = 150; 
 var RECORDING_STOP_DELAY = 300; 
 
 // TODO need to create a blocking wait before upload message displays
@@ -80,11 +79,10 @@ function setUpFSM() {
         var prompt = prompts.getNextPrompt();
         view.updateProgress();
 
-        // delay display of prompt so user does not start speaking before recorder
-        // starts 
-        //setTimeout( function() {
-          view.displayPrompt(prompts.getPromptId(),prompts.getPromptSentence());
-        //}, PROMPT_DISPLAY_DELAY);
+        // only display prompt when user presses record so that they delay the 
+        // start of reading the prompt and give the recording a bit of a leading
+        // silence...
+        view.displayPrompt(prompts.getPromptId(),prompts.getPromptSentence());
 
         audio.record();
 
@@ -97,6 +95,7 @@ function setUpFSM() {
   
     //  recording timeout object
     var rec_timeout_obj;
+    var record_wait_promise;
 
     fsm = new StateMachine({
       init: 'waveformdisplay',
@@ -122,6 +121,12 @@ function setUpFSM() {
         onStopclicked: function() { 
           view.hidePromptDisplay();
 
+          function endrecording_with_delay() {
+              setTimeout( function () {
+                audio.endRecording();
+              }, RECORDING_STOP_DELAY);
+          }
+
           clearTimeout(rec_timeout_obj);
 
           // actual stopping of recording is delayed because some users hit it
@@ -129,9 +134,9 @@ function setUpFSM() {
           // unfortunate side-effect is that need to wait for delayed stop of
           // recording to complete before showing upload message, otherwise
           // will not capture last prompt recording...
-          setTimeout( function () {
-            audio.endRecording();
-          }, RECORDING_STOP_DELAY);
+          record_wait_promise =  new Promise(function(resolve, reject) {
+            resolve ( endrecording_with_delay() );
+          });
         },
 
         onDeleteclicked: function() { 
@@ -181,9 +186,13 @@ function setUpFSM() {
           view.setRSUButtonDisplay(false, false, false);
           // to give browser enough time to process the last audio recording
           // this should be blocking until last prompt is displayed in DOM
-          setTimeout( function () {
+          //setTimeout( function () {
+          //  messageToUpload();
+          //}, PROCESS_LAST_RECORDING_DELAY); 
+
+          record_wait_promise.then(function(value) {
             messageToUpload();
-          }, PROCESS_LAST_RECORDING_DELAY); 
+          });
         },
 
         // at maximum selected prompts, cannot record anymore, must upload to 
