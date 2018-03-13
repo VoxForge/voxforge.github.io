@@ -51,29 +51,47 @@ var view = new View();
 
 // finite state machine object
 var fsm = setUpFSM();
+//visualize(fsm);
 
 /**
 * ### Finite State Machine #####################################################
 */
 function setUpFSM() {
-    /**
-    * update number of prompts recorded and total number of prompts to record
-    */
-    function updateProgress() {
-      var progress = prompts.getProgressDescription();
-      document.querySelector('.progress-display').innerText = progress;
-    }
 
     /**
     * display window to ask user if they want to upload their recordings to 
     * VoxForge server
     */
-    function messageToUpload() {
-      if (confirm('Are you ready to upload your submission?\nIf not, press cancel now,' + 
-	          ' and then press Upload once you are ready.')) {
+    function messageToUpload () {
+        if (confirm('Are you ready to upload your submission?\nIf not, press cancel now,' + 
+              ' and then press Upload once you are ready.')) {
         fsm.yesuploadmessage();
-      } 
-      fsm.canceluploadmessage();
+        } 
+        fsm.canceluploadmessage();
+    }
+
+    /**
+    * record audio state - either less than prompt number n, or last prompt
+    */
+    function recordAudio() {
+        view.setRSButtonDisplay(false, true); 
+        view.hideProfileInfo();
+
+        var prompt = prompts.getNextPrompt();
+        view.updateProgress();
+
+        // delay display of prompt so user does not start speaking before recorder
+        // starts 
+        setTimeout( function() {
+          document.querySelector('.prompt_id').innerText = prompts.getPromptId();
+          document.querySelector('.info-display').innerText = prompts.getPromptSentence();
+        }, 150);
+
+        audio.record();
+
+        rec_timeout_obj = setTimeout(function(){
+          fsm.recordingtimeout();
+        }, RECORDING_TIMEOUT);
     }
 
   var rec_timeout_obj;
@@ -103,18 +121,18 @@ function setUpFSM() {
         view.setRSButtonDisplay(true, false);
         view.hidePromptDisplay();
 
+        clearTimeout(rec_timeout_obj);
+
         // actual stopping of recording is delayed because some users hit it
         // early and cut off the end of their recording
         setTimeout( function () {
           audio.endRecording();
         }, 400);
-
-        clearTimeout(rec_timeout_obj);
       },
 
       onDeleteclicked: function() { 
         view.setRSButtonDisplay(true, false);
-        updateProgress();
+        view.updateProgress();
       },
 
       onYesuploadmessage: function() { 
@@ -136,41 +154,25 @@ function setUpFSM() {
         console.log("recorder stopped");
       },
 
-      onMaxpromptsreached: function() { console.log('onmaxpromptsreached')  },
-
       // States Actions: on entry
       onWaveformdisplay: function() { 
+        console.log('   *** onWaveformdisplay ' + this.state + " " + this.transitions() );
         view.setRSButtonDisplay(true, false);        
-        console.log('onWaveformdisplay: waiting for user input') 
       },
 
       onRecordingltn: function() { 
-        view.setRSButtonDisplay(false, true); 
-        view.hideProfileInfo();
-        updateProgress();
-
-        var prompt = prompts.getNextPrompt();
-        audio.record(prompt);
-
-        rec_timeout_obj = setTimeout(function(){
-          fsm.recordingtimeout();
-        }, RECORDING_TIMEOUT);
+        console.log('   *** onRecordingltn ' + this.state + " " + this.transitions() );
+        recordAudio();
       },
 
       onRecordinglastprompt: function() { 
-        view.setRSButtonDisplay(false, true); 
-        view.hideProfileInfo();
-        updateProgress();
-
-        var prompt = prompts.getNextPrompt();
-        audio.record(prompt);
-
-        rec_timeout_obj = setTimeout(function(){
-          fsm.recordingtimeout();
-        }, RECORDING_TIMEOUT);
+        console.log('   *** onRecordinglastprompt ' + this.state + " " + this.transitions() );
+        recordAudio();
       },
 
-      maxprompts: function() { 
+      onMaxprompts: function() { 
+        console.log('   *** maxprompts ' + this.state + " " + this.transitions() );
+
         // to give browser enough time to process the last audio recording
         setTimeout( function () {
           messageToUpload();
@@ -179,14 +181,15 @@ function setUpFSM() {
       },
 
       onUploading: function() { 
-        console.log('onUploading');
+        console.log('   *** onUploading ' + this.state + " " + this.transitions() );
+
         view.setUButtonDisplay(true); 
         upload();
 
         document.cookie = 'all_done=true; path=/'; // todo is this require anymore???
         profile.addProfile2LocalStorage();
         prompts.resetIndices();
-        audio.clip_id = 0;
+        view.clip_id = 0;
         view.clearSoundClips();
       }
     }

@@ -25,6 +25,8 @@ function View () {
     // where audio visualiser (vue meter) will be displayed in HTML
     this.canvas = document.querySelector('.visualizer');
 
+    // unique id for wavesurfer objects in DOM
+    this.clip_id = 0;
     /**
     * The value of contents of the independent_div is compared to the passed in 
     * value, and if they are equal, then the dependent_div is displayed, otherwise
@@ -255,7 +257,7 @@ View.prototype.update = function (json_object) {
 $('#max_num_prompts_disp').click(function () { 
     prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
     prompts.initPromptStack();
-    updateProgress();
+    view.updateProgress();
 
     console.log('max_num_prompts:' + prompts.max_num_prompts);
 });
@@ -276,3 +278,138 @@ View.prototype.hidePromptDisplay = function () {
 View.prototype.clearSoundClips = function () {
     $( '.sound-clips' ).empty();
 }
+
+/**
+* run after worker completes audio recording; creates a waveform display of 
+* recorded audio and displays text of associated prompt line.  User can
+* then review and if needed delete an erroneous recording, which can then be
+* re-recorded
+*/
+View.prototype.waveformdisplay = function (blob) {
+    // 'self' used to save the current context when calling function references
+    var self = this;
+
+    var clipContainer = document.createElement('article');
+    clipContainer.classList.add('clip');
+    var prompt_id = document.querySelector('.prompt_id').innerText;
+
+    /**
+    * displays the speech recording's transcription
+    */
+    function createClipLabel() {
+      var prompt_sentence = document.querySelector('.info-display').innerText;
+      var clipLabel = document.createElement('prompt');
+      clipLabel.classList.add('clip-label');
+      clipLabel.textContent = prompt_id + prompt_sentence;
+    
+      return clipLabel;
+    }
+
+    /**
+    * create button to allow user to delete a prompt line
+    */
+    function createDeleteButton() {
+      var deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.className = 'delete';
+
+      /**
+      * delete a recorded prompt; which is then saved in prompt_stack so user
+      * can re-record
+      */
+      deleteButton.onclick = function(e) {
+        evtTgt = e.target;
+        var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
+        
+        prompts.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
+        console.log("prompt deleted: " + prompt_id);
+
+        evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+
+        // TODO
+        fsm.deleteclicked();
+      }
+
+      return deleteButton;
+    }
+
+    var audioURL = window.URL.createObjectURL(blob);
+    /**
+    * TODO This creates an additional audio player that may not be really required given
+    * that Wavesurfer now works correctly.  Still usefull to let user adjust volume
+    */
+    function createAudioPlayer() {
+      var audioPlayer = document.createElement('audio');
+      audioPlayer.setAttribute('controls', '');
+      audioPlayer.controls = true;
+      audioPlayer.src = audioURL;
+      console.log(prompt_id + " recorder stopped; audio: " + audioURL);
+
+      return audioPlayer;
+    }
+
+    var waveformdisplay_id = "waveformContainer_" + prompt_id;
+    /**
+    * this creates the container (i.e. element in the shadow DOM) to be used
+    * by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
+    * to exist before being called, so this creates the it...
+    */
+    function createWaveformElement() {
+      var waveformElement = document.createElement('div');
+      // hook for wavesurfer
+      waveformElement.setAttribute("id", waveformdisplay_id);
+      // TODO move this to css
+      waveformElement.setAttribute("style", 
+          "border-style: solid; min-width:100px; ");
+
+      var style = document.createElement('div');
+      style.setAttribute("style", "text-align: center");
+
+      // playbutton inside wavesurfer display
+      var button_display_id = "button_" + prompt_id;
+      var button = document.createElement(button_display_id);
+      button.className = "btn btn-primary";
+      button.textContent = 'Play'; 
+      button.setAttribute("onclick", "wavesurfer[" + self.clip_id + "].playPause()");
+      var i = document.createElement('i');
+      i.className = "glyphicon glyphicon-play";
+      button.appendChild(i);
+
+      style.appendChild(button);
+      waveformElement.appendChild(style);
+
+      console.log("clip_id: " + self.clip_id);
+
+      return waveformElement;
+    }
+
+    clipContainer.appendChild(createClipLabel());
+    clipContainer.appendChild(createDeleteButton());
+    clipContainer.appendChild(createWaveformElement());
+    clipContainer.appendChild(createAudioPlayer());
+
+    view.soundClips.insertBefore(clipContainer, view.soundClips.children[0]);
+
+    // add waveform to waveformElement
+    // see http://wavesurfer-js.org/docs/
+    wavesurfer[self.clip_id] = WaveSurfer.create({
+      container: '#' + waveformdisplay_id,
+      scrollParent: true,
+      waveColor : 'OliveDrab',
+      minPxPerSec: 200
+    });
+    wavesurfer[self.clip_id].load(audioURL);
+
+    self.clip_id++;
+}
+
+
+/**
+* update number of prompts recorded and total number of prompts to record
+*/
+View.prototype.updateProgress = function () {
+    var progress = prompts.getProgressDescription();
+    document.querySelector('.progress-display').innerText = progress;
+}
+
+

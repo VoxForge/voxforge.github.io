@@ -301,9 +301,10 @@ Prompts.prototype.maxPromptsReached = function () {
 
 /**
 * true when max number of prompts user wants to record is reached
+* 0 indexed therefore last prompt is (max_num_prompts -1)
 */
 Prompts.prototype.last = function () {
-    return this.prompt_count == this.max_num_prompts;
+    return this.prompt_count >= this.max_num_prompts - 1;
 }
 
 
