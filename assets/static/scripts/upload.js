@@ -33,7 +33,7 @@ $( window ).unload(function() {
 * that calls web worker that actually creates the zip file for download
 * to VoxForge server
 */
-function upload() {
+function upload( when_audio_processing_completed_func ) {
 
     var allClips = document.querySelectorAll('.clip');
     var clipIndex = 0;
@@ -128,6 +128,8 @@ function upload() {
     }
 
     audioArrayLoop();
+
+    when_audio_processing_completed_func();
 }
 
 

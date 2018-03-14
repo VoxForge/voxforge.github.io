@@ -20,6 +20,7 @@ prompt_list_files:
 
 
 username_label: Nom d'utilisateur
+anonymous: anonymous
 anonymous_submission: (laisser vide pour soumettre anonymement)
 profile_info: Profil
 

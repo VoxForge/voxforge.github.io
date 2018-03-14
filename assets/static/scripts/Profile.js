@@ -256,7 +256,7 @@ Profile.prototype.addProfile2LocalStorage = function () {
 * return cleaned username user entered into input field
 */
 Profile.prototype.getUserName = function () {
-    return Profile.cleanUserInputRemoveSpaces( $('#username').val() );
+    return Profile.cleanUserInputRemoveSpaces( $('#username').val() ) || page_anonymous;
 }
 
 /**

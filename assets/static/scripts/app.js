@@ -53,7 +53,7 @@ var RECORDING_STOP_DELAY = 300;
 // upload message, because upload() reads from DOM and if not finished 
 // recording, it will miss last recording.
 var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400; 
-
+var WAIT_FOR_COPY_OF_AUDIO = 750; 
 /**
 * Instantiate classes
 */
@@ -196,25 +196,18 @@ function setUpFSM() {
         onUploading: function() { 
           view.setRSUButtonDisplay(false, false, false);
           console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
-
-          //upload();
-          //profile.addProfile2LocalStorage();
-          //prompts.resetIndices();
-          //view.reset();
-          //fsm.donesubmission();
-          // this seems to work OK to cause upload to complete before resetting 
-          // everything
-          var promise1 =  new Promise(function(resolve, reject) {
-            resolve( upload() );
-          });
-          // need upload() to complete before continuing...
-          promise1.then(function(value) {
-            console.log('then');
-            fsm.donesubmission();
-            profile.addProfile2LocalStorage();
-            prompts.resetIndices();
-            view.reset();
-          });
+          
+          upload( 
+              // anonymous function to be executed after processsing of shadow DOM
+              // audio elements completed, otherwise submission package will be
+              // missing prompt lines...
+              function () {
+                fsm.donesubmission();
+                profile.addProfile2LocalStorage();
+                prompts.resetIndices();
+                view.reset();
+              } 
+          );
         },
       }
     });
