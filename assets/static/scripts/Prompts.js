@@ -166,6 +166,7 @@ function Prompts() {
 // object instances, that is, the variables and methods of the object
 Prompts.prototype = {
     max_num_prompts: 3, // TODO testing
+    previous_max_num_prompts: 0, // to decide what to do when use changes max number of prompts
     list: [], // list of prompts to be read by user
     index: 0, // pointer to position in prompt list array
     prompt_count: 0, // number of prompts ueserread

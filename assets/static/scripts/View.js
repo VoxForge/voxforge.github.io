@@ -25,6 +25,8 @@ function View () {
     // where audio visualiser (vue meter) will be displayed in HTML
     this.canvas = document.querySelector('.visualizer');
 
+    this.maxnumpromptschanged = document.querySelector('#max_num_prompts_disp');
+
     // unique id for wavesurfer objects in DOM
     this.clip_id = 0;
     /**
@@ -129,6 +131,18 @@ function View () {
     }
     option += '<option value="' + page_localized_other + '">' + page_localized_other + '</option>'; 
     $('#first_language').append(option);
+
+    /**
+    * updates the current number of prompts that the user selected from dropdown
+    */
+    $('#max_num_prompts_disp').click(function () { 
+        prompts.previous_max_num_prompts = prompts.max_num_prompts;
+        prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
+        prompts.initPromptStack();
+        view.updateProgress();
+
+        console.log('max_num_prompts:' + prompts.max_num_prompts);
+    });
 }
 
 
@@ -154,13 +168,24 @@ View.prototype.speakerCharacteristics = function () {
     $("#recording_information_display").hide();
 }
 
+/**
+* toggle to display profile info
+*/
 View.prototype.profileInfo = function () {
     $("#profile-display").toggle(); 
 }
+
+/**
+* toggle to display recording info
+*/
 View.prototype.recordingInformation = function () {
     $("#recording_information_display").toggle(); 
     $("#speaker_characteristics_display").hide(); 
 }
+
+/**
+* toggle to display directions
+*/
 View.prototype.directionsInfo = function () {
     $("#directions-display").toggle(); 
 }
@@ -241,17 +266,6 @@ View.prototype.update = function (json_object) {
 }
 
 /**
-* updates the current number of prompts that the user selected from dropdown
-*/
-$('#max_num_prompts_disp').click(function () { 
-    prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
-    prompts.initPromptStack();
-    view.updateProgress();
-
-    console.log('max_num_prompts:' + prompts.max_num_prompts);
-});
-
-/**
 * set record, stop button display
 */
 View.prototype.setRSButtonDisplay = function (record, stop) {
@@ -274,14 +288,23 @@ View.prototype.setRSUButtonDisplay = function (record, stop, upload) {
     this.setUButtonDisplay(upload);
 }
 
+/**
+* hid prompt display
+*/
 View.prototype.hidePromptDisplay = function () {
     $('.info-display').hide();
 }
 
+/**
+* clear sound clips
+*/
 View.prototype.clearSoundClips = function () {
     $( '.sound-clips' ).empty();
 }
 
+/**
+* display prompt line
+*/
 View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
     document.querySelector('.prompt_id').innerText = getPromptId;
     document.querySelector('.info-display').innerText = getPromptSentence;

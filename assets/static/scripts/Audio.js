@@ -113,7 +113,7 @@ function Audio () {
     * a destination audiocontext to capture audio
     */
     function setupAudioNodes(stream) {
-      // using self because setupAudioNodes is being called as a parameter to 
+      // using 'self' because setupAudioNodes is being called as a parameter to 
       // getUserMedia, which means it is a reference, and therefore loses 'this'
       // context...
       microphone = self.audioCtx.createMediaStreamSource(stream);

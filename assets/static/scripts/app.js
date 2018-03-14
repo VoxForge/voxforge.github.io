@@ -113,6 +113,8 @@ function setUpFSM() {
         { name: 'uploadclicked',       from: 'maxprompts',               to: 'uploading' },
         { name: 'deleteclicked',       from: 'maxprompts',               to: 'waveformdisplay'  },
         { name: 'deleteclicked',       from: 'waveformdisplay',          to: 'waveformdisplay'  },
+        { name: 'maxnumpromptschanged', from: 'maxprompts',              to: 'waveformdisplay' },
+        { name: 'maxnumpromptschanged', from: 'waveformdisplay',         to: 'waveformdisplay' },
         { name: 'uploadclicked',       from: 'waveformdisplay',          to: 'uploading' },
         { name: 'donesubmission',      from: 'uploading',                to: 'waveformdisplay' },
       ],
@@ -201,6 +203,8 @@ function setUpFSM() {
               // anonymous function to be executed after processsing of shadow DOM
               // audio elements completed, otherwise submission package will be
               // missing prompt lines...
+              // basically a blocking wait until audio files get converted into
+              // a form that can be used by zipupload.
               function () {
                 fsm.donesubmission();
                 profile.addProfile2LocalStorage();
@@ -223,6 +227,14 @@ function setUpFSM() {
     // but might mess up this context value...
     view.stop.onclick = function() { fsm.stopclicked(); }
     view.upload.onclick = function() { fsm.uploadclicked() }
+    view.maxnumpromptschanged.onclick = function() { 
+      // only go to waveform_display state if user increases the maximum number
+      // of prompts to record
+      if (prompts.max_num_prompts > prompts.previous_max_num_prompts) {
+        // fsm does not like underscores...
+        fsm.maxnumpromptschanged();
+      }
+    }
 
     return fsm;
 }
