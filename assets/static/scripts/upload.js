@@ -40,7 +40,10 @@ function upload( when_audio_processing_completed_func ) {
     var audioArray = [];
 
     /**
-    * recursive function that loops over audio clips
+    * recursive function that loops over audio clips and asynchronously
+    * loads them into audioArray.  This can cause some timing issues if
+    * there are many audio files... therefore only reset user facing display
+    * after all text and audio is sent to web worker for background processing
     */
     function audioArrayLoop() {
       var clip = allClips[clipIndex];
@@ -124,12 +127,12 @@ function upload( when_audio_processing_completed_func ) {
         }
       };
 
+      when_audio_processing_completed_func();
+
       console.log('===done createZipFile===');
     }
 
     audioArrayLoop();
-
-    when_audio_processing_completed_func();
 }
 
 

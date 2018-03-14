@@ -102,21 +102,21 @@ function setUpFSM() {
       init: 'waveformdisplay',
 
       transitions: [
-        { name: 'recordclickedltn',    from: 'waveformdisplay',          to: 'recordingltn' },
-        { name: 'recordclickedeqn',    from: 'waveformdisplay',          to: 'recordinglastprompt' },
-        { name: 'stopclicked',         from: 'recordingltn',             to: 'waveformdisplay'  },
-        { name: 'recordingtimeout',    from: 'recordingltn',             to: 'waveformdisplay' },  
-        { name: 'stopclicked',         from: 'recordinglastprompt',      to: 'displaymessage'  },
-        { name: 'recordingtimeout',    from: 'recordinglastprompt',      to: 'displaymessage'  },
-        { name: 'yesuploadmessage',    from: 'displaymessage',           to: 'uploading' },
-        { name: 'canceluploadmessage', from: 'displaymessage',           to: 'maxprompts' },
-        { name: 'uploadclicked',       from: 'maxprompts',               to: 'uploading' },
-        { name: 'deleteclicked',       from: 'maxprompts',               to: 'waveformdisplay'  },
-        { name: 'deleteclicked',       from: 'waveformdisplay',          to: 'waveformdisplay'  },
-        { name: 'maxnumpromptschanged', from: 'maxprompts',              to: 'waveformdisplay' },
-        { name: 'maxnumpromptschanged', from: 'waveformdisplay',         to: 'waveformdisplay' },
-        { name: 'uploadclicked',       from: 'waveformdisplay',          to: 'uploading' },
-        { name: 'donesubmission',      from: 'uploading',                to: 'waveformdisplay' },
+        { name: 'recordclickedltn',     from: 'waveformdisplay',     to: 'recordingltn' },
+        { name: 'recordclickedeqn',     from: 'waveformdisplay',     to: 'recordinglastprompt' },
+        { name: 'stopclicked',          from: 'recordingltn',        to: 'waveformdisplay'  },
+        { name: 'recordingtimeout',     from: 'recordingltn',        to: 'waveformdisplay' },  
+        { name: 'stopclicked',          from: 'recordinglastprompt', to: 'displaymessage'  },
+        { name: 'recordingtimeout',     from: 'recordinglastprompt', to: 'displaymessage'  },
+        { name: 'yesuploadmessage',     from: 'displaymessage',      to: 'uploading' },
+        { name: 'canceluploadmessage',  from: 'displaymessage',      to: 'maxprompts' },
+        { name: 'uploadclicked',        from: 'maxprompts',          to: 'uploading' },
+        { name: 'deleteclicked',        from: 'maxprompts',          to: 'waveformdisplay'  },
+        { name: 'deleteclicked',        from: 'waveformdisplay',     to: 'waveformdisplay'  },
+        { name: 'maxnumpromptschanged', from: 'maxprompts',          to: 'waveformdisplay' },
+        { name: 'maxnumpromptschanged', from: 'waveformdisplay',     to: 'waveformdisplay' },
+        { name: 'uploadclicked',        from: 'waveformdisplay',     to: 'uploading' },
+        { name: 'donesubmission',       from: 'uploading',           to: 'waveformdisplay' },
       ],
 
       methods: {
@@ -206,10 +206,10 @@ function setUpFSM() {
               // basically a blocking wait until audio files get converted into
               // a form that can be used by zipupload.
               function () {
-                fsm.donesubmission();
                 profile.addProfile2LocalStorage();
                 prompts.resetIndices();
                 view.reset();
+                fsm.donesubmission();
               } 
           );
         },
@@ -228,12 +228,12 @@ function setUpFSM() {
     view.stop.onclick = function() { fsm.stopclicked(); }
     view.upload.onclick = function() { fsm.uploadclicked() }
     view.maxnumpromptschanged.onclick = function() { 
-      // only go to waveform_display state if user increases the maximum number
-      // of prompts to record
-      if (prompts.max_num_prompts > prompts.previous_max_num_prompts) {
+      // only retirn to waveform_display state if user _increases_ the maximum 
+      // number of prompts
+      //if (prompts.max_num_prompts > prompts.previous_max_num_prompts) {
         // fsm does not like underscores...
         fsm.maxnumpromptschanged();
-      }
+      //}
     }
 
     return fsm;
