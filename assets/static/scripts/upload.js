@@ -105,14 +105,12 @@ function upload( when_audio_processing_completed_func ) {
         speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
       });
 
-      // TODO create anonymous class
-      zip_worker.onmessage = zipworkerDone;
       /**
       * receives replies from work thread and displays status accordingly
       *
       * this is a worker callback inside the worker context
       */
-      function zipworkerDone(event) { 
+      zip_worker.onmessage = function zipworkerDone(event) { 
         if (event.data.status === "transferComplete") {
           console.log('message from worker: Upload to VoxForge server completed');
           view.showUploadStatus("Upload successfull!");

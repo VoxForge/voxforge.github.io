@@ -130,9 +130,11 @@ function Audio () {
       microphone.connect(self.microphoneLevel); 
 
       profile.sample_rate = self.audioCtx.sampleRate;
-      // TODO need to validate this or at least get it from audio context somehow
-      // but WavAudioEncoder.js says it is converting to 16-bit signed....
-      // profile.sample_rate_format = "32 bit float";
+      // TODO  WavAudioEncoder.js says it is converting to 16-bit signed....
+      // Audacity still says audio recorded by this program is 32-bit float... 
+      // TODO why not just use 32 bit float in audio?:
+      // wavesufer can only use 16-bit, therefore would need two sets of audio:
+      // one for display and one for saving as part of submission.
       profile.sample_rate_format = "16 bit";
 
       profile.channels = self.mediaStreamOutput.channelCount;

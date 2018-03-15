@@ -37,9 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #############################################################################
 
 importScripts('../lib/jszip.js', '../lib/localforage.js'); 
-//var uploadURL = 'https://flask.voxforge1.org/uploadSubmissionFile'; // Flask testing
-//var uploadURL = 'https://jekyll_voxforge.org/flask/uploadSubmissionFile'; // Flask testing
-// now using PHP uploader
+
+// if change here, remember to update index.php: $ALLOWEDURL & $UPLOADFOLDER
 var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
 //var uploadURL = 'https://upload.voxforge1.org'; // prod
 
@@ -114,32 +113,32 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
     var max_retries = 3;
     var run_once = false;
 
-    /* Inner Function: implements a recursive loop */
-    function uploadZipFileLoop() {
-        // on failed upload, perform 2 more retries and then save submission locally
-        function transferFailed(evt) {
-          if ( upload_try_count <= max_retries ) {
-            console.log("transferFailed: retry # " + upload_try_count);
-            setTimeout( function () {
-              uploadZipFileLoop();
-      // TODO DEBUG
-      //            }, 1000 * 60 * 1); // wait 1 minute for each retry
-            }, 3000 ); 
-            upload_try_count++;
-          } else {
-            if ( ! run_once ) {
-              run_once = true;
-              var message = "transferFailed: An error occurred while transferring the file.";
-              console.log(message);
-              self.postMessage({
-                status: message 
-              });
-              saveSubmissionLocally(language, username);
-            }
-            return;
-          }
+    function transferFailed(evt) {
+      if ( upload_try_count <= max_retries ) {
+        console.log("transferFailed: retry # " + upload_try_count);
+        setTimeout( function () {
+          uploadZipFileLoop();
+          // TODO DEBUG
+          //    }, 1000 * 60 * 1); // wait 1 minute for each retry
+        }, 3000 ); 
+        upload_try_count++;
+      } else {
+        if ( ! run_once ) {
+          run_once = true;
+          var message = "transferFailed: An error occurred while transferring the file.";
+          console.log(message);
+          self.postMessage({
+            status: message 
+          });
+          saveSubmissionLocally(language, username);
         }
+        return;
+      }
+    }
 
+    /* Inner Function: implements a recursive loop */
+    /* on failed upload, perform 2 more retries and then save submission locally */
+    function uploadZipFileLoop() {
       xhr.upload.addEventListener("error", transferFailed);
       // firefox thinks a break in internet connection is a transferCancelled event??
       //xhr.upload.addEventListener("abort", transferCancelled);
@@ -152,7 +151,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
       form.append('username', username);
       form.append('language', language);
       xhr.send(form);
-    } // end uploadZipFileLoop
+    } 
 
     /* Inner Function: save the submission as a JSON object in user's browser 
       InnoDB database using LocalForage */
@@ -175,10 +174,27 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
     }
 
     xhr.upload.addEventListener("progress", updateProgress);
-    xhr.upload.addEventListener("load", function(event) {
-      transferSuccessful();
-      checkForSavedFailedUploads();
-    });
+ 
+    // can't read xhr.readyState inside this function...
+    //xhr.upload.addEventListener("load", function(event) {
+    //    transferSuccessful();
+    //    checkForSavedFailedUploads();
+    //});
+    xhr.responseType = 'text';
+    xhr.onload = function () {
+        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+            // browser thinks everything is OK, but need to check for
+            // valid server response to make sure no issues there...
+            // (e.g. permission issues on server upload folder)
+            if (xhr.responseText == "submission uploaded successfully." ) {
+              transferSuccessful();
+              checkForSavedFailedUploads();
+            } else {
+              max_retries = 1;
+              transferFailed(null);
+            }
+        }
+    };
 
     uploadZipFileLoop();
 }
@@ -237,7 +253,6 @@ function checkForSavedFailedUploads() {
     }
 
     /* Inner Function: upload the submission to the VoxForge server */
-    //function uploadSubmission(xhr, saved_submission_name, zip_file_in_memory) {
     function uploadSubmission(saved_submission_name, jsonOnject) {
         /* Inner Function: if saved submission successfully uploaded to  
            VoxForge server, removeit from user's browser storage */
@@ -252,10 +267,24 @@ function checkForSavedFailedUploads() {
 
         xhr = new XMLHttpRequest();
         xhr.upload.addEventListener("progress", updateProgress);
-        xhr.upload.addEventListener("load", function(event) {
-          transferSuccessful();
-          removeSavedSubmission(saved_submission_name);
-        });
+        
+        // can't read xhr.readyState from in here...
+        //xhr.upload.addEventListener("load", function(event) {
+        //    transferSuccessful();
+        //    removeSavedSubmission(saved_submission_name);
+        //  }
+        //});
+        xhr.responseType = 'text';
+        xhr.onload = function () {
+            if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+                // to catch configuration errors on server side
+                if (xhr.responseText == "submission uploaded successfully." ) {
+                  transferSuccessful();
+                  removeSavedSubmission(saved_submission_name);;
+                }
+            }
+        };
+
         xhr.upload.addEventListener("error", function(event) {
           console.log('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
         });
@@ -266,9 +295,6 @@ function checkForSavedFailedUploads() {
         xhr.open('POST', uploadURL, true); // async
 
         var form = new FormData();
-        //form.append('file', zip_file_in_memory, "webworker_file.zip");
-        //formData.append('language', language);
-        //formData.append('username', username);
         form.append('file', jsonOnject['file'], "webworker_file.zip");
         form.append('language', jsonOnject['language'])
         form.append('username', jsonOnject['username'])

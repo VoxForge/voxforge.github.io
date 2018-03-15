@@ -3,7 +3,7 @@
 // https://help.1and1.com/hosting-c37630/scripts-and-programming-languages-c85099/php-c37728/enable-error-logs-a792503.html
 // set up logging in php.ini in same folder as this script
 
-
+// if change here, remember to update ZipWorker.js: uploadURL
 $ALLOWEDURL = "https://voxforge.github.io"; // prod
 $UPLOADFOLDER = '../../public/speechsubmissions/'; // prod
 $ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
@@ -62,7 +62,7 @@ try {
   )) {
     throw new RuntimeException('Failed to move submission file.');
   }
-  echo 'submission is uploaded successfully.';
+  echo 'submission uploaded successfully.';
 
 } catch (RuntimeException $e) {
   echo $e->getMessage();
