@@ -198,7 +198,7 @@ Prompts.splitPromptLine = function(promptLine) {
 */
 Prompts.prototype.initPromptStack = function () {
     this.prompt_stack = [];
-    // TODO why is this one indexed... no longer makes sense
+    // TODO why is this 'one' indexed... no longer makes sense
     // wouldn't first element always be lost?
     this.index = Math.floor((Math.random() * prompts.list.length) + 1); // one indexed
 

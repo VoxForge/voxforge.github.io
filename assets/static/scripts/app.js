@@ -113,12 +113,15 @@ function setUpFSM() {
         { name: 'uploadclicked',        from: 'maxprompts',          to: 'uploading' },
         { name: 'deleteclicked',        from: 'maxprompts',          to: 'waveformdisplay'  },
         { name: 'deleteclicked',        from: 'waveformdisplay',     to: 'waveformdisplay'  },
-        { name: 'maxnumpromptschanged', from: 'maxprompts',          to: 'waveformdisplay' },
-        { name: 'maxnumpromptschanged', from: 'waveformdisplay',     to: 'waveformdisplay' },
+        { name: 'maxnumpromptsincreased', from: 'maxprompts',        to: 'waveformdisplay' },
+        { name: 'maxnumpromptsincreased', from: 'waveformdisplay',   to: 'waveformdisplay' },
+        { name: 'recordedmorethancurrentmaxprompts', from: 'maxprompts', to: 'displaymessage' },
+        { name: 'recordedmorethancurrentmaxprompts', from: 'waveformdisplay', to: 'displaymessage' },
         { name: 'uploadclicked',        from: 'waveformdisplay',     to: 'uploading' },
         { name: 'donesubmission',       from: 'uploading',           to: 'waveformdisplay' },
       ],
 
+      // fsm does not like underscores in method or state names...
       methods: {
         // Transition Actions: user initiated
         onStopclicked: function() { 
@@ -202,9 +205,9 @@ function setUpFSM() {
           upload( 
               // anonymous function to be executed after processsing of shadow DOM
               // audio elements completed, otherwise submission package will be
-              // missing prompt lines...
+              // missing prompt lines and audio files...
               // basically a blocking wait until audio files get converted into
-              // a form that can be used by zipupload.
+              // blobs for later processing zipupload web worker.
               function () {
                 profile.addProfile2LocalStorage();
                 prompts.resetIndices();
@@ -228,12 +231,13 @@ function setUpFSM() {
     view.stop.onclick = function() { fsm.stopclicked(); }
     view.upload.onclick = function() { fsm.uploadclicked() }
     view.maxnumpromptschanged.onclick = function() { 
-      // only retirn to waveform_display state if user _increases_ the maximum 
+      // only return to waveform_display state if user _increases_ the maximum 
       // number of prompts
-      //if (prompts.max_num_prompts > prompts.previous_max_num_prompts) {
-        // fsm does not like underscores...
-        fsm.maxnumpromptschanged();
-      //}
+      if (prompts.max_num_prompts > prompts.previous_max_num_prompts) {
+        fsm.maxnumpromptsincreased();
+      } else  if (prompts.max_num_prompts < prompts.previous_max_num_prompts) {
+        fsm.recordedmorethancurrentmaxprompts();
+      } // no transition fired if max_num_prompts == previous_max_num_prompts
     }
 
     return fsm;

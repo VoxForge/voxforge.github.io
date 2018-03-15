@@ -134,17 +134,23 @@ function View () {
 
     /**
     * updates the current number of prompts that the user selected from dropdown
+    *
+    * Note: when user changes the number of prompts to read, initPromptStack
+    * will causes the promptIDs to be in non-consecutive order, 
+    * and may result in user reading exactly same prompts again...
     */
     $('#max_num_prompts_disp').click(function () { 
         prompts.previous_max_num_prompts = prompts.max_num_prompts;
         prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
-        prompts.initPromptStack();
         view.updateProgress();
+
+        // promptId start point will be randomized and not be consecutive
+        // to previous prompt IDs.
+        prompts.initPromptStack();
 
         console.log('max_num_prompts:' + prompts.max_num_prompts);
     });
 }
-
 
 /** 
 * display upload to VoxForge server status to user
