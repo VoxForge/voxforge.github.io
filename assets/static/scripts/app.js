@@ -125,18 +125,7 @@ function setUpFSM() {
       methods: {
         // Transition Actions: user initiated
         onStopclicked: function() { 
-          view.hidePromptDisplay();
-
-          clearTimeout(rec_timeout_obj);
-
-          // actual stopping of recording is delayed because some users hit it
-          // early and cut off the end of their recording.
-          // unfortunate side-effect is that need to wait for delayed stop of
-          // recording to complete before showing upload message, otherwise
-          // will not capture last prompt recording...
-          setTimeout( function () {
-            audio.endRecording();
-          }, RECORDING_STOP_DELAY);
+          audio.endRecording();
         },
 
         onDeleteclicked: function() { 
@@ -164,7 +153,6 @@ function setUpFSM() {
           recordAudio();
         },
 
-        // n = last prompt
         onRecordinglastprompt: function() {
           view.setRSButtonDisplay(false, true);  
           console.log('   *** onRecordinglastprompt state: ' + this.state + " trans: " + this.transitions() );
@@ -226,10 +214,23 @@ function setUpFSM() {
           fsm.recordclickedltn(); // ltn = less than n; where n = maxprompts
         }
     }
+
     //TODO use actual function reference instead of function calling function
     // but might mess up this context value...
-    view.stop.onclick = function() { fsm.stopclicked(); }
-    view.upload.onclick = function() { fsm.uploadclicked() }
+    view.stop.onclick = function() { 
+          clearTimeout(rec_timeout_obj);
+          view.hidePromptDisplay();
+          // actual stopping of recording is delayed because some users hit it
+          // early and cut off the end of their recording.
+          setTimeout( function () {
+            fsm.stopclicked(); 
+          }, RECORDING_STOP_DELAY);
+    }
+
+    view.upload.onclick = function() { 
+        fsm.uploadclicked() 
+    }
+
     view.maxnumpromptschanged.onclick = function() { 
       // only return to waveform_display state if user _increases_ the maximum 
       // number of prompts

@@ -131,7 +131,10 @@ function Audio () {
 
       profile.sample_rate = self.audioCtx.sampleRate;
       // TODO need to validate this or at least get it from audio context somehow
-      profile.sample_rate_format = "32 bit float";
+      // but WavAudioEncoder.js says it is converting to 16-bit signed....
+      // profile.sample_rate_format = "32 bit float";
+      profile.sample_rate_format = "16 bit";
+
       profile.channels = self.mediaStreamOutput.channelCount;
 
       console.log('channels: ' + self.mediaStreamOutput.channelCount);
@@ -172,6 +175,13 @@ Audio.prototype.record = function () {
     visualize(this.analyser);
 
     // clears out audio buffer 
+    audioworker.postMessage({
+      command: 'start',
+      sampleRate: this.audioCtx.sampleRate,
+      numChannels: 1
+    });
+
+    // start recording
     this.processor.onaudioprocess = function(event) {
       audioworker.postMessage({ 
         command: 'record', 
@@ -179,12 +189,7 @@ Audio.prototype.record = function () {
       });
     };
 
-    // start recording
-    audioworker.postMessage({
-      command: 'start',
-      sampleRate: this.audioCtx.sampleRate,
-      numChannels: 1
-    });
+
 
     console.log('recording audioCtx.sampleRate: ' + this.audioCtx.sampleRate);
 }
