@@ -39,8 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 importScripts('../lib/jszip.js', '../lib/localforage.js'); 
 
 // if change here, remember to update index.php: $ALLOWEDURL & $UPLOADFOLDER
-var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
-//var uploadURL = 'https://upload.voxforge1.org'; // prod
+//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
+var uploadURL = 'https://upload.voxforge1.org'; // prod
 
 /**
 * Main worker function.  This worker, running in the background, takes the text
