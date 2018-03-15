@@ -9,15 +9,14 @@ weight: 2
 
 ################################################################################
 
+# TODO remove .html subffixes for prod
 total_number_of_prompts: 865
 # sequence number start, url to prompt file
 prompt_list_files:
   - id: "001"
-    file_location: /fr/prompts/001
+    file_location: /fr/prompts/001.html
     contains_promptid: true
     number_of_prompts: 865
-
-
 
 username_label: Nom d'utilisateur
 anonymous: anonymous
@@ -208,6 +207,7 @@ controls:
   var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
   var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
   var page_please_select = "{{ page.please_select }}";
+  var page_anonymous = "{{ page.anonymous }}";
 </script>
 
 

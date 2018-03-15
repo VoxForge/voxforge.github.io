@@ -43,10 +43,6 @@ var SPEECHSUBMISSIONAPPVERSION = "0.1";
 var RECORDING_TIMEOUT = 15000; // 15 seconds
 var RECORDING_STOP_DELAY = 300; 
 
-// TODO need to create a blocking wait before upload message displays
-// tried using promises as a kind of semaphore between clickstop on lastprompt 
-// and displaymessage... it would still miss a prompt displayed in shadow DOM...
-
 // upload uses shadow DOM entries as database of audio... if browser does not have
 // enough time to process the last prompt, it will not be included in upload...
 // need to at least wait for RECORDING_STOP_DELAY to complete before displaying
@@ -68,6 +64,8 @@ var fsm = setUpFSM();
 
 /**
 * ### Finite State Machine #####################################################
+*
+* see: https://github.com/jakesgordon/javascript-state-machine
 */
 function setUpFSM() {
     /**
@@ -121,8 +119,9 @@ function setUpFSM() {
         { name: 'donesubmission',       from: 'uploading',           to: 'waveformdisplay' },
       ],
 
-      // fsm does not like underscores in method or state names...
+      // javascript-state-machine does not like underscores in method or state names...
       methods: {
+        // #####################################################################
         // Transition Actions: user initiated
         onStopclicked: function() { 
           audio.endRecording();
@@ -135,27 +134,27 @@ function setUpFSM() {
         // Transition Actions: system initiated
         onRecordingtimeout: function() { 
           audio.endRecording();
-          console.log("recorder stopped on timeout of " + RECORDING_TIMEOUT + " seconds.");
+          //console.log("recorder stopped on timeout of " + RECORDING_TIMEOUT + " seconds.");
         },
 
         // #####################################################################
         // States (Actions to take on entry into given state)
         onWaveformdisplay: function() { 
           view.setRSButtonDisplay(true, false);   
-          console.log('   *** onWaveformdisplay state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onWaveformdisplay state: ' + this.state + " trans: " + this.transitions() );
         },
 
         // recording less than total number of prompts to record (less than n)
         // (ltn = less then n, where n = total number of prompts)
         onRecordingltn: function() { 
           view.setRSButtonDisplay(false, true);  
-          console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
           recordAudio();
         },
 
         onRecordinglastprompt: function() {
           view.setRSButtonDisplay(false, true);  
-          console.log('   *** onRecordinglastprompt state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onRecordinglastprompt state: ' + this.state + " trans: " + this.transitions() );
           recordAudio();
         },
 
@@ -169,7 +168,7 @@ function setUpFSM() {
               }
           }
 
-          console.log('   *** onDisplaymessage state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onDisplaymessage state: ' + this.state + " trans: " + this.transitions() );
 
           view.setRSUButtonDisplay(false, false, false);
           // to give browser enough time to process the last audio recording
@@ -183,12 +182,12 @@ function setUpFSM() {
         // continue, or delete then upload
         onMaxprompts: function() { 
           view.setRSUButtonDisplay(false, false, true);
-          console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onUploading: function() { 
           view.setRSUButtonDisplay(false, false, false);
-          console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
           upload( 
               // anonymous function to be executed after processsing of shadow DOM

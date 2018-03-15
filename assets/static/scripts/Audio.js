@@ -59,7 +59,6 @@ function Audio () {
     }
 
     var constraints = { audio: true };
-    // TODO need to test this code... set navigator.mediaDevices.getUserMedia=null then run as test
     if (navigator.mediaDevices.getUserMedia === undefined) {
       navigator.mediaDevices.getUserMedia = function(constraints) {
 
@@ -71,7 +70,7 @@ function Audio () {
         // Some browsers just don't implement it - return a rejected promise with 
         // an error to keep a consistent interface
         if (!getUserMedia) {
-          console.log('getUserMedia not supported on your browser!');
+          console.error('getUserMedia not supported on your browser!');
           document.querySelector('.info-display').innerText = 
             'Your device does not support the HTML5 API needed to record audio';  
           document.querySelector('.prompt_id').innerText = "";
@@ -102,7 +101,7 @@ function Audio () {
       })
       .catch(function(err) {
         window.alert("Could not get audio input - reason: " + err);
-        console.log('The following error occured: ' + err);
+        console.error('The following error occured: ' + err);
       });
 
     /**
@@ -139,9 +138,9 @@ function Audio () {
 
       profile.channels = self.mediaStreamOutput.channelCount;
 
-      console.log('channels: ' + self.mediaStreamOutput.channelCount);
-      console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
-      console.log('microphoneLevel.gain.value: ' + self.microphoneLevel.gain.value);
+      console.info('channels: ' + self.mediaStreamOutput.channelCount);
+      console.info('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
+      console.info('microphoneLevel.gain.value: ' + self.microphoneLevel.gain.value);
     }
 
     /**
@@ -149,7 +148,6 @@ function Audio () {
     * worker sends back the recorded data as an audio blob
     */
     audioworker.onmessage = function(event) { 
-      // TODO should this be a callback?
       view.waveformdisplay(event.data.blob); 
     }; 
 }
@@ -190,18 +188,10 @@ Audio.prototype.record = function () {
         buffers: getBuffers(event) 
       });
     };
-
-
-
-    console.log('recording audioCtx.sampleRate: ' + this.audioCtx.sampleRate);
 }
 
 /**
 * disconnect audio nodes; send message to audio worker to stop recording
-
-TODO need a better way to clear buffer because a recording that gets cut off
-sometimes gets partially included in next recording... some buffer is not
-getting totally cleared...
 */
 Audio.prototype.endRecording = function () {
     this.microphoneLevel.disconnect();

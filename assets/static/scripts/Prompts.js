@@ -147,9 +147,12 @@ function Prompts() {
     validate_Readmd_file();
 
     var random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
-    console.log("prompt file id: " + page_prompt_list_files[random_prompt_file].id + " (prompt file array index: " + random_prompt_file + ")");
-    console.log("starting promptId: " + page_prompt_list_files[random_prompt_file].start);
-
+    var prompt_file = page_prompt_list_files[random_prompt_file];
+    console.log("prompt file id: " + prompt_file.id + " (prompt file array index: " + random_prompt_file + ")");
+    //console.log("starting promptId: " + page_prompt_list_files[random_prompt_file].start);
+    if ( ! prompt_file.contains_promptid) {
+        console.log("starting promptId: " + prompt_file.start);
+    }
     /** 
     * get prompts file for given language from server
     * synchronous request... 
@@ -157,7 +160,7 @@ function Prompts() {
     $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
           processPromptsFile
     ).fail(function() {
-      console.warn("cannot find prompts file on VoxForge server: " + 
+      console.error("cannot find prompts file on VoxForge server: " + 
                   page_prompt_list_files[random_prompt_file]['file_location']);
     });
 }

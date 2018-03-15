@@ -363,7 +363,7 @@ View.prototype.waveformdisplay = function (blob) {
 
         evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
 
-        // TODO
+        // TODO use a callback?
         fsm.deleteclicked();
       }
 

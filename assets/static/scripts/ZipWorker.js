@@ -39,8 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 importScripts('../lib/jszip.js', '../lib/localforage.js'); 
 
 // if change here, remember to update index.php: $ALLOWEDURL & $UPLOADFOLDER
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
-var uploadURL = 'https://upload.voxforge1.org'; // prod
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
+//var uploadURL = 'https://upload.voxforge1.org'; // prod
 
 /**
 * Main worker function.  This worker, running in the background, takes the text
@@ -55,15 +55,13 @@ var uploadURL = 'https://upload.voxforge1.org'; // prod
 * is detected using a service worker
 */
 self.onmessage = function(event) {
-  console.log("starting zipAndUpload web worker");
-
   var data = event.data;
   switch (data.command) {
     case 'zipAndUpload':
       createZipFile(self, data);
       break;
     default:
-      console.log('zipAndUpload error. Invalid command: ' + data.command);
+      console.error('zipAndUpload error. Invalid command: ' + data.command);
       break;
   }
 };
@@ -115,7 +113,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
 
     function transferFailed(evt) {
       if ( upload_try_count <= max_retries ) {
-        console.log("transferFailed: retry # " + upload_try_count);
+        console.info("transferFailed: retry # " + upload_try_count);
         setTimeout( function () {
           uploadZipFileLoop();
           // TODO DEBUG
@@ -126,7 +124,7 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
         if ( ! run_once ) {
           run_once = true;
           var message = "transferFailed: An error occurred while transferring the file.";
-          console.log(message);
+          console.info(message);
           self.postMessage({
             status: message 
           });
@@ -164,12 +162,12 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
       jsonOnject['speechSubmissionAppVersion'] = speechSubmissionAppVersion;
       //localforage.setItem(saved_submission_name, zip_file_in_memory).then(function (value) {
       localforage.setItem(saved_submission_name, jsonOnject).then(function (value) {
-        console.log('saveSubmissionLocally: saved submission to localforage browser storage using this key: ' + saved_submission_name);
+        console.info('saveSubmissionLocally: saved submission to localforage browser storage using this key: ' + saved_submission_name);
         self.postMessage({ 
           status: "savedInBrowserStorage"
         });
       }).catch(function(err) {
-          console.log('saveSubmissionLocally failed!', err);
+          console.error('saveSubmissionLocally failed!', err);
       });
     }
 
@@ -205,9 +203,9 @@ function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, 
 function updateProgress (evt) {
   if (evt.lengthComputable) {
     var percentComplete = (evt.loaded / evt.total) * 100;
-    console.log('percentComplete %', Math.round(percentComplete) );
+    console.info('percentComplete %', Math.round(percentComplete) );
   } else {
-    console.log('percentComplete - Unable to compute progress information since the total size is unknown');
+    console.warning('percentComplete - Unable to compute progress information since the total size is unknown');
   }
 }
 
@@ -216,7 +214,7 @@ function updateProgress (evt) {
 * that the transfer completed successfully
 */
 function transferSuccessful(evt) {
-  console.log("transferComplete: The transfer successfully completed.");
+  console.info("transferComplete: The transfer successfully completed.");
   self.postMessage({ 
     status: "transferComplete" 
   });
@@ -230,13 +228,13 @@ function checkForSavedFailedUploads() {
     /* Inner Function: if saved submissions exist, get then upload the submission */
     function foundSavedSubmission(numberOfKeys) {
       localforage.keys().then(function(savedSubmissionArray) {
-        console.log('saved submissions to upload: \n' + ' - '+ savedSubmissionArray.join('\n'));
+        console.info('saved submissions to upload: \n' + ' - '+ savedSubmissionArray.join('\n'));
         for (var i = 0; i < savedSubmissionArray.length; i++) {
           var saved_submission_name = savedSubmissionArray[i];
           getSubmission(saved_submission_name);
         }
       }).catch(function(err) {
-        console.log(err);
+        console.error(err);
       });
     }
 
@@ -244,11 +242,11 @@ function checkForSavedFailedUploads() {
     function getSubmission(saved_submission_name) {
       //localforage.getItem(saved_submission_name).then(function(zip_file_in_memory) {
       localforage.getItem(saved_submission_name).then(function(jsonOnject) {
-        console.log("uploading saved submission: " + saved_submission_name);
+        console.info("uploading saved submission: " + saved_submission_name);
         //uploadSubmission(new XMLHttpRequest(), saved_submission_name, zip_file_in_memory);
         uploadSubmission(saved_submission_name, jsonOnject);
       }).catch(function(err) {
-        console.log('checkForSavedFailedUpload err: ' + err);
+        console.error('checkForSavedFailedUpload err: ' + err);
       });
     }
 
@@ -261,7 +259,7 @@ function checkForSavedFailedUploads() {
           localforage.removeItem(saved_submission_name).then(function() {
             console.log('Saved submission removed: ' + saved_submission_name);
           }).catch(function(err) {
-            console.log('Error: cannot remove saved submission: ' + saved_submission_name + ' err: ' + err);
+            console.error('Error: cannot remove saved submission: ' + saved_submission_name + ' err: ' + err);
           });  
         }
 
@@ -286,11 +284,11 @@ function checkForSavedFailedUploads() {
         };
 
         xhr.upload.addEventListener("error", function(event) {
-          console.log('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
+          console.warn('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
         });
         //xhr.upload.addEventListener("abort", transferCancelled);
         xhr.upload.addEventListener("abort", function(event) {
-          console.log('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
+          console.warn('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
         });
         xhr.open('POST', uploadURL, true); // async
 
@@ -309,6 +307,6 @@ function checkForSavedFailedUploads() {
       foundSavedSubmission(numberOfKeys);
     }
   }).catch(function(err) {
-      console.log(err);
+      console.error(err);
   });
 }

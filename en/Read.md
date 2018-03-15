@@ -10,6 +10,7 @@ weight: 2
 
 ################################################################################
 
+# TODO remove .html subffixes for prod
 total_number_of_prompts: 1176
 prompt_list_files:
   - id: "001"

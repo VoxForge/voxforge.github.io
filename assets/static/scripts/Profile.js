@@ -70,9 +70,6 @@ Profile.cleanUserInputRemoveSpaces = function (user_input) {
 * 
 * removes all non-alphanumeric characters
 * trim string to max of length 80 characters
-* 
-* TODO would HTML excaping be enough? using browser's escape(str) function
-* see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/escape
 
 * https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet
 *   But HTML entity encoding doesn't work if you're putting untrusted data inside 
@@ -256,7 +253,7 @@ Profile.prototype.addProfile2LocalStorage = function () {
 * return cleaned username user entered into input field
 */
 Profile.prototype.getUserName = function () {
-    return Profile.cleanUserInputRemoveSpaces( $('#username').val() ) || page_anonymous;
+    return Profile.cleanUserInputRemoveSpaces( $('#username').val() ) || page_anonymous || "anonymous";
 }
 
 /**
@@ -270,7 +267,6 @@ Profile.prototype.getTempSubmissionName = function () {
       )
     }
 
-    // TODO why did you set it to toLowercase???
     // var username = $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
     var username = Profile.cleanUserInputRemoveSpaces( $('#username').val() ).toLowerCase();
     var d = new Date();

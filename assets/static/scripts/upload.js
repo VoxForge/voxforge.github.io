@@ -112,22 +112,20 @@ function upload( when_audio_processing_completed_func ) {
       */
       zip_worker.onmessage = function zipworkerDone(event) { 
         if (event.data.status === "transferComplete") {
-          console.log('message from worker: Upload to VoxForge server completed');
+          console.info('message from worker: Upload to VoxForge server completed');
           view.showUploadStatus("Upload successfull!");
         } else if (event.data.status === "savedInBrowserStorage") {
-          console.log('message from worker: problem with Internet connection, submission saved in browser storage');
+          console.info('message from worker: problem with Internet connection, submission saved in browser storage');
           alert("\t\tSubmission saved in browser storage.\n \t\t(No Internet Connection)  \n\nIt will be uploaded next time you make a submission with Internet up.");
         } else if (event.data.status === "foundSavedFailedUploads") {
-          console.log('message from worker: found submissions saved to browser, uploading them...');
+          console.info('message from worker: found submissions saved to browser, uploading them...');
           view.showUploadStatus("Found saved submission(s), uploading to VoxForge server.");
         } else {
-          console.log('message from worker: transfer error: ' + event.data.status);
+          console.error('message from worker: transfer error: ' + event.data.status);
         }
       };
 
       when_audio_processing_completed_func();
-
-      console.log('===done createZipFile===');
     }
 
     audioArrayLoop();
