@@ -100,9 +100,9 @@ function upload( when_audio_processing_completed_func ) {
         temp_submission_name: profile.getTempSubmissionName(),
         readme_blob: readme_blob,
         prompts_blob: prompts_blob,
+        license_blob: license_blob,
         profile_json_blob: profile_json_blob,
         prompts_json_blob: prompts_json_blob,
-        license_json_blob: license_json_blob,
         audio: audioArray,
         speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
       });

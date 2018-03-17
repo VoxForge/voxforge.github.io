@@ -73,6 +73,7 @@ function createZipFile(self, data) {
   var zip = new JSZip();
   zip.file("readme.txt", data.readme_blob); // backward compatibility for VoxForge 1.0 corpus
   zip.file("prompts.txt", data.prompts_blob); // backward compatibility for VoxForge 1.0 corpus
+  zip.file("license.txt", data.license_blob);
   zip.file("profile.json", data.profile_json_blob);
   zip.file("prompts.json", data.prompts_json_blob);
 
@@ -87,9 +88,6 @@ function createZipFile(self, data) {
     function(zip_file_in_memory) {
       var xhr = new XMLHttpRequest();
 
-      // TODO this approach will not catch instance where user records in one language
-      // offline, it gets saved and then recrods in another language and both get
-      // uploaded under second name and language...
       uploadZipFile(
         xhr, 
         data.temp_submission_name, 

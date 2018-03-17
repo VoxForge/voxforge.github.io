@@ -104,22 +104,46 @@ Profile.prototype.toHash = function () {
 
     profile_hash["language"] = page_language;
     profile_hash["native_speaker"] = $("#native_speaker").val();
+
     profile_hash["first_language"] = $('#first_language').val();
-    profile_hash["first_language_other"] = $("#first_language_other").val();
+    if ($('#first_language').val() == page_localized_other) {
+        profile_hash["first_language_other"] = Profile.cleanUserInput( $("#first_language_other").val() );
+    } else {
+        profile_hash["first_language_other"] = "";
+    }
+
     profile_hash["dialect"] = $("#dialect").val();
-    profile_hash["dialect_other"] = Profile.cleanUserInput( $("#dialect_other").val() );
+    if ($('#dialect').val() == page_localized_other) {
+        profile_hash["dialect_other"] = Profile.cleanUserInput( $("#dialect_other").val() );
+    } else {
+        profile_hash["dialect_other"] = "";
+    }
+
     profile_hash["sub_dialect"] = $("#sub_dialect").val();
 
     profile_hash["microphone"] = $("#microphone").val() ;
-    profile_hash["microphone_other"] = Profile.cleanUserInput( $("#microphone_other").val() );
+    if ($('#microphone').val() == page_localized_other) {
+        profile_hash["microphone_other"] = Profile.cleanUserInput( $("#microphone_other").val() );
+    } else {
+        profile_hash["microphone_other"] = "";
+    }
 
     profile_hash["recording_location"] = $("#recording_location").val() ;
-    profile_hash["recording_location_other"] = Profile.cleanUserInput( $("#recording_location_other").val() );
+    if ($('#recording_location').val() == page_localized_other) {
+        profile_hash["recording_location_other"] = Profile.cleanUserInput( $("#recording_location_other").val() );
+    } else {
+        profile_hash["recording_location_other"] = "";
+    }
 
     profile_hash["background_noise"] = $("#background_noise").val() ;
     profile_hash["noise_volume"] = $("#noise_volume").val() ;
+
     profile_hash["noise_type"] = $("#noise_type").val();
-    profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
+    if ($('#noise_type').val() == page_localized_other) {
+        profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
+    } else {
+        profile_hash["noise_type_other"] = "";
+    }
 
     profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
 
@@ -268,12 +292,20 @@ Profile.prototype.getTempSubmissionName = function () {
     }
 
     // var username = $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
-    var username = Profile.cleanUserInputRemoveSpaces( $('#username').val() ).toLowerCase() || page_anonymous || "anonymous";
+    var username = this.getUserName().toLowerCase();
+
     var d = new Date();
     var date = d.getFullYear().toString() + (d.getMonth() + 1).toString() + d.getDate().toString();
     var result = page_language + '-' + username + '-' + date + '-' + uuidv4();
 
     return result;
+}
+
+/**
+* return username to be used in license, if blank, the use FSF
+*/
+Profile.prototype.getLicenseUserName = function () {
+    return Profile.cleanUserInputRemoveSpaces( $('#username').val() ) || "Free Software Foundation";
 }
 
 /**
@@ -284,13 +316,14 @@ Profile.prototype.CC0toTextArray = function () {
     var i=0;
     var d = new Date();
     var year = d.getFullYear().toString();
-    var work_name = 'VoxForge speech recording by';
-
-    license_array[i++] = year + ' ' + work_name + ' by ' + Profile.cleanUserInputRemoveSpaces( $('#username').val() + '\n';
+    
+    // assuming that it makes not sense to mention FSF in a CC0 license since 
+    // there is no copyright...
+    license_array[i++] = year + ' - VoxForge Speech Recording by: ' + this.getUserName() + '\n';
  
-    license_array[i++] = "\nTo the extent possible under law, the person who associated CC0 with\n';
-    license_array[i++] = work_name + ' has waived all copyright and related or neighboring rights\n';
-    license_array[i++] = 'to ' + work_name + '\n';
+    license_array[i++] = '\nTo the extent possible under law, the person who associated CC0 with\n';
+    license_array[i++] = 'this Speech Recording has waived all copyright and related or neighboring rights\n';
+    license_array[i++] = 'to the Speech Recording\n';
 
     license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
     license_array[i++] = 'work.  If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.\n';
@@ -306,11 +339,10 @@ Profile.prototype.CC_BYtoTextArray = function () {
     var i=0;
     var d = new Date();
     var year = d.getFullYear().toString();
-    var work_name = 'VoxForge speech recording by';
 
-    license_array[i++] = work_name + ' (c) ' + year + 'by ' + Profile.cleanUserInputRemoveSpaces( $('#username').val() + '\n';
+    license_array[i++] = 'VoxForge Speech Recording (c) ' + year + ' by: ' + this.getUserName() + '\n';
 
-    license_array[i++] = '\n' + work_name + 'is licensed under a\n';
+    license_array[i++] = '\nThis Speech Recordingis licensed under a\n';
     license_array[i++] = 'Creative Commons Attribution 3.0 Unported License.\n';
 
     license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
@@ -322,16 +354,15 @@ Profile.prototype.CC_BYtoTextArray = function () {
 /**
 * CC BY-SA Attribution-ShareAlike 3.0 Unported Licenseto array
 */
-Profile.prototype.CC_BY-SAtoTextArray = function () {
+Profile.prototype.CC_BY_SAtoTextArray = function () {
     var license_array = [];
     var i=0;
     var d = new Date();
     var year = d.getFullYear().toString();
-    var work_name = 'VoxForge speech recording by';
 
-    license_array[i++] = work_name + ' (c) ' + year + ' by ' + Profile.cleanUserInputRemoveSpaces( $('#username').val() + '\n';
+    license_array[i++] = 'VoxForge Speech Recording (c) ' + year + ' by: ' + this.getUserName() + '\n';
 
-    license_array[i++] = '\n' + work_name + 'is licensed under a\n';
+    license_array[i++] = '\nThis Speech Recording is licensed under a\n';
     license_array[i++] = 'Creative Commons Attribution-ShareAlike 3.0 Unported License.\n';
  
     license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
@@ -348,10 +379,8 @@ Profile.prototype.GPL_V3toTextArray = function () {
     var i=0;
     var d = new Date();
     var year = d.getFullYear().toString();
-    var work_name = 'VoxForge speech recording';
 
-    license_array[i++] = work_name;
-    license_array[i++] = 'Copyright (C) ' + year + ' ' + Profile.cleanUserInputRemoveSpaces( $('#username').val() + '\n';
+    license_array[i++] = 'VoxForge Speech Recording Copyright (C) ' + year + ' by: ' + this.getUserName() + '\n';
 
     license_array[i++] = '\nThis program is free software: you can redistribute it and/or modify\n';
     license_array[i++] = 'it under the terms of the GNU General Public License as published by\n';
@@ -373,11 +402,22 @@ Profile.prototype.GPL_V3toTextArray = function () {
 * GPL v3 License to array
 */
 Profile.prototype.licensetoArray = function () {
-    if ($("#license").val(); == 'CC0' {
-        return this.CC0toTextArray();
-    } else     if ($("#license").val(); == 'CC0' {
+    var licenseID = $("#license").val();
+    var result;
 
+    if (licenseID == 'CC0') {
+        result = this.CC0toTextArray();
+    } else if (licenseID == 'CC_BY') {
+        result =  this.CC_BYtoTextArray();
+    } else if (licenseID == 'CC_BY-SA') {
+        result =  this.CC_BY_SAtoTextArray();
+    } else if (licenseID == 'GPLv3') {
+        result =  this.GPL_V3toTextArray();
+    } else {
+        console.error('invalid licence ID: ' + licenseID);
+    }
 
+    return result;
 }
 
 
