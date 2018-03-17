@@ -90,6 +90,7 @@ function upload( when_audio_processing_completed_func ) {
     function createZipFile(audioArray) {
       var readme_blob = new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"});
       var prompts_blob = new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"});
+      var license_blob = new Blob(profile.licensetoArray(), {type: "text/plain;charset=utf-8"});
       var profile_json_blob = new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"});
       var prompts_json_blob = new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"});
       zip_worker.postMessage({
@@ -101,6 +102,7 @@ function upload( when_audio_processing_completed_func ) {
         prompts_blob: prompts_blob,
         profile_json_blob: profile_json_blob,
         prompts_json_blob: prompts_json_blob,
+        license_json_blob: license_json_blob,
         audio: audioArray,
         speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
       });

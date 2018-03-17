@@ -205,7 +205,7 @@ function updateProgress (evt) {
     var percentComplete = (evt.loaded / evt.total) * 100;
     console.info('percentComplete %', Math.round(percentComplete) );
   } else {
-    console.warning('percentComplete - Unable to compute progress information since the total size is unknown');
+    console.warn('percentComplete - Unable to compute progress information since the total size is unknown');
   }
 }
 

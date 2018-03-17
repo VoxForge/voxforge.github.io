@@ -187,11 +187,12 @@ license:
       identical terms.  </br>
       <b>GPLv3 </b> similar to CC BY-SA, but made for software... used by
       VoxForge 1.0 corpus.
+  selection_default: CC0 - Creative Commons - No rights Reserved 
   selection:
-    - CC0 - Creative Commons - No rights Reserved (default)
     - CC BY - Attribution
     - CC BY-SA - Creative Commons Attribution-ShareAlike
     - GPLv3 - GNU General Public License
+
 
 num_prompts:
   label: Number of prompts to read

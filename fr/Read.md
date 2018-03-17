@@ -154,25 +154,25 @@ license:
       CC BY-SA - Attribution-ShareAlike
       GPLv3 - GNU General Public License
     text:  > 
-      <b>CC0 - Pas de droit d’auteur</b> permet aux titulaires de droits de 
+      <b>CC0 - Creative Commons - Pas de droit d’auteur</b> permet aux titulaires de droits de 
       renoncer à tous leurs droits et de placer une œuvre dans le domaine 
       public. </br>
-      <b>CC BY - Attribution</b>  Cette licence permet aux autres de distribuer,
+      <b>CC BY - Creative Commons - Attribution</b>  Cette licence permet aux autres de distribuer,
       remixer, arranger, et adapter votre œuvre, même à des fins commerciales, 
       tant qu’on vous accorde le mérite de la création originale en citant 
       votre nom.</br>
-      <b>CC BY-SA - Attribution - Partage dans les Mêmes Conditions</b>  Cette 
+      <b>CC BY-SA - Creative Commons - Attribution - Partage dans les Mêmes Conditions</b>  Cette 
       licence permet aux autres de remixer, arranger, et adapter votre œuvre, 
       même à des fins commerciales, tant qu’on vous accorde le mérite en citant 
       votre nom et qu’on diffuse les nouvelles créations selon des conditions 
       identiques. </br>
-      <b>GPLv3 </b> similar to CC BY-SA, but made for software... used by
+      <b>GPLv3 GNU General Public License</b> similar to CC BY-SA, but made for software... used by
       VoxForge 1.0 corpus.
+  selection_default: { value: 'CC0',  item: 'CC0 - Creative Commons - Pas de droit d’auteur (conseillé)' }
   selection:
-    - CC0 - Creative Commons - Pas de droit d’auteur (défaut)
-    - CC BY - Attribution
-    - CC BY-SA - Attribution - Partage dans les Mêmes Conditions 
-    - GPLv3 - GNU General Public License
+    - { value: 'CC_BY',     option: 'CC BY - Creative Commons - Attribution' }
+    - { value: 'CC_BY-SA',  option: 'CC BY-SA -  Creative Commons - Attribution - Partage dans les Mêmes Conditions' }
+    - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License' }
 
 num_prompts:
   label: Nombre de phrases à lire

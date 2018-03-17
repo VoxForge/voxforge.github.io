@@ -229,12 +229,17 @@
            <div data-role="popup" id="license_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
             <p><a href="{{ page.license.popup.link }}" target="_blank">{{ page.license.label }}</a>: {{ page.license.popup.text }}</p>
            </div>
-           <select type="text" id="license"/></br>
-              <option selected value="CC0">{{ page.please_select }}</option>
+             <select type="text" id="license"/></br>
+              <option selected value="{{ page.license.selection_default.value }}">{{ page.license.selection_default.item }}</option>
               {% for item in page.license.selection %}
-                <option value="{{ item }}">{{ item }}</option>
+                <option value="{{ item.value }}">{{ item.option }}</option>
               {% endfor %}
               </select>
+
+            {% for item in page.age.selection %}
+              <option old_value="{{ item.old_value }}" value="{{ item.value }}">{{ item.value }}</option> 
+            {% endfor %}
+
 	       </div> <!-- recording_information_display -->
 	     </div><!-- readme -->
 	   </div> <!-- profile-display -->

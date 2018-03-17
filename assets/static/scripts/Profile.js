@@ -268,10 +268,116 @@ Profile.prototype.getTempSubmissionName = function () {
     }
 
     // var username = $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
-    var username = Profile.cleanUserInputRemoveSpaces( $('#username').val() ).toLowerCase();
+    var username = Profile.cleanUserInputRemoveSpaces( $('#username').val() ).toLowerCase() || page_anonymous || "anonymous";
     var d = new Date();
     var date = d.getFullYear().toString() + (d.getMonth() + 1).toString() + d.getDate().toString();
     var result = page_language + '-' + username + '-' + date + '-' + uuidv4();
 
     return result;
 }
+
+/**
+* CC0 1.0 license to array
+*/
+Profile.prototype.CC0toTextArray = function () {
+    var license_array = [];
+    var i=0;
+    var d = new Date();
+    var year = d.getFullYear().toString();
+    var work_name = 'VoxForge speech recording by';
+
+    license_array[i++] = year + ' ' + work_name + ' by ' + Profile.cleanUserInputRemoveSpaces( $('#username').val() + '\n';
+ 
+    license_array[i++] = "\nTo the extent possible under law, the person who associated CC0 with\n';
+    license_array[i++] = work_name + ' has waived all copyright and related or neighboring rights\n';
+    license_array[i++] = 'to ' + work_name + '\n';
+
+    license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
+    license_array[i++] = 'work.  If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.\n';
+
+    return license_array;
+}
+
+/**
+* CC BY Attribution 3.0 Unported License to array
+*/
+Profile.prototype.CC_BYtoTextArray = function () {
+    var license_array = [];
+    var i=0;
+    var d = new Date();
+    var year = d.getFullYear().toString();
+    var work_name = 'VoxForge speech recording by';
+
+    license_array[i++] = work_name + ' (c) ' + year + 'by ' + Profile.cleanUserInputRemoveSpaces( $('#username').val() + '\n';
+
+    license_array[i++] = '\n' + work_name + 'is licensed under a\n';
+    license_array[i++] = 'Creative Commons Attribution 3.0 Unported License.\n';
+
+    license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
+    license_array[i++] = 'work.  If not, see <http://creativecommons.org/licenses/by/3.0/>.\n';
+
+    return license_array;
+}
+
+/**
+* CC BY-SA Attribution-ShareAlike 3.0 Unported Licenseto array
+*/
+Profile.prototype.CC_BY-SAtoTextArray = function () {
+    var license_array = [];
+    var i=0;
+    var d = new Date();
+    var year = d.getFullYear().toString();
+    var work_name = 'VoxForge speech recording by';
+
+    license_array[i++] = work_name + ' (c) ' + year + ' by ' + Profile.cleanUserInputRemoveSpaces( $('#username').val() + '\n';
+
+    license_array[i++] = '\n' + work_name + 'is licensed under a\n';
+    license_array[i++] = 'Creative Commons Attribution-ShareAlike 3.0 Unported License.\n';
+ 
+    license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
+    license_array[i++] = 'work.  If not, see <http://creativecommons.org/licenses/by-sa/3.0/>.\n';
+
+    return license_array;
+}
+
+/**
+* GPL v3 License to array
+*/
+Profile.prototype.GPL_V3toTextArray = function () {
+    var license_array = [];
+    var i=0;
+    var d = new Date();
+    var year = d.getFullYear().toString();
+    var work_name = 'VoxForge speech recording';
+
+    license_array[i++] = work_name;
+    license_array[i++] = 'Copyright (C) ' + year + ' ' + Profile.cleanUserInputRemoveSpaces( $('#username').val() + '\n';
+
+    license_array[i++] = '\nThis program is free software: you can redistribute it and/or modify\n';
+    license_array[i++] = 'it under the terms of the GNU General Public License as published by\n';
+    license_array[i++] = 'the Free Software Foundation, either version 3 of the License, or\n';
+    license_array[i++] = '(at your option) any later version.\n';
+
+    license_array[i++] = '\nThis program is distributed in the hope that it will be useful,\n';
+    license_array[i++] = 'but WITHOUT ANY WARRANTY; without even the implied warranty of\n';
+    license_array[i++] = 'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n';
+    license_array[i++] = 'GNU General Public License for more details.\n';
+
+    license_array[i++] = '\nYou should have received a copy of the GNU General Public License\n';
+    license_array[i++] = 'along with this program.  If not, see <https://www.gnu.org/licenses/>.\n';
+
+    return license_array;
+}
+
+/**
+* GPL v3 License to array
+*/
+Profile.prototype.licensetoArray = function () {
+    if ($("#license").val(); == 'CC0' {
+        return this.CC0toTextArray();
+    } else     if ($("#license").val(); == 'CC0' {
+
+
+}
+
+

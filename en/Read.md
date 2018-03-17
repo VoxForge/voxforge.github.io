@@ -183,28 +183,28 @@ license:
     title: Creative Commons Licences
     link: https://creativecommons.org/licenses/
     hover_text: >
-      CC0 - Public Domain Dedication
-      CC BY - Attribution
-      CC BY-SA - Attribution-ShareAlike
-      GPLv3 - GNU General Public License
+      CC0 - Creative Commons Public Domain Dedication;
+      CC BY - Creative Commons Attribution;
+      CC BY-SA - Creative Commons Attribution-ShareAlike;
+      GPLv3 - GNU General Public License.
     text:  > 
-      <b>CC0 - Public Domain Dedication</b> you dedicate this work to the
+      <b>CC0 - Creative Commons Public Domain Dedication</b> you dedicate this work to the
       public domain by waiving all of your rights to the work worldwide
-      under copyright law</br>
-      <b>CC BY - Attribution</b>  This license lets others distribute, remix, 
+      under copyright law.  If you don't know which license to choose, choose: <b>CC0</b>.</br>
+      <b>CC BY - Creative Commons Attribution</b>  This license lets others distribute, remix, 
       tweak, and build upon your work, even commercially, as long as they 
-      credit you for the original creation</br>
-      <b>CC BY-SA - Attribution-ShareAlike </b>  This license lets others 
+      credit you for the original creation.</br>
+      <b>CC Creative Commons BY-SA - Attribution-ShareAlike </b>  This license lets others 
       remix, tweak, and build upon your work even for commercial purposes, 
       as long as they credit you and license their new creations under the 
       identical terms.  </br>
-      <b>GPLv3 </b> similar to CC BY-SA, but made for software... used by
+      <b>GPLv3 GNU General Public License</b> similar to CC BY-SA, but made for software... used by
       VoxForge 1.0 corpus.
+  selection_default: { value: 'CC0',  item: 'CC0 - Creative Commons - No rights Reserved (recommended)' }
   selection:
-    - CC0 - Creative Commons - No rights Reserved (default)
-    - CC BY - Attribution
-    - CC BY-SA - Creative Commons Attribution-ShareAlike
-    - GPLv3 - GNU General Public License
+    - { value: 'CC_BY',     option: 'CC BY - Creative Commons - Attribution' }
+    - { value: 'CC_BY-SA',  option: 'CC BY-SA - Creative Commons Attribution-ShareAlike' }
+    - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License' }
 
 num_prompts:
   label: Number of prompts to read
@@ -215,7 +215,7 @@ instructions:
   line2: 2. Press <b>Stop</b> when completed.
   line3: 3. When all the requested prompts are completed, you'll be prompted to <b>Upload</b> your recordings.
   edge:
-    mouse_over_text: For Microsoft Edge browser, click here to see how to tell Windows that Edge can use your microphone.
+    mouse_over_text: For Microsoft Edge browser, click here to see how to give your browser permission to use your microphone.
     popup:
       title: Windows - How to give your Edge browser permission to use your microphone
       link: https://privacy.microsoft.com/en-us/windows-10-camera-and-privacy
