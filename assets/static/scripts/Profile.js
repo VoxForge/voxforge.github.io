@@ -94,6 +94,8 @@ Profile.prototype.toHash = function () {
     var profile_hash = {};
     var i=0;
 
+    // note, this leaves the contents of Form Other unchanged, only when user 
+    // comes back does it make a difference
     if ( $('#username').val() ) {
       profile_hash["username"] = Profile.cleanUserInputRemoveSpaces( $("#username").val() );
     } else {
@@ -106,43 +108,43 @@ Profile.prototype.toHash = function () {
     profile_hash["native_speaker"] = $("#native_speaker").val();
 
     profile_hash["first_language"] = $('#first_language').val();
-    if ($('#first_language').val() == page_localized_other) {
-        profile_hash["first_language_other"] = Profile.cleanUserInput( $("#first_language_other").val() );
-    } else {
+    if ($('#first_language').val() !== page_localized_other) {
         profile_hash["first_language_other"] = "";
+    } else {
+        profile_hash["first_language_other"] = Profile.cleanUserInput( $("#first_language_other").val() );
     }
 
     profile_hash["dialect"] = $("#dialect").val();
-    if ($('#dialect').val() == page_localized_other) {
-        profile_hash["dialect_other"] = Profile.cleanUserInput( $("#dialect_other").val() );
-    } else {
+    if ($('#dialect').val() !== page_localized_other) {
         profile_hash["dialect_other"] = "";
+    } else {
+        profile_hash["dialect_other"] = Profile.cleanUserInput( $("#dialect_other").val() );
     }
 
     profile_hash["sub_dialect"] = $("#sub_dialect").val();
 
     profile_hash["microphone"] = $("#microphone").val() ;
-    if ($('#microphone').val() == page_localized_other) {
-        profile_hash["microphone_other"] = Profile.cleanUserInput( $("#microphone_other").val() );
-    } else {
+    if ($('#microphone').val() !== page_localized_other) {
         profile_hash["microphone_other"] = "";
+    } else {
+        profile_hash["microphone_other"] = Profile.cleanUserInput( $("#microphone_other").val() );
     }
 
     profile_hash["recording_location"] = $("#recording_location").val() ;
-    if ($('#recording_location').val() == page_localized_other) {
-        profile_hash["recording_location_other"] = Profile.cleanUserInput( $("#recording_location_other").val() );
-    } else {
+    if ($('#recording_location').val() !== page_localized_other) {
         profile_hash["recording_location_other"] = "";
+    } else {
+        profile_hash["recording_location_other"] = Profile.cleanUserInput( $("#recording_location_other").val() );
     }
 
     profile_hash["background_noise"] = $("#background_noise").val() ;
     profile_hash["noise_volume"] = $("#noise_volume").val() ;
 
     profile_hash["noise_type"] = $("#noise_type").val();
-    if ($('#noise_type').val() == page_localized_other) {
-        profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
-    } else {
+    if ($('#noise_type').val() !== page_localized_other) {
         profile_hash["noise_type_other"] = "";
+    } else {
+        profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
     }
 
     profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
