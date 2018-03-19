@@ -1,0 +1,113 @@
+/*
+Copyright 2018 VoxForge
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+var CACHE_NAME = 'voxforge-cache-v0.1';
+var PATH = '/assets/static/';
+
+var urlsToCache = [
+  PATH + 'lib/EncoderWorker.js',
+  PATH + 'lib/jquery-1.12.4.js',
+  PATH + 'lib/jquery.mobile-1.4.5.js',
+  PATH + 'lib/languages.js',
+  PATH + 'lib/platform.js',
+  PATH + 'lib/visualize.js',
+  PATH + 'lib/wavesurfer.js',
+  PATH + 'lib/idb-keyval.js',
+  PATH + 'lib/jszip.js',
+  PATH + 'lib/localforage.js',
+  PATH + 'lib/state-machine.js',
+  PATH + 'lib/WavAudioEncoder.js',
+
+  PATH + 'scripts/app.js',
+  PATH + 'scripts/Audio.js',
+  PATH + 'scripts/Profile.js',
+  PATH + 'scripts/Prompts.js',
+  PATH + 'scripts/upload.js',
+  PATH + 'scripts/View.js',
+  PATH + 'scripts/ZipWorker.js',
+
+  PATH + 'styles/app.css',
+  PATH + 'styles/jquery.mobile-1.4.5.css',
+
+  '/en/prompts/001.html',
+  '/en/prompts/002.html',
+  '/en/prompts/003.html',
+  '/en/read/',
+];
+
+self.addEventListener('install', function(event) {
+  // Perform install steps
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function(cache) {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+  );
+});
+
+/**
+* this should cache the /en/prompts/001... prompt files as they are requested...
+* TODO if browser offline && asking for a prompt file, then don't just pick
+* a random prompt file, use theone currently in cache, and add more prompt files
+* once user is back online...
+*
+* If we want to cache new requests cumulatively, we can do so by handling the
+* response of the fetch request and then adding it to the cache, like below.
+*
+* see: https://developers.google.com/web/fundamentals/primers/service-workers/
+*/
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    caches.match(event.request)
+      .then(function(response) {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
+
+        // IMPORTANT: Clone the request. A request is a stream and
+        // can only be consumed once. Since we are consuming this
+        // once by cache and once by the browser for fetch, we need
+        // to clone the response.
+        var fetchRequest = event.request.clone();
+
+        return fetch(fetchRequest).then(
+          function(response) {
+            // Check if we received a valid response
+            if(!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // IMPORTANT: Clone the response. A response is a stream
+            // and because we want the browser to consume the response
+            // as well as the cache consuming the response, we need
+            // to clone it so we have two streams.
+            var responseToCache = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(function(cache) {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          }
+        );
+      })
+    );
+});
+
