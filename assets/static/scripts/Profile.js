@@ -94,8 +94,8 @@ Profile.prototype.toHash = function () {
     var profile_hash = {};
     var i=0;
 
-    // note, this leaves the contents of Form Other unchanged, only when user 
-    // comes back does it make a difference
+    // note, this leaves the contents of Form unchanged, only when user 
+    // comes back does content of Other form field get removed
     if ( $('#username').val() ) {
       profile_hash["username"] = Profile.cleanUserInputRemoveSpaces( $("#username").val() );
     } else {
