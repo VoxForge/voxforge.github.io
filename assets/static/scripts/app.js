@@ -31,7 +31,14 @@ vulnerability...
 TODO: CSRF - Cross site request forgery
 
 // for testing with Chrome: requires https; can bypass this with:
-// google-chrome --user-data-dir=~/temp --unsafely-treat-insecure-origin-as-secure="http://flask.voxforge1.org"
+// no longer works: google-chrome -user-data-dir=~/temp --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://jekyll_voxforge.org
+
+// see: https://stackoverflow.com/questions/32042187/chrome-error-you-are-using-an-unsupported-command-line-flag-ignore-certifcat
+// Note: if you actually want to ignore invalid certificates there's an option 
+// in chrome://flags you can enable: Allow invalid certificates for resources loaded from localhost
+// just start the browser at https://127.0.0.1/en/read/ (note: not same as jekyll with port 4000...)
+
+
 // need Google Chrome version > 58 for wavesurfer to work correctly
 */
 
@@ -251,7 +258,7 @@ TODO promisifying a XHR request
 */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+    navigator.serviceWorker.register('/voxforge_sw.js').then(function(registration) {
       // Registration was successful
       console.log('ServiceWorker registration successful with scope: ', registration.scope);
     }, function(err) {
@@ -260,3 +267,10 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+
+// Then later, request a one-off sync:
+navigator.serviceWorker.ready.then(function(swRegistration) {
+  return swRegistration.sync.register('myFirstSync');
+});
+

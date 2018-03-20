@@ -17,7 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 // if change here, remember to update index.php: $ALLOWEDURL & $UPLOADFOLDER
-var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
+//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
+// Chrome does like self signed certificates... need to test in prod...
+// make sure you terminate old service workers: chrome://inspect/#service-workers
+// then clear browser caches
+// F12; Network>Disable Cache
+//In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost'
+// don't use Jekyll port number for testing...
+var uploadURL = 'https://127.0.0.1/index.php'; // chrome testing
 //var uploadURL = 'https://upload.voxforge1.org'; // prod
 
 // zip and upload Web Worker

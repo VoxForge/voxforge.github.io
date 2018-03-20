@@ -7,7 +7,9 @@
 // also move index.php to prod
 //$ALLOWEDURL = "https://voxforge.github.io"; // prod
 //$UPLOADFOLDER = '../../public/speechsubmissions/'; // prod
-$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
+
+//$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
+$ALLOWEDURL = "https://127.0.0.1"; // testing
 $UPLOADFOLDER = './submissions/'; // testing
 
 // max upload size should be a function of the number of prompts
