@@ -88,6 +88,9 @@ function upload( when_audio_processing_completed_func ) {
     * call web worker to create zip file and upload to VoxForge server
     */
     function createZipFile(audioArray) {
+      // need to copy to blobs here (rather than web worker) because if pass 
+      // them as-is to ZipWorker, they will be overwritten when page refreshes
+      // and not be accessible withing web worker
       var readme_blob = new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"});
       var prompts_blob = new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"});
       var license_blob = new Blob(profile.licensetoArray(), {type: "text/plain;charset=utf-8"});

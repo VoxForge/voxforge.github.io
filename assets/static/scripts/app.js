@@ -245,7 +245,9 @@ function setUpFSM() {
 
 /**
 * use service worker to cache all javascript files so app can be run offline
-*
+
+TODO promisifying a XHR request
+* see https://developers.google.com/web/fundamentals/primers/promises
 */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
