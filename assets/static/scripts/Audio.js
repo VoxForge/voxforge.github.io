@@ -159,10 +159,15 @@ function Audio () {
 */
 Audio.prototype.record = function () {
     /**
-    * captures audio buffer data from processor worker
+    * function used as a parameter to audioworker captures audio buffer data 
+    * from processor worker
+    *
+    * TODO couldn't this be used inside EncoderWorker?
+    * this seems like it is not a callback, but an anonymous function used within audioworker
     */
     function getBuffers(event) {
       var buffers = [];
+      // TODO can we simplify this loop to only capture one channel?
       for (var ch = 0; ch < 2; ++ch)
         buffers[ch] = event.inputBuffer.getChannelData(ch);
       return buffers;
@@ -201,5 +206,6 @@ Audio.prototype.endRecording = function () {
       command: 'finish' 
     });
 
+    // TODO is this needed?
     return "ok";
 }

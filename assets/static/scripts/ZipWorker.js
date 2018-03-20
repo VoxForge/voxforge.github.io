@@ -38,10 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 importScripts('../lib/jszip.js', '../lib/localforage.js'); 
 
-// if change here, remember to update index.php: $ALLOWEDURL & $UPLOADFOLDER
-var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
-//var uploadURL = 'https://upload.voxforge1.org'; // prod
-
 /**
 * Main worker function.  This worker, running in the background, takes the text
 * and audio blob files
@@ -57,7 +53,7 @@ var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
 self.onmessage = function(event) {
   var data = event.data;
   switch (data.command) {
-    case 'zipAndUpload':
+    case 'zip':
       createZipFile(self, data);
       break;
     default:
@@ -67,7 +63,7 @@ self.onmessage = function(event) {
 };
 
 /**
-* creates the zip file in memory
+* creates the zip file in memory and return to caller as blob
 */
 function createZipFile(self, data) {
   var zip = new JSZip();
@@ -86,225 +82,12 @@ function createZipFile(self, data) {
   /* inner function: create zip file in memory and puts it in a blob object */
   zip.generateAsync({type:"blob"}).then(
     function(zip_file_in_memory) {
-      var xhr = new XMLHttpRequest();
-
-      uploadZipFile(
-        xhr, 
-        data.temp_submission_name, 
-        zip_file_in_memory,
-        data.language,
-        data.username,
-        data.speechSubmissionAppVersion,
-      );
+      self.postMessage({ 
+        zip_file_in_memory: zip_file_in_memory,
+        status: "zipFileCreationComplete" 
+      });
     }
   );
 }
 
-/**
-* tries to perform the actual upload of submission to voxforge server, if cannot
-* tries 2 more times and then saves to user's browser storage
-*/
-function uploadZipFile(xhr, temp_submission_name, zip_file_in_memory, language, username, speechSubmissionAppVersion) {
-    var upload_try_count = 1;
-    var max_retries = 3;
-    var run_once = false;
 
-    function transferFailed(evt) {
-      if ( upload_try_count <= max_retries ) {
-        console.info("transferFailed: retry # " + upload_try_count);
-        setTimeout( function () {
-          uploadZipFileLoop();
-          // TODO DEBUG
-          //    }, 1000 * 60 * 1); // wait 1 minute for each retry
-        }, 3000 ); 
-        upload_try_count++;
-      } else {
-        if ( ! run_once ) {
-          run_once = true;
-          var message = "transferFailed: An error occurred while transferring the file.";
-          console.info(message);
-          self.postMessage({
-            status: message 
-          });
-          saveSubmissionLocally(language, username);
-        }
-        return;
-      }
-    }
-
-    /* Inner Function: implements a recursive loop */
-    /* on failed upload, perform 2 more retries and then save submission locally */
-    function uploadZipFileLoop() {
-      xhr.upload.addEventListener("error", transferFailed);
-      // firefox thinks a break in internet connection is a transferCancelled event??
-      //xhr.upload.addEventListener("abort", transferCancelled);
-      xhr.upload.addEventListener("abort", transferFailed);
-
-      xhr.open('POST', uploadURL, true); // async
-
-      var form = new FormData();
-      form.append('file', zip_file_in_memory, "webworker_file.zip");
-      form.append('username', username);
-      form.append('language', language);
-      xhr.send(form);
-    } 
-
-    /* Inner Function: save the submission as a JSON object in user's browser 
-      InnoDB database using LocalForage */
-    function saveSubmissionLocally(language, username) {
-      var saved_submission_name = temp_submission_name;
-      var jsonOnject = {};
-      jsonOnject['file'] = zip_file_in_memory;
-      jsonOnject['username'] = username;
-      jsonOnject['language'] = language;
-      jsonOnject['speechSubmissionAppVersion'] = speechSubmissionAppVersion;
-      //localforage.setItem(saved_submission_name, zip_file_in_memory).then(function (value) {
-      localforage.setItem(saved_submission_name, jsonOnject).then(function (value) {
-        console.info('saveSubmissionLocally: saved submission to localforage browser storage using this key: ' + saved_submission_name);
-        self.postMessage({ 
-          status: "savedInBrowserStorage"
-        });
-      }).catch(function(err) {
-          console.error('saveSubmissionLocally failed!', err);
-      });
-    }
-
-    xhr.upload.addEventListener("progress", updateProgress);
- 
-    // can't read xhr.readyState inside this function...
-    //xhr.upload.addEventListener("load", function(event) {
-    //    transferSuccessful();
-    //    checkForSavedFailedUploads();
-    //});
-    xhr.responseType = 'text';
-    xhr.onload = function () {
-        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-            // browser thinks everything is OK, but need to check for
-            // valid server response to make sure no issues there...
-            // (e.g. permission issues on server upload folder)
-            if (xhr.responseText == "submission uploaded successfully." ) {
-              transferSuccessful();
-              checkForSavedFailedUploads();
-            } else {
-              max_retries = 1;
-              transferFailed(null);
-            }
-        }
-    };
-
-    uploadZipFileLoop();
-}
-
-/** 
-* display upload progress in concole for debugging
-*/
-function updateProgress (evt) {
-  if (evt.lengthComputable) {
-    var percentComplete = (evt.loaded / evt.total) * 100;
-    console.info('percentComplete %', Math.round(percentComplete) );
-  } else {
-    console.warn('percentComplete - Unable to compute progress information since the total size is unknown');
-  }
-}
-
-/** 
-* if the upload was successful, send a message back to calling program saying 
-* that the transfer completed successfully
-*/
-function transferSuccessful(evt) {
-  console.info("transferComplete: The transfer successfully completed.");
-  self.postMessage({ 
-    status: "transferComplete" 
-  });
-}
-
-/** 
-* check for saved submissions (because of previous failed upload), and if there 
-* is one, upload to server
-*/
-function checkForSavedFailedUploads() {
-    /* Inner Function: if saved submissions exist, get then upload the submission */
-    function foundSavedSubmission(numberOfKeys) {
-      localforage.keys().then(function(savedSubmissionArray) {
-        console.info('saved submissions to upload: \n' + ' - '+ savedSubmissionArray.join('\n'));
-        for (var i = 0; i < savedSubmissionArray.length; i++) {
-          var saved_submission_name = savedSubmissionArray[i];
-          getSubmission(saved_submission_name);
-        }
-      }).catch(function(err) {
-        console.error(err);
-      });
-    }
-
-    /* Inner Function: get the submission object */
-    function getSubmission(saved_submission_name) {
-      //localforage.getItem(saved_submission_name).then(function(zip_file_in_memory) {
-      localforage.getItem(saved_submission_name).then(function(jsonOnject) {
-        console.info("uploading saved submission: " + saved_submission_name);
-        //uploadSubmission(new XMLHttpRequest(), saved_submission_name, zip_file_in_memory);
-        uploadSubmission(saved_submission_name, jsonOnject);
-      }).catch(function(err) {
-        console.error('checkForSavedFailedUpload err: ' + err);
-      });
-    }
-
-    /* Inner Function: upload the submission to the VoxForge server */
-    function uploadSubmission(saved_submission_name, jsonOnject) {
-        /* Inner Function: if saved submission successfully uploaded to  
-           VoxForge server, removeit from user's browser storage */
-        function removeSavedSubmission(saved_submission_name) {
-          // only remove saved submission if upload completed successfully
-          localforage.removeItem(saved_submission_name).then(function() {
-            console.log('Saved submission removed: ' + saved_submission_name);
-          }).catch(function(err) {
-            console.error('Error: cannot remove saved submission: ' + saved_submission_name + ' err: ' + err);
-          });  
-        }
-
-        xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener("progress", updateProgress);
-        
-        // can't read xhr.readyState from in here...
-        //xhr.upload.addEventListener("load", function(event) {
-        //    transferSuccessful();
-        //    removeSavedSubmission(saved_submission_name);
-        //  }
-        //});
-        xhr.responseType = 'text';
-        xhr.onload = function () {
-            if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-                // to catch configuration errors on server side
-                if (xhr.responseText == "submission uploaded successfully." ) {
-                  transferSuccessful();
-                  removeSavedSubmission(saved_submission_name);;
-                }
-            }
-        };
-
-        xhr.upload.addEventListener("error", function(event) {
-          console.warn('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
-        });
-        //xhr.upload.addEventListener("abort", transferCancelled);
-        xhr.upload.addEventListener("abort", function(event) {
-          console.warn('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
-        });
-        xhr.open('POST', uploadURL, true); // async
-
-        var form = new FormData();
-        form.append('file', jsonOnject['file'], "webworker_file.zip");
-        form.append('language', jsonOnject['language'])
-        form.append('username', jsonOnject['username'])
-        xhr.send(form);
-    }
-
-  /* check localforage for any saved submissions (by counting the number of keys
-     therein */
-  localforage.length().then(function(numberOfKeys) {
-    if (numberOfKeys > 0) {
-      console.log('number of submissions saved in browser storage: ' + numberOfKeys);
-      foundSavedSubmission(numberOfKeys);
-    }
-  }).catch(function(err) {
-      console.error(err);
-  });
-}

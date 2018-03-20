@@ -45,6 +45,7 @@ see: https://github.com/higuma/wav-audio-encoder-js
   };
 
   // TODO why convert to 16-bit... because wavesurfer doesn't seem to work with 32-bit float
+  // TODO only one channel for audio... therefore simplify loop...
 
   //  convert raw 32-bit floating point audio samples to 16-bit signed integer
   // see https://stackoverflow.com/questions/43881026/convert-32-bit-floating-points-to-16-bit-pcm-range

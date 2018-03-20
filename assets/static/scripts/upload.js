@@ -16,6 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+// if change here, remember to update index.php: $ALLOWEDURL & $UPLOADFOLDER
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
+//var uploadURL = 'https://upload.voxforge1.org'; // prod
 
 // zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
@@ -91,23 +94,22 @@ function upload( when_audio_processing_completed_func ) {
       // need to copy to blobs here (rather than web worker) because if pass 
       // them as-is to ZipWorker, they will be overwritten when page refreshes
       // and not be accessible withing web worker
+      var username = profile.getUserName();
+      var language = page_language;
+
       var readme_blob = new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"});
       var prompts_blob = new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"});
       var license_blob = new Blob(profile.licensetoArray(), {type: "text/plain;charset=utf-8"});
       var profile_json_blob = new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"});
       var prompts_json_blob = new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"});
       zip_worker.postMessage({
-        command: 'zipAndUpload',
-        username: profile.getUserName(),
-        language: page_language,
-        temp_submission_name: profile.getTempSubmissionName(),
+        command: 'zip',
         readme_blob: readme_blob,
         prompts_blob: prompts_blob,
         license_blob: license_blob,
         profile_json_blob: profile_json_blob,
         prompts_json_blob: prompts_json_blob,
         audio: audioArray,
-        speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
       });
 
       /**
@@ -116,15 +118,9 @@ function upload( when_audio_processing_completed_func ) {
       * this is a worker callback inside the worker context
       */
       zip_worker.onmessage = function zipworkerDone(event) { 
-        if (event.data.status === "transferComplete") {
+        if (event.data.status === "zipFileCreationComplete") {
           console.info('message from worker: Upload to VoxForge server completed');
-          view.showUploadStatus("Upload successfull!");
-        } else if (event.data.status === "savedInBrowserStorage") {
-          console.info('message from worker: problem with Internet connection, submission saved in browser storage');
-          alert("\t\tSubmission saved in browser storage.\n \t\t(No Internet Connection)  \n\nIt will be uploaded next time you make a submission with Internet up.");
-        } else if (event.data.status === "foundSavedFailedUploads") {
-          console.info('message from worker: found submissions saved to browser, uploading them...');
-          view.showUploadStatus("Found saved submission(s), uploading to VoxForge server.");
+          uploadZipFile(language, username, event.data.zip_file_in_memory);
         } else {
           console.error('message from worker: transfer error: ' + event.data.status);
         }
@@ -132,6 +128,67 @@ function upload( when_audio_processing_completed_func ) {
 
       when_audio_processing_completed_func();
     }
+
+    /**
+    * service worker to actually upload the zip file to voxforge servers...
+    */
+    function uploadZipFile(language, username, zip_file_in_memory) {
+        xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener("progress", updateProgress);
+
+        // can't read xhr.readyState from in here...
+        //xhr.upload.addEventListener("load", function(event) {
+        //    transferSuccessful();
+        //    removeSavedSubmission(saved_submission_name);
+        //  }
+        //});
+        xhr.responseType = 'text';
+        xhr.onload = function () {
+            if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+                // to catch configuration errors on server side
+                if (xhr.responseText == "submission uploaded successfully." ) {
+                  transferSuccessful();
+                }
+            }
+        };
+
+        xhr.upload.addEventListener("error", function(event) {
+          console.warn('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
+        });
+        //xhr.upload.addEventListener("abort", transferCancelled);
+        xhr.upload.addEventListener("abort", function(event) {
+          console.warn('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
+        });
+        xhr.open('POST', uploadURL, true); // async
+
+        var form = new FormData();
+        form.append('file', zip_file_in_memory, "webworker_file.zip");
+        form.append('language', language);
+        form.append('username', username);
+
+        xhr.send(form);
+    }
+
+    /** 
+    * display upload progress in console for debugging
+    */
+    function updateProgress (evt) {
+      if (evt.lengthComputable) {
+        var percentComplete = (evt.loaded / evt.total) * 100;
+        console.info('percentComplete %', Math.round(percentComplete) );
+      } else {
+        console.warn('percentComplete - Unable to compute progress information since the total size is unknown');
+      }
+    }
+
+    /** 
+    * zip file uploaded to voxforge server
+    */
+    function transferSuccessful() {
+      console.log('transferSuccessful');
+      view.showUploadStatus("Upload successfull!");
+    }
+
 
     audioArrayLoop();
 }

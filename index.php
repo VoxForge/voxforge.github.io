@@ -5,8 +5,8 @@
 
 // if change here, remember to update ZipWorker.js: uploadURL
 // also move index.php to prod
-$ALLOWEDURL = "https://voxforge.github.io"; // prod
-$UPLOADFOLDER = '../../public/speechsubmissions/'; // prod
+//$ALLOWEDURL = "https://voxforge.github.io"; // prod
+//$UPLOADFOLDER = '../../public/speechsubmissions/'; // prod
 $ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
 $UPLOADFOLDER = './submissions/'; // testing
 
