@@ -93,7 +93,10 @@ function upload( when_audio_processing_completed_func ) {
       };
       xhr.send();
     }
-    
+
+
+
+
     /**
     * call web worker to create zip file and upload to VoxForge server
     */
@@ -127,7 +130,11 @@ function upload( when_audio_processing_completed_func ) {
       zip_worker.onmessage = function zipworkerDone(event) { 
         if (event.data.status === "zipFileCreationComplete") {
           console.info('message from worker: Upload to VoxForge server completed');
-          uploadZipFile(language, username, event.data.zip_file_in_memory);
+          uploadZipFile(uploadURL, language, username, event.data.zip_file_in_memory).then(function(response) {
+              console.log("Success!", response);
+            }, function(error) {
+              console.error("Failed!", error);
+            })
         } else {
           console.error('message from worker: transfer error: ' + event.data.status);
         }
@@ -139,34 +146,35 @@ function upload( when_audio_processing_completed_func ) {
     /**
     * service worker to actually upload the zip file to voxforge servers...
     */
-    function uploadZipFile(language, username, zip_file_in_memory) {
+    function uploadZipFile(URL, language, username, zip_file_in_memory) {
+      return new Promise(function(resolve, reject) {
+
         xhr = new XMLHttpRequest();
         xhr.upload.addEventListener("progress", updateProgress);
 
-        // can't read xhr.readyState from in here...
-        //xhr.upload.addEventListener("load", function(event) {
-        //    transferSuccessful();
-        //    removeSavedSubmission(saved_submission_name);
-        //  }
-        //});
         xhr.responseType = 'text';
         xhr.onload = function () {
             if (xhr.readyState === xhr.DONE && xhr.status === 200) {
                 // to catch configuration errors on server side
                 if (xhr.responseText == "submission uploaded successfully." ) {
                   transferSuccessful();
+                  resolve("OK");
                 }
+            } else {
+              reject(Error(xhr.statusText));
             }
         };
 
         xhr.upload.addEventListener("error", function(event) {
-          console.warn('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
+          reject(Error("Network Error"));
         });
+
         //xhr.upload.addEventListener("abort", transferCancelled);
         xhr.upload.addEventListener("abort", function(event) {
-          console.warn('Warning: upload of saved submission failed for' + saved_submission_name + 'will try again next time');
+          reject(Error("connection aborted"));
         });
-        xhr.open('POST', uploadURL, true); // async
+
+        xhr.open('POST', URL, true); // async
 
         var form = new FormData();
         form.append('file', zip_file_in_memory, "webworker_file.zip");
@@ -174,6 +182,7 @@ function upload( when_audio_processing_completed_func ) {
         form.append('username', username);
 
         xhr.send(form);
+      });
     }
 
     /** 
