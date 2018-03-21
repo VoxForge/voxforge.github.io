@@ -258,19 +258,21 @@ TODO promisifying a XHR request
 */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/voxforge_sw.js').then(function(registration) {
+   navigator.serviceWorker.register('/voxforge_sw.js').then(function(registration) {
       // Registration was successful
       console.log('ServiceWorker registration successful with scope: ', registration.scope);
     }, function(err) {
       // registration failed :(
       console.log('ServiceWorker registration failed: ', err);
     });
+
+
   });
 }
 
 
 // Then later, request a one-off sync:
-navigator.serviceWorker.ready.then(function(swRegistration) {
-  return swRegistration.sync.register('myFirstSync');
-});
+//navigator.serviceWorker.ready.then(function(swRegistration) {
+//  return swRegistration.sync.register('myFirstSync');
+//});
 

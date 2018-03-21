@@ -9,7 +9,8 @@
 //$UPLOADFOLDER = '../../public/speechsubmissions/'; // prod
 
 //$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
-$ALLOWEDURL = "https://127.0.0.1"; // testing
+$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
+//$ALLOWEDURL = "https://jekyll2_voxforge.org"; // testing CORS
 $UPLOADFOLDER = './submissions/'; // testing
 
 // max upload size should be a function of the number of prompts

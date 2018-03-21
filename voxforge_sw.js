@@ -14,6 +14,37 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+// Chrome service worker debugging woes:
+// 1) http://127.0.0.1:4000/en/read/  # jekyll default server
+// client service worker registers and caches files... wtf
+// server with uploadURL = 'http://127.0.0.1/index.php'
+//      error: (index):1 Failed to load http://127.0.0.1/index.php: Response for preflight is invalid (redirect)
+//      need https for preflight to work correctly
+
+// 2) https://127.0.0.1:4000/en/read/  # jekyll default server
+// service workers register; fetch of javascript etc files works; error: will not upload
+
+// 3) https://127.0.0.1/en/read/ # apache2
+// service worker registers, but fetch of files to cache fails with TypeError: Failed to fetch
+
+// 4) https://localhost/en/read/  # apache2
+//ServiceWorker registration successful; but fetch of files to cache fails with: Uncaught (in promise) TypeError: Failed to fetch
+
+// 5) https://jekyll_voxforge.org/en/read/  # apache2
+// service worker fails to register with error: ServiceWorker registration failed:  DOMException: Failed to register a ServiceWorker: An SSL certificate error occurred when fetching the script.
+// but upload works:
+// browser: https://jekyll_voxforge.org/en/read/   
+// index.php: $ALLOWEDURL = "https://jekyll_voxforge.org";
+
+// 6) https://jekyll2_voxforge.org/en/read/  # apache2
+// service worker fails to register with error: ServiceWorker registration failed:  DOMException: Failed to register a ServiceWorker: An SSL certificate error occurred when fetching the script.
+// but upload works:
+// browser: https://jekyll_voxforge.org/en/read/   
+// index.php: $ALLOWEDURL = "https://jekyll2_voxforge.org";
+
+// 7) http://jekyll_voxforge.org/en/read/  # apache2
+// redirects to https; failes as above
+
 
 var CACHE_NAME = 'voxforge-cache-v0.1';
 var PATH = '/assets/static/';
@@ -79,35 +110,9 @@ self.addEventListener('fetch', function(event) {
         if (response) {
           return response;
         }
-
-        // IMPORTANT: Clone the request. A request is a stream and
-        // can only be consumed once. Since we are consuming this
-        // once by cache and once by the browser for fetch, we need
-        // to clone the response.
-        var fetchRequest = event.request.clone();
-
-        return fetch(fetchRequest).then(
-          function(response) {
-            // Check if we received a valid response
-            if(!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // IMPORTANT: Clone the response. A response is a stream
-            // and because we want the browser to consume the response
-            // as well as the cache consuming the response, we need
-            // to clone it so we have two streams.
-            var responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then(function(cache) {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        );
-      })
-    );
+        return fetch(event.request);
+      }
+    )
+  );
 });
 

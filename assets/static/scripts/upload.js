@@ -18,13 +18,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // if change here, remember to update index.php: $ALLOWEDURL & $UPLOADFOLDER
 //var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
-// Chrome does like self signed certificates... need to test in prod...
+// Chrome does not like self signed certificates... need to test in prod...
 // make sure you terminate old service workers: chrome://inspect/#service-workers
 // then clear browser caches
 // F12; Network>Disable Cache
+// F12 Application>Service Workers>Update on reload
 //In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost'
 // don't use Jekyll port number for testing...
-var uploadURL = 'https://127.0.0.1/index.php'; // chrome testing
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // chrome testing
 //var uploadURL = 'https://upload.voxforge1.org'; // prod
 
 // zip and upload Web Worker
@@ -101,25 +102,21 @@ function upload( when_audio_processing_completed_func ) {
     * call web worker to create zip file and upload to VoxForge server
     */
     function createZipFile(audioArray) {
-      // need to copy to blobs here (rather than web worker) because if pass 
-      // them as-is to ZipWorker, they will be overwritten when page refreshes
+      // need to copy to blobs here (rather than in web worker) because if pass 
+      // them as references to ZipWorker, they will be overwritten when page refreshes
       // and not be accessible withing web worker
-      var username = profile.getUserName();
-      var language = page_language;
-
-      var readme_blob = new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"});
-      var prompts_blob = new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"});
-      var license_blob = new Blob(profile.licensetoArray(), {type: "text/plain;charset=utf-8"});
-      var profile_json_blob = new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"});
-      var prompts_json_blob = new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"});
       zip_worker.postMessage({
-        command: 'zip',
-        readme_blob: readme_blob,
-        prompts_blob: prompts_blob,
-        license_blob: license_blob,
-        profile_json_blob: profile_json_blob,
-        prompts_json_blob: prompts_json_blob,
+        command: 'zipAndSave',
+        username: profile.getUserName(),
+        language: page_language,
+        temp_submission_name: profile.getTempSubmissionName(),
+        readme_blob: new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"}),
+        prompts_blob: new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"}),
+        license_blob: new Blob(profile.licensetoArray(), {type: "text/plain;charset=utf-8"}),
+        profile_json_blob: new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
+        prompts_json_blob: new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
         audio: audioArray,
+        speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
       });
 
       /**
@@ -128,13 +125,13 @@ function upload( when_audio_processing_completed_func ) {
       * this is a worker callback inside the worker context
       */
       zip_worker.onmessage = function zipworkerDone(event) { 
-        if (event.data.status === "zipFileCreationComplete") {
-          console.info('message from worker: Upload to VoxForge server completed');
+        if (event.data.status === "savedInBrowserStorage") {
+          console.info('message from worker: zip file creation completed');
           uploadZipFile(uploadURL, language, username, event.data.zip_file_in_memory).then(function(response) {
               console.log("Success!", response);
             }, function(error) {
               console.error("Failed!", error);
-            })
+          });
         } else {
           console.error('message from worker: transfer error: ' + event.data.status);
         }
@@ -145,43 +142,47 @@ function upload( when_audio_processing_completed_func ) {
 
     /**
     * service worker to actually upload the zip file to voxforge servers...
+
+see: https://www.twilio.com/blog/2017/02/send-messages-when-youre-back-online-with-service-workers-and-background-sync.html
+
     */
     function uploadZipFile(URL, language, username, zip_file_in_memory) {
       return new Promise(function(resolve, reject) {
 
-        xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener("progress", updateProgress);
+          xhr = new XMLHttpRequest();
+          xhr.upload.addEventListener("progress", updateProgress);
 
-        xhr.responseType = 'text';
-        xhr.onload = function () {
-            if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-                // to catch configuration errors on server side
-                if (xhr.responseText == "submission uploaded successfully." ) {
-                  transferSuccessful();
-                  resolve("OK");
-                }
-            } else {
-              reject(Error(xhr.statusText));
-            }
-        };
+          xhr.responseType = 'text';
+          xhr.onload = function () {
+              if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+                  // to catch configuration errors on server side
+                  if (xhr.responseText == "submission uploaded successfully." ) {
+                    view.showUploadStatus("Upload successfull!");
+                    resolve("OK");
+                  }
+              } else {
+                reject(Error(xhr.statusText));
+              }
+          };
 
-        xhr.upload.addEventListener("error", function(event) {
-          reject(Error("Network Error"));
-        });
+          xhr.upload.addEventListener("error", function(event) {
+            reject(Error("Network Error"));
+          });
 
-        //xhr.upload.addEventListener("abort", transferCancelled);
-        xhr.upload.addEventListener("abort", function(event) {
-          reject(Error("connection aborted"));
-        });
+          //xhr.upload.addEventListener("abort", transferCancelled);
+          xhr.upload.addEventListener("abort", function(event) {
+            reject(Error("connection aborted"));
+          });
 
-        xhr.open('POST', URL, true); // async
+          xhr.open('POST', URL, true); // async
 
-        var form = new FormData();
-        form.append('file', zip_file_in_memory, "webworker_file.zip");
-        form.append('language', language);
-        form.append('username', username);
+          var form = new FormData();
+          form.append('file', zip_file_in_memory, "webworker_file.zip");
+          form.append('language', language);
+          form.append('username', username);
 
-        xhr.send(form);
+          xhr.send(form);
+
       });
     }
 
@@ -196,15 +197,6 @@ function upload( when_audio_processing_completed_func ) {
         console.warn('percentComplete - Unable to compute progress information since the total size is unknown');
       }
     }
-
-    /** 
-    * zip file uploaded to voxforge server
-    */
-    function transferSuccessful() {
-      console.log('transferSuccessful');
-      view.showUploadStatus("Upload successfull!");
-    }
-
 
     audioArrayLoop();
 }
