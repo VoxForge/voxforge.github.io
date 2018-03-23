@@ -254,6 +254,8 @@ function setUpFSM() {
 
 /**
 * use service worker to cache all javascript files so app can be run offline
+* and if the browser supports it, perform background sync to upload submissions
+* to server.
 */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {

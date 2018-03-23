@@ -63,6 +63,7 @@ function upload( when_audio_processing_completed_func ) {
     *
     * uses xhr internally to collect read audio damples from shadow DOM
     */
+    // TODO convert to promise syntax to make things clearer
     function audioArrayLoop() {
       var clip = allClips[clipIndex];
       clip.style.display = 'None';
@@ -139,25 +140,29 @@ function upload( when_audio_processing_completed_func ) {
           // see: https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
           // https://bugzilla.mozilla.org/show_bug.cgi?id=1217544 - planned for FFv61
 
-          // request a one-off sync to upload the saved submission
-          // will upload if there is connectivity, if there is none, will
-          // keep on trying to upload until connectivity is made
-          // and then will delete saved submission from browser storage
-
-          // Second call to sync takes longer than you think, but it will work
-          // eventually... service worker seems to collect up all the calls to
-          // service worker and does uploads consecutively
-          // wait about 1-2 minutes
           navigator.serviceWorker.ready.then(function(swRegistration) {
             if (typeof swRegistration.sync !== 'undefined') {
+
+              // request a one-off sync to upload the saved submission
+              // will upload if there is connectivity, if there is none, will
+              // keep on trying to upload until connectivity is made
+              // and then will delete saved submission from browser storage
+
+              // Second call to sync takes longer than you think, but it will work
+              // eventually... service worker seems to collect up all the calls to
+              // service worker and does uploads consecutively
+              // wait about 1-2 minutes
               return swRegistration.sync.register('myFirstSync').then(function() {
                 console.info('service worker sync succeeded - submission will be uploaded shortly');
                }, function() {
-                console.error('service worker sync failed');
+                console.error('service worker sync failed, will retry later');
               });
+
             } else {
-              console.warn('Browser does not support backrgound sync using service workers, trying web worker');
+
+              console.warn('Browser does not support background sync using service workers, trying web worker');
               webWorkerUpload();
+
             }
           });
           console.info('set myFirstSync event to tell service worker to upload');
@@ -181,20 +186,25 @@ function upload( when_audio_processing_completed_func ) {
       }
     }
 
+    /** 
+    * use web worker rather than service worker for upload to voxforge server
+    */
+    function webWorkerUpload() {
+        upload_worker.postMessage({
+          command: 'upload',
+        });
+
+        upload_worker.onmessage = function webWorkerUploadDone(event) { 
+          if (event.data.status === "OK") {
+            console.info('message from upload web worker: submission uploaded to server');
+          } else {
+            console.error('message from upload web worker: transfer error: ' + event.data.status);
+          }
+        };
+    }
+
     audioArrayLoop();
 }
 
-function webWorkerUpload() {
-    upload_worker.postMessage({
-      command: 'upload',
-    });
 
-    upload_worker.onmessage = function webWorkerUploadDone(event) { 
-      if (event.data.status === "OK") {
-        console.info('message from upload web worker: submission uploaded to server');
-      } else {
-        console.error('message from upload web worker: transfer error: ' + event.data.status);
-      }
-    };
-}
 
