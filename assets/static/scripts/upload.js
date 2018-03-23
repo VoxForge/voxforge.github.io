@@ -148,11 +148,15 @@ function upload( when_audio_processing_completed_func ) {
           // service worker and does uploads consecutively
           // wait about 1-2 minutes
           navigator.serviceWorker.ready.then(function(swRegistration) {
-            return swRegistration.sync.register('myFirstSync').then(function() {
-              console.info('service worker sync succeeded - submission will be uploaded shortly');
-             }, function() {
-              console.error('service worker sync failed');
-            });
+            if (typeof swRegistration.sync !== 'undefined') {
+              return swRegistration.sync.register('myFirstSync').then(function() {
+                console.info('service worker sync succeeded - submission will be uploaded shortly');
+               }, function() {
+                console.error('service worker sync failed');
+              });
+            } else {
+                console.warn('Browser does not support backrgound sync using service workers');
+            }
           });
           console.info('set myFirstSync event to tell service worker to upload');
         } else {

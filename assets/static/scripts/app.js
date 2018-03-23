@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+
 /*
 https://www.acunetix.com/websitesecurity/cross-site-scripting/
 XSS - How Cross-site Scripting works
@@ -196,6 +198,7 @@ function setUpFSM() {
           view.setRSUButtonDisplay(false, false, false);
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
+          // TODO convert this to promise...
           upload( 
               // anonymous function to be executed after processsing of shadow DOM
               // audio elements completed, otherwise submission package will be

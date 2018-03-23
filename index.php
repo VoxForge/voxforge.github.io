@@ -8,8 +8,6 @@
 //$ALLOWEDURL = "https://voxforge.github.io"; // prod
 //$UPLOADFOLDER = '../../public/speechsubmissions/'; // prod
 
-//$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
-// run google with: google-chrome --allow-insecure-localhost https://localhost
 $ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
 $UPLOADFOLDER = './submissions/'; // testing
 
