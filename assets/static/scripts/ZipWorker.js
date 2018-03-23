@@ -82,12 +82,7 @@ function createZipFile(self, data) {
   /* inner function: create zip file in memory and puts it in a blob object */
   zip.generateAsync({type:"blob"}).then(
     function(zip_file_in_memory) {
-      saveSubmissionLocally(
-        data.language, 
-        data.username, 
-        data.temp_submission_name, 
-        data.speechSubmissionAppVersion
-      );
+      saveSubmissionLocally(data, zip_file_in_memory);
     }
   );
 }
@@ -96,18 +91,20 @@ function createZipFile(self, data) {
 * save the submission as a JSON object in user's browser 
 * InnoDB database using LocalForage 
 */
-function saveSubmissionLocally(language, username, temp_submission_name, speechSubmissionAppVersion) {
+function saveSubmissionLocally(data, zip_file_in_memory) {
   var jsonOnject = {};
+  jsonOnject['username'] = data.username;
+  jsonOnject['language'] = data.language;
+  jsonOnject['speechSubmissionAppVersion'] = data.speechSubmissionAppVersion;
   jsonOnject['file'] = zip_file_in_memory;
-  jsonOnject['username'] = username;
-  jsonOnject['language'] = language;
-  jsonOnject['speechSubmissionAppVersion'] = speechSubmissionAppVersion;
 
-  localforage.setItem(temp_submission_name, jsonOnject).then(function (value) {
-    console.info('saveSubmissionLocally: saved submission to localforage browser storage using this key: ' + saved_submission_name);
+  localforage.setItem(data.temp_submission_name, jsonOnject).then(function (value) {
+    console.info('saveSubmissionLocally: saved submission to localforage browser storage using this key: ' + data.temp_submission_name);
+
     self.postMessage({ 
       status: "savedInBrowserStorage"
     });
+
   }).catch(function(err) {
       console.error('saveSubmissionLocally failed!', err);
   });

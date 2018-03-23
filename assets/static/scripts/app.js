@@ -252,9 +252,6 @@ function setUpFSM() {
 
 /**
 * use service worker to cache all javascript files so app can be run offline
-
-TODO promisifying a XHR request
-* see https://developers.google.com/web/fundamentals/primers/promises
 */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
@@ -269,10 +266,4 @@ if ('serviceWorker' in navigator) {
 
   });
 }
-
-
-// Then later, request a one-off sync:
-//navigator.serviceWorker.ready.then(function(swRegistration) {
-//  return swRegistration.sync.register('myFirstSync');
-//});
 

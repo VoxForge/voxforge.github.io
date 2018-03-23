@@ -25,7 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // F12 Application>Service Workers>Update on reload
 //In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost'
 // don't use Jekyll port number for testing...
-var uploadURL = 'https://jekyll_voxforge.org/index.php'; // chrome testing
+//NOW IN voxforge_sw.js
+//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // chrome testing
 //var uploadURL = 'https://upload.voxforge1.org'; // prod
 
 // zip and upload Web Worker
@@ -43,6 +44,9 @@ $( window ).unload(function() {
 * collect all recorded audio into an array (audioArray) then calls function 
 * that calls web worker that actually creates the zip file for download
 * to VoxForge server
+*
+* Notes:
+* service workers: https://www.twilio.com/blog/2017/02/send-messages-when-youre-back-online-with-service-workers-and-background-sync.html
 */
 function upload( when_audio_processing_completed_func ) {
 
@@ -55,6 +59,8 @@ function upload( when_audio_processing_completed_func ) {
     * loads them into audioArray.  This can cause some timing issues if
     * there are many audio files... therefore only reset user facing display
     * after all text and audio is sent to web worker for background processing
+    *
+    * uses xhr internally to collect read audio damples from shadow DOM
     */
     function audioArrayLoop() {
       var clip = allClips[clipIndex];
@@ -87,7 +93,7 @@ function upload( when_audio_processing_completed_func ) {
             // Q1: why doesnt createZipFile get called many times as the call stack unrolls???
             // ... because status no longer status == 200???
 
-            createZipFile(audioArray);
+            callWorker2createZipFile(audioArray);
 
           }
         }
@@ -95,28 +101,27 @@ function upload( when_audio_processing_completed_func ) {
       xhr.send();
     }
 
-
-
-
     /**
     * call web worker to create zip file and upload to VoxForge server
     */
-    function createZipFile(audioArray) {
+    function callWorker2createZipFile(audioArray) {
       // need to copy to blobs here (rather than in web worker) because if pass 
       // them as references to ZipWorker, they will be overwritten when page refreshes
       // and not be accessible withing web worker
       zip_worker.postMessage({
         command: 'zipAndSave',
+
+        speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
         username: profile.getUserName(),
         language: page_language,
         temp_submission_name: profile.getTempSubmissionName(),
+
         readme_blob: new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"}),
         prompts_blob: new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"}),
         license_blob: new Blob(profile.licensetoArray(), {type: "text/plain;charset=utf-8"}),
         profile_json_blob: new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
         prompts_json_blob: new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
         audio: audioArray,
-        speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
       });
 
       /**
@@ -127,63 +132,35 @@ function upload( when_audio_processing_completed_func ) {
       zip_worker.onmessage = function zipworkerDone(event) { 
         if (event.data.status === "savedInBrowserStorage") {
           console.info('message from worker: zip file creation completed');
-          uploadZipFile(uploadURL, language, username, event.data.zip_file_in_memory).then(function(response) {
-              console.log("Success!", response);
-            }, function(error) {
-              console.error("Failed!", error);
+          // FireFox: TypeError: swRegistration.sync is undefine
+          // sync is not supported in FireFox  WTF!!!
+          // https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/sync
+          // see: https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
+          // https://bugzilla.mozilla.org/show_bug.cgi?id=1217544 - planned for FFv61
+
+          // request a one-off sync to upload the saved submission
+          // will upload if there is connectivity, if there is none, will
+          // keep on trying to upload until connectivity is made
+          // and then will delete saved submission from browser storage
+
+          // Second call to sync takes longer than you think, but it will work
+          // eventually... service worker seems to collect up all the calls to
+          // service worker and does uploads consecutively
+          // wait about 1-2 minutes
+          navigator.serviceWorker.ready.then(function(swRegistration) {
+            return swRegistration.sync.register('myFirstSync').then(function() {
+              console.info('service worker sync succeeded - submission will be uploaded shortly');
+             }, function() {
+              console.error('service worker sync failed');
+            });
           });
+          console.info('set myFirstSync event to tell service worker to upload');
         } else {
           console.error('message from worker: transfer error: ' + event.data.status);
         }
       };
 
       when_audio_processing_completed_func();
-    }
-
-    /**
-    * service worker to actually upload the zip file to voxforge servers...
-
-see: https://www.twilio.com/blog/2017/02/send-messages-when-youre-back-online-with-service-workers-and-background-sync.html
-
-    */
-    function uploadZipFile(URL, language, username, zip_file_in_memory) {
-      return new Promise(function(resolve, reject) {
-
-          xhr = new XMLHttpRequest();
-          xhr.upload.addEventListener("progress", updateProgress);
-
-          xhr.responseType = 'text';
-          xhr.onload = function () {
-              if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-                  // to catch configuration errors on server side
-                  if (xhr.responseText == "submission uploaded successfully." ) {
-                    view.showUploadStatus("Upload successfull!");
-                    resolve("OK");
-                  }
-              } else {
-                reject(Error(xhr.statusText));
-              }
-          };
-
-          xhr.upload.addEventListener("error", function(event) {
-            reject(Error("Network Error"));
-          });
-
-          //xhr.upload.addEventListener("abort", transferCancelled);
-          xhr.upload.addEventListener("abort", function(event) {
-            reject(Error("connection aborted"));
-          });
-
-          xhr.open('POST', URL, true); // async
-
-          var form = new FormData();
-          form.append('file', zip_file_in_memory, "webworker_file.zip");
-          form.append('language', language);
-          form.append('username', username);
-
-          xhr.send(form);
-
-      });
     }
 
     /** 
@@ -200,7 +177,3 @@ see: https://www.twilio.com/blog/2017/02/send-messages-when-youre-back-online-wi
 
     audioArrayLoop();
 }
-
-
-
-
