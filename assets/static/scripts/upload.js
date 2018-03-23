@@ -31,13 +31,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
-
+var upload_worker = new Worker('/assets/static/scripts/UploadWorker.js');
 /**
 * if page reloaded kill background worker threads before page reload
 * to prevent zombie worker threads in FireFox
 */
 $( window ).unload(function() {
   zip_worker.terminate();
+  upload_worker.terminate();
 });
 
 /**
@@ -155,7 +156,8 @@ function upload( when_audio_processing_completed_func ) {
                 console.error('service worker sync failed');
               });
             } else {
-                console.warn('Browser does not support backrgound sync using service workers');
+              console.warn('Browser does not support backrgound sync using service workers, trying web worker');
+              webWorkerUpload();
             }
           });
           console.info('set myFirstSync event to tell service worker to upload');
@@ -181,3 +183,18 @@ function upload( when_audio_processing_completed_func ) {
 
     audioArrayLoop();
 }
+
+function webWorkerUpload() {
+    upload_worker.postMessage({
+      command: 'upload',
+    });
+
+    upload_worker.onmessage = function webWorkerUploadDone(event) { 
+      if (event.data.status === "OK") {
+        console.info('message from upload web worker: submission uploaded to server');
+      } else {
+        console.error('message from upload web worker: transfer error: ' + event.data.status);
+      }
+    };
+}
+

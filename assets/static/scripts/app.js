@@ -67,7 +67,6 @@ var view = new View(); // needs to be before profile object creation
 var profile = new Profile();
 var audio = new Audio();
 
-
 // finite state machine object
 var fsm = setUpFSM();
 
@@ -258,11 +257,9 @@ function setUpFSM() {
 */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-   navigator.serviceWorker.register('/voxforge_sw.js').then(function(registration) {
-      // Registration was successful
+    navigator.serviceWorker.register('/voxforge_sw.js').then(function(registration) {
       console.log('ServiceWorker registration successful with scope: ', registration.scope);
     }, function(err) {
-      // registration failed :(
       console.log('ServiceWorker registration failed: ', err);
     });
 

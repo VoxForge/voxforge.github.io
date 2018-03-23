@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 importScripts('assets/static/scripts/processSavedSubmissions.js'); 
+importScripts('assets/static/lib/localforage.js');
 
 /**
 this allows testing of service workers on private network:
