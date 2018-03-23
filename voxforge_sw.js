@@ -14,9 +14,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
-//var uploadURL = 'https://jekyll_voxforge.org/index.php';
+var uploadURL = 'https://upload.voxforge1.org'; // prod
+//var uploadURL = 'https://jekyll2_voxforge.org/index.php'; 
+//var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
+//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 importScripts('assets/static/lib/localforage.js'); 
 
 // Chrome service worker debugging woes:
