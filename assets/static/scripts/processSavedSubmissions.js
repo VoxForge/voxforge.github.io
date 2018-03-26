@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 
+var LOCAL_PROMPT_FILE_NAME = "prompt_file"; // needs to be redefined here
+
 // cannot put this here even though code is being shared bby voxforge_sw.js and 
 // UploadWorker.js because they are stored in different places and need different
 // relative paths
@@ -45,18 +47,23 @@ function processSavedSubmissions() {
       console.info('submissions to upload to VoxForge server: \n' + ' - '+ savedSubmissionArray.join('\n'));
 
       for (var i = 0; i < savedSubmissionArray.length; i++) {
-        getSavedSubmission( savedSubmissionArray[i] )
-        .then(uploadSubmission)
-        .then(removeSubmission)
-        .then(function(result) {
-            if ( i == savedSubmissionArray.length - 1 && result === "OK" ) {
-              console.info("submission(s) successfully uploaded.");
-              resolve("OK");
-            }
-        })
-        .catch(function(err) {
-              reject(err);
-        });
+        // so doesnt try to upload and delete saved prompt list
+        if (savedSubmissionArray[i] !== LOCAL_PROMPT_FILE_NAME) {
+
+            getSavedSubmission( savedSubmissionArray[i] )
+            .then(uploadSubmission)
+            .then(removeSubmission)
+            .then(function(result) {
+                if ( i == savedSubmissionArray.length - 1 && result === "OK" ) {
+                  console.info("submission(s) successfully uploaded.");
+                  resolve("OK");
+                }
+            })
+            .catch(function(err) {
+                  reject(err);
+            });
+
+        }
       }
 
     }).catch(function(err) {

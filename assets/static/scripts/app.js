@@ -60,6 +60,8 @@ var RECORDING_STOP_DELAY = 300;
 // recording, it will miss last recording.
 var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400; 
 var WAIT_FOR_COPY_OF_AUDIO = 750; 
+var LOCAL_PROMPT_FILE_NAME = "prompt_file";
+
 /**
 * Instantiate classes
 */

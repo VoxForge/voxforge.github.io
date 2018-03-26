@@ -209,21 +209,20 @@ function Prompts() {
         console.log("starting promptId: " + page_prompt_list_files[random_prompt_file].start);
     }
 
-    var local_prompt_file_name = "prompt_file";
     /** 
     * get prompts file for given language from server
     * synchronous request... 
     */
     $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
       function(prompt_data) {
-        processPromptsFile(prompt_data, local_prompt_file_name);
+        processPromptsFile(prompt_data, LOCAL_PROMPT_FILE_NAME);
       }
     ).fail(function() {
       var file_name = page_prompt_list_files[random_prompt_file]['file_location'];
       console.warn("cannot find prompts file on VoxForge server: " + file_name + 
-                   "; or bad Internet connection... using locally stored prompt file: " + local_prompt_file_name);
+                   "; or bad Internet connection... using locally stored prompt file: " + LOCAL_PROMPT_FILE_NAME);
 
-      getSavedPromptList(local_prompt_file_name)
+      getSavedPromptList(LOCAL_PROMPT_FILE_NAME)
       .then( function(jsonObject) {
           self.list = jsonObject.list;
           initializePromptStack();
