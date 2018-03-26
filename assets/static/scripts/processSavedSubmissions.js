@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var uploadURL = 'https://upload.voxforge1.org'; // prod
-//var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
+//var uploadURL = 'https://upload.voxforge1.org'; // prod
 //var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 
 // cannot put this here even though code is being shared bby voxforge_sw.js and 
 // UploadWorker.js because they are stored in different places and need different
