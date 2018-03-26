@@ -151,13 +151,16 @@ function Prompts() {
     * User's set of prompts to be read in contained in a stack, that way
     * if a user wants to re-read a prompt, they delete it, and it gets
     * placed in the stack and re-displayed to the user to record again.
+    *
+    * reading prompt list using the self.index and modulus to wrap
+    * around the prompt list array.
     */
     function initializePromptStack() {
       for (var i = 0 ; i <  self.max_num_prompts; i++) { 
+        self.index = self.index % (self.list.length)
         // using unshift rather than push to keep prompt elements in order
         self.prompt_stack.unshift(self.list[self.index]);
         self.index++;
-        self.index = self.index % (self.list.length -1)
       }
     }
 
@@ -172,7 +175,7 @@ function Prompts() {
       savePromptListLocally(local_prompt_file_name);
 
       // set random index of prompt line to present to user
-      self.index = Math.floor((Math.random() * self.list.length) + 1); // one indexed
+      self.index = Math.floor((Math.random() * self.list.length)); // zero indexed
 
       initializePromptStack();
     }
@@ -197,6 +200,7 @@ function Prompts() {
     validate_Readmd_file();
 
     var random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
+    var random_prompt_file = 0 // TEST
 
     console.log("prompt file id: " + page_prompt_list_files[random_prompt_file].id + 
                 " (prompt file array index: " + random_prompt_file + ")");
@@ -266,7 +270,8 @@ Prompts.prototype.initPromptStack = function () {
     this.prompt_stack = [];
     // TODO why is this 'one' indexed... no longer makes sense
     // wouldn't first element always be lost?
-    this.index = Math.floor((Math.random() * this.list.length) + 1); // one indexed
+    //this.index = Math.floor((Math.random() * this.list.length) + 1); // one indexed
+    this.index = Math.floor((Math.random() * this.list.length));
 
     for (var i = this.max_num_prompts -1 ; i >=0; i--) { 
       // using unshift rather than push to keep prompt elements in order
