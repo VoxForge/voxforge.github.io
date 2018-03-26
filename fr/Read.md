@@ -196,6 +196,7 @@ controls:
   record: Enregistrer
   stop: Arrêter
   upload: Télécharger
+  upload_message: Êtes-vous prêt à télécharger votre soumission? \nSi non, appuyez sur Annuler maintenant, puis appuyez sur Télécharger une fois que vous êtes prêt.
 
 # script below gets loaded in {{ content }} section of layout page
 ---
@@ -208,6 +209,7 @@ controls:
   var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
   var page_please_select = "{{ page.please_select }}";
   var page_anonymous = "{{ page.anonymous }}";
+  var page_upload_message = "{{ page.controls.upload_message }}";
 </script>
 
 

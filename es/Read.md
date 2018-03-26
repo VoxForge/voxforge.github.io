@@ -216,6 +216,7 @@ controls:
   record: Record
   stop: Stop
   upload: Upload
+  upload_message: Are you ready to upload your submission?\nIf not, press cancel now, and then press Upload once you are ready.
 
 # script below gets loaded in {{ content }} section of layout page
 ---
@@ -228,6 +229,7 @@ controls:
   var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
   var page_please_select = "{{ page.please_select }}";
   var page_anonymous = "{{ page.anonymous }}";
+  var page_upload_message = "{{ page.controls.upload_message }}";
 </script>
 
 

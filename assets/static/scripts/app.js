@@ -169,8 +169,7 @@ function setUpFSM() {
 
         onDisplaymessage: function() {
           function messageToUpload () {
-              if (confirm('Are you ready to upload your submission?\nIf not, press cancel now,' + 
-                    ' and then press Upload once you are ready.')) {
+              if (confirm(page_upload_message)) {
                 fsm.yesuploadmessage();
               } else {
                 fsm.canceluploadmessage();
