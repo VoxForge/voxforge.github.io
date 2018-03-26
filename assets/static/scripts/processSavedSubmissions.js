@@ -115,7 +115,7 @@ function uploadSubmission(data) {
 
     })
     .catch(function (error) {
-      console.error('Warning: upload of saved submission failed for: ' + saved_submission_name + 'will try again next time');
+      console.warn('upload of saved submission failed for: ' + saved_submission_name + 'will try again next time');
       reject('Request failed', error);
     });
 

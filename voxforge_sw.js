@@ -54,23 +54,21 @@ var urlsToCache = [
   PATH + 'lib/localforage.js',
   PATH + 'lib/state-machine.js',
   PATH + 'lib/WavAudioEncoder.js',
-  PATH + 'lib/processSavedSubmissions.js',
 
   PATH + 'scripts/app.js',
   PATH + 'scripts/Audio.js',
+  PATH + 'scripts/processSavedSubmissions.js',
   PATH + 'scripts/Profile.js',
   PATH + 'scripts/Prompts.js',
   PATH + 'scripts/upload.js',
   PATH + 'scripts/View.js',
+  PATH + 'scripts/UploadWorker.js',
   PATH + 'scripts/ZipWorker.js',
+
 
   PATH + 'styles/app.css',
   PATH + 'styles/jquery.mobile-1.4.5.css',
-// TODO need to figure how no to have to load all prompt files for app to work 
-// offline...
-//  '/en/prompts/001.html',
-//  '/en/prompts/002.html',
-//  '/en/prompts/003.html',
+
   '/en/read/',
 ];
 
