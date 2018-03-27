@@ -31,7 +31,7 @@ code by the victim’s browser.
 This app does not display other users' input in its pages, so no obvious XSS 
 vulnerability...
 
-TODO: CSRF - Cross site request forgery
+TODO: CSRF - Cross site request forgery; XSS cross site scripting
 
 // for testing with Chrome: requires https; can bypass this with:
 // no longer works: google-chrome -user-data-dir=~/temp --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://jekyll_voxforge.org
@@ -60,7 +60,9 @@ var RECORDING_STOP_DELAY = 300;
 // recording, it will miss last recording.
 var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400; 
 var WAIT_FOR_COPY_OF_AUDIO = 750; 
-var LOCAL_PROMPT_FILE_NAME = "prompt_file";
+
+// TODO duplicate definition in service worker file: processSavedSubmission.js
+var LOCAL_PROMPT_FILE_NAME = "voxforge_prompt_file";
 
 /**
 * Instantiate classes

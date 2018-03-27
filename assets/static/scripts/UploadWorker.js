@@ -25,6 +25,8 @@ make sure to import self-signed root Cert into Firefox certificate store
 */
 
 importScripts('processSavedSubmissions.js'); 
+// TODO: processSavedSubmissions is called from service worker (voxforge_sw.js) from 
+// a different root, therefore localforage import must be done in calling script
 importScripts('../lib/localforage.js');
 
 self.onmessage = function(event) {

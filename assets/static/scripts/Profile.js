@@ -150,7 +150,7 @@ Profile.prototype.toHash = function () {
     profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
 
     profile_hash["os"] = platform.os.toString();
-    profile_hash["browser"] = platform.version;
+    profile_hash["browser"] = platform.name + ' ' + platform.version;
 
     profile_hash["license"] = $("#license").val();
 
@@ -244,7 +244,7 @@ Profile.prototype.toTextArray = function () {
 
     profile_array[i++] = 'Audio Recording Software: VoxForge Javascript speech submission application\n';
 
-    profile_array[i++] = 'O/S: ' +  platform.os + '\n';
+    profile_array[i++] = 'O/S: ' +  platform.os.toString() + '\n';
     profile_array[i++] = 'Browser: ' +  platform.name + ' ' + platform.version + '\n';
     profile_array[i++] = '\nLicense: ' +  $('#license').val() + '\n';
 
@@ -298,7 +298,7 @@ Profile.prototype.getTempSubmissionName = function () {
 
     var d = new Date();
     var date = d.getFullYear().toString() + (d.getMonth() + 1).toString() + d.getDate().toString();
-    var result = page_language + '-' + username + '-' + date + '-' + uuidv4();
+    var result = 'voxforge' + '-' + page_language + '-' + username + '-' + date + '-' + uuidv4();
 
     return result;
 }

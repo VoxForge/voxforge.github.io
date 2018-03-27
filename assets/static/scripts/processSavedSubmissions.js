@@ -19,7 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 
-var LOCAL_PROMPT_FILE_NAME = "prompt_file"; // needs to be redefined here
+// TODO: duplicate definition app.js
+var LOCAL_PROMPT_FILE_NAME = "voxforge_prompt_file"; // needs to be redefined here
 
 // cannot put this here even though code is being shared bby voxforge_sw.js and 
 // UploadWorker.js because they are stored in different places and need different
@@ -54,6 +55,8 @@ function processSavedSubmissions() {
             .then(uploadSubmission)
             .then(removeSubmission)
             .then(function(result) {
+                // checking result === OK is redundant since previous function
+                // in chaning resolved rather than rejecting...
                 if ( i == savedSubmissionArray.length - 1 && result === "OK" ) {
                   console.info("submission(s) successfully uploaded.");
                   resolve("OK");
@@ -77,14 +80,14 @@ function getSavedSubmission(saved_submission_name) {
   return new Promise(function (resolve, reject) {
     // getItem only returns jsonObject
     localforage.getItem(saved_submission_name)
+    .then(function(jsonOnject) {
+      // resolve sends these as parameters to next promise in chain
+      resolve([saved_submission_name, jsonOnject, uploadURL]);
 
-      .then(function(jsonOnject) {
-        // resolve sends these as parameters to next promise in chain
-        resolve([saved_submission_name, jsonOnject, uploadURL]);
-
-      }).catch(function(err) {
-        reject('checkForSavedFailedUpload err: ' + err);
-      });
+    })
+    .catch(function(err) {
+      reject('checkForSavedFailedUpload err: ' + err);
+    });
   });
 }
 

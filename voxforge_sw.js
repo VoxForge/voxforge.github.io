@@ -16,6 +16,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 importScripts('assets/static/scripts/processSavedSubmissions.js'); 
+// TODO: processSavedSubmissions is called from service worker (voxforge_sw.js) from 
+// a different root, therefore localforage import must be done in calling script
 importScripts('assets/static/lib/localforage.js');
 
 /**
