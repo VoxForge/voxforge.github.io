@@ -61,9 +61,6 @@ var RECORDING_STOP_DELAY = 300;
 var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400; 
 var WAIT_FOR_COPY_OF_AUDIO = 750; 
 
-// TODO duplicate definition in service worker file: processSavedSubmission.js
-var LOCAL_PROMPT_FILE_NAME = "voxforge_prompt_file";
-
 /**
 * Instantiate classes
 */

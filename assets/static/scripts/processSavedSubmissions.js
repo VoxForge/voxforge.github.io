@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 
 // TODO: duplicate definition app.js
-var LOCAL_PROMPT_FILE_NAME = "voxforge_prompt_file"; // needs to be redefined here
+var LOCAL_PROMPT_FILE_NAME = "prompt_file"; // needs to be redefined here
 
 // cannot put this here even though code is being shared bby voxforge_sw.js and 
 // UploadWorker.js because they are stored in different places and need different

@@ -15,11 +15,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 /**
 * ### Contructor ##############################################
 */
 function Prompts() {
+    // TODO duplicate definition in service worker file: processSavedSubmission.js
+    var local_prompt_file_name = page_language + '_' + 'prompt_file';
+
+    // lexical closure of 'this' value so that when function 'processPromptsFile' 
+    // gets passed as parameter to $.get (thus being called as a reference), it
+    // has access to correct 'this' context variable
+    // see: http://alistapart.com/article/getoutbindingsituations
+    var self = this;
+
     /* Inner functions */
     /**
     * verify that read.md entries contain valid data
@@ -89,12 +97,6 @@ function Prompts() {
       return page_prompt_list_files.length;
     }
 
-    // lexical closure of 'this' value so that when function 'processPromptsFile' 
-    // gets passed as parameter (thus being called as a reference) to $.get, it
-    // has access to correct 'this' context variable
-    // see: http://alistapart.com/article/getoutbindingsituations
-    var self = this;
-
     /**
     * split prompt file from server into an array and decide if it needs a 
     * prompt ID added; store in 'self.list'
@@ -134,7 +136,7 @@ function Prompts() {
     * save the prompt file as a JSON object in user's browser 
     * InnoDB database using LocalForage 
     */
-    function savePromptListLocally(local_prompt_file_name) {
+    function savePromptListLocally() {
       var jsonOnject = {};
       jsonOnject['language'] = page_language;
       jsonOnject['id'] = page_prompt_list_files[random_prompt_file].id;
@@ -170,9 +172,9 @@ function Prompts() {
     * (note complete prompt list is split into many smaller prompt files so
     * that browser does not need to load them all in at once...)
     */
-    function processPromptsFile(prompt_data, local_prompt_file_name) {
+    function processPromptsFile(prompt_data) {
       convertPromptDataToArray(prompt_data);
-      savePromptListLocally(local_prompt_file_name);
+      savePromptListLocally();
 
       // set random index of prompt line to present to user
       self.index = Math.floor((Math.random() * self.list.length)); // zero indexed
@@ -181,10 +183,10 @@ function Prompts() {
     }
 
     /* get the submission object */
-    function getSavedPromptList(prompt_file_name) {
+    function getSavedPromptList() {
       return new Promise(function (resolve, reject) {
           // getItem only returns jsonObject
-          localforage.getItem(prompt_file_name)
+          localforage.getItem(local_prompt_file_name)
           .then(function(jsonOnject) {
             // resolve sends these as parameters to next promise in chain
             resolve(jsonOnject);
@@ -197,6 +199,8 @@ function Prompts() {
 
     /* ====================================================================== */
     /* Main */
+
+
     validate_Readmd_file();
 
     var random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
@@ -215,14 +219,14 @@ function Prompts() {
     */
     $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
       function(prompt_data) {
-        processPromptsFile(prompt_data, LOCAL_PROMPT_FILE_NAME);
+        processPromptsFile(prompt_data);
       }
     ).fail(function() {
       var file_name = page_prompt_list_files[random_prompt_file]['file_location'];
       console.warn("cannot find prompts file on VoxForge server: " + file_name + 
-                   "; or bad Internet connection... using locally stored prompt file: " + LOCAL_PROMPT_FILE_NAME);
+                   "; or bad Internet connection... using locally stored prompt file: " + local_prompt_file_name);
 
-      getSavedPromptList(LOCAL_PROMPT_FILE_NAME)
+      getSavedPromptList()
       .then( function(jsonObject) {
           self.list = jsonObject.list;
           initializePromptStack();
@@ -234,7 +238,9 @@ function Prompts() {
 // The prototype for the Prompts object defines the properties of 
 // object instances, that is, the variables and methods of the object
 Prompts.prototype = {
+    //max_num_prompts: 10, // prod
     max_num_prompts: 3, // TODO testing
+
     previous_max_num_prompts: 0, // to decide what to do when use changes max number of prompts
     list: [], // list of prompts to be read by user
     index: 0, // pointer to position in prompt list array
