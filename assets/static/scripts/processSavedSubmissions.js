@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 
-// TODO: duplicate definition app.js
-var LOCAL_PROMPT_FILE_NAME = "prompt_file"; // needs to be redefined here
+// TODO: duplicate definition LOCAL_PROMPT_FILE_NAME in app.js
+var regex = /prompt_file$/; 
 
 // cannot put this here even though code is being shared bby voxforge_sw.js and 
 // UploadWorker.js because they are stored in different places and need different
@@ -46,10 +46,12 @@ function processSavedSubmissions() {
 
     localforage.keys().then(function(savedSubmissionArray) {
       console.info('submissions to upload to VoxForge server: \n' + ' - '+ savedSubmissionArray.join('\n'));
+      // test for file name does not contain LOCAL_PROMPT_FILE_NAME; because
+      // file names are language prefixed and do not want to delete them...
 
       for (var i = 0; i < savedSubmissionArray.length; i++) {
-        // so doesnt try to upload and delete saved prompt list
-        if (savedSubmissionArray[i] !== LOCAL_PROMPT_FILE_NAME) {
+        // so doesn't try to upload and delete saved prompt list
+        if ( ! regex.test(savedSubmissionArray[i]) ) {
 
             getSavedSubmission( savedSubmissionArray[i] )
             .then(uploadSubmission)

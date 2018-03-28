@@ -86,11 +86,6 @@ self.addEventListener('install', function(event) {
 });
 
 /**
-* this should cache the /en/prompts/001... prompt files as they are requested...
-* TODO if browser offline && asking for a prompt file, then don't just pick
-* a random prompt file, use theone currently in cache, and add more prompt files
-* once user is back online...
-*
 * If we want to cache new requests cumulatively, we can do so by handling the
 * response of the fetch request and then adding it to the cache, like below.
 *
