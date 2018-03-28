@@ -130,41 +130,62 @@ function upload( when_audio_processing_completed_func ) {
       * receives replies from work thread and displays status accordingly
       *
       * this is a worker callback inside the worker context
+      *
+      * for testing CORS make sure you have rootCA cert installed
+      * on browser to be tested... otherwise operation will fail silently
       */
       zip_worker.onmessage = function zipworkerDone(event) { 
         if (event.data.status === "savedInBrowserStorage") {
-          console.info('message from worker: zip file creation completed');
+          console.info('message from worker: savedInBrowserStorage (zip file creation and save completed)');
           // FireFox: TypeError: swRegistration.sync is undefine
           // sync is not supported in FireFox  WTF!!!
           // https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/sync
           // see: https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
           // https://bugzilla.mozilla.org/show_bug.cgi?id=1217544 - planned for FFv61
 
-          navigator.serviceWorker.ready.then(function(swRegistration) {
-            if (typeof swRegistration.sync !== 'undefined') {
+          // Chrome on Linux and Windows 10 supports service workers for fetching
+          // and background sync; Chrome on Androind 5 and up works too.
+          // TODO: Chrome on Android 4.4.2 does not work - current theory Chrome does 
+          // not like CORS xhr using any type of worker (service or web)
+          // Firefox on Linux & Windows 10 supports service workers for fetching 
+          // but not background sync, therefore use Web Worker; 
+          // FireFox works on Andoid 4.4.2 and up.
+          // Windows 10 Edge does not support service workers at all... use
+          // Web Workers...
+          if (typeof navigator.serviceWorker !== 'undefined') { 
 
-              // request a one-off sync to upload the saved submission
-              // will upload if there is connectivity, if there is none, will
-              // keep on trying to upload until connectivity is made
-              // and then will delete saved submission from browser storage
+              navigator.serviceWorker.ready.then(function(swRegistration) {
+                if (typeof swRegistration.sync !== 'undefined') { // Chrome
+                  // request a one-off sync to upload the saved submission
+                  // will upload if there is connectivity, if there is none, will
+                  // keep on trying to upload until connectivity is made
+                  // and then will delete saved submission from browser storage
 
-              // Second call to sync takes longer than you think, but it will work
-              // eventually... service worker seems to collect up all the calls to
-              // service worker and does uploads consecutively
-              // wait about 1-2 minutes
-              return swRegistration.sync.register('myFirstSync').then(function() {
-                console.info('service worker sync succeeded - submission will be uploaded shortly');
-               }, function() {
-                console.error('service worker sync failed, will retry later');
+                  // Second call to sync takes longer than you think, but it will work
+                  // eventually... service worker seems to collect up all the calls to
+                  // service worker and does uploads consecutively
+                  // wait about 1-2 minutes
+                  return swRegistration.sync.register('myFirstSync').then(function() {
+                    console.info('service worker sync succeeded - submission will be uploaded shortly');
+                   }, function() {
+                    console.error('service worker sync failed, will retry later');
+                  });
+
+                } else { // FireFox
+                  console.warn('Browser does not support background sync using service workers, trying web worker');
+                  webWorkerUpload();
+                }
               });
 
-            } else {
+          } else { // TODO  Edge... but edge does not support InnoDB... Localforage 
+                    //was supposed to work around this issue.... so no support for
+                    // Edge for now...
 
-              console.warn('Browser does not support background sync using service workers, trying web worker');
-              webWorkerUpload();
+            console.warn('Browser does not support service workers, trying web worker');
+            webWorkerUpload();
 
-            }
-          });
+          }
+
           console.info('set myFirstSync event to tell service worker to upload');
         } else {
           console.error('message from worker: transfer error: ' + event.data.status);

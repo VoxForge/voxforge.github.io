@@ -45,13 +45,13 @@ function processSavedSubmissions() {
     });
 
     localforage.keys().then(function(savedSubmissionArray) {
-      console.info('submissions to upload to VoxForge server: \n' + ' - '+ savedSubmissionArray.join('\n'));
       // test for file name does not contain LOCAL_PROMPT_FILE_NAME; because
       // file names are language prefixed and do not want to delete them...
 
       for (var i = 0; i < savedSubmissionArray.length; i++) {
         // so doesn't try to upload and delete saved prompt list
         if ( ! regex.test(savedSubmissionArray[i]) ) {
+            console.info('submission to upload to VoxForge server: ' + savedSubmissionArray[i]);
 
             getSavedSubmission( savedSubmissionArray[i] )
             .then(uploadSubmission)
