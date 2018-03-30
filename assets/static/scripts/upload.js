@@ -143,14 +143,14 @@ function upload( when_audio_processing_completed_func ) {
           // see: https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
           // https://bugzilla.mozilla.org/show_bug.cgi?id=1217544 - planned for FFv61
 
-          // Chrome on Linux and Windows 10 supports service workers for fetching
+          // - Chrome on Linux and Windows 10 supports service workers for fetching
           // and background sync; Chrome on Androind 5 and up works too.
-          // TODO: Chrome on Android 4.4.2 does not work - current theory Chrome does 
-          // not like CORS xhr using any type of worker (service or web)
-          // Firefox on Linux & Windows 10 supports service workers for fetching 
+          // - TODO: Chrome on Android 4.4.2 does not work - current theory Chrome does 
+          // not like CORS xhr using any type of worker (service or web).
+          // - Firefox on Linux & Windows 10 supports service workers for fetching 
           // but not background sync, therefore use Web Worker; 
           // FireFox works on Andoid 4.4.2 and up.
-          // Windows 10 Edge does not support service workers at all... use
+          // - Edge on Windows 10 does not support service workers at all... use
           // Web Workers...
           if (typeof navigator.serviceWorker !== 'undefined') { 
 
@@ -166,9 +166,9 @@ function upload( when_audio_processing_completed_func ) {
                   // service worker and does uploads consecutively
                   // wait about 1-2 minutes
                   return swRegistration.sync.register('myFirstSync').then(function() {
-                    console.info('service worker sync succeeded - submission will be uploaded shortly');
+                    console.info('service worker background sync succeeded - submission will be uploaded shortly');
                    }, function() {
-                    console.error('service worker sync failed, will retry later');
+                    console.error('service worker background sync failed, will retry later');
                   });
 
                 } else { // FireFox

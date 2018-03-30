@@ -14,10 +14,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+// Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
+// /etc/hosts or on local DNS server;
 //var uploadURL = 'https://upload.voxforge1.org'; // prod
 //var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
+
 
 // TODO: duplicate definition LOCAL_PROMPT_FILE_NAME in app.js
 var regex = /prompt_file$/; 
@@ -103,17 +105,38 @@ function uploadSubmission(data) {
     form.append('language', jsonOnject['language'])
     form.append('username', jsonOnject['username'])
 
+    // Basically fetch() will only reject a promise if the user is offline, or 
+    // some unlikely networking error occurs, such a DNS lookup failure.
+    // see: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/
+
+    // research: https://medium.com/@shahata/why-i-wont-be-using-fetch-api-in-my-apps-6900e6c6fe78
     fetch(uploadURL, {
       method: 'post',
       body: form,
       mode: 'cors',
       credentials: 'include',
     })
+    .then(response=>response.text())
+    .then((response_text) => {
+        console.log('post URL ' +  uploadURL);
+        if (response_text === "submission uploaded successfully." ) {
+          console.info("transferComplete: upload to VoxForge server successfully completed for: " + saved_submission_name);
+
+          // resolve sends these as parameters to next promise in chain
+          resolve(saved_submission_name);
+
+        } else {
+          reject('Request failed - server configuration issues', response);
+        }
+    })
+/*
     .then(function (response) {
-      console.log('post URL ' +  uploadURL);
+
+
+
 
       // TODO response.text() is an object, how to get response payload from server
-      console.log('response data: ' + response.text());
+      console.log('response data: ' + response.statusText);
       // to catch configuration errors on server side
       //if (response.text() === "submission uploaded successfully." ) {
       //  console.info("transferComplete: upload to VoxForge server successfully completed for: " + saved_submission_name);
@@ -125,9 +148,9 @@ function uploadSubmission(data) {
       //  reject('Request failed - server configuration issues', response);
       //}
 
-    })
+    }) */
     .catch(function (error) {
-      console.warn('upload of saved submission failed for: ' + saved_submission_name + 'will try again next time');
+      console.warn('upload of saved submission failed for: ' + saved_submission_name + ' ...will try again next time');
       reject('Request failed', error);
     });
 
