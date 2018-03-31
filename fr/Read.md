@@ -23,6 +23,8 @@ anonymous: anonymous
 anonymous_submission: (laisser vide pour soumettre anonymement)
 profile_info: Profil
 
+# Yes and No must be in quotes, otherwise evaluates to true/false
+# can't use 'yes' or 'no' as variable names in YAML
 localized_variable:
   lv_yes: "Oui"
   lv_no: "Non"

@@ -78,6 +78,9 @@ var fsm = setUpFSM();
 * see: https://github.com/jakesgordon/javascript-state-machine
 */
 function setUpFSM() {
+    //  recording timeout object
+    var rec_timeout_obj;
+
     /**
     * record audio - used in two states:
     *    1. where less than total number of prompts to record (less than n), or 
@@ -102,9 +105,6 @@ function setUpFSM() {
     }
 
     view.setRSUButtonDisplay(true, false, false); 
-  
-    //  recording timeout object
-    var rec_timeout_obj;
 
     fsm = new StateMachine({
       init: 'waveformdisplay',
@@ -198,7 +198,7 @@ function setUpFSM() {
           view.setRSUButtonDisplay(false, false, false);
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
-          // TODO convert this to promise...
+          // TODO convert passing in of anonymous function to promise...
           upload( 
               // anonymous function to be executed after processsing of shadow DOM
               // audio elements completed, otherwise submission package will be

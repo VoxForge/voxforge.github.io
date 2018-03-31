@@ -14,6 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
 // /etc/hosts or on local DNS server;
 //var uploadURL = 'https://upload.voxforge1.org'; // prod
@@ -25,11 +26,15 @@ var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 var regex = /prompt_file$/; 
 
 // cannot put this here even though code is being shared by voxforge_sw.js and 
-// UploadWorker.js because they are stored in different places and need different
-// relative paths
+// UploadWorker.js because they are stored in different places and have 
+// rdifferent elative paths
 // importScripts('assets/static/lib/localforage.js');
 
-/* if saved submissions exist, get then upload the submission */
+
+
+/**
+* if saved submissions exist, get then upload the submission 
+*/
 function processSavedSubmissions() {
   return new Promise(function (resolve, reject) {
     localforage.length().then(function(numberOfKeys) {
@@ -73,13 +78,17 @@ function processSavedSubmissions() {
         }
       }
 
-    }).catch(function(err) {
+    })
+    .catch(function(err) {
       reject(err);
     });
   });
 }
 
-/* get the submission object */
+/**
+* get the submission object 
+*
+*/
 function getSavedSubmission(saved_submission_name) {
   return new Promise(function (resolve, reject) {
     // getItem only returns jsonObject
@@ -95,7 +104,14 @@ function getSavedSubmission(saved_submission_name) {
   });
 }
 
-/* upload the submission to the VoxForge server */
+/**
+* upload the submission to the VoxForge server 
+*
+* Basically fetch() will only reject a promise if the user is offline, or 
+* a networking error occurs, such a DNS lookup failure.
+* see: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/
+* research: https://medium.com/@shahata/why-i-wont-be-using-fetch-api-in-my-apps-6900e6c6fe78
+*/
 function uploadSubmission(data) {
   var [saved_submission_name, jsonOnject, uploadURL] = data;
 
@@ -105,18 +121,13 @@ function uploadSubmission(data) {
     form.append('language', jsonOnject['language'])
     form.append('username', jsonOnject['username'])
 
-    // Basically fetch() will only reject a promise if the user is offline, or 
-    // some unlikely networking error occurs, such a DNS lookup failure.
-    // see: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/
-
-    // research: https://medium.com/@shahata/why-i-wont-be-using-fetch-api-in-my-apps-6900e6c6fe78
     fetch(uploadURL, {
       method: 'post',
       body: form,
       mode: 'cors',
       credentials: 'include',
     })
-    .then(response=>response.text())
+    .then(response=>response.text()) // this resolves the promise to get the response data from network stream
     .then((response_text) => {
         console.log('post URL ' +  uploadURL);
         if (response_text === "submission uploaded successfully." ) {
@@ -129,26 +140,6 @@ function uploadSubmission(data) {
           reject('Request failed - server configuration issues', response);
         }
     })
-/*
-    .then(function (response) {
-
-
-
-
-      // TODO response.text() is an object, how to get response payload from server
-      console.log('response data: ' + response.statusText);
-      // to catch configuration errors on server side
-      //if (response.text() === "submission uploaded successfully." ) {
-      //  console.info("transferComplete: upload to VoxForge server successfully completed for: " + saved_submission_name);
-
-        // resolve sends these as parameters to next promise in chain
-        resolve(saved_submission_name);
-
-      //} else {
-      //  reject('Request failed - server configuration issues', response);
-      //}
-
-    }) */
     .catch(function (error) {
       console.warn('upload of saved submission failed for: ' + saved_submission_name + ' ...will try again next time');
       reject('Request failed', error);
@@ -158,7 +149,9 @@ function uploadSubmission(data) {
 }
 
 
-/* delete submission from local storage */
+/**
+* delete submission from local storage 
+*/
 function removeSubmission(saved_submission_name) {
   return new Promise(function (resolve, reject) {
     // only remove saved submission if upload completed successfully
@@ -167,7 +160,8 @@ function removeSubmission(saved_submission_name) {
 
       resolve("OK");
 
-    }).catch(function(err) {
+    })
+    .catch(function(err) {
       reject('Error: cannot remove saved submission: ' + saved_submission_name + ' err: ' + err);
     });  
   });

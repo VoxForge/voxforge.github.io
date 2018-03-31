@@ -200,7 +200,6 @@ function Prompts() {
     /* ====================================================================== */
     /* Main */
 
-
     validate_Readmd_file();
 
     var random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
@@ -235,8 +234,10 @@ function Prompts() {
    });
 }
 
-// The prototype for the Prompts object defines the properties of 
-// object instances, that is, the variables and methods of the object
+/**
+* The prototype for the Prompts object defines the properties of 
+* object instances, that is, the variables and methods of the object
+*/
 Prompts.prototype = {
     //max_num_prompts: 10, // prod
     max_num_prompts: 3, // TODO testing
@@ -338,7 +339,8 @@ Prompts.prototype.getPromptSentence = function () {
 *
 * prompts need to be sorted because recordings are displayed in reverse order 
 * so that most recent one was displayed first (less scrolling for user
-* to see most recent recording)
+* to see most recent recording); and prompt deletion and re-recording 
+* messes up ordering also...
 */
 Prompts.prototype.toArray = function () {
     var temp_array = this.prompts_recorded.sort();
