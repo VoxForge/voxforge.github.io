@@ -24,7 +24,7 @@ var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // TODO: duplicate definition LOCAL_PROMPT_FILE_NAME in app.js
 var regex = /prompt_file$/; 
 
-// cannot put this here even though code is being shared bby voxforge_sw.js and 
+// cannot put this here even though code is being shared by voxforge_sw.js and 
 // UploadWorker.js because they are stored in different places and need different
 // relative paths
 // importScripts('assets/static/lib/localforage.js');

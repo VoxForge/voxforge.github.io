@@ -342,10 +342,12 @@ Prompts.prototype.getPromptSentence = function () {
 * TODO if delete a prompt and re-record, then ordering gets all messed up...
 */
 Prompts.prototype.toArray = function () {
-    var temp_array = this.prompts_recorded;
+    //var temp_array = this.prompts_recorded;
+    var temp_array = this.prompts_recorded.sort();
     // need to reverse array because recordings are displayed in reverse order 
     // so that most recent one was displayed first
-    return temp_array.reverse();
+    //return temp_array.reverse();
+    return temp_array;
 }
 
 /**
@@ -353,12 +355,13 @@ Prompts.prototype.toArray = function () {
 * array reversal achieved by reading array elements in reverse order
 */
 Prompts.prototype.toJsonString = function () {
-    var arr = this.prompts_recorded;
+    //var arr = this.prompts_recorded;
+    var arr = this.prompts_recorded.sort();
     var obj = {};
 
     // reverses array
-    var end = arr.length - 1;
-    for (var i = end ; i >= 0 ; i--)
+    //var end = arr.length - 1;
+    for (var i = 0 ; i < arr.length ; i++)
     {
       var prompt_line = arr[i].split(/\s+/);
       var prompt_id = prompt_line.shift();
