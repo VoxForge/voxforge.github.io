@@ -298,7 +298,7 @@ Profile.prototype.getTempSubmissionName = function () {
 
     var d = new Date();
     var date = d.getFullYear().toString() + (d.getMonth() + 1).toString() + d.getDate().toString();
-    var result = 'voxforge' + '-' + page_language + '-' + username + '-' + date + '-' + uuidv4();
+    var result = page_language + '-' + username + '-' + date + '-' + uuidv4();
 
     return result;
 }

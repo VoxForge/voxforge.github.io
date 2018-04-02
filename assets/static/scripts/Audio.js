@@ -36,7 +36,7 @@ var wavesurfer = [];
 * Class definition
 */
 function Audio () {
-    // 'self' used to save the current context when calling function references
+    // 'self' used to save current context when calling function references
     var self = this;
 
     // object attributes
@@ -91,18 +91,38 @@ function Audio () {
     * see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
     */
     navigator.mediaDevices.getUserMedia(constraints)
-      .then(function(stream) {
-        console.log('getUserMedia supported.');
-        setupAudioNodes(stream);
+    .then(function(stream) {
+      console.log('getUserMedia supported.');
+      setupAudioNodes(stream);
+    })
+    .catch(function(err) {
+      window.alert("Could not get audio input - reason: " + err);
+      console.error('The following error occured: ' + err);
+    });
 
-        // starts entire application... not very clear from here...
-        //setUpFSM();
 
-      })
-      .catch(function(err) {
-        window.alert("Could not get audio input - reason: " + err);
-        console.error('The following error occured: ' + err);
-      });
+    /**
+    * Audio processing notes:
+    * 1. bit rate in Audacity does not match bit rate of file:
+    * - WavAudioEncoder.js converts audio from 32-bit float to  16-bit signed
+    * Audacity - depending on quality settings (in preferences) will 
+    * show whatever the default quality settings are... so even if audio recorded 
+    * in 16-bit, it will display default quality which might be 32-bit float...
+    * - use ffprobe to read wav header file and tell you actual bit rate:
+    * $  ffprob en000048.wav
+ ... 
+ Input #0, wav, from 'en000048.wav':
+ Duration: 00:00:02.37, bitrate: 705 kb/s
+ Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 44100 Hz, 1 channels, s16, 705 kb/s
+    * $ ffmpeg -formats | grep PCM
+ DE s16le           PCM signed 16-bit little-endian
+    *
+    * 2. Why not just use 32 bit float in audio (with no downsample)?
+    * Wavesufer can only use 16-bit, therefore would need two sets of audio:
+    * one for display and one for saving as part of submission.
+    *
+    */
+
 
     /**
     * set up audio nodes that are connected together in a graph so that the 
@@ -110,6 +130,7 @@ function Audio () {
     * (currently not used), an analyzer to create visually display the amplitude
     * of the captured audio, a processor to capture the raw audio, and 
     * a destination audiocontext to capture audio
+    *
     */
     function setupAudioNodes(stream) {
       // using 'self' because setupAudioNodes is being called as a parameter to 
@@ -129,11 +150,6 @@ function Audio () {
       microphone.connect(self.microphoneLevel); 
 
       profile.sample_rate = self.audioCtx.sampleRate;
-      // TODO  WavAudioEncoder.js says it is converting to 16-bit signed....
-      // Audacity still says audio recorded by this program is 32-bit float... 
-      // TODO why not just use 32 bit float in audio?:
-      // wavesufer can only use 16-bit, therefore would need two sets of audio:
-      // one for display and one for saving as part of submission.
       profile.sample_rate_format = "16 bit";
 
       profile.channels = self.mediaStreamOutput.channelCount;
