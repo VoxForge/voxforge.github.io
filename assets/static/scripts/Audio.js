@@ -101,26 +101,41 @@ function Audio () {
     });
 
 
-    /**
+    /*
     * Audio processing notes:
     * 1. bit rate in Audacity does not match bit rate of file:
-    * - WavAudioEncoder.js converts audio from 32-bit float to  16-bit signed
-    * Audacity - depending on quality settings (in preferences) will 
+    * WavAudioEncoder.js converts audio from 32-bit float to  16-bit signed.
+    * Audacity, depending on quality settings (in preferences), will 
     * show whatever the default quality settings are... so even if audio recorded 
-    * in 16-bit, it will display default quality which might be 32-bit float...
-    * - use ffprobe to read wav header file and tell you actual bit rate:
-    * $  ffprob en000048.wav
- ... 
- Input #0, wav, from 'en000048.wav':
- Duration: 00:00:02.37, bitrate: 705 kb/s
- Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 44100 Hz, 1 channels, s16, 705 kb/s
-    * $ ffmpeg -formats | grep PCM
- DE s16le           PCM signed 16-bit little-endian
+    * in 16-bit, it will display default quality... which might be 32-bit float.
+    * - use ffprobe (part of ffmpeg suit) to read wav header file and tell
+    * you actual bit rate:
+        $  ffprob en000048.wav
+         ... 
+         Input #0, wav, from 'en000048.wav':
+         Duration: 00:00:02.37, bitrate: 705 kb/s
+         Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 44100 Hz, 1 channels, s16, 705 kb/s
+        $ ffmpeg -formats | grep PCM
+         DE s16le           PCM signed 16-bit little-endian
+    * see: https://trac.ffmpeg.org/wiki/audio%20types
     *
     * 2. Why not just use 32 bit float in audio (with no downsample)?
     * Wavesufer can only use 16-bit, therefore would need two sets of audio:
-    * one for display and one for saving as part of submission.
+    * one for display and one for saving as part of submission, which could be 
+    * done given that saving audio is done as a background Web Worker process
     *
+    * 3. Sometimes get scratches and pops when recording with Smartphone.
+    * This might be the result of truncation distortion when converting from 
+    * 32-bit float to 16-bit... may need to apply dithering and noise shapping
+    * to address this issue
+    * Dither is low volume noise, introduced into digital audio when converting 
+    * from a higher bit-resolution to a lower bit-resolution.
+    * The process of reducing bit-resolution causes quantization errors, also
+    * known as truncation distortion, which if not prevented, can sound very
+    * unpleasant.
+    * see: http://darkroommastering.com/blog/dithering-explained
+    * or it could simply be that my low end smartphone does not have neough 
+    * processing power and the result is scratches and pops...
     */
 
 
