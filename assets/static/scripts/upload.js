@@ -23,11 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // then clear browser caches
 // F12; Network>Disable Cache
 // F12 Application>Service Workers>Update on reload
-//In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost'
-// don't use Jekyll port number for testing...
-//NOW IN voxforge_sw.js
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // chrome testing
-//var uploadURL = 'https://upload.voxforge1.org'; // prod
+//In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost' ... does not work
+// need to install rootCA in browser...
 
 // zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
@@ -132,24 +129,28 @@ function upload( when_audio_processing_completed_func ) {
       * this is a worker callback inside the worker context
       *
       * for testing CORS make sure you have rootCA cert installed
-      * on browser to be tested... otherwise operation will fail silently
+      * on browser to be tested (Linux, Android, Unix...)
+      * otherwise operation will fail silently
       */
       zip_worker.onmessage = function zipworkerDone(event) { 
         if (event.data.status === "savedInBrowserStorage") {
           console.info('message from worker: savedInBrowserStorage (zip file creation and save completed)');
           // FireFox: TypeError: swRegistration.sync is undefine
-          // sync is not supported in FireFox  WTF!!!
+          // background sync is not supported in FireFox  WTF!!!
           // https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/sync
           // see: https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
           // https://bugzilla.mozilla.org/show_bug.cgi?id=1217544 - planned for FFv61
 
           // - Chrome on Linux and Windows 10 supports service workers for fetching
-          // and background sync; Chrome on Androind 5 and up works too.
-          // - TODO: Chrome on Android 4.4.2 does not work - current theory Chrome does 
-          // not like CORS xhr using any type of worker (service or web).
+          // and background sync; 
+          // - Chrome on Android 5 - works.
+          // - Chrome on Android 4.4.2 - needs valid root certificate installed
+          // in browser  
           // - Firefox on Linux & Windows 10 supports service workers for fetching 
           // but not background sync, therefore use Web Worker; 
-          // FireFox works on Andoid 4.4.2 and up.
+          // FireFox works on Andoid 4.4.2 - now needs a root certificate
+          // see: https://wiki.mozilla.org/CA:AddRootToFirefox
+          //
           // - Edge on Windows 10 does not support service workers at all... use
           // Web Workers...
           if (typeof navigator.serviceWorker !== 'undefined') { 

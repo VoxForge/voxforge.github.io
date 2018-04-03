@@ -31,12 +31,6 @@ https://stackoverflow.com/questions/43665243/invalid-self-signed-ssl-cert-subjec
 // this does not work:
 //In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost'
 
-
-workaround in Chrome... does not work for service workers:
-$google-chrome --allow-insecure-localhost https://localhost 
-index.php: $ALLOWEDURL = "https://localhost"; // testing
-var uploadURL = 'https://localhost/index.php';
-
 chrome://serviceworker-internals  > open DEvTools window and pause Javascript
 execution on Service Worker startup...
 */

@@ -28,8 +28,8 @@ see: https://github.com/higuma/wav-audio-encoder-js
 
 /**
 *
-given that audio recorded from smartohone contains scratches and pops, do 
-we need to add dithering?
+given that audio recorded from smartphone sometimes contains scratches and pops, 
+do we need to add dithering?
 see: http://wiki.audacityteam.org/wiki/Dither
 "Dither" is intentional noise which is added so as to randomise the quantisation 
 errors  (rounding errors) that occur when downsampling the Bit Depth of an
