@@ -198,9 +198,9 @@ function upload( when_audio_processing_completed_func ) {
     * upload any previously saved submissions (in browser storage)
     */
     function uploadZippedSubmission() {
-//      if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
-//        parseInt(platform.os.version) < 5)
-//      {
+      if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
+        parseInt(platform.os.version) < 5)
+      {
         // Chrome Android 4.4.2 fails silently when using service worker...
         // force use of webworker for background upload
 /*
@@ -215,6 +215,8 @@ get following browser error when trying to run service worker:
 1.1.2) works OK with WebWorker
 1.2) Chrome Android 4.4.2 with rootCA installed on browser and service worker
 works!
+2) try on voxforge.github.io, service worker does not work, get:
+    Uncaught (in promise) Request failed voxforge_sw.js:1
 
 - try with rootCA installed on browser and web worker
 - try with no rootCA and web worker
@@ -223,8 +225,8 @@ works!
 for all of these...
 */
 
-//          webWorkerUpload();      
-//     } else {
+          webWorkerUpload();      
+     } else {
         if (typeof navigator.serviceWorker !== 'undefined') { 
             navigator.serviceWorker.ready.then(function(swRegistration) { // service workers supported
               if (typeof swRegistration.sync !== 'undefined') { 
