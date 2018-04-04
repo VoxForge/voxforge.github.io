@@ -16,7 +16,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 // TODO figure out javascript & GPL licensing....
 // see: https://opensource.stackexchange.com/questions/4360/what-are-the-implications-of-licensing-a-javascript-library-under-gpl
-
+// TODO do we need a manifest file???
+// http://diveintohtml5.info/offline.html
 
 /*
 https://www.acunetix.com/websitesecurity/cross-site-scripting/
@@ -47,17 +48,34 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 
 // #############################################################################
 
+// see: http://diveintohtml5.info/everything.html
+if( ! window.Worker )
+{
+  window.alert('Your browser does not support service or web workers, please ' +
+               'upgrade to a current version of an open browser such as ' +
+               'Chrome or FireFox');           
+}
+
+if( ! window.indexedDB )
+{
+  window.alert('Your browser does not support indexedDB for offline storage of ' +
+               'submissions, please upgrade to a current version of an open ' +
+               'browser such as Chrome or FireFox');          
+}
+
+if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
+{
+  window.alert('Microsoft proprietary browsers not supported... please upgrade ' +
+               'to a current version of an open browser such as Chrome or ' +
+               'FireFox');         
+}
+
 if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
   parseInt(platform.os.version) < 5)
 {
-  // need an aleter because this fails silently...
+  // need an alert because this fails silently...
   window.alert('Only Chrome on Android 5 and up is supported');           
 }
-if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
-{
-  window.alert('Microsoft Browsers not supported');           
-}
-
 
 // #############################################################################
 

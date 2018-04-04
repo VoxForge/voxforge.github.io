@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // /etc/hosts or on local DNS server;
 
 //var uploadURL = 'https://upload.voxforge1.org'; // prod
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
-var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+//var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 
 
 // TODO: duplicate definition LOCAL_PROMPT_FILE_NAME in app.js

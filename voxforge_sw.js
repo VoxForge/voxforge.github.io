@@ -85,6 +85,10 @@ self.addEventListener('install', function(event) {
 * response of the fetch request and then adding it to the cache, like below.
 *
 * see: https://developers.google.com/web/fundamentals/primers/service-workers/
+
+// TODO do we need a manifest file???
+// http://diveintohtml5.info/offline.html
+
 */
 self.addEventListener('fetch', function(event) {
   event.respondWith(

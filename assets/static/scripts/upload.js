@@ -166,7 +166,7 @@ function upload( when_audio_processing_completed_func ) {
     * cors where each domain has different ssl certificate; only web
     * worker seems to work, service worker fails silently...
     * - Firefox on Linux & Windows 10 supports service workers for fetching 
-    * but not background sync, therefore use Web Worker; 
+    * but not background sync, therefore use Web Worker for uploads; 
     * FireFox works on Andoid 4.4.2 - now needs a root certificate
     * see: https://wiki.mozilla.org/CA:AddRootToFirefox
     *
@@ -198,28 +198,61 @@ function upload( when_audio_processing_completed_func ) {
     * upload any previously saved submissions (in browser storage)
     */
     function uploadZippedSubmission() {
-      if (typeof navigator.serviceWorker !== 'undefined') { 
-          navigator.serviceWorker.ready.then(function(swRegistration) {
-            if (typeof swRegistration.sync !== 'undefined') { 
-              serviceWorkerUpload(swRegistration); // Chrome
-            } else { 
-              webWorkerUpload(); // FireFox
-            }
-          });
+//      if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
+//        parseInt(platform.os.version) < 5)
+//      {
+        // Chrome Android 4.4.2 fails silently when using service worker...
+        // force use of webworker for background upload
+/*
+1) from jekyll_voxforge.org with upload to: jekyll_voxforge.org
+1.1.1) so when using Chrome Android 4.4.2 with only a public certicate and no 
+corresponding root certificate stored on Android (Security>Credential Storage>Trusted Credentials
+get following browser error when trying to run service worker:
+    An SSL certificate error occurred when fetching the script.
+    Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID /voxforge_sw.js 
+    ServiceWorker registration failed:  DOMException: Failed to register 
+    a ServiceWorker: An SSL certificate error occurred when fetching the script. app.js:299 
+1.1.2) works OK with WebWorker
+1.2) Chrome Android 4.4.2 with rootCA installed on browser and service worker
+works!
 
-      } else { 
-        // TODO make sure not deadlock with service/web workers...
-        // TODO: should try web workers first...
-        //webWorkerUpload();
-        asyncMainThreadUpload();
-      }
+- try with rootCA installed on browser and web worker
+- try with no rootCA and web worker
+
+- then try CORS (from jekyll_voxforge.org with upload to: jekyll2_voxforge.org)
+for all of these...
+*/
+
+//          webWorkerUpload();      
+//     } else {
+        if (typeof navigator.serviceWorker !== 'undefined') { 
+            navigator.serviceWorker.ready.then(function(swRegistration) { // service workers supported
+              if (typeof swRegistration.sync !== 'undefined') { 
+                serviceWorkerUpload(swRegistration); // background sync supported
+              } else { 
+                webWorkerUpload(); // background sync not supported
+              }
+            });
+        } else { // service workers not supported
+          if( !! window.Worker ) { // web workers supported
+              webWorkerUpload();
+          } else {
+              asyncMainThreadUpload();
+          }
+
+        }
+//      }
     }
 
     /** 
     * upload submission from main thread, asynchronously...
     */
     function asyncMainThreadUpload() {
+      // TODO make sure not deadlock with service/web workers...
+      // TODO: should try web workers first...
       console.info('submission uploaded (in main thread) asynchronously to VoxForge server');
+
+
       processSavedSubmissions()
       .then(function(result) {
         console.info('async upload message: ' + result);
