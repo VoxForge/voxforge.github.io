@@ -197,13 +197,10 @@ function upload( when_audio_processing_completed_func ) {
     * background sync... therefore use Web Worker to upload submission and 
     * upload any previously saved submissions (in browser storage)
     */
-    function uploadZippedSubmission() {
-      if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
-        parseInt(platform.os.version) < 5)
-      {
+
         // Chrome Android 4.4.2 fails silently when using service worker...
         // force use of webworker for background upload
-/*
+/**
 1) from jekyll_voxforge.org with upload to: jekyll_voxforge.org
 1.1.1) so when using Chrome Android 4.4.2 with only a public certicate and no 
 corresponding root certificate stored on Android (Security>Credential Storage>Trusted Credentials
@@ -224,25 +221,29 @@ works!
 - then try CORS (from jekyll_voxforge.org with upload to: jekyll2_voxforge.org)
 for all of these...
 */
-
-          webWorkerUpload();      
-     } else {
-        if (typeof navigator.serviceWorker !== 'undefined') { 
-            navigator.serviceWorker.ready.then(function(swRegistration) { // service workers supported
-              if (typeof swRegistration.sync !== 'undefined') { 
-                serviceWorkerUpload(swRegistration); // background sync supported
-              } else { 
-                webWorkerUpload(); // background sync not supported
+    function uploadZippedSubmission() {
+      if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
+          parseInt(platform.os.version) < 5)
+      {
+          //webWorkerUpload();      
+           asyncMainThreadUpload();
+      } else {
+            if (typeof navigator.serviceWorker !== 'undefined') { 
+                navigator.serviceWorker.ready.then(function(swRegistration) { // service workers supported
+                  if (typeof swRegistration.sync !== 'undefined') { 
+                    serviceWorkerUpload(swRegistration); // background sync supported
+                  } else { 
+                    webWorkerUpload(); // background sync not supported
+                  }
+                });
+            } else { // service workers not supported
+              if( !! window.Worker ) { // web workers supported
+                  webWorkerUpload();
+              } else {
+                  asyncMainThreadUpload();
               }
-            });
-        } else { // service workers not supported
-          if( !! window.Worker ) { // web workers supported
-              webWorkerUpload();
-          } else {
-              asyncMainThreadUpload();
-          }
 
-        }
+            }
       }
     }
 
