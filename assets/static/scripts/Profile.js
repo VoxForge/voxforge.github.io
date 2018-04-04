@@ -323,10 +323,10 @@ Profile.prototype.getShortSubmissionName = function () {
 }
 
 /**
-* return username to be used in license, if blank, the use FSF
+* return username to be used in license
 */
 Profile.prototype.getLicenseUserName = function () {
-    return Profile.cleanUserInputRemoveSpaces( $('#username').val() ) || "Free Software Foundation";
+    return Profile.prototype.getUserName;
 }
 
 /**
