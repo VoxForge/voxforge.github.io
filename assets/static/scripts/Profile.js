@@ -313,9 +313,9 @@ Profile.prototype.getShortSubmissionName = function () {
     var username = this.getUserName().toLowerCase();
     var d = new Date();
     var month = d.getMonth() + 1;
-    month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
+    month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
     var day = d.getDate();
-    day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
+    day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
     var date = d.getFullYear().toString() + month.toString() + day.toString();
     var result = page_language + '-' + username + '-' + date + '-' + Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
 
