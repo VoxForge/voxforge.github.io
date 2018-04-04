@@ -15,16 +15,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+* if change here, remember to update index.php: $ALLOWEDURL & $UPLOADFOLDER
+* var uploadURL = 'https://jekyll_voxforge.org/index.php'; * test
+* Chrome and self signed certificates... need to make sure you install rootCA
+* in Chrome certificate store...
 
-// if change here, remember to update index.php: $ALLOWEDURL & $UPLOADFOLDER
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
-// Chrome does not like self signed certificates... need to test in prod...
-// make sure you terminate old service workers: chrome://inspect/#service-workers
-// then clear browser caches
-// F12; Network>Disable Cache
-// F12 Application>Service Workers>Update on reload
-//In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost' ... does not work
-// need to install rootCA in browser...
+* make sure you terminate old service workers: chrome://inspect/#service-workers
+* then clear browser caches
+* F12; Network>Disable Cache
+* F12 Application>Service Workers>Update on reload
+
+* In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost' ... does not work
+* need to install rootCA in browser...
+*/
+
 
 // zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
