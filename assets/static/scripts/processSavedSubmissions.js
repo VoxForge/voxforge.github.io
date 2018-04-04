@@ -39,7 +39,8 @@ var regex = /prompt_file$/;
 function processSavedSubmissions() {
   return new Promise(function (resolve, reject) {
     localforage.length().then(function(numberOfKeys) {
-      console.info('number of submissions saved in browser storage: ' + numberOfKeys);
+      // counts all keys, including saved language prompt files... 
+      //console.info('number of submissions saved in browser storage: ' + numberOfKeys);
 
       // TODO since later loop iterates through all saved submissions, this 
       // prevents service worker from turning into a zombie threads 
@@ -66,7 +67,7 @@ function processSavedSubmissions() {
             .then(removeSubmission)
             .then(function(result) {
                 // checking result === OK is redundant since previous function
-                // in chaning resolved rather than rejecting...
+                // in chain resolved rather than rejected...
                 if ( i == savedSubmissionArray.length - 1 && result === "OK" ) {
                   console.info("submission(s) successfully uploaded.");
                   resolve("OK");

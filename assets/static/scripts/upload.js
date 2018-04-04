@@ -154,17 +154,7 @@ function upload( when_audio_processing_completed_func ) {
           // see: https://wiki.mozilla.org/CA:AddRootToFirefox
           //
           // - Edge on Windows 10 does not support service workers at all... try
-          // Web Workers...
-
-          if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
-              parseInt(platform.os.version) < 5)
-          {
-            console.warn('Chrome on Android 4.4.2 and below does not support ' +
-                         'cross origin background sync with service workers... ' +
-                         'trying web worker');
-            
-            navigator.serviceWorker = null;              
-          } 
+          // Web Workers... 
 
           if (typeof navigator.serviceWorker !== 'undefined') { 
 

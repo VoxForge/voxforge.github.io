@@ -47,6 +47,15 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 
 // #############################################################################
 
+if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
+  parseInt(platform.os.version) < 5)
+{
+window.alert('Only Chrome on Android 5 and up is supported');           
+}
+
+
+
+
 // constants
 var SPEECHSUBMISSIONAPPVERSION = "0.1";
 
@@ -109,6 +118,7 @@ function setUpFSM() {
     fsm = new StateMachine({
       init: 'waveformdisplay',
 
+      //  name: TRANSITION              from: STATE                  to: STATE                                        
       transitions: [
         { name: 'recordclickedltn',     from: 'waveformdisplay',     to: 'recordingltn' },
         { name: 'recordclickedeqn',     from: 'waveformdisplay',     to: 'recordinglastprompt' },
@@ -237,7 +247,7 @@ function setUpFSM() {
     }
 
     view.upload.onclick = function() { 
-        fsm.uploadclicked() 
+        fsm.uploadclicked();
     }
 
     view.maxnumpromptschanged.onclick = function() { 
