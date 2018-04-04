@@ -110,7 +110,7 @@ If it fails, another sync will be scheduled to retry.
 Retry syncs also wait for connectivity, and employ an exponential back-off.
 */
 self.addEventListener('sync', function(event) {
-  if (event.tag == 'myFirstSync') {
+  if (event.tag == 'voxforgeSync') {
     event.waitUntil(processSavedSubmissions());
   }
 });

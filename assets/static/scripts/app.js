@@ -50,11 +50,16 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
   parseInt(platform.os.version) < 5)
 {
-window.alert('Only Chrome on Android 5 and up is supported');           
+  // need an aleter because this fails silently...
+  window.alert('Only Chrome on Android 5 and up is supported');           
+}
+if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
+{
+  window.alert('Microsoft Browsers not supported');           
 }
 
 
-
+// #############################################################################
 
 // constants
 var SPEECHSUBMISSIONAPPVERSION = "0.1";

@@ -16,8 +16,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /*
-* if change here, remember to update index.php: $ALLOWEDURL & $UPLOADFOLDER
-* var uploadURL = 'https://jekyll_voxforge.org/index.php'; * test
 * Chrome and self signed certificates... need to make sure you install rootCA
 * in Chrome certificate store...
 
@@ -154,8 +152,8 @@ function upload( when_audio_processing_completed_func ) {
     * on browser to be tested (Linux, Android, Unix...)
     * otherwise operation will fail silently
 
-    * FireFox: TypeError: swRegistration.sync is undefine
-    * background sync is not supported in FireFox  WTF!!!
+    * FireFox: TypeError: swRegistration.sync is undefined
+    * background sync is not supported in FireFox
     * https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/sync
     * see: https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
     * https://bugzilla.mozilla.org/show_bug.cgi?id=1217544 - planned for FFv61
@@ -173,51 +171,98 @@ function upload( when_audio_processing_completed_func ) {
     * see: https://wiki.mozilla.org/CA:AddRootToFirefox
     *
     * - Edge on Windows 10 does not support service workers at all... try
-    * Web Workers... 
+    * Web Workers... but edge does not support InnoDB... Localforage 
+    * was supposed to work around this issue.... so no support for
+    * Edge for now...
     */
 
     /** 
     * worker Processing - depending on browser support, use background sync and 
     * a service worker to upload submission, use a web worker that uploads in 
-    * background; or perform a synchronous upload
+    * background; or perform a synchronous upload neither is supported
+
+    * service worker - background sync (e.g. current Chrome on Linux/Win10/Android 5 and up)
+    * swRegistration.sync.register: requests a one-off sync to upload the saved 
+    * submission.  It will upload if there is connectivity, if there is none, 
+    * it will keep on trying to upload until connectivity is made
+    * and then will delete saved submission from browser storage
+
+    * Second call to sync takes longer than you think, but it will work
+    * eventually... service worker seems to collect up all the calls to
+    * service worker and does uploads consecutively
+    * wait about 1-2 minutes
+    *
+    * web worker - background upload  (e.g. current Firefox on Linux/Win10/Android 4.4.2 and up)
+    * some browsers implement service workers for caching files but not 
+    * background sync... therefore use Web Worker to upload submission and 
+    * upload any previously saved submissions (in browser storage)
     */
     function uploadZippedSubmission() {
-
-     console.info('set myFirstSync event to tell service worker to upload');
-
       if (typeof navigator.serviceWorker !== 'undefined') { 
-
           navigator.serviceWorker.ready.then(function(swRegistration) {
-            if (typeof swRegistration.sync !== 'undefined') { // Chrome
-              // request a one-off sync to upload the saved submission
-              // will upload if there is connectivity, if there is none, will
-              // keep on trying to upload until connectivity is made
-              // and then will delete saved submission from browser storage
-
-              // Second call to sync takes longer than you think, but it will work
-              // eventually... service worker seems to collect up all the calls to
-              // service worker and does uploads consecutively
-              // wait about 1-2 minutes
-              return swRegistration.sync.register('myFirstSync').then(function() {
-                console.info('service worker background sync succeeded - submission will be uploaded shortly');
-               }, function() {
-                console.error('service worker background sync failed, will retry later');
-              });
-
-            } else { // FireFox
-              console.warn('Browser service worker does not support background sync... trying web worker');
-              webWorkerUpload();
+            if (typeof swRegistration.sync !== 'undefined') { 
+              serviceWorkerUpload(swRegistration); // Chrome
+            } else { 
+              webWorkerUpload(); // FireFox
             }
           });
 
-      } else { // TODO  Edge... but edge does not support InnoDB... Localforage 
-                //was supposed to work around this issue.... so no support for
-                // Edge for now...
-
-        console.warn('Browser does not support service workers, trying web worker');
-        webWorkerUpload();
-
+      } else { 
+        // TODO make sure not deadlock with service/web workers...
+        // TODO: should try web workers first...
+        //webWorkerUpload();
+        asyncMainThreadUpload();
       }
+    }
+
+    /** 
+    * upload submission from main thread, asynchronously...
+    */
+    function asyncMainThreadUpload() {
+      console.info('submission uploaded (in main thread) asynchronously to VoxForge server');
+      processSavedSubmissions()
+      .then(function(result) {
+        console.info('async upload message: ' + result);
+      })
+      .catch(function(err) {
+        console.error('async upload message: ' + err);
+      });
+    }
+
+    /** 
+    * send message to service worker to start submission upload.
+    * will continue to try to upload even if no Internet, until connection
+    * restablished, and if successful, remove uploaded submission from
+    * browser storage
+    */
+    function serviceWorkerUpload(swRegistration) {
+      swRegistration.sync.register('voxforgeSync').then(function() {
+        console.info('service worker background sync event called - submission will be uploaded shortly');
+       }, function() {
+        console.error('service worker background sync failed, will retry later');
+      });
+    }
+
+    /** 
+    * send message to web worker to upload submission.  If fails, submission
+    * stays in InnoDB until next time user makes submission, and then new
+    * submission and any saved submissions will be uploaded, and removed
+    * from browser storage after successful upload
+    */
+    function webWorkerUpload() {
+        console.warn('Browser service worker does not support background sync... using web worker');
+
+        upload_worker.postMessage({
+          command: 'upload',
+        });
+
+        upload_worker.onmessage = function webWorkerUploadDone(event) { 
+          if (event.data.status === "OK") {
+            console.info('message from upload web worker: submission uploaded to server');
+          } else {
+            console.error('message from upload web worker: transfer error: ' + event.data.status);
+          }
+        };
     }
 
     /** 
@@ -230,23 +275,6 @@ function upload( when_audio_processing_completed_func ) {
       } else {
         console.warn('percentComplete - Unable to compute progress information since the total size is unknown');
       }
-    }
-
-    /** 
-    * use web worker rather than service worker for upload to voxforge server
-    */
-    function webWorkerUpload() {
-        upload_worker.postMessage({
-          command: 'upload',
-        });
-
-        upload_worker.onmessage = function webWorkerUploadDone(event) { 
-          if (event.data.status === "OK") {
-            console.info('message from upload web worker: submission uploaded to server');
-          } else {
-            console.error('message from upload web worker: transfer error: ' + event.data.status);
-          }
-        };
     }
 
     audioArrayLoop();
