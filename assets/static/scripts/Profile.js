@@ -66,6 +66,19 @@ Profile.cleanUserInputRemoveSpaces = function (user_input) {
 }
 
 /**
+* make random string of length strlen, can override default characters to use
+* in random string
+*/
+Profile.makeRandString = function (strlen, possible) {
+  var text = "";
+
+  for (var i = 0; i < strlen; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
+/**
 * remove unwanted characters from user input
 * 
 * removes all non-alphanumeric characters
@@ -287,18 +300,24 @@ Profile.prototype.getUserName = function () {
 * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 */
 Profile.prototype.getTempSubmissionName = function () {
-    function uuidv4() {
-      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-      )
-    }
+    return this.getShortSubmissionName() + '[' + Profile.makeRandString (10,'1234567890') + ']';
+}
 
-    // var username = $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
+/**
+* submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
+* see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+*/
+Profile.prototype.getShortSubmissionName = function () {
+    // see: https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+
     var username = this.getUserName().toLowerCase();
-
     var d = new Date();
-    var date = d.getFullYear().toString() + (d.getMonth() + 1).toString() + d.getDate().toString();
-    var result = page_language + '-' + username + '-' + date + '-' + uuidv4();
+    var month = d.getMonth() + 1;
+    month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
+    var day = d.getDate();
+    day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
+    var date = d.getFullYear().toString() + month.toString() + day.toString();
+    var result = page_language + '-' + username + '-' + date + '-' + Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
 
     return result;
 }

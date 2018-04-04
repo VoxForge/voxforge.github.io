@@ -214,8 +214,8 @@ function setUpFSM() {
               // audio elements completed, otherwise submission package will be
               // missing prompt lines and audio files...
               // basically a blocking wait until audio files get converted into
-              // blobs for later processing zipupload web worker.
-              function () {
+              // blobs for later processing by zipupload web worker.
+              function when_audio_processing_completed_func () {
                 profile.addProfile2LocalStorage();
                 prompts.resetIndices();
                 view.reset();

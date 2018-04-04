@@ -95,7 +95,12 @@ function saveSubmissionLocally(data, zip_file_in_memory) {
   var jsonOnject = {};
   jsonOnject['username'] = data.username;
   jsonOnject['language'] = data.language;
+  jsonOnject['short_submission_name'] = data.short_submission_name;
   jsonOnject['speechSubmissionAppVersion'] = data.speechSubmissionAppVersion;
+  if (!Date.now) { // UTC timestamp in milliseconds;
+      Date.now = function() { return new Date().getTime(); }
+  }
+  jsonOnject['timestamp'] = Date.now();
   jsonOnject['file'] = zip_file_in_memory;
 
   localforage.setItem(data.temp_submission_name, jsonOnject).then(function (value) {
