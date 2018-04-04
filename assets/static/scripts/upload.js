@@ -143,16 +143,28 @@ function upload( when_audio_processing_completed_func ) {
 
           // - Chrome on Linux and Windows 10 supports service workers for fetching
           // and background sync; 
-          // - Chrome on Android 5 - works.
+          // - Chrome on Android 5 - works with service workers
           // - Chrome on Android 4.4.2 - needs valid root certificate installed
-          // in browser  
+          // in browser for local testing; but in prod, where we are using
+          // cors where each domain has different ssl certificate; only web
+          // worker seems to work, service worker fails silently...
           // - Firefox on Linux & Windows 10 supports service workers for fetching 
           // but not background sync, therefore use Web Worker; 
           // FireFox works on Andoid 4.4.2 - now needs a root certificate
           // see: https://wiki.mozilla.org/CA:AddRootToFirefox
           //
-          // - Edge on Windows 10 does not support service workers at all... use
+          // - Edge on Windows 10 does not support service workers at all... try
           // Web Workers...
+
+          if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
+              parseInt(platform.os.version) < 5)
+          {
+            console.warn('Chrome on Android 4.4.2 and below does not support ' +
+                         'cross origin background sync with service workers... ' +
+                         'trying web worker');
+            webWorkerUpload();              
+          } else
+
           if (typeof navigator.serviceWorker !== 'undefined') { 
 
               navigator.serviceWorker.ready.then(function(swRegistration) {
@@ -173,7 +185,7 @@ function upload( when_audio_processing_completed_func ) {
                   });
 
                 } else { // FireFox
-                  console.warn('Browser does not support background sync using service workers, trying web worker');
+                  console.warn('Browser service worker does not support background sync... trying web worker');
                   webWorkerUpload();
                 }
               });
