@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 /**
 * Class declaration
 */
@@ -59,7 +58,11 @@ function Profile () {
   * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
   */
   function createTempSubmissionName() {
-      return this.getShortSubmissionName() + '[' + makeRandString (10,'1234567890') + ']';
+      return createShortSubmissionName() + '[' + makeRandString (10,'1234567890') + ']';
+  }
+
+  function getUserName () {
+      return Profile.cleanUserInputRemoveSpaces( $('#username').val() ) || page_anonymous || "anonymous";
   }
 
   /**
@@ -69,7 +72,7 @@ function Profile () {
   function createShortSubmissionName() {
       // see: https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 
-      var username = this.getUserName().toLowerCase();
+      var username = getUserName().toLowerCase();
       var d = new Date();
       var month = d.getMonth() + 1;
       month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month

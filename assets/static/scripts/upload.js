@@ -255,10 +255,15 @@ same subdomains...
           parseInt(platform.os.version) < 5)
       {
 
-          // Android 4.4.2 Chrome does not like the voxforge1.org certificate
+          // Android 4.4.2 Chrome implementation of background sync with service
+          // workers does not like the voxforge1.org SSL certificate
           // and background sync will not work with service workers, but it still 
-          // tries to perform background sync run with service worker... 
-          // therefore override this behaviour...
+          // tries to perform background syncand returns an error:
+                // An SSL certificate error occurred when fetching the script.
+                // app.js:299 ServiceWorker registration failed:  
+                // DOMException: Failed to register a ServiceWorker: 
+                // An SSL certificate error occurred when fetching the script.
+          // therefore to override this behaviour, use a web worker
 
 
            webWorkerUpload();      
