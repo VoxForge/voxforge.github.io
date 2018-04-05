@@ -265,8 +265,9 @@ same subdomains...
                 // An SSL certificate error occurred when fetching the script.
           // therefore to override this behaviour, tried web worker:
           // get an net::ERR_CERT_AUTHORITY_INVALID error
-          // Therefore upload from main thread using async call
-    
+          // Therefore upload from main thread using async call:
+          // now getting same error: net::ERR_CERT_AUTHORITY_INVALID
+          // even though it worked before... uggh!
            asyncMainThreadUpload(); // still need web workers to perform the zip,and recroding...
       } else {
             if (typeof navigator.serviceWorker !== 'undefined') { 

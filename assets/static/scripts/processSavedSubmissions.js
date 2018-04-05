@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
 // /etc/hosts or on local DNS server;
 
-var uploadURL = 'https://upload.voxforge1.org'; // prod
+var uploadURL = 'https://upload.voxforge1.org/index.php'; // prod
 //var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 
@@ -93,7 +93,7 @@ function processSavedSubmissions() {
             }
         })
         .catch(function (error) {
-          console.warn('upload of saved submission failed for: ' + saved_submission_name + ' ...will try again next time');
+          console.warn('upload of saved submission failed for: ' + saved_submission_name + ' ...will try again on next upload attempt');
           reject('Request failed', error);
         });
 
