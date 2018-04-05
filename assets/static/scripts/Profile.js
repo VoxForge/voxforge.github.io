@@ -20,10 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * Class declaration
 */
 function Profile () {
-  this.sample_rate = null;
-  this.sample_rate_format = null;
-  this.channels = null;
-
   /**
   * get profile information from local storage and if it exists, return parsed
   * JSON object, otherwise return null.
@@ -44,6 +40,52 @@ function Profile () {
   if ( parsedLocalStorageObject = getProfileFromLocalStorage() ) {
       view.update(parsedLocalStorageObject);
   }
+
+  /**
+  * make random string of length strlen, can override default characters to use
+  * in random string
+  */
+  function makeRandString(strlen, possible) {
+    var text = "";
+
+    for (var i = 0; i < strlen; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+  }
+
+  /**
+  * submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
+  * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+  */
+  function createTempSubmissionName() {
+      return this.getShortSubmissionName() + '[' + makeRandString (10,'1234567890') + ']';
+  }
+
+  /**
+  * submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
+  * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+  */
+  function createShortSubmissionName() {
+      // see: https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+
+      var username = this.getUserName().toLowerCase();
+      var d = new Date();
+      var month = d.getMonth() + 1;
+      month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
+      var day = d.getDate();
+      day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
+      var date = d.getFullYear().toString() + month.toString() + day.toString();
+      var result = page_language + '-' + username + '-' + date + '-' + makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
+
+      return result;
+  }
+
+  this.sample_rate = null;
+  this.sample_rate_format = null;
+  this.channels = null;
+  this.tempSubmissionName = createTempSubmissionName();
+  this.shortSubmissionName = createShortSubmissionName();
 }
 
 /**
@@ -63,19 +105,6 @@ Profile.cleanUserInputRemoveSpaces = function (user_input) {
     var user_input = user_input.replace(/\s+/, '_').replace(/[^a-z0-9_\-]/gi,'').replace(/_+/g, '_');
 
     return user_input.substring(0, 40);
-}
-
-/**
-* make random string of length strlen, can override default characters to use
-* in random string
-*/
-Profile.makeRandString = function (strlen, possible) {
-  var text = "";
-
-  for (var i = 0; i < strlen; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  return text;
 }
 
 /**
@@ -300,7 +329,7 @@ Profile.prototype.getUserName = function () {
 * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 */
 Profile.prototype.getTempSubmissionName = function () {
-    return this.getShortSubmissionName() + '[' + Profile.makeRandString (10,'1234567890') + ']';
+    return this.tempSubmissionName;
 }
 
 /**
@@ -308,18 +337,7 @@ Profile.prototype.getTempSubmissionName = function () {
 * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 */
 Profile.prototype.getShortSubmissionName = function () {
-    // see: https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
-
-    var username = this.getUserName().toLowerCase();
-    var d = new Date();
-    var month = d.getMonth() + 1;
-    month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
-    var day = d.getDate();
-    day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
-    var date = d.getFullYear().toString() + month.toString() + day.toString();
-    var result = page_language + '-' + username + '-' + date + '-' + Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
-
-    return result;
+    return this.shortSubmissionName;
 }
 
 /**

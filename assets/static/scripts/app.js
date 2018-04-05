@@ -243,6 +243,8 @@ function setUpFSM() {
                 prompts.resetIndices();
                 view.reset();
                 fsm.donesubmission();
+                // reset random 3 digit characters for submission name
+                profile = new Profile(); 
               } 
           );
         },

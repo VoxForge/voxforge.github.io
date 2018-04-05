@@ -136,13 +136,13 @@ function upload( when_audio_processing_completed_func ) {
           console.info('message from worker: savedInBrowserStorage (zip file creation and save completed)');
 
           uploadZippedSubmission();
-
         } else {
           console.error('message from worker: transfer error: ' + event.data.status);
         }
       };
 
-      when_audio_processing_completed_func();
+      // wait until zip_worker postMesasge completed before resetting everything
+      when_audio_processing_completed_func(); 
     }
 
 
@@ -212,21 +212,59 @@ get following browser error when trying to run service worker:
 1.1.2) works OK with WebWorker
 1.2) Chrome Android 4.4.2 with rootCA installed on browser and service worker
 works!
-2) try on voxforge.github.io, service worker does not work, get:
+
+2.1) try on voxforge.github.io, service worker does not work, get:
     Uncaught (in promise) Request failed voxforge_sw.js:1
+
+2.3) need to try with webworker....
+
+2.2) try with asyncMainThreadUpload, get error:
+    POST https://upload.voxforge1.org/ net::ERR_CERT_AUTHORITY_INVALID  processSavedSubmissions.js:76
 
 - try with rootCA installed on browser and web worker
 - try with no rootCA and web worker
 
 - then try CORS (from jekyll_voxforge.org with upload to: jekyll2_voxforge.org)
 for all of these...
+
+More testing:
+first error:
+An SSL certificate error occurred when fetching the script.
+Failed to load resource: net::ERR_CERT_AUTHORITY_INVALID /voxforge_sw.js 
+
+added header to index.php:
+header("Service-Worker-Allowed: /"); # allow service worker to root context
+
+now error is: 
+An SSL certificate error occurred when fetching the script.
+app.js:299 ServiceWorker registration failed:  
+DOMException: Failed to register a ServiceWorker: 
+An SSL certificate error occurred when fetching the script.
+
+on Chrome Android 4.4.2 https://upload.voxforge1.org/en/read/
+certificate is shown as invalid
+
+on Chrome LInux https://upload.voxforge1.org/en/read/
+certificate is shown as *valid*
+
+!!!!!!!!!!!!!!!!!!!!! app and php need to be on same domain.... might work with 
+same subdomains...
 */
     function uploadZippedSubmission() {
       if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
           parseInt(platform.os.version) < 5)
       {
-          //webWorkerUpload();      
-           asyncMainThreadUpload();
+
+          // Android 4.4.2 Chrome does not like the voxforge1.org certificate
+          // and background sync will not work with service workers, but it still 
+          // tries to perform background sync run with service worker... 
+          // therefore override this behaviour...
+
+
+           webWorkerUpload();      
+
+    
+           //asyncMainThreadUpload(); // still need web workers to perform the zip,and recroding...
       } else {
             if (typeof navigator.serviceWorker !== 'undefined') { 
                 navigator.serviceWorker.ready.then(function(swRegistration) { // service workers supported
