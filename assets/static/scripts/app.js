@@ -65,17 +65,11 @@ if( ! window.indexedDB )
 
 if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
 {
-  window.alert('Microsoft proprietary browsers not supported... please upgrade ' +
-               'to a current version of an open browser such as Chrome or ' +
+  window.alert('Microsoft proprietary browsers not supported... please install ' +
+               'a current version of an open browser such as Chrome or ' +
                'FireFox');         
 }
 
-if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
-  parseInt(platform.os.version) < 5)
-{
-  // need an alert because this fails silently...
-  window.alert('Only Chrome on Android 5 and up is supported');           
-}
 
 // #############################################################################
 

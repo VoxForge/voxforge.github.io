@@ -247,8 +247,8 @@ certificate is shown as invalid
 on Chrome LInux https://upload.voxforge1.org/en/read/
 certificate is shown as *valid*
 
-!!!!!!!!!!!!!!!!!!!!! app and php need to be on same domain.... might work with 
-same subdomains...
+
+
 */
     function uploadZippedSubmission() {
       if (platform.os.family === "Android" && platform.name === "Chrome Mobile" &&
@@ -268,6 +268,46 @@ same subdomains...
           // Therefore upload from main thread using async call:
           // now getting same error: net::ERR_CERT_AUTHORITY_INVALID
           // even though it worked before... uggh!
+
+/* 
+see: https://stackoverflow.com/questions/13862908/ssl-certificate-is-not-trusted-on-mobile-only?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+Put your domain name here: https://www.ssllabs.com/ssltest/analyze.html 
+You should be able to see if there are any issues with your ssl certificate 
+chain. I am guessing that you have SSL chain issues. A short description of the
+ problem is that there's actually a list of certificates on your server
+ (and not only one) and these need to be in the correct order. If they are
+ there but not in the correct order, the website will be fine on desktop 
+browsers (an iOs as well I think), but android is more strict about the order 
+of certificates, and will give an error if the order is incorrect. To fix
+ this you just need to re-order the certificates.
+
+see also: https://whatsmychaincert.com/?upload.voxforge1.org
+An error occurred when building the chain for this certificate.  The certificate might lack necessary meta-data or its certificate authority might be malfunctioning.  Details:
+
+* The chain contains an untrusted certificate without standard CA issuer information 
+(subject = "C=US, O=DigiCert Inc, OU=www.digicert.com, CN=Encryption Everywhere DV TLS CA - G2"; 
+issuer = "C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert Global Root G2"; error code = 20)
+
+https://www.1and1.ca/ssl-checker
+
+
+see: https://superuser.com/questions/452063/the-certificate-is-not-trusted-because-no-issuer-chain-was-provided?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+Some secure web-sites with certificates from trusted authorities have incorrect 
+configuration such that they don't include a chain of intermediate certificates 
+of trust when serving their own certificate.
+
+If you have a system/browser that has seen its share of valid certificates, 
+such intermediaries may already be cached, and you won't be getting any error 
+messages, even if their web-server configuration is still wrong as above.
+
+However, if you're using a freshly installed browser on a fresh system, 
+and such intermediaries weren't cached yet, and the certificate presented
+ by the web-server is missing an appropriate chain of intermediaries, then you
+ get an error message.
+
+see: https://certlogik.com/ssl-checker/
+*/
+
            asyncMainThreadUpload(); // still need web workers to perform the zip,and recroding...
       } else {
             if (typeof navigator.serviceWorker !== 'undefined') { 
