@@ -77,7 +77,7 @@ function processSavedSubmissions() {
           method: 'post',
           body: form,
           mode: 'cors',
-          credentials: 'include',
+/*          credentials: 'include', */
         })
         .then(response=>response.text()) // this resolves the promise to get the response data from network stream
         .then((response_text) => {

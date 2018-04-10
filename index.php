@@ -6,10 +6,11 @@
 // if change here, remember to update ZipWorker.js: uploadURL
 // also move index.php to prod
 $ALLOWEDURL = "https://voxforge.github.io"; // prod
+//$ALLOWEDURL = "https://upload.voxforge1.org"; // prod
 $UPLOADFOLDER = '../../public/speechsubmissions/'; // prod
 
-$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
-$UPLOADFOLDER = './submissions/'; // testing
+//$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
+//$UPLOADFOLDER = './submissions/'; // testing
 
 // max upload size should be a function of the number of prompts
 $MAX_UPLOAD_SIZE = 100 * 1024 * 1024; //100 megabytes
@@ -21,7 +22,7 @@ header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Request-Headers, x-requested-with");
 //header("Access-Control-Max-Age: 86400"); # 24hrs * 60min * 60secs = 86400
 header("Access-Control-Max-Age: 1"); #testing
-header("Access-Control-Allow-Credentials: true"); # allow cookies
+//header("Access-Control-Allow-Credentials: true"); # allow cookies
 
 /* testing: clear && curl --include -X voxforge1.org/upload.php --header Access-Control-Request-Method:POST --header Access-Control-Request-Headers:Content-Type --header Origin:https://voxforge.github.io
  * error handling see http://php.net/manual/en/features.file-upload.php
