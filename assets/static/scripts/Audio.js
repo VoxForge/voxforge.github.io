@@ -100,7 +100,6 @@ function Audio () {
       console.error('The following error occured: ' + err);
     });
 
-
     /*
     * Audio processing notes:
     * 1. bit rate in Audacity does not match bit rate of file:

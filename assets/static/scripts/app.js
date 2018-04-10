@@ -51,23 +51,17 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 // see: http://diveintohtml5.info/everything.html
 if( ! window.Worker )
 {
-  window.alert('Your browser does not support service or web workers, please ' +
-               'upgrade to a current version of an open browser such as ' +
-               'Chrome or FireFox');           
+  window.alert( page_no_worker_message );           
 }
 
 if( ! window.indexedDB )
 {
-  window.alert('Your browser does not support indexedDB for offline storage of ' +
-               'submissions, please upgrade to a current version of an open ' +
-               'browser such as Chrome or FireFox');          
+  window.alert( page_no_indexedDB_message );          
 }
 
 if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
 {
-  window.alert('Microsoft proprietary browsers not supported... please install ' +
-               'a current version of an open browser such as Chrome or ' +
-               'FireFox');         
+  window.alert( page_no_edgeSupport_message );         
 }
 
 

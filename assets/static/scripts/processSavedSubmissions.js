@@ -26,15 +26,15 @@ var uploadURL = 'https://upload.voxforge1.org'; // prod
 // TODO: duplicate definition LOCAL_PROMPT_FILE_NAME in app.js
 var regex = /prompt_file$/; 
 
-// cannot put this here even though code is being shared by voxforge_sw.js and 
+// cannot put importScripts here even though code is being shared by voxforge_sw.js and 
 // UploadWorker.js because they are stored in different places and have 
-// rdifferent elative paths
+// different relative paths
 // importScripts('assets/static/lib/localforage.js');
 
 
 
 /**
-* if saved submissions exist, get then upload the submission 
+* if saved submissions exists, get then upload the submission 
 */
 function processSavedSubmissions() {
     /**
@@ -118,7 +118,10 @@ function processSavedSubmissions() {
       });
     }
 
-
+    /**
+    * returns a promise that finds saved submission in browser storage, uploads
+    * it and if successful, removes the submission from storage
+    */
     return new Promise(function (resolve, reject) {
       localforage.length().then(function(numberOfKeys) {
         // counts all keys, including saved language prompt files... 
