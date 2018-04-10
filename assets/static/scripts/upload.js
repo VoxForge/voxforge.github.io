@@ -133,11 +133,11 @@ function upload( when_audio_processing_completed_func ) {
       */
       zip_worker.onmessage = function zipworkerDone(event) { 
         if (event.data.status === "savedInBrowserStorage") {
-          console.info('message from worker: savedInBrowserStorage (zip file creation and save completed)');
+          console.info('message from web worker: savedInBrowserStorage (zip file creation and save completed)');
 
           uploadZippedSubmission();
         } else {
-          console.error('message from worker: transfer error: ' + event.data.status);
+          console.error('message from web worker: zip error: ' + event.data.status);
         }
       };
 
@@ -204,7 +204,7 @@ function upload( when_audio_processing_completed_func ) {
       } else { // service workers not supported
         if( !! window.Worker ) { // web workers supported
             webWorkerUpload();
-        } else { // should never 
+        } else { // should never get here...
             asyncMainThreadUpload();
         }
 
@@ -220,7 +220,6 @@ function upload( when_audio_processing_completed_func ) {
       // TODO make sure not deadlock with service/web workers...
       // TODO: should try web workers first...
       console.info('submission uploaded (in main thread) asynchronously to VoxForge server');
-
 
       processSavedSubmissions()
       .then(function(result) {
@@ -243,6 +242,12 @@ function upload( when_audio_processing_completed_func ) {
        }, function() {
         console.error('service worker background sync failed, will retry later');
       });
+
+      navigator.serviceWorker.onmessage = function (e) {
+            // messages from service worker.
+            console.log('e.data.status', e.data.status);
+      };
+    
     }
 
     /** 

@@ -113,14 +113,16 @@ If it fulfills, the sync is complete.
 If it fails, another sync will be scheduled to retry. 
 Retry syncs also wait for connectivity, and employ an exponential back-off.
 */
+
+// trying to send message from service woker back to caller,
+// not as simple as it should be...
+// https://stackoverflow.com/questions/30177782/chrome-serviceworker-postmessage?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 self.addEventListener('sync', function(event) {
   if (event.tag == 'voxforgeSync') {
     event.waitUntil(
       processSavedSubmissions()
-      .then(function(response) {
-           console.log('service worker completed');
-      })
-    );
+    ); 
+
   }
 });
 
