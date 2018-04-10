@@ -6,11 +6,12 @@
 // if change here, remember to update ZipWorker.js: uploadURL
 // also move index.php to prod
 $ALLOWEDURL = "https://voxforge.github.io"; // prod
-//$ALLOWEDURL = "https://upload.voxforge1.org"; // prod
 $UPLOADFOLDER = '../../public/speechsubmissions/'; // prod
 
-//$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
-//$UPLOADFOLDER = './submissions/'; // testing
+//!!!!!!
+$ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
+$UPLOADFOLDER = './submissions/'; // testing
+//!!!!!!
 
 // max upload size should be a function of the number of prompts
 $MAX_UPLOAD_SIZE = 100 * 1024 * 1024; //100 megabytes

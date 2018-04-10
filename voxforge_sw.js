@@ -115,7 +115,12 @@ Retry syncs also wait for connectivity, and employ an exponential back-off.
 */
 self.addEventListener('sync', function(event) {
   if (event.tag == 'voxforgeSync') {
-    event.waitUntil(processSavedSubmissions());
+    event.waitUntil(
+      processSavedSubmissions()
+      .then(function(response) {
+           console.log('service worker completed');
+      })
+    );
   }
 });
 
