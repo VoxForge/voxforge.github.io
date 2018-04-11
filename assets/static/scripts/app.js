@@ -296,7 +296,11 @@ if ('serviceWorker' in navigator) {
     // create breakpoints in voxforge_sw.js to know when this occurs...
     // Handler for messages coming from the service worker
     navigator.serviceWorker.addEventListener('message', function(event){
-        console.log(" ***Client 1 Received Message: " + event.data.message);
+        console.log("*** serviceworker says: " + event.data.message);
+        if (event.data.type == "alert") {
+          window.alert( "the following submissions were successfully uploaded " +
+                        "using background sync: " + event.data.message );   
+        }
     });
   });
 }

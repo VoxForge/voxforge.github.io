@@ -75,7 +75,7 @@ self.addEventListener('install', function(event) {
     caches.open(CACHE_NAME)
       .then(function(cache) {
         console.log('Opened cache');
-        sendMessage("message from service worker: install");
+        sendMessage("log", "install");
         return cache.addAll(urlsToCache);
       })
   );
@@ -95,7 +95,7 @@ self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
-        sendMessage("message from service worker: fetch");
+        sendMessage("log", "fetch");
         // Cache hit - return response
         if (response) {
           return response;
@@ -120,9 +120,9 @@ Retry syncs also wait for connectivity, and employ an exponential back-off.
 // not as simple as it should be...
 // https://stackoverflow.com/questions/30177782/chrome-serviceworker-postmessage?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 self.addEventListener('sync', function(event) {
-  sendMessage("message from service worker: sync called");
+  sendMessage("log", "sync");
   if (event.tag == 'voxforgeSync') {
-     console.log('background sync request received by serviceworker');
+     console.log('voxforgeSync: background sync request received by serviceworker');
 
     // waitUntil method is used to tell the browser not to terminate the 
     // service worker until the promise passed to waitUntil is either resolved 
@@ -132,12 +132,11 @@ self.addEventListener('sync', function(event) {
     // https://googlechrome.github.io/samples/service-worker/post-message/index.html
     event.waitUntil(
       processSavedSubmissions()
-      .then(function(response) {
-        sendMessage("voxforgeSync**************************WTF");
-        resolve('OK');
+      .then(function(uploadedSubmissionList) {
+        sendMessage("alert", uploadedSubmissionList);
       })
       .catch(function(err) {
-        reject('sendMessage err: ' + err);
+        console.error('sendMessage err: ' + err);
       })
     ); 
 
@@ -152,17 +151,16 @@ self.addEventListener('sync', function(event) {
 /**
 * A page is controlled by a service worker on navigation to an origin that the 
 * service worker is registered for. So the original page load that actually
-* initializes the service worker is not itself controlled.
-* That's why the worker only finds your tab once you visit with a new tab or 
-*do a refresh.
+* initializes the service worker is not itself controlled...
 *
 * https://stackoverflow.com/questions/35100759/serviceworkers-focus-tab-clients-is-empty-on-notificationclick/35108844?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 */
-function sendMessage(message) {
+function sendMessage(type, message) {
   self.clients.matchAll({includeUncontrolled: true, type: 'window'})
   .then(function(clientList) {
     clientList.forEach(function(client) {
       client.postMessage({
+        type: type,
         message: message
       });
     });

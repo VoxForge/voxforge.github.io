@@ -84,9 +84,9 @@ function processSavedSubmissions() {
         .then((response_text) => {
             console.log('post URL ' +  uploadURL);
             if (response_text === "submission uploaded successfully." ) {
-              console.info("transferComplete: upload to VoxForge server successfully completed for: " + saved_submission_name);
+              //console.info("transferComplete: upload to VoxForge server successfully completed for: " + saved_submission_name);
 
-              // resolve sends these as parameters to next promise in chain
+              // resolve sends this as parameter to next promise in chain
               resolve(saved_submission_name);
 
             } else {
@@ -108,9 +108,9 @@ function processSavedSubmissions() {
       return new Promise(function (resolve, reject) {
         // only remove saved submission if upload completed successfully
         localforage.removeItem(saved_submission_name).then(function() {
-          console.log('Backup submission removed from browser: ' + saved_submission_name);
+          //console.log('Backup submission removed from browser: ' + saved_submission_name);
 
-          resolve("OK");
+          resolve(saved_submission_name);
 
         })
         .catch(function(err) {
@@ -125,7 +125,7 @@ function processSavedSubmissions() {
     */
     return new Promise(function (resolve, reject) {
       localforage.length().then(function(numberOfKeys) {
-        // counts all keys, including saved language prompt files... 
+        // counts all keys, including saved promptList files... 
         // console.info('number of submissions saved in browser storage: ' + numberOfKeys);
 
         // TODO since later loop iterates through all saved submissions, this 
@@ -139,36 +139,35 @@ function processSavedSubmissions() {
         reject(err);
       });
 
-      localforage.keys().then(function(savedSubmissionArray) {
-        // test for file name does not contain LOCAL_PROMPT_FILE_NAME; because
-        // file names are language prefixed and do not want to delete them...
+      localforage.keys()
+      .then(function(savedSubmissionArray) {
+          var uploadList = [];
+          var j = 0;
 
-        for (var i = 0; i < savedSubmissionArray.length; i++) {
-          // so doesn't try to upload and delete saved prompt list
-          if ( ! regex.test(savedSubmissionArray[i]) ) {
-              console.info('submission to upload to VoxForge server: ' + savedSubmissionArray[i]);
-
-              getSavedSubmission( savedSubmissionArray[i] )
-              .then(uploadSubmission)
-              .then(removeSubmission)
-              .then(function(result) {
-                  // checking result === OK is redundant since previous function
-                  // in chain resolved rather than rejected...
-                  if ( i == savedSubmissionArray.length - 1 && result === "OK" ) {
-                    console.info("submission(s) successfully uploaded.");
-
-          send_message_to_all_clients("!!!!!! submission(s) successfully uploaded.");
-
-                    resolve("OK");
-                  }
-              })
-              .catch(function(err) {
-                    reject(err);
-              });
-
+          // https://stackoverflow.com/questions/31426740/how-to-return-many-promises-in-a-loop-and-wait-for-them-all-to-do-other-stuff?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+          var promises = [];
+          for (var i = 0; i < savedSubmissionArray.length; i++) {
+            // so doesn't try to upload and delete saved promptList file
+            if ( ! regex.test(savedSubmissionArray[i]) ) {
+              promises.push(
+                  getSavedSubmission( savedSubmissionArray[i] )
+                  .then(uploadSubmission)
+                  .then(removeSubmission)
+                  .then(function(saved_submission_name) {
+                    uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
+                    j++;
+                    //console.info("submission successfully uploaded: " + saved_submission_name);
+                   })
+              )
+            }
           }
-        }
-
+          Promise.all(promises) // wait for all async promises to complete
+          .then(function(saved_submission_name) { 
+            resolve(uploadList.toString());
+          })
+          .catch(function(err) {
+             reject(err);
+          });
       })
       .catch(function(err) {
         reject(err);

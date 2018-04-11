@@ -133,11 +133,11 @@ function upload( when_audio_processing_completed_func ) {
       */
       zip_worker.onmessage = function zipworkerDone(event) { 
         if (event.data.status === "savedInBrowserStorage") {
-          console.info('message from web worker: savedInBrowserStorage (zip file creation and save completed)');
+          console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
 
           uploadZippedSubmission();
         } else {
-          console.error('message from web worker: zip error: ' + event.data.status);
+          console.error('webworker says: zip error: ' + event.data.status);
         }
       };
 
@@ -260,7 +260,7 @@ function upload( when_audio_processing_completed_func ) {
 
         upload_worker.onmessage = function webWorkerUploadDone(event) { 
           if (event.data.status === "OK") {
-            console.info('message from upload web worker: submission uploaded to server');
+            console.info('message from upload web worker: submission(s) uploaded to server: ' + event.data.uploadedSubmissionList);
           } else {
             console.error('message from upload web worker: transfer error: ' + event.data.status);
           }

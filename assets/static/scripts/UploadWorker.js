@@ -48,9 +48,10 @@ self.onmessage = function(event) {
 */
 function upload(self, data) {
     processSavedSubmissions()
-    .then((successMessage) => {
+    .then((uploadedSubmissionList) => {
       self.postMessage({
-        status: successMessage,
+        status: 'OK',
+        uploadedSubmissionList: uploadedSubmissionList,
       });
     })
     .catch(function(errorMessage) {
