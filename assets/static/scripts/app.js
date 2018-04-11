@@ -276,31 +276,17 @@ function setUpFSM() {
     return fsm;
 }
 
+/**
+* use service worker to cache all javascript files so app can be run offline
+* and if the browser supports it, perform background sync to upload submissions
+* to server.
+*/
 if ('serviceWorker' in navigator) {
-  /**
-  * use service worker to cache all javascript files so app can be run offline
-  * and if the browser supports it, perform background sync to upload submissions
-  * to server.
-  */
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('/voxforge_sw.js').then(function(registration) {
       console.log('ServiceWorker registration successful with scope: ', registration.scope);
     }, function(err) {
       console.log('ServiceWorker registration failed: ', err);
-    });
-
-    // http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
-    // https://github.com/jbmoelker/serviceworker-introduction/issues/1
-    // https://miguelmota.com/blog/getting-started-with-service-workers/
-    // when debugging, need to wait for service worker to trigger - 1-2 minutes
-    // create breakpoints in voxforge_sw.js to know when this occurs...
-    // Handler for messages coming from the service worker
-    navigator.serviceWorker.addEventListener('message', function(event){
-        console.log("*** serviceworker says: " + event.data.message);
-        if (event.data.type == "alert") {
-          window.alert( "the following submissions were successfully uploaded " +
-                        "using background sync: " + event.data.message );   
-        }
     });
   });
 }

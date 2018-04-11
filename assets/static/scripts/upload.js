@@ -196,7 +196,8 @@ function upload( when_audio_processing_completed_func ) {
       if (typeof navigator.serviceWorker !== 'undefined') { 
           navigator.serviceWorker.ready.then(function(swRegistration) { // service workers supported
             if (typeof swRegistration.sync !== 'undefined') { 
-              serviceWorkerUpload(swRegistration); // background sync supported
+              addServiceWorkerMessageEventListener();
+              serviceWorkerUpload(swRegistration);  // background sync supported
             } else { 
               webWorkerUpload(); // background sync not supported
             }
@@ -207,13 +208,12 @@ function upload( when_audio_processing_completed_func ) {
         } else { // should never get here...
             asyncMainThreadUpload();
         }
-
       }
     }
 
     /** 
     * upload submission from main thread, asynchronously...
-    * TODO is this even required anymore...
+    * TODO is this even required anymore???
     * might be useful to allow user to upload manually...
     */
     function asyncMainThreadUpload() {
@@ -242,7 +242,24 @@ function upload( when_audio_processing_completed_func ) {
        }, function() {
         console.error('service worker background sync failed, will retry later');
       });
-   
+    }
+
+    /** 
+      // http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
+      // https://github.com/jbmoelker/serviceworker-introduction/issues/1
+      // https://miguelmota.com/blog/getting-started-with-service-workers/
+      // when debugging, need to wait for service worker to trigger - 1-2 minutes
+      // create breakpoints in voxforge_sw.js to know when this occurs...
+      // Handler for messages coming from the service worker
+    */
+    function addServiceWorkerMessageEventListener() {
+      navigator.serviceWorker.addEventListener('message', function(event){
+          console.log("*** serviceworker says: " + event.data.message);
+          if (event.data.type == "alert") {
+            window.alert( "the following submissions were successfully uploaded " +
+                          "using background sync: " + event.data.message );   
+          }
+      });
     }
 
     /** 
@@ -261,6 +278,8 @@ function upload( when_audio_processing_completed_func ) {
         upload_worker.onmessage = function webWorkerUploadDone(event) { 
           if (event.data.status === "OK") {
             console.info('message from upload web worker: submission(s) uploaded to server: ' + event.data.uploadedSubmissionList);
+            window.alert( "the following submissions were successfully uploaded " +
+                          "using webworker: " + event.data.uploadedSubmissionList );   
           } else {
             console.error('message from upload web worker: transfer error: ' + event.data.status);
           }

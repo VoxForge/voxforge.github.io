@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var uploadURL = 'https://upload.voxforge1.org'; // prod
 // !!!!!!
-var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // !!!!!!
 
@@ -80,7 +80,9 @@ function processSavedSubmissions() {
           mode: 'cors',
 /*          credentials: 'include', */
         })
-        .then(response=>response.text()) // this resolves the promise to get the response data from network stream
+        // this resolves the promise to get the response data from network stream;
+        // basically converts the voxforge server response stream to text...
+        .then(response=>response.text()) 
         .then((response_text) => {
             console.log('post URL ' +  uploadURL);
             if (response_text === "submission uploaded successfully." ) {
