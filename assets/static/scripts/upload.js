@@ -224,6 +224,8 @@ function upload( when_audio_processing_completed_func ) {
       processSavedSubmissions()
       .then(function(result) {
         console.info('async upload message: ' + result);
+        window.alert( "the following submissions were successfully uploaded " +
+                      "using async procedure: " + result );   
       })
       .catch(function(err) {
         console.error('async upload message: ' + err);
