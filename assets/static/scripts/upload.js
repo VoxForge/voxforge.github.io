@@ -242,12 +242,7 @@ function upload( when_audio_processing_completed_func ) {
        }, function() {
         console.error('service worker background sync failed, will retry later');
       });
-
-      navigator.serviceWorker.onmessage = function (e) {
-            // messages from service worker.
-            console.log('e.data.status', e.data.status);
-      };
-    
+   
     }
 
     /** 

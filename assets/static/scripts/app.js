@@ -290,5 +290,20 @@ if ('serviceWorker' in navigator) {
     });
 
 
+
+    // http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
+    // https://github.com/jbmoelker/serviceworker-introduction/issues/1
+    // https://miguelmota.com/blog/getting-started-with-service-workers/
+    // when debugging, need to wait for service worker to trigger - 1-2 minutes
+    // create breakpoints in voxforge_sw.js to know when this occurs...
+    // Handler for messages coming from the service worker
+    navigator.serviceWorker.addEventListener('message', function(event){
+        console.log(" ***Client 1 Received Message: " + event.data);
+    });
+
+
+
   });
+
+
 }

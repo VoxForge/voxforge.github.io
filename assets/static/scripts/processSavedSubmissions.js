@@ -156,6 +156,9 @@ function processSavedSubmissions() {
                   // in chain resolved rather than rejected...
                   if ( i == savedSubmissionArray.length - 1 && result === "OK" ) {
                     console.info("submission(s) successfully uploaded.");
+
+          send_message_to_all_clients("!!!!!! submission(s) successfully uploaded.");
+
                     resolve("OK");
                   }
               })
