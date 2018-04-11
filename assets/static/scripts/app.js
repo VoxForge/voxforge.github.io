@@ -297,10 +297,12 @@ if ('serviceWorker' in navigator) {
     // when debugging, need to wait for service worker to trigger - 1-2 minutes
     // create breakpoints in voxforge_sw.js to know when this occurs...
     // Handler for messages coming from the service worker
-    navigator.serviceWorker.addEventListener('message', function(event){
-        console.log(" ***Client 1 Received Message: " + event.data);
+    //navigator.serviceWorker.addEventListener('message', function(event){
+    //    console.log(" ***Client 1 Received Message: " + event.data);
+    //});
+    navigator.serviceWorker.addEventListener('message', event => {
+      console.log('*****' + event.data);
     });
-
 
 
   });

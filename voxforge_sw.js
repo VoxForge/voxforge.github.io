@@ -119,26 +119,44 @@ Retry syncs also wait for connectivity, and employ an exponential back-off.
 // https://stackoverflow.com/questions/30177782/chrome-serviceworker-postmessage?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 self.addEventListener('sync', function(event) {
   if (event.tag == 'voxforgeSync') {
+     console.log('background sync request received by serviceworker');
     // waitUntil method is used to tell the browser not to terminate the 
     // service worker until the promise passed to waitUntil is either resolved 
     // or rejected.
-    send_message_to_all_clients('starting background sync');
+    //send_message_to_all_clients('starting background sync');
+
+//chrome://serviceworker-internals
+
     event.waitUntil(
       processSavedSubmissions()
     ); 
+    event.waitUntil(async function() {
+      self.clients.matchAll()
+      .then(clients => {
+          if (!clients) { console.log('empty clients'); return; }
 
+          clients.forEach(
+             client => client.postMessage("****SW Says: '"+msg+"'")
+          );
+      });
+    });
   }
+
+
+
 });
+
 
 // https://miguelmota.com/blog/getting-started-with-service-workers/
 //http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
+//https://developer.mozilla.org/en-US/docs/Web/API/Client/postMessage
 function send_message_to_all_clients(msg){
-    self.clients.matchAll().then(clients => {
-        // problem: clients is empty !!!!!!
-        clients.forEach(
-            client => client.postMessage("****SW Says: '"+msg+"'")
-        );
-    });
+    //self.clients.matchAll().then(clients => {
+    //    // problem: clients is empty !!!!!!
+    //    clients.forEach(
+    //        client => client.postMessage("****SW Says: '"+msg+"'")
+    //    );
+    //});
 
     // trying different syntax...
     //self.clients.matchAll().then((clients) => {
@@ -146,8 +164,7 @@ function send_message_to_all_clients(msg){
     //    return client.postMessage('This is message is from service worker.');
     //  })
     //});
+
+
+
 }
-
-
-
-
