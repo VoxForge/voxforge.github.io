@@ -276,17 +276,3 @@ function setUpFSM() {
     return fsm;
 }
 
-/**
-* use service worker to cache all javascript files so app can be run offline
-* and if the browser supports it, perform background sync to upload submissions
-* to server.
-*/
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/voxforge_sw.js').then(function(registration) {
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, function(err) {
-      console.log('ServiceWorker registration failed: ', err);
-    });
-  });
-}

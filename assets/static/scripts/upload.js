@@ -29,6 +29,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+/**
+* use service worker to perform background sync to upload submissions
+* to server (if browser supports it: Chrome:yes, Firefox:no), and to 
+* cache all javascript files so app can be run offline
+*/
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/voxforge_sw.js').then(function(registration) {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
+
+/** 
+* Listen for return messages from service worker
+*
+// http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
+// https://github.com/jbmoelker/serviceworker-introduction/issues/1
+// https://miguelmota.com/blog/getting-started-with-service-workers/
+// when debugging, need to wait for service worker to trigger - 1-2 minutes
+// create breakpoints in voxforge_sw.js to know when this occurs...
+// Handler for messages coming from the service worker
+*/
+navigator.serviceWorker.addEventListener('message', function(event){
+  console.log("*** serviceworker says: " + event.data.message);
+  if (event.data.type == "alert") {
+    window.alert( "the following submissions were successfully uploaded " +
+                  "using background sync: " + event.data.message );   
+  }
+});
+
 // zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
 var upload_worker = new Worker('/assets/static/scripts/UploadWorker.js');
@@ -196,7 +229,6 @@ function upload( when_audio_processing_completed_func ) {
       if (typeof navigator.serviceWorker !== 'undefined') { 
           navigator.serviceWorker.ready.then(function(swRegistration) { // service workers supported
             if (typeof swRegistration.sync !== 'undefined') { 
-              addServiceWorkerMessageEventListener();
               serviceWorkerUpload(swRegistration);  // background sync supported
             } else { 
               webWorkerUpload(); // background sync not supported
@@ -243,24 +275,6 @@ function upload( when_audio_processing_completed_func ) {
         console.info('service worker background sync event called - submission will be uploaded shortly');
        }, function() {
         console.error('service worker background sync failed, will retry later');
-      });
-    }
-
-    /** 
-      // http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
-      // https://github.com/jbmoelker/serviceworker-introduction/issues/1
-      // https://miguelmota.com/blog/getting-started-with-service-workers/
-      // when debugging, need to wait for service worker to trigger - 1-2 minutes
-      // create breakpoints in voxforge_sw.js to know when this occurs...
-      // Handler for messages coming from the service worker
-    */
-    function addServiceWorkerMessageEventListener() {
-      navigator.serviceWorker.addEventListener('message', function(event){
-          console.log("*** serviceworker says: " + event.data.message);
-          if (event.data.type == "alert") {
-            window.alert( "the following submissions were successfully uploaded " +
-                          "using background sync: " + event.data.message );   
-          }
       });
     }
 
