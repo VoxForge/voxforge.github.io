@@ -88,6 +88,12 @@ function upload( when_audio_processing_completed_func ) {
     var clipIndex = 0;
     var audioArray = [];
 
+    processAudio()
+    .then(callWorker2createZipFile)
+    .then(uploadZippedSubmission);
+
+    // ### inner functions #################################################
+
     /**
     * recursive function that loops over audio clips and asynchronously
     * loads them into audioArray.  This can cause some timing issues if
@@ -131,7 +137,7 @@ function upload( when_audio_processing_completed_func ) {
                 // ... because status no longer status == 200???
 
                 //callWorker2createZipFile(audioArray);
-                resolve(audioArray); // passed as parameter to next promise call in chain
+                resolve(audioArray); // audioArray passed as parameter to next function in call chain
               }
             }
           };
@@ -258,6 +264,7 @@ function upload( when_audio_processing_completed_func ) {
           }
         }
 
+        // ### inner functions #################################################
         /** 
         * upload submission from main thread, asynchronously...
         * TODO is this even required anymore???
@@ -317,13 +324,7 @@ function upload( when_audio_processing_completed_func ) {
             };
         }
 
-    }
-
-    // ### Main ################################################################
-
-    processAudio()
-    .then(callWorker2createZipFile)
-    .then(uploadZippedSubmission);
+    } // uploadZippedSubmission
 }
 
 

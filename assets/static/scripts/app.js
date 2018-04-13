@@ -79,7 +79,6 @@ var RECORDING_STOP_DELAY = 300;
 // upload message, because upload() reads from DOM and if not finished 
 // recording, it will miss last recording.
 var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400; 
-var WAIT_FOR_COPY_OF_AUDIO = 750; 
 
 /**
 * Instantiate classes

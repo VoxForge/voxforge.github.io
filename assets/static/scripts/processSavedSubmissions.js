@@ -151,14 +151,12 @@ function processSavedSubmissions() {
           for (var i = 0; i < savedSubmissionArray.length; i++) {
             // so doesn't try to upload and delete saved promptList file
             if ( ! regex.test(savedSubmissionArray[i]) ) {
-
+              var saved_submission_name = savedSubmissionArray[i];
+              uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
               promises.push(
-                getSavedSubmission( savedSubmissionArray[i] )
+                getSavedSubmission( saved_submission_name )
                 .then(uploadSubmission)
                 .then(removeSubmission)
-                .then(function(saved_submission_name) {
-                  uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
-                 })
               )
               j++;
 
@@ -167,7 +165,7 @@ function processSavedSubmissions() {
 
           // wait for all async promises to complete
           Promise.all(promises) 
-          .then(function(saved_submission_name) { 
+          .then(function() { 
             resolve(uploadList.toString());
           })
           .catch(function(err) {
@@ -175,9 +173,6 @@ function processSavedSubmissions() {
           });
 
       })
-      .catch(function(err) {
-        reject(err);
-      });
     });
 }
 
