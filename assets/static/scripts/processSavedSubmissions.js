@@ -151,25 +151,29 @@ function processSavedSubmissions() {
           for (var i = 0; i < savedSubmissionArray.length; i++) {
             // so doesn't try to upload and delete saved promptList file
             if ( ! regex.test(savedSubmissionArray[i]) ) {
+
               promises.push(
-                  getSavedSubmission( savedSubmissionArray[i] )
-                  .then(uploadSubmission)
-                  .then(removeSubmission)
-                  .then(function(saved_submission_name) {
-                    uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
-                    j++;
-                    //console.info("submission successfully uploaded: " + saved_submission_name);
-                   })
+                getSavedSubmission( savedSubmissionArray[i] )
+                .then(uploadSubmission)
+                .then(removeSubmission)
+                .then(function(saved_submission_name) {
+                  uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
+                 })
               )
+              j++;
+
             }
           }
-          Promise.all(promises) // wait for all async promises to complete
+
+          // wait for all async promises to complete
+          Promise.all(promises) 
           .then(function(saved_submission_name) { 
             resolve(uploadList.toString());
           })
           .catch(function(err) {
              reject(err);
           });
+
       })
       .catch(function(err) {
         reject(err);

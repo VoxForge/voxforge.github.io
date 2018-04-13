@@ -242,92 +242,81 @@ function upload( when_audio_processing_completed_func ) {
     * storage)
     */
     function uploadZippedSubmission() {
-      if (typeof navigator.serviceWorker !== 'undefined') { 
-          navigator.serviceWorker.ready.then(function(swRegistration) { // service workers supported
-            if (typeof swRegistration.sync !== 'undefined') { 
-              serviceWorkerUpload(swRegistration);  // background sync supported
-            } else { 
-              webWorkerUpload(); // background sync not supported
-            }
-          });
-      } else { // service workers not supported
-        if( !! window.Worker ) { // web workers supported
-            webWorkerUpload();
-        } else { // should never get here...
-            asyncMainThreadUpload();
-        }
-      }
-    }
-
-    /** 
-    * upload submission from main thread, asynchronously...
-    * TODO is this even required anymore???
-    * might be useful to allow user to upload manually...
-    */
-    function asyncMainThreadUpload() {
-      // TODO make sure not deadlock with service/web workers...
-      // TODO: should try web workers first...
-      console.info('submission uploaded (in main thread) asynchronously to VoxForge server');
-
-      processSavedSubmissions()
-      .then(function(result) {
-        console.info('async upload message: ' + result);
-        window.alert( "the following submissions were successfully uploaded " +
-                      "using async procedure: " + result );   
-      })
-      .catch(function(err) {
-        console.error('async upload message: ' + err);
-      });
-    }
-
-    /** 
-    * send message to service worker to start submission upload.
-    * will continue to try to upload even if no Internet, until connection
-    * restablished, and if successful, remove uploaded submission from
-    * browser storage
-    */
-    function serviceWorkerUpload(swRegistration) {
-      swRegistration.sync.register('voxforgeSync').then(function() {
-        console.info('service worker background sync event called - submission will be uploaded shortly');
-       }, function() {
-        console.error('service worker background sync failed, will retry later');
-      });
-    }
-
-    /** 
-    * send message to web worker to upload submission.  If fails, submission
-    * stays in InnoDB until next time user makes submission, and then new
-    * submission and any saved submissions will be uploaded, and removed
-    * from browser storage after successful upload
-    */
-    function webWorkerUpload() {
-        console.warn('Browser service worker does not support background sync... using web worker');
-
-        upload_worker.postMessage({
-          command: 'upload',
-        });
-
-        upload_worker.onmessage = function webWorkerUploadDone(event) { 
-          if (event.data.status === "OK") {
-            console.info('message from upload web worker: submission(s) uploaded to server: ' + event.data.uploadedSubmissionList);
-            window.alert( "the following submissions were successfully uploaded " +
-                          "using webworker: " + event.data.uploadedSubmissionList );   
-          } else {
-            console.error('message from upload web worker: transfer error: ' + event.data.status);
+        if (typeof navigator.serviceWorker !== 'undefined') { 
+            navigator.serviceWorker.ready.then(function(swRegistration) { // service workers supported
+              if (typeof swRegistration.sync !== 'undefined') { 
+                serviceWorkerUpload(swRegistration);  // background sync supported
+              } else { 
+                webWorkerUpload(); // background sync not supported
+              }
+            });
+        } else { // service workers not supported
+          if( !! window.Worker ) { // web workers supported
+              webWorkerUpload();
+          } else { // should never get here...
+              asyncMainThreadUpload();
           }
-        };
-    }
+        }
 
-    /** 
-    * display upload progress in console for debugging
-    */
-    function updateProgress (evt) {
-      if (evt.lengthComputable) {
-        var percentComplete = (evt.loaded / evt.total) * 100;
-        console.info('percentComplete %', Math.round(percentComplete) );
-      } else {
-        console.warn('percentComplete - Unable to compute progress information since the total size is unknown');
-      }
+        /** 
+        * upload submission from main thread, asynchronously...
+        * TODO is this even required anymore???
+        * might be useful to allow user to upload manually...
+        */
+        function asyncMainThreadUpload() {
+          // TODO make sure not deadlock with service/web workers...
+          // TODO: should try web workers first...
+          console.info('submission uploaded (in main thread) asynchronously to VoxForge server');
+
+          processSavedSubmissions()
+          .then(function(result) {
+            console.info('async upload message: ' + result);
+            window.alert( "the following submissions were successfully uploaded " +
+                          "using async procedure: " + result );   
+          })
+          .catch(function(err) {
+            console.error('async upload message: ' + err);
+          });
+        }
+
+        /** 
+        * send message to service worker to start submission upload.
+        * will continue to try to upload even if no Internet, until connection
+        * restablished, and if successful, remove uploaded submission from
+        * browser storage
+        */
+        function serviceWorkerUpload(swRegistration) {
+          swRegistration.sync.register('voxforgeSync').then(function() {
+            console.info('service worker background sync event called - submission will be uploaded shortly');
+           }, function() {
+            console.error('service worker background sync failed, will retry later');
+          });
+        }
+
+        /** 
+        * send message to web worker to upload submission.  If fails, submission
+        * stays in InnoDB until next time user makes submission, and then new
+        * submission and any saved submissions will be uploaded, and removed
+        * from browser storage after successful upload
+        */
+        function webWorkerUpload() {
+            console.warn('Browser service worker does not support background sync... using web worker');
+
+            upload_worker.postMessage({
+              command: 'upload',
+            });
+
+            upload_worker.onmessage = function webWorkerUploadDone(event) { 
+              if (event.data.status === "OK") {
+                console.info('message from upload web worker: submission(s) uploaded to server: ' + event.data.uploadedSubmissionList);
+                window.alert( "the following submissions were successfully uploaded " +
+                              "using webworker: " + event.data.uploadedSubmissionList );   
+              } else {
+                console.error('message from upload web worker: transfer error: ' + event.data.status);
+              }
+            };
+        }
+
     }
 
     // ### Main ################################################################
