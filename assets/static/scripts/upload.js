@@ -164,10 +164,11 @@ function upload( when_audio_processing_completed_func ) {
           command: 'zipAndSave',
 
           speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
-          username: profile.getUserName(),
-          language: page_language,
           temp_submission_name: profile.getTempSubmissionName(),
           short_submission_name: profile.getShortSubmissionName(),
+          username: profile.getUserName(),
+          language: page_language,
+          suffix: profile.getSuffix(),
 
           readme_blob: new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"}),
           prompts_blob: new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"}),

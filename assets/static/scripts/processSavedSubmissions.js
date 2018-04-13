@@ -39,7 +39,7 @@ var regex = /prompt_file$/;
 */
 function processSavedSubmissions() {
     /**
-    * get the submission object 
+    * get the submission object from browser storage
     *
     */
     function getSavedSubmission(saved_submission_name) {
@@ -71,8 +71,9 @@ function processSavedSubmissions() {
       return new Promise(function (resolve, reject) {
         var form = new FormData();
         form.append('file', jsonOnject['file'], "webworker_file.zip");
-        form.append('language', jsonOnject['language'])
-        form.append('username', jsonOnject['username'])
+        form.append('language', jsonOnject['language']);
+        form.append('username', jsonOnject['username']);
+        form.append('suffix',   jsonOnject['suffix']);
 
         fetch(uploadURL, {
           method: 'post',
@@ -153,13 +154,12 @@ function processSavedSubmissions() {
             if ( ! regex.test(savedSubmissionArray[i]) ) {
               var saved_submission_name = savedSubmissionArray[i];
               uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
+              j++;
               promises.push(
                 getSavedSubmission( saved_submission_name )
                 .then(uploadSubmission)
                 .then(removeSubmission)
               )
-              j++;
-
             }
           }
 

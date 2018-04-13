@@ -56,8 +56,9 @@ try {
     );
 
     $destination = createNewFileName(
-      $_REQUEST['username'],
       $_REQUEST['language'],
+      $_REQUEST['username'],
+      $_REQUEST['suffix'],
       $GLOBALS['UPLOADFOLDER']
     );
 
@@ -69,7 +70,7 @@ try {
     }
     echo 'submission uploaded successfully.';
 
-  } catch (RuntimeException $e) {
+} catch (RuntimeException $e) {
     echo $e->getMessage();
 }
 
@@ -134,23 +135,27 @@ function get_zip_originalsize($filename) {
     return $size;
 }
 
-function createNewFileName($username, $language, $uploadfolder) {
+function createNewFileName($language, $username, $suffix, $uploadfolder) {
     // limits the length of the filename to 40 char + date and 3 char random code
     $language = basename( $language ); // may prevent directory traversal attacks
-    $language = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $language  ); // remove unwanted characters
+    $language = preg_replace  ( "[^a-zA-Z0-9_-]" , "" , $language  ); // remove unwanted characters
     $language = strtoupper( substr($language , 0, 2) ); // set to uppercase; 2 character max size
 
-    $username = basename( $username ); // may prevent directory traversal attacks
-    $username = preg_replace  (  "/\s+/", "_", $username  ); // replace one or more spaces with single undescore
-    $username = preg_replace  (  "[^a-zA-Z0-9_-]"  , ""  , $username  ); // remove unwanted characters
+    $username = basename( $username );
+    $username = preg_replace  ( "/\s+/", "_", $username ); // replace one or more spaces with single undescore
+    $username = preg_replace  ( "[^a-zA-Z0-9_-]"  , "" , $username ); // remove unwanted characters
     $username = substr($username , 0, 40); // 40 character max size
+
+    $suffix = basename( $suffix ); 
+    $suffix = preg_replace  ( "[^a-z]" , ""  , $suffix  ); // only allow lower case alpha characters
+    $suffix = substr($suffix , 0, 3); // 3 character max size
 
     date_default_timezone_set('America/Toronto');
     $date =  date('Ymd');
-    $threeRandomChar = substr(md5(microtime()),rand(0,26),3);
+    //$threeRandomChar = substr(md5(microtime()),rand(0,26),3);
     $randomNumbers = mt_rand();
 
-    $filename = $language . '-' . $username . '-' . $date . '-' . $threeRandomChar . "[" . $randomNumbers . "]" . ".zip";
+    $filename = $language . '-' . $username . '-' . $date . '-' . $suffix . "[" . $randomNumbers . "]" . ".zip";
     $destination = $uploadfolder . $filename;
 
     return $destination;

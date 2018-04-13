@@ -93,9 +93,10 @@ function createZipFile(self, data) {
 */
 function saveSubmissionLocally(data, zip_file_in_memory) {
   var jsonOnject = {};
+  jsonOnject['short_submission_name'] = data.short_submission_name;
   jsonOnject['username'] = data.username;
   jsonOnject['language'] = data.language;
-  jsonOnject['short_submission_name'] = data.short_submission_name;
+  jsonOnject['suffix'] = data.suffix;
   jsonOnject['speechSubmissionAppVersion'] = data.speechSubmissionAppVersion;
   if (!Date.now) { // UTC timestamp in milliseconds;
       Date.now = function() { return new Date().getTime(); }

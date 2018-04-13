@@ -41,8 +41,17 @@ function Profile () {
   }
 
   /**
+  * get sanitized User Name
+  */
+  function getUserName () {
+      return Profile.cleanUserInputRemoveSpaces( $('#username').val() ) || page_anonymous || "anonymous";
+  }
+
+  /**
   * make random string of length strlen, can override default characters to use
   * in random string
+  *
+  * see: https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
   */
   function makeRandString(strlen, possible) {
     var text = "";
@@ -57,38 +66,32 @@ function Profile () {
   * submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
   * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
   */
-  function createTempSubmissionName() {
-      return createShortSubmissionName() + '[' + makeRandString (10,'1234567890') + ']';
-  }
-
-  function getUserName () {
-      return Profile.cleanUserInputRemoveSpaces( $('#username').val() ) || page_anonymous || "anonymous";
-  }
-
-  /**
-  * submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
-  * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-  */
-  function createShortSubmissionName() {
-      // see: https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
-
-      var username = getUserName().toLowerCase();
+  function createShortSubmissionName(suffix) {
       var d = new Date();
       var month = d.getMonth() + 1;
       month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
       var day = d.getDate();
       day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
       var date = d.getFullYear().toString() + month.toString() + day.toString();
-      var result = page_language + '-' + username + '-' + date + '-' + makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
+      var result = page_language + '-' + getUserName() + '-' + date + '-' + suffix;
 
       return result;
+  }
+
+  /**
+  * submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
+  * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+  */
+  function createTempSubmissionName(shortSubmissionName) {
+      return shortSubmissionName + '[' + makeRandString (10,'1234567890') + ']';
   }
 
   this.sample_rate = null;
   this.sample_rate_format = null;
   this.channels = null;
-  this.tempSubmissionName = createTempSubmissionName();
-  this.shortSubmissionName = createShortSubmissionName();
+  this.suffix = makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
+  this.shortSubmissionName = createShortSubmissionName(this.suffix);
+  this.tempSubmissionName = createTempSubmissionName(this.shortSubmissionName);
 }
 
 /**
@@ -341,6 +344,13 @@ Profile.prototype.getTempSubmissionName = function () {
 */
 Profile.prototype.getShortSubmissionName = function () {
     return this.shortSubmissionName;
+}
+
+/**
+* return suffix used in for submission name
+*/
+Profile.prototype.getSuffix = function () {
+    return this.suffix;
 }
 
 /**
