@@ -96,87 +96,103 @@ function upload( when_audio_processing_completed_func ) {
     *
     * uses xhr internally to collect read audio damples from shadow DOM
     */
-    // TODO convert to promise syntax to make things clearer
-    function audioArrayLoop() {
-      var clip = allClips[clipIndex];
-      clip.style.display = 'None';
-      var audioBlobUrl = clip.querySelector('audio').src;
-      var prompt = clip.querySelector('prompt').innerText;
-      var prompt_id = prompt.split(/(\s+)/).shift();
-      //prompts.prompts_recorded[clipIndex] = prompt + '\n';
-      prompts.prompts_recorded.push(prompt + '\n');
+    function processAudio() {
+      return new Promise(function (resolve, reject) {
 
-      // Ajax is asynchronous - once the request is sent script will 
-      // continue executing without waiting for the response.
-      var xhr = new XMLHttpRequest();
-      // get blob from browser memory; 
-      xhr.open('GET', audioBlobUrl, true);
-      xhr.responseType = 'blob';
-      xhr.onload = function(e) {
-        if (this.status == 200) {
-          var blob = this.response;
-          // add current audio blob to zip file in browser memory
-          audioArray.push ({
-              filename: prompt_id + '.wav', 
-              audioBlob: blob
-          });
-          clipIndex += 1;
-          if (clipIndex < allClips.length) {
-            audioArrayLoop();
-          } else {
-            // must be called here because ajax is asynchronous
-            // Q1: why doesnt createZipFile get called many times as the call stack unrolls???
-            // ... because status no longer status == 200???
+        function audioArrayLoop() {
+          var clip = allClips[clipIndex];
+          clip.style.display = 'None';
+          var audioBlobUrl = clip.querySelector('audio').src;
+          var prompt = clip.querySelector('prompt').innerText;
+          var prompt_id = prompt.split(/(\s+)/).shift();
+          //prompts.prompts_recorded[clipIndex] = prompt + '\n';
+          prompts.prompts_recorded.push(prompt + '\n');
 
-            callWorker2createZipFile(audioArray);
+          // Ajax is asynchronous - once the request is sent script will 
+          // continue executing without waiting for the response.
+          var xhr = new XMLHttpRequest();
+          // get blob from browser memory; 
+          xhr.open('GET', audioBlobUrl, true);
+          xhr.responseType = 'blob';
+          xhr.onload = function(e) {
+            if (this.status == 200) {
+              var blob = this.response;
+              // add current audio blob to zip file in browser memory
+              audioArray.push ({
+                  filename: prompt_id + '.wav', 
+                  audioBlob: blob
+              });
+              clipIndex += 1;
+              if (clipIndex < allClips.length) {
+                audioArrayLoop();
+              } else {
+                // must be called here because ajax is asynchronous
+                // Q1: why doesnt createZipFile get called many times as the call stack unrolls???
+                // ... because status no longer status == 200???
 
-          }
-        }
-      };
-      xhr.send();
-    }
+                //callWorker2createZipFile(audioArray);
+                resolve(audioArray); // passed as parameter to next promise call in chain
+              }
+            }
+          };
+          xhr.onerror = function() {
+            reject("error processing audio from DOM");
+          };
+          xhr.send();
+        } // audioArrayLoop
 
+        audioArrayLoop();
+
+      }); // Promise
+    };// processAudio
     /**
     * call web worker to create zip file and upload to VoxForge server
     */
     function callWorker2createZipFile(audioArray) {
-      // need to copy to blobs here (rather than in web worker) because if pass 
-      // them as references to ZipWorker, they will be overwritten when page refreshes
-      // and not be accessible withing web worker
-      zip_worker.postMessage({
-        command: 'zipAndSave',
+      return new Promise(function (resolve, reject) {
 
-        speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
-        username: profile.getUserName(),
-        language: page_language,
-        temp_submission_name: profile.getTempSubmissionName(),
-        short_submission_name: profile.getShortSubmissionName(),
+        // need to copy to blobs here (rather than in web worker) because if pass 
+        // them as references to ZipWorker, they will be overwritten when page refreshes
+        // and not be accessible withing web worker
+        zip_worker.postMessage({
+          command: 'zipAndSave',
 
-        readme_blob: new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"}),
-        prompts_blob: new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"}),
-        license_blob: new Blob(profile.licensetoArray(), {type: "text/plain;charset=utf-8"}),
-        profile_json_blob: new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
-        prompts_json_blob: new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
-        audio: audioArray,
-      });
+          speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
+          username: profile.getUserName(),
+          language: page_language,
+          temp_submission_name: profile.getTempSubmissionName(),
+          short_submission_name: profile.getShortSubmissionName(),
 
-      /**
-      * receives replies from worker thread and displays status accordingly
-      * this is a worker callback inside the worker context
-      */
-      zip_worker.onmessage = function zipworkerDone(event) { 
-        if (event.data.status === "savedInBrowserStorage") {
-          console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
+          readme_blob: new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"}),
+          prompts_blob: new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"}),
+          license_blob: new Blob(profile.licensetoArray(), {type: "text/plain;charset=utf-8"}),
+          profile_json_blob: new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
+          prompts_json_blob: new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
+          audio: audioArray,
+        });
 
-          uploadZippedSubmission();
-        } else {
-          console.error('webworker says: zip error: ' + event.data.status);
-        }
-      };
+        /**
+        * receives replies from worker thread and displays status accordingly
+        * this is a worker callback inside the worker context
+        */
+        zip_worker.onmessage = function zipworkerDone(event) { 
+          if (event.data.status === "savedInBrowserStorage") {
+            console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
 
-      // wait until zip_worker postMesasge completed before resetting everything
-      when_audio_processing_completed_func(); 
-    }
+            //uploadZippedSubmission();
+            resolve('OK');
+          } else {
+            var m = 'webworker says: zip error: ' + event.data.status;
+            console.error(m);
+            reject(m);
+          }
+        };
+
+        // wait until zip_worker postMesasge completed before resetting everything
+        when_audio_processing_completed_func(); 
+
+      }); // Promise
+    } // callWorker2createZipFile
 
     /**
     * for testing CORS make sure you have rootCA cert installed
@@ -314,7 +330,11 @@ function upload( when_audio_processing_completed_func ) {
       }
     }
 
-    audioArrayLoop();
+    // ### Main ################################################################
+
+    processAudio()
+    .then(callWorker2createZipFile)
+    .then(uploadZippedSubmission);
 }
 
 
