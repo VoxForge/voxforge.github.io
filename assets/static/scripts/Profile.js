@@ -66,51 +66,32 @@ function Profile () {
   * submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
   * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
   */
-  function createShortSubmissionName(suffix) {
-      var d = new Date();
-      var month = d.getMonth() + 1;
-      month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
-      var day = d.getDate();
-      day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
-      var date = d.getFullYear().toString() + month.toString() + day.toString();
-      var result = page_language + '-' + getUserName() + '-' + date + '-' + suffix;
+  //function createShortSubmissionName(suffix) {
+  //    var d = new Date();
+  //   var month = d.getMonth() + 1;
+  //    month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
+  //    var day = d.getDate();
+  //    day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
+  //    var date = d.getFullYear().toString() + month.toString() + day.toString();
+  //    var result = page_language + '-' + getUserName() + '-' + date + '-' + suffix;
 
-      return result;
-  }
+   //   return result;
+  //}
 
   /**
   * submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
   * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
   */
-  function createTempSubmissionName(shortSubmissionName) {
-      return shortSubmissionName + '[' + makeRandString (10,'1234567890') + ']';
-  }
+  //function createTempSubmissionName(shortSubmissionName) {
+  //    return shortSubmissionName + '[' + makeRandString (10,'1234567890') + ']';
+  //}
 
   this.sample_rate = null;
   this.sample_rate_format = null;
   this.channels = null;
+
   this.suffix = makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
-  this.shortSubmissionName = createShortSubmissionName(this.suffix);
-  this.tempSubmissionName = createTempSubmissionName(this.shortSubmissionName);
-}
-
-/**
-* remove unwanted characters from user input
-*
-* see: https://stackoverflow.com/questions/20864893/javascript-replace-all-non-alpha-numeric-characters-new-lines-and-multiple-whi
-* \W is the negation of shorthand \w for [A-Za-z0-9_] word characters (including the underscore)
-* 
-* $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
-* 
-* first replace convert one or more spaces to underscore
-* second replace removes all non-alphanumeric characters
-* third remove consecutive underscores and replace them with single underscore
-* lastly, trim string to max of length 40 characters
-*/
-Profile.cleanUserInputRemoveSpaces = function (user_input) {
-    var user_input = user_input.replace(/\s+/, '_').replace(/[^a-z0-9_\-]/gi,'').replace(/_+/g, '_');
-
-    return user_input.substring(0, 40);
+  this.randomDigits = makeRandString (10,'1234567890');
 }
 
 /**
@@ -323,6 +304,7 @@ Profile.prototype.addProfile2LocalStorage = function () {
    localStorage.setItem(page_language, this.toJsonString());
 };
 
+
 /**
 * return cleaned username user entered into input field
 */
@@ -335,7 +317,7 @@ Profile.prototype.getUserName = function () {
 * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 */
 Profile.prototype.getTempSubmissionName = function () {
-    return this.tempSubmissionName;
+  return this.getShortSubmissionName() + '[' + this.randomDigits + ']';
 }
 
 /**
@@ -343,7 +325,34 @@ Profile.prototype.getTempSubmissionName = function () {
 * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 */
 Profile.prototype.getShortSubmissionName = function () {
-    return this.shortSubmissionName;
+  var d = new Date();
+  var month = d.getMonth() + 1;
+  month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
+  var day = d.getDate();
+  day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
+  var date = d.getFullYear().toString() + month.toString() + day.toString();
+  var result = page_language + '-' + this.getUserName() + '-' + date + '-' + this.suffix;
+
+  return result;
+}
+
+/**
+* remove unwanted characters from user input
+*
+* see: https://stackoverflow.com/questions/20864893/javascript-replace-all-non-alpha-numeric-characters-new-lines-and-multiple-whi
+* \W is the negation of shorthand \w for [A-Za-z0-9_] word characters (including the underscore)
+* 
+* $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
+* 
+* first replace convert one or more spaces to underscore
+* second replace removes all non-alphanumeric characters
+* third remove consecutive underscores and replace them with single underscore
+* lastly, trim string to max of length 40 characters
+*/
+Profile.cleanUserInputRemoveSpaces = function (user_input) {
+    var user_input = user_input.replace(/\s+/, '_').replace(/[^a-z0-9_\-]/gi,'').replace(/_+/g, '_');
+
+    return user_input.substring(0, 40);
 }
 
 /**
