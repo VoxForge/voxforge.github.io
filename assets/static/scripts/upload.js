@@ -44,23 +44,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-/** 
-* Listen for return messages from service worker
-*
-// http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
-// https://github.com/jbmoelker/serviceworker-introduction/issues/1
-// https://miguelmota.com/blog/getting-started-with-service-workers/
-// when debugging, need to wait for service worker to trigger - 1-2 minutes
-// create breakpoints in voxforge_sw.js to know when this occurs...
-// Handler for messages coming from the service worker
-*/
-navigator.serviceWorker.addEventListener('message', function(event){
-  console.log("*** serviceworker says: " + event.data.message);
-  if (event.data.type == "alert") {
-    window.alert( event.data.message );   
-  }
-});
-
 // zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
 var upload_worker = new Worker('/assets/static/scripts/UploadWorker.js');
@@ -274,6 +257,7 @@ function upload( when_audio_processing_completed_func ) {
         function asyncMainThreadUpload() {
           // TODO make sure not deadlock with service/web workers...
           // TODO: should try web workers first...
+          // TODO localize in Read.md page...
           console.info('submission uploaded (in main thread) asynchronously to VoxForge server');
 
           processSavedSubmissions()
@@ -294,6 +278,8 @@ function upload( when_audio_processing_completed_func ) {
         * browser storage
         */
         function serviceWorkerUpload(swRegistration) {
+          // for processing of return values from service worker, see 
+          // service worker event above (i.e. navigator.serviceWorker.addEventListener... )
           swRegistration.sync.register('voxforgeSync').then(function() {
             console.info('service worker background sync event called - submission will be uploaded shortly');
            }, function() {
@@ -313,34 +299,60 @@ function upload( when_audio_processing_completed_func ) {
             });
 
             upload_worker.onmessage = function webWorkerUploadDone(event) { 
-              if (event.data.status === "uploaded") {
-                console.info('message from upload web worker: submission(s) uploaded to server: ' + event.data.uploadedSubmissionList);
-                //window.alert( "the following submissions were successfully uploaded " +
-                //              "using webworker: " + event.data.uploadedSubmissionList );   
-                var uploadList = event.data.uploadedSubmissionList;
-                var submissionText = (uploadList.length > 1 ? "Submissions" : "Submission");
-                window.alert(uploadList.length + " " + submissionText + 
-                            " uploaded to VoxForge Server (using web worker):\n\n    " +
-                            uploadList.join("\n    "));
-
-              } if (event.data.status === "savedtoLocalStorage") {
-                console.info('message from upload web worker: submission(s) uploaded to server: ' + event.data.uploadedSubmissionList);
-                //window.alert( "the following submissions were successfully uploaded " +
-                //              "using webworker: " + event.data.uploadedSubmissionList );  
-                var uploadList = event.data.uploadedSubmissionList;
-                var submissionText = (uploadList.length > 1 ? "submissions" : "submission");
-                window.alert("Submission saved to browser storage.\n\n" +
-                            "Your browser storage contains " + uploadList.length + 
-                            " " + submissionText + ":\n\n    " + 
-                            uploadList.join("\n    ")); 
-              } else {
-                console.error('message from upload web worker: transfer error: ' + event.data.status);
-              }
+              console.log("*** webworker says: " + event.data.message);
+              processWorkerEventMessage(page_alert_message.webworker, event);
             };
         }
 
     } // uploadZippedSubmission
 }
 
+/** 
+* Listen for return messages from service worker
+*
+// http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
+// https://github.com/jbmoelker/serviceworker-introduction/issues/1
+// https://miguelmota.com/blog/getting-started-with-service-workers/
+// when debugging, need to wait for service worker to trigger - 1-2 minutes
+// create breakpoints in voxforge_sw.js to know when this occurs...
+// Handler for messages coming from the service worker
+*/
+navigator.serviceWorker.addEventListener('message', function(event){
+  console.log("*** serviceworker says: " + event.data.message);
+  processWorkerEventMessage(page_alert_message.serviceworker, event);
+});
 
+/** 
+* common function to process service worker or web worker returned message
+* events.
+*/
+function processWorkerEventMessage(workertype, event) {
+    var status = event.data.status;
 
+    if (status === "uploaded" || status === "savedtoLocalStorage") {
+      var submissionList = event.data.submissionList;
+      var submissionText = (submissionList.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
+
+      if (status === "uploaded") {
+        var m = submissionList.length + " " + 
+                submissionText + " " +
+                page_alert_message.uploaded_message  + " (" + 
+                workertype + "):\n\n    " +
+                submissionList.join("\n    ");
+        console.info(m);
+        window.alert(m);
+
+      } else if (status === "savedtoLocalStorage") {
+        var m = page_alert_message.localstorage_message + "\n" +
+                page_alert_message.browsercontains_message.trim() + " " + // remove newline
+                submissionList.length + " " + 
+                submissionText + ":\n    " + 
+                submissionList.join("\n    "); 
+        console.info(m);
+        window.alert(m);
+      }
+    } else {
+      console.error('message from upload worker: transfer error: ' +
+                    status + " " + event.data.message);
+    }
+}

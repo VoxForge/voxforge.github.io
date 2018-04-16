@@ -216,6 +216,17 @@ controls:
     une version courrante d'un navigateur Libre et 'Open Source' tel que Chrome ou
     FireFox"
 
+alert_message:
+  serviceworker: serviceworker
+  webworker: webworker
+  submission_plural: submissions
+  localstorage_message: >
+    Submission saved to browser storage.
+  browsercontains_message: >
+    Your browser storage contains
+  uploaded_message: >
+    uploaded to VoxForge Server
+
 # script below gets loaded in {{ content }} section of layout page
 ---
 <script>
@@ -231,6 +242,7 @@ controls:
   var page_no_worker_message = {{ page.controls.no_worker_message }};
   var page_no_indexedDB_message = {{ page.controls.no_indexedDB_message }};
   var page_no_edgeSupport_message = {{ page.controls.no_edgeSupport_message }};
+  var page_alert_message = {{ page.alert_message  | jsonify}};
 </script>
 
 

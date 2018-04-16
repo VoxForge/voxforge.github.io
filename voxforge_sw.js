@@ -75,7 +75,6 @@ self.addEventListener('install', function(event) {
     caches.open(CACHE_NAME)
       .then(function(cache) {
         console.log('Opened cache');
-        sendMessage("log", "install");
         return cache.addAll(urlsToCache);
       })
   );
@@ -95,7 +94,6 @@ self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
-        sendMessage("log", "fetch");
         // Cache hit - return response
         if (response) {
           return response;
@@ -115,9 +113,7 @@ If it fulfills, the sync is complete.
 If it fails, another sync will be scheduled to retry. 
 Retry syncs also wait for connectivity, and employ an exponential back-off.
 */
-
 self.addEventListener('sync', function(event) {
-  sendMessage("log", "sync");
   if (event.tag == 'voxforgeSync') {
      console.log('voxforgeSync: background sync request received by serviceworker');
 
@@ -129,17 +125,10 @@ self.addEventListener('sync', function(event) {
     event.waitUntil(
       processSavedSubmissions()
       .then(function(uploadList) {
-        var submissionText = (uploadList.length > 1 ? "Submissions" : "Submission");
-        sendMessage("alert", uploadList.length + " " + submissionText + 
-                    " uploaded to VoxForge Server (using background sync):\n\n    " + 
-                    uploadList.join("\n    "));
+        sendMessage("uploaded", uploadList);
       })
       .catch(function(uploadList) {
-        var submissionText = (uploadList.length > 1 ? "submissions" : "submission");
-        sendMessage("alert", "Submission saved to browser storage.\n\n" +
-                     "Your browser storage contains " + uploadList.length + 
-                     " " + submissionText + ":\n\n    " + 
-                     uploadList.join("\n    ")); 
+        sendMessage("savedtoLocalStorage", uploadList);
       })
     ); 
 
@@ -160,14 +149,15 @@ self.addEventListener('sync', function(event) {
 //https://developer.mozilla.org/en-US/docs/Web/API/Client/postMessage
 //https://serviceworke.rs/message-relay_service-worker_doc.html
 */
-function sendMessage(type, message) {
+function sendMessage(status, submissionList) {
   self.clients.matchAll({includeUncontrolled: true, type: 'window'})
   .then(function(clientList) {
     clientList.forEach(function(client) {
       client.postMessage({
-        type: type,
-        message: message
+        status: status,
+        submissionList: submissionList
       });
     });
   });
 }
+
