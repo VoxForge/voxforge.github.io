@@ -57,8 +57,7 @@ if ('serviceWorker' in navigator) {
 navigator.serviceWorker.addEventListener('message', function(event){
   console.log("*** serviceworker says: " + event.data.message);
   if (event.data.type == "alert") {
-    window.alert( "the following submissions were successfully uploaded " +
-                  "using background sync: " + event.data.message );   
+    window.alert( event.data.message );   
   }
 });
 
@@ -254,6 +253,7 @@ function upload( when_audio_processing_completed_func ) {
               if (typeof swRegistration.sync !== 'undefined') { 
                 serviceWorkerUpload(swRegistration);  // background sync supported
               } else { 
+                console.warn('service worker does not support background sync... using web worker');
                 webWorkerUpload(); // background sync not supported
               }
             });
@@ -308,17 +308,31 @@ function upload( when_audio_processing_completed_func ) {
         * from browser storage after successful upload
         */
         function webWorkerUpload() {
-            console.warn('Browser service worker does not support background sync... using web worker');
-
             upload_worker.postMessage({
               command: 'upload',
             });
 
             upload_worker.onmessage = function webWorkerUploadDone(event) { 
-              if (event.data.status === "OK") {
+              if (event.data.status === "uploaded") {
                 console.info('message from upload web worker: submission(s) uploaded to server: ' + event.data.uploadedSubmissionList);
-                window.alert( "the following submissions were successfully uploaded " +
-                              "using webworker: " + event.data.uploadedSubmissionList );   
+                //window.alert( "the following submissions were successfully uploaded " +
+                //              "using webworker: " + event.data.uploadedSubmissionList );   
+                var uploadList = event.data.uploadedSubmissionList;
+                var submissionText = (uploadList.length > 1 ? "Submissions" : "Submission");
+                window.alert(uploadList.length + " " + submissionText + 
+                            " uploaded to VoxForge Server (using web worker):\n\n    " +
+                            uploadList.join("\n    "));
+
+              } if (event.data.status === "savedtoLocalStorage") {
+                console.info('message from upload web worker: submission(s) uploaded to server: ' + event.data.uploadedSubmissionList);
+                //window.alert( "the following submissions were successfully uploaded " +
+                //              "using webworker: " + event.data.uploadedSubmissionList );  
+                var uploadList = event.data.uploadedSubmissionList;
+                var submissionText = (uploadList.length > 1 ? "submissions" : "submission");
+                window.alert("Submission saved to browser storage.\n\n" +
+                            "Your browser storage contains " + uploadList.length + 
+                            " " + submissionText + ":\n\n    " + 
+                            uploadList.join("\n    ")); 
               } else {
                 console.error('message from upload web worker: transfer error: ' + event.data.status);
               }

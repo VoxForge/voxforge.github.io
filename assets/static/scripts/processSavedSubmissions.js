@@ -166,10 +166,11 @@ function processSavedSubmissions() {
           // wait for all async promises to complete
           Promise.all(promises) 
           .then(function() { 
-            resolve(uploadList.toString());
+            resolve(uploadList);
           })
           .catch(function(err) {
-             reject(err);
+             console.error('processSavedSubmissions err: ' + err);
+             reject(uploadList);
           });
 
       })

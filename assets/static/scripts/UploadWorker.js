@@ -50,13 +50,14 @@ function upload(self, data) {
     processSavedSubmissions()
     .then((uploadedSubmissionList) => {
       self.postMessage({
-        status: 'OK',
+        status: 'uploaded',
         uploadedSubmissionList: uploadedSubmissionList,
       });
     })
-    .catch(function(errorMessage) {
+    .catch(function(uploadedSubmissionList) {
       self.postMessage({
-        status: errorMessage, 
+        status: 'savedtoLocalStorage',
+        uploadedSubmissionList: uploadedSubmissionList,
       });
     })
 }

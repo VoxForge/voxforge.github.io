@@ -41,13 +41,6 @@ function Profile () {
   }
 
   /**
-  * get sanitized User Name
-  */
-  function getUserName () {
-      return Profile.cleanUserInputRemoveSpaces( $('#username').val() ) || page_anonymous || "anonymous";
-  }
-
-  /**
   * make random string of length strlen, can override default characters to use
   * in random string
   *
@@ -61,30 +54,6 @@ function Profile () {
 
     return text;
   }
-
-  /**
-  * submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
-  * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-  */
-  //function createShortSubmissionName(suffix) {
-  //    var d = new Date();
-  //   var month = d.getMonth() + 1;
-  //    month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
-  //    var day = d.getDate();
-  //    day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
-  //    var date = d.getFullYear().toString() + month.toString() + day.toString();
-  //    var result = page_language + '-' + getUserName() + '-' + date + '-' + suffix;
-
-   //   return result;
-  //}
-
-  /**
-  * submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
-  * see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-  */
-  //function createTempSubmissionName(shortSubmissionName) {
-  //    return shortSubmissionName + '[' + makeRandString (10,'1234567890') + ']';
-  //}
 
   this.sample_rate = null;
   this.sample_rate_format = null;

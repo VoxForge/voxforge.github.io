@@ -128,11 +128,18 @@ self.addEventListener('sync', function(event) {
     // https://googlechrome.github.io/samples/service-worker/post-message/index.html
     event.waitUntil(
       processSavedSubmissions()
-      .then(function(uploadedSubmissionList) {
-        sendMessage("alert", uploadedSubmissionList);
+      .then(function(uploadList) {
+        var submissionText = (uploadList.length > 1 ? "Submissions" : "Submission");
+        sendMessage("alert", uploadList.length + " " + submissionText + 
+                    " uploaded to VoxForge Server (using background sync):\n\n    " + 
+                    uploadList.join("\n    "));
       })
-      .catch(function(err) {
-        console.error('sendMessage err: ' + err);
+      .catch(function(uploadList) {
+        var submissionText = (uploadList.length > 1 ? "submissions" : "submission");
+        sendMessage("alert", "Submission saved to browser storage.\n\n" +
+                     "Your browser storage contains " + uploadList.length + 
+                     " " + submissionText + ":\n\n    " + 
+                     uploadList.join("\n    ")); 
       })
     ); 
 
