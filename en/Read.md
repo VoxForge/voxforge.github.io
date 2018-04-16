@@ -248,6 +248,7 @@ controls:
 alert_message:
   serviceworker: serviceworker
   webworker: webworker
+  submission_singular: submission
   submission_plural: submissions
   localstorage_message: >
     Submission saved to browser storage.
