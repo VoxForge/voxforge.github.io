@@ -18,14 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
 // /etc/hosts or on local DNS server;
 
-var uploadURL = 'https://upload.voxforge1.org'; // prod
+//var uploadURL = 'https://upload.voxforge1.org'; // prod
 // !!!!!!
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // !!!!!!
-
-// TODO: duplicate definition LOCAL_PROMPT_FILE_NAME in app.js
-var regex = /prompt_file$/; 
 
 // cannot put importScripts here even though code is being shared by voxforge_sw.js and 
 // UploadWorker.js because they are stored in different places and have 
@@ -129,13 +126,11 @@ function processSavedSubmissions() {
     return new Promise(function (resolve, reject) {
       localforage.length()
       .then(function(numberOfKeys) {
-        // counts all keys, including saved promptList files... 
-        // console.info('number of submissions saved in browser storage: ' + numberOfKeys);
+        console.info('number of submissions saved in browser storage: ' + numberOfKeys);
 
         // TODO since later loop iterates through all saved submissions, this 
         // prevents service worker from turning into a zombie thread 
         // and continually checking for (deleted) saved submissions...
-        // but number of keys includes the saved promptfiles
         if (numberOfKeys <= 0) {
           resolve('no submissions found in browser storage: ' + numberOfKeys);
         }
@@ -152,17 +147,14 @@ function processSavedSubmissions() {
           // https://stackoverflow.com/questions/31426740/how-to-return-many-promises-in-a-loop-and-wait-for-them-all-to-do-other-stuff?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
           var promises = [];
           for (var i = 0; i < savedSubmissionArray.length; i++) {
-            // so doesn't try to upload and delete saved promptList file
-            if ( ! regex.test(savedSubmissionArray[i]) ) {
-              var saved_submission_name = savedSubmissionArray[i];
-              uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
-              j++;
-              promises.push(
-                getSavedSubmission( saved_submission_name )
-                .then(uploadSubmission)
-                .then(removeSubmission)
-              )
-            }
+            var saved_submission_name = savedSubmissionArray[i];
+            uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
+            j++;
+            promises.push(
+              getSavedSubmission( saved_submission_name )
+              .then(uploadSubmission)
+              .then(removeSubmission)
+            )
           }
 
           // wait for all async promises to complete
