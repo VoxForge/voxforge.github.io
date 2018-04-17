@@ -127,13 +127,15 @@ function processSavedSubmissions() {
     * it and if successful, removes the submission from storage
     */
     return new Promise(function (resolve, reject) {
-      localforage.length().then(function(numberOfKeys) {
+      localforage.length()
+      .then(function(numberOfKeys) {
         // counts all keys, including saved promptList files... 
         // console.info('number of submissions saved in browser storage: ' + numberOfKeys);
 
         // TODO since later loop iterates through all saved submissions, this 
         // prevents service worker from turning into a zombie thread 
         // and continually checking for (deleted) saved submissions...
+        // but number of keys includes the saved promptfiles
         if (numberOfKeys <= 0) {
           resolve('no submissions found in browser storage: ' + numberOfKeys);
         }

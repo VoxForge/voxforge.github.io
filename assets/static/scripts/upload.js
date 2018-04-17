@@ -205,9 +205,9 @@ function upload( when_audio_processing_completed_func ) {
     * see: https://wiki.mozilla.org/CA:AddRootToFirefox
     *
     * - Edge on Windows 10 does not support service workers at all... try
-    * Web Workers... but edge does not support InnoDB... Localforage 
-    * was supposed to work around this issue.... so no support for
-    * Edge for now...
+    * Web Workers... 
+    * TODO Edge does not support FormData... create alternate form (again...) to 
+    * support Edge.  no support for Edge for now...
     */
 
     /** 
@@ -273,9 +273,11 @@ function upload( when_audio_processing_completed_func ) {
 
         /** 
         * send message to service worker to start submission upload.
-        * will continue to try to upload even if no Internet, until connection
+        *
+        * supposed continue to try to upload even if no Internet, until connection
         * restablished, and if successful, remove uploaded submission from
-        * browser storage
+        * browser storage, but this does not seem to work in Windows, Linux, 
+        * just Android
         */
         function serviceWorkerUpload(swRegistration) {
           // for processing of return values from service worker, see 
@@ -323,8 +325,7 @@ navigator.serviceWorker.addEventListener('message', function(event){
 });
 
 /** 
-* common function to process service worker or web worker returned message
-* events.
+* process messages from service worker or web worker
 */
 function processWorkerEventMessage(workertype, event) {
     var status = event.data.status;

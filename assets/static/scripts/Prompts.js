@@ -21,6 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function Prompts() {
     // TODO duplicate definition in service worker file: processSavedSubmission.js
     var local_prompt_file_name = page_language + '_' + 'prompt_file';
+    this.promptCache = localforage.createInstance({
+        name: "promptCache"
+    });
 
     // lexical closure of 'this' value so that when function 'processPromptsFile' 
     // gets passed as parameter to $.get (thus being called as a reference), it
@@ -142,7 +145,7 @@ function Prompts() {
       jsonOnject['id'] = page_prompt_list_files[random_prompt_file].id;
       jsonOnject['list'] = self.list;
 
-      localforage.setItem(local_prompt_file_name, jsonOnject).then(function (value) {
+      self.promptCache.setItem(local_prompt_file_name, jsonOnject).then(function (value) {
         console.info('savePromptListLocally: saved promptfile to localforage browser storage: ' + local_prompt_file_name);
       }).catch(function(err) {
           console.error('savePromptListLocally failed!', err);
@@ -186,7 +189,8 @@ function Prompts() {
     function getSavedPromptList() {
       return new Promise(function (resolve, reject) {
           // getItem only returns jsonObject
-          localforage.getItem(local_prompt_file_name)
+          //localforage.getItem(local_prompt_file_name)
+          self.promptCache.getItem(local_prompt_file_name)
           .then(function(jsonOnject) {
             // resolve sends these as parameters to next promise in chain
             resolve(jsonOnject);
@@ -213,8 +217,10 @@ function Prompts() {
     }
 
     /** 
-    * get prompts file for given language from server
-    * synchronous request... 
+    * get prompts file for given language from server; used cached version of 
+    * prompt file if not network connection...
+    *
+    * (synchronous request)
     */
     $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
       function(prompt_data) {
