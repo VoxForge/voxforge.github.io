@@ -37,6 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #############################################################################
 
 importScripts('../lib/jszip.js', '../lib/localforage.js'); 
+var submissionCache = localforage.createInstance({
+    name: "submissionCache"
+});
 
 /**
 * Main worker function.  This worker, running in the background, takes the text
@@ -104,7 +107,7 @@ function saveSubmissionLocally(data, zip_file_in_memory) {
   jsonOnject['timestamp'] = Date.now();
   jsonOnject['file'] = zip_file_in_memory;
 
-  localforage.setItem(data.temp_submission_name, jsonOnject).then(function (value) {
+  submissionCache.setItem(data.temp_submission_name, jsonOnject).then(function (value) {
     console.info('saveSubmissionLocally: saved submission to localforage browser storage using this key: ' + data.temp_submission_name);
 
     self.postMessage({ 

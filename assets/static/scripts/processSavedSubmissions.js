@@ -28,7 +28,9 @@ var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 // UploadWorker.js because they are stored in different places and have 
 // different relative paths
 // importScripts('assets/static/lib/localforage.js');
-
+var submissionCache = localforage.createInstance({
+    name: "submissionCache"
+});
 
 
 /**
@@ -42,7 +44,7 @@ function processSavedSubmissions() {
     function getSavedSubmission(saved_submission_name) {
       return new Promise(function (resolve, reject) {
         // getItem only returns jsonObject
-        localforage.getItem(saved_submission_name)
+        submissionCache.getItem(saved_submission_name)
         .then(function(jsonOnject) {
           // resolve sends these as parameters to next promise in chain
           resolve([saved_submission_name, jsonOnject, uploadURL]);
@@ -107,7 +109,7 @@ function processSavedSubmissions() {
     function removeSubmission(saved_submission_name) {
       return new Promise(function (resolve, reject) {
         // only remove saved submission if upload completed successfully
-        localforage.removeItem(saved_submission_name).then(function() {
+        submissionCache.removeItem(saved_submission_name).then(function() {
           //console.log('Backup submission removed from browser: ' + saved_submission_name);
 
           resolve(saved_submission_name);
@@ -124,7 +126,7 @@ function processSavedSubmissions() {
     * it and if successful, removes the submission from storage
     */
     return new Promise(function (resolve, reject) {
-      localforage.length()
+      submissionCache.length()
       .then(function(numberOfKeys) {
         console.info('number of submissions saved in browser storage: ' + numberOfKeys);
 
@@ -139,7 +141,7 @@ function processSavedSubmissions() {
         reject(err);
       });
 
-      localforage.keys()
+      submissionCache.keys()
       .then(function(savedSubmissionArray) {
           var uploadList = [];
           var j = 0;

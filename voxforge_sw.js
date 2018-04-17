@@ -14,12 +14,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-importScripts('assets/static/scripts/processSavedSubmissions.js'); 
 // TODO: processSavedSubmissions is called from service worker (voxforge_sw.js) 
 // from a absolute root (as opposed to relative path) therefore localforage 
 // import must be done in calling script
-importScripts('assets/static/lib/localforage.js');
+importScripts('assets/static/lib/localforage.js'); // localforage needs to be defined before call to processSavedSubmissions
+
+importScripts('assets/static/scripts/processSavedSubmissions.js'); 
+
 
 /**
 this allows testing of service workers on private network:
@@ -33,6 +34,8 @@ https://stackoverflow.com/questions/43665243/invalid-self-signed-ssl-cert-subjec
 
 chrome://serviceworker-internals  > open DEvTools window and pause Javascript
 execution on Service Worker startup...
+
+see also: chrome://inspect/#service-workers
 */
 
 var CACHE_NAME = 'voxforge-cache-v0.1';

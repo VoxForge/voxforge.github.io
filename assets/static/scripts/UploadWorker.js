@@ -23,11 +23,11 @@ passed a promise to FetchEvent.respondWith() that rejected with
 make sure to import self-signed root Cert into Firefox certificate store
 
 */
-
-importScripts('processSavedSubmissions.js'); 
 // TODO: processSavedSubmissions is called from service worker (voxforge_sw.js) from 
 // a different root, therefore localforage import must be done in calling script
-importScripts('../lib/localforage.js');
+importScripts('../lib/localforage.js'); // localforage needs to be defined before call to processSavedSubmissions
+
+importScripts('processSavedSubmissions.js'); 
 
 self.onmessage = function(event) {
   var data = event.data;
