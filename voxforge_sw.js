@@ -131,6 +131,12 @@ self.addEventListener('sync', function(event) {
         sendMessage("uploaded", uploadList);
       })
       .catch(function(uploadList) {
+        // TODO causes weird behaviour in Chrome Android 4.4.2: rather than
+        // firing off as soon as internet disconnected after user tries to 
+        // upload to server, it queues and fires just before actual upload
+        // occurs after internet is re-connected????
+        // Chrome on LInux fires this off as soon as user tries to upload
+        // when there is no Internet connection...
         sendMessage("savedtoLocalStorage", uploadList);
       })
     ); 

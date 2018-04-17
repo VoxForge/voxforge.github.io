@@ -260,15 +260,6 @@
               onclick="view.directionsInfo()">{{ page.instructions.label }}</button>
       <div id="directions-display">
         {{ page.instructions.line1 }}
-            <a href="#ms_windows_mic_popupInfo" data-rel="popup" data-transition="pop" 
-               class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-               title="{{ page.instructions.edge.mouse_over_text }}">
-            </a>
-          <div data-role="popup" id="ms_windows_mic_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-            <p><a href="{{ page.instructions.edge.popup.link }}" target="_blank">{{ page.instructions.edge.popup.title }}</a>
-              {{ page.instructions.edge.popup.text }}
-            </p>
-          </div>
         <br/>
         {{ page.instructions.line2 }}
         <br/>

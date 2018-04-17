@@ -82,7 +82,7 @@ function upload( when_audio_processing_completed_func ) {
     * there are many audio files... therefore only reset user facing display
     * after all text and audio is sent to web worker for background processing
     *
-    * uses xhr internally to collect read audio damples from shadow DOM
+    * uses xhr internally to collect read audio samples from shadow DOM
     */
     function processAudio() {
       return new Promise(function (resolve, reject) {

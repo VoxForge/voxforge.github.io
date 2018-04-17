@@ -220,6 +220,8 @@ controls:
   upload_message: >
     "Are you ready to upload your submission?\nIf not, press Cancel now, 
     and then press Upload once you are ready."
+
+browser_support:
   no_worker_message: >
     "Your browser does not support service or web workers, please
     upgrade to a current version of a Free and Open Source browser such as 
@@ -228,6 +230,10 @@ controls:
     "Your browser does not support indexedDB for offline storage of 
     submissions, please upgrade to a current version of a Free and Open 
     Source browser such as Chrome or FireFox."
+  no_formDataSupport_message: >
+    "Browser does not support FormData... please install 
+    a current version of a Free and Open Source browser such as Chrome or 
+    FireFox"
   no_edgeSupport_message: >
     "Microsoft proprietary browsers not supported... please install 
     a current version of a Free and Open Source browser such as Chrome or 
@@ -257,10 +263,8 @@ alert_message:
   var page_please_select = "{{ page.please_select }}";
   var page_anonymous = "{{ page.anonymous }}";
   var page_upload_message = {{ page.controls.upload_message }};
-  var page_no_worker_message = {{ page.controls.no_worker_message }};
-  var page_no_indexedDB_message = {{ page.controls.no_indexedDB_message }};
-  var page_no_edgeSupport_message = {{ page.controls.no_edgeSupport_message }};
   var page_alert_message = {{ page.alert_message  | jsonify}};
+  var page_browser_support = {{ page.browser_support  | jsonify}};
 </script>
 
 

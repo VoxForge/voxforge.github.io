@@ -48,16 +48,16 @@ self.onmessage = function(event) {
 */
 function upload(self, data) {
     processSavedSubmissions()
-    .then((uploadedSubmissionList) => {
+    .then((uploadList) => {
       self.postMessage({
         status: 'uploaded',
-        submissionList: uploadedSubmissionList,
+        submissionList: uploadList,
       });
     })
-    .catch(function(uploadedSubmissionList) {
+    .catch(function(uploadList) {
       self.postMessage({
         status: 'savedtoLocalStorage',
-        submissionList: uploadedSubmissionList,
+        submissionList: uploadList,
       });
     })
 }

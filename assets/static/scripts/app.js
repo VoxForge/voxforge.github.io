@@ -51,18 +51,27 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 // see: http://diveintohtml5.info/everything.html
 if( ! window.Worker )
 {
-  window.alert( page_no_worker_message );           
+  window.alert( page_browser_support.no_worker_message );           
 }
 
 if( ! window.indexedDB )
 {
-  window.alert( page_no_indexedDB_message );          
+  window.alert( page_browser_support.no_indexedDB_message );          
+}
+
+if( ! window.FormData )
+{
+  // TODO Edge does not yet support FormData
+  // for work around, see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest#Submitting_forms_and_uploading_files
+  // this check does not actually catch anything...
+  window.alert( page_browser_support.no_formDataSupport_message );           
 }
 
 if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
 {
-  window.alert( page_no_edgeSupport_message );         
+  window.alert( page_browser_support.no_edgeSupport_message );         
 }
+
 
 
 // #############################################################################

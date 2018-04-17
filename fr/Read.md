@@ -201,6 +201,8 @@ controls:
   upload_message: >
     "Êtes-vous prêt à télécharger votre soumission? \nSi non, appuyez sur 
     Annuler, puis appuyez sur Télécharger une fois que vous êtes prêt."
+
+browser_support:
   no_worker_message: >
     "Votre navigateur ne supporte pas les 'travailleurs de service' ou 
     'travailleurs de web', s'il vous plaît metté à jour votre navigateur
@@ -211,6 +213,10 @@ controls:
     soumissions, s'il vous plaît s'il vous plaît metté à jour votre navigateur
     (ou installer une version courrante d'un navigateur Libre et 'Open Source' 
     tel que Chrome ou FireFox)"
+  no_formDataSupport_message: >
+    "Browser does not support FormData... please install 
+    a current version of a Free and Open Source browser such as Chrome or 
+    FireFox"
   no_edgeSupport_message: >
     "Les navigateurs de Microsoft ne sont pas supportés ... veuillez installer
     une version courrante d'un navigateur Libre et 'Open Source' tel que Chrome ou
@@ -240,10 +246,8 @@ alert_message:
   var page_please_select = "{{ page.please_select }}";
   var page_anonymous = "{{ page.anonymous }}";
   var page_upload_message = {{ page.controls.upload_message }};
-  var page_no_worker_message = {{ page.controls.no_worker_message }};
-  var page_no_indexedDB_message = {{ page.controls.no_indexedDB_message }};
-  var page_no_edgeSupport_message = {{ page.controls.no_edgeSupport_message }};
   var page_alert_message = {{ page.alert_message  | jsonify}};
+  var page_browser_support = {{ page.browser_support  | jsonify}};
 </script>
 
 
