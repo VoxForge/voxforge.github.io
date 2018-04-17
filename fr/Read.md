@@ -179,21 +179,6 @@ license:
 num_prompts:
   label: Nombre de phrases à lire
 
-instructions:
-  label: Instructions
-  line1: 1. Appuyez sur <b>Enregistrer</b> pour commencer, en disant seulement la phrase qui apparaît dans la boîte ci-dessous.
-  line2: 2. Appuyez sur <b>Arrêter</b> lorsque vous avez terminé.
-  line3: 3. Quand tous les enregistrements demandées sont completés, vous serez invité à les <b>Téléchargers</b>.
-  edge:
-    mouse_over_text: Pour le navigateur Microsoft Edge, cliquez ici pour voir comment indiquer à Windows comment Edge peut utiliser votre microphone.
-    popup:
-      title: Windows - Comment autoriser votre navigateur Edge à utiliser votre microphone
-      link: https://privacy.microsoft.com/en-us/windows-10-camera-and-privacy
-      text:  > 
-        1. Sélectionnez Start, puis Paramètres> Confidentialité> Microphone. </br>
-        2. Choisissez votre paramètre préféré pour Autoriser les applications à utiliser mon microphone. </br>
-        3. Sous <i>Choisir les applications</i> pouvant utiliser votre microphone, activez le paramètre individuel pour le navigateur Edge. </br>
-
 controls:
   record: Enregistrer
   stop: Arrêter

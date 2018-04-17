@@ -198,21 +198,6 @@ license:
 num_prompts:
   label: Number of prompts to read
 
-instructions:
-  label: Instructions
-  line1: 1. Press <b>Record</b> to start, saying only the sentence that appears in the box below.
-  line2: 2. Press <b>Stop</b> when completed.
-  line3: 3. When all the requested prompts are completed, you'll be prompted to <b>Upload</b> your recordings.
-  edge:
-    mouse_over_text: For Microsoft Edge browser, click here to see how to tell Windows that Edge can use your microphone.
-    popup:
-      title: Windows - How to give your Edge browser permission to use your microphone
-      link: https://privacy.microsoft.com/en-us/windows-10-camera-and-privacy
-      text:  > 
-        1. Go to Start, then select Settings > Privacy > Microphone.</br> 
-        2. Choose your preferred setting for Let apps use my microphone.</br>
-        3. Under Choose apps that can use your microphone, turn on the individual setting for the Edge browser.</br>
-
 controls:
   record: Record
   stop: Stop
