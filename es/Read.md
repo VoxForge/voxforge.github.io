@@ -194,15 +194,14 @@ license:
     - CC BY-SA - Creative Commons Attribution-ShareAlike
     - GPLv3 - GNU General Public License
 
-
 num_prompts:
   label: Number of prompts to read
 
 instructions:
   label: Instructions
-  line1: 1. Appuyez sur <b>Enregistrer</b> pour commencer, en disant seulement la phrase qui apparaît dans la boîte ci-dessous.
-  line2: 2. Appuyez sur <b>Arrêter</b> lorsque vous avez terminé.
-  line3: 3. Quand tous les enregistrements demandées sont completés, vous serez invité à les <b>Téléchargers</b>.
+  line1: 1. Press <b>Record</b> to start, saying only the sentence that appears in the box below.
+  line2: 2. Press <b>Stop</b> when completed.
+  line3: 3. When all the requested prompts are completed, you'll be prompted to <b>Upload</b> your recordings.
 
 controls:
   record: Record
