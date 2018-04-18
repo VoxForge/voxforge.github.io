@@ -149,6 +149,8 @@ Profile.prototype.toHash = function () {
 
     profile_hash["os"] = platform.os.toString();
     profile_hash["browser"] = platform.name + ' ' + platform.version;
+    profile_hash["product"] = platform.product;
+    profile_hash["manufacturer"] = platform.manufacturer;
 
     profile_hash["license"] = $("#license").val();
 
@@ -244,6 +246,13 @@ Profile.prototype.toTextArray = function () {
 
     profile_array[i++] = 'O/S: ' +  platform.os.toString() + '\n';
     profile_array[i++] = 'Browser: ' +  platform.name + ' ' + platform.version + '\n';
+    if (platform.product) { // smartphone product name
+      profile_array[i++] = 'Product: ' + platform.product + '\n';
+    }
+    if (platform.manufacturer) { // smartphone manufacturer
+      profile_array[i++] = 'Manufacturer: ' + platform.manufacturer + '\n';
+    }
+
     profile_array[i++] = '\nLicense: ' +  $('#license').val() + '\n';
 
     profile_array[i++] = '\nFile Info: \n\n';
