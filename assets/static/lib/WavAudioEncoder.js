@@ -32,18 +32,10 @@ given that audio recorded from smartphone sometimes contains scratches and pops,
 do we need to add dithering?
 see: http://wiki.audacityteam.org/wiki/Dither
 "Dither" is intentional noise which is added so as to randomise the quantisation 
-errors (rounding errors) that occur when downsampling the Bit Depth of an
+errors  (rounding errors) that occur when downsampling the Bit Depth of an
  audio stream to a lower resolution than the current format. 
 see also: 
 http://darkroommastering.com/blog/dithering-explained
-
-
-
- * research:
- * from: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer
-  The buffer contains data in the following format:  non-interleaved IEEE754 
-  32-bit linear PCM with a nominal range between -1 and +1, that is, 
-  32bits floating point buffer, with each samples between -1.0 and 1.0.
 */
 
 (function(self) {
@@ -63,58 +55,38 @@ http://darkroommastering.com/blog/dithering-explained
     this.dataViews = [];
   };
 
-  // TODO why convert to 16-bit... wavesurfer works in Chrome with 32-bit float, not in Firefox
+  // why convert to 16-bit... because takes up less space...
   // TODO only one channel for audio... therefore simplify loop...
 
   //  convert raw 32-bit floating point audio samples to 16-bit signed integer
   // see https://stackoverflow.com/questions/43881026/convert-32-bit-floating-points-to-16-bit-pcm-range
   // see also: https://github.com/mattdiamond/Recorderjs/blob/master/src/recorder.js
 
-  // try it with 32-bit float: trying to figure out if noise artifacts on
-  // recording on Android with FireFox (especially) or Chrome (sometimes)
-  // is a result of downsampling quantization error, since no dithering is
-  // being applied...
   // https://github.com/Jam3/audiobuffer-to-wav/blob/master/index.js
+
+  // see also: see: https://github.com/higuma/wav-audio-encoder-js
 
   // a more efficient way to copy 32-bit float is: AudioBuffer.copyFromChannel()
   // see: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/copyFromChannel
 
-  // Firefox HTML5 implementation can only play uncmopressed PCM audio at
-  // 8 or 16 bits per sample:
-  // https://support.mozilla.org/en-US/kb/html5-audio-and-video-firefox
-  // but it records at 32-bit float... WTF!
-  // see also https://bugzilla.mozilla.org/show_bug.cgi?id=524109
   Encoder.prototype.encode = function(buffer) {
     var len = buffer[0].length,
         nCh = this.numChannels,
-        //view = new DataView(new ArrayBuffer(len * nCh * 2)), // 16-bit
-        view = new DataView(new ArrayBuffer(len * nCh * 4)), // 32-bit float
+        view = new DataView(new ArrayBuffer(len * nCh * 2)),
         offset = 0;
-    //for (var i = 0; i < len; ++i)
-    //  for (var ch = 0; ch < nCh; ++ch) {
-    //    var x = buffer[ch][i] * 0x7fff; // 0x7fff = 32767
-    //    view.setInt16(offset, x < 0 ? max(x, -0x8000) : min(x, 0x7fff), true);
-    //    offset += 2;
-    //  }
-    var ch = 1;
-    for (var i = 0; i < len; ++i) {
-      view.setFloat32(offset,buffer[ch][i], true);
-      offset += 4;
-    }
-
+    for (var i = 0; i < len; ++i)
+      for (var ch = 0; ch < nCh; ++ch) {
+        var x = buffer[ch][i] * 0x7fff; // 0x7fff = 32767
+        view.setInt16(offset, x < 0 ? max(x, -0x8000) : min(x, 0x7fff), true);
+        offset += 2;
+      }
     this.dataViews.push(view);
     this.numSamples += len;
   };
 
   Encoder.prototype.finish = function(mimeType) {
-    var bitDepth = 32;
-
-    var bytesPerSample = bitDepth / 8;
-    var format = (bitDepth == 32 ? 3 : 1);
-    var blockAlign = this.numChannels * bytesPerSample;
-
-    var dataSize = this.numChannels * this.numSamples * bytesPerSample;
-    view = new DataView(new ArrayBuffer(44)); // appending to this would take longer than just allocating it from the beginning....
+    var dataSize = this.numChannels * this.numSamples * 2,
+    view = new DataView(new ArrayBuffer(44));
     /* RIFF identifier */
     setString(view, 0, 'RIFF');
     /* RIFF chunk length */
@@ -126,17 +98,17 @@ http://darkroommastering.com/blog/dithering-explained
     /* format chunk length */
     view.setUint32(16, 16, true);
     /* sample format (raw) */
-    view.setUint16(20, format, true); 
+    view.setUint16(20, 1, true);
     /* channel count */
     view.setUint16(22, this.numChannels, true);
     /* sample rate */
     view.setUint32(24, this.sampleRate, true);
     /* byte rate (sample rate * block align) */
-    view.setUint32(28, this.sampleRate * blockAlign, true);
+    view.setUint32(28, this.sampleRate * 4, true);
     /* block align (channel count * bytes per sample) */
-    view.setUint16(32, blockAlign, true);
+    view.setUint16(32, this.numChannels * 2, true);
     /* bits per sample */
-    view.setUint16(34, bitDepth, true);
+    view.setUint16(34, 16, true);
     /* data chunk identifier */
     setString(view, 36, 'data');
     /* data chunk length */

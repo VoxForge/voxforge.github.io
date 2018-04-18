@@ -140,9 +140,17 @@ function Audio () {
     *
     * 2. Why not just use 32 bit float in audio (with no downsample)?
     * Chrome support recording and playback with 32-bit float wav format.
-    * Firefox only supports playback of 8 & 16 bit wav files, even thought it 
-    * can record at 32-bit float... 
+    * Firefox HTML5 implementation can only play uncmopressed PCM audio at
+    * 8 or 16 bits per sample
+      (https://support.mozilla.org/en-US/kb/html5-audio-and-video-firefox
+      see also: see also https://bugzilla.mozilla.org/show_bug.cgi?id=524109)
+    *  even thought it can record at 32-bit float... 
+      (The buffer contains data in the following format:  non-interleaved IEEE754 
+      32-bit linear PCM with a nominal range between -1 and +1, that is, 
+      32bits floating point buffer, with each samples between -1.0 and 1.0.
+      see: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer)
     * Wavesurfer was originally thought to be the problem but it is a actually Firefox...
+    *
     * therefore would need two sets of audio:
     * one for display and one for saving as part of submission, which could be 
     * done given that saving audio is done as a background Web Worker process
@@ -160,6 +168,7 @@ function Audio () {
     * known as truncation distortion, which if not prevented, can sound very
     * unpleasant.
     * see: http://darkroommastering.com/blog/dithering-explained
+    * and:  http://wiki.audacityteam.org/wiki/Dither
     * or it could simply be that my low end smartphone does not have neough 
     * processing power and the result is scratches and pops...
     */
