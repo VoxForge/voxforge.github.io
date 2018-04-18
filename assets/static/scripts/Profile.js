@@ -147,6 +147,8 @@ Profile.prototype.toHash = function () {
 
     profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
 
+    profile_hash["user_agent_string"] = platform.ua;
+    // attempts to parse the ua string
     profile_hash["os"] = platform.os.toString();
     profile_hash["browser"] = platform.name + ' ' + platform.version;
     profile_hash["product"] = platform.product || "";
