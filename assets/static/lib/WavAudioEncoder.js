@@ -32,7 +32,7 @@ given that audio recorded from smartphone sometimes contains scratches and pops,
 do we need to add dithering?
 see: http://wiki.audacityteam.org/wiki/Dither
 "Dither" is intentional noise which is added so as to randomise the quantisation 
-errors  (rounding errors) that occur when downsampling the Bit Depth of an
+errors (rounding errors) that occur when downsampling the Bit Depth of an
  audio stream to a lower resolution than the current format. 
 see also: 
 http://darkroommastering.com/blog/dithering-explained
@@ -63,7 +63,7 @@ http://darkroommastering.com/blog/dithering-explained
     this.dataViews = [];
   };
 
-  // TODO why convert to 16-bit... BECAUSE wavesurfer doesn't seem to work with 32-bit float
+  // TODO why convert to 16-bit... wavesurfer works in Chrome with 32-bit float, not in Firefox
   // TODO only one channel for audio... therefore simplify loop...
 
   //  convert raw 32-bit floating point audio samples to 16-bit signed integer
@@ -75,7 +75,15 @@ http://darkroommastering.com/blog/dithering-explained
   // is a result of downsampling quantization error, since no dithering is
   // being applied...
   // https://github.com/Jam3/audiobuffer-to-wav/blob/master/index.js
-  //
+
+  // a more efficient way to copy 32-bit float is: AudioBuffer.copyFromChannel()
+  // see: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/copyFromChannel
+
+  // Firefox HTML5 implementation can only play uncmopressed PCM audio at
+  // 8 or 16 bits per sample:
+  // https://support.mozilla.org/en-US/kb/html5-audio-and-video-firefox
+  // but it records at 32-bit float... WTF!
+  // see also https://bugzilla.mozilla.org/show_bug.cgi?id=524109
   Encoder.prototype.encode = function(buffer) {
     var len = buffer[0].length,
         nCh = this.numChannels,
@@ -100,6 +108,7 @@ http://darkroommastering.com/blog/dithering-explained
 
   Encoder.prototype.finish = function(mimeType) {
     var bitDepth = 32;
+
     var bytesPerSample = bitDepth / 8;
     var format = (bitDepth == 32 ? 3 : 1);
     var blockAlign = this.numChannels * bytesPerSample;

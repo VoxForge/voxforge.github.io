@@ -109,21 +109,48 @@ function Audio () {
     * in 16-bit, it will display default quality... which might be 32-bit float.
     * - use ffprobe (part of ffmpeg suit) to read wav header file and tell
     * you actual bit rate:
-        $  ffprob en000048.wav
+        $  ffprobe en000048.wav
          ... 
-         Input #0, wav, from 'en000048.wav':
-         Duration: 00:00:02.37, bitrate: 705 kb/s
-         Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 44100 Hz, 1 channels, s16, 705 kb/s
+         Input #0, wav, from 'en000463.wav':
+          Duration: 00:00:02.51, bitrate: 1411 kb/s
+            Stream #0:0: Audio: pcm_s32le ([1][0][0][0] / 0x0001), 44100 Hz, 1 channels, s32, 1411 kb/s
         $ ffmpeg -formats | grep PCM
-         DE s16le           PCM signed 16-bit little-endian
+         DE s32le           PCM signed 32-bit little-endian
+    * use: quelcom:
+    * see: https://www.hecticgeek.com/2012/06/fix-wav-header-errors-ubuntu-linux/
+        $ qwavheaderdump -F en000463.wav
+        en000463.wav (442412 bytes):
+	        riff: 'RIFF'
+	        riff length: 442404
+	        wave: 'WAVE'
+	        fmt: 'fmt '
+	        fmt length: 16
+	        format: 3
+		        format field should 1 (pcm tag)
+		        fixed
+	        channels: 1
+	        sample rate: 44100
+	        bytes/second: 176400
+	        bytes/sample: 4
+	        bits/sample: 32
+	        data: 'data'
+	        data length: 442368
+
     * see: https://trac.ffmpeg.org/wiki/audio%20types
     *
     * 2. Why not just use 32 bit float in audio (with no downsample)?
-    * Wavesufer can only use 16-bit, therefore would need two sets of audio:
+    * Chrome support recording and playback with 32-bit float wav format.
+    * Firefox only supports playback of 8 & 16 bit wav files, even thought it 
+    * can record at 32-bit float... 
+    * Wavesurfer was originally thought to be the problem but it is a actually Firefox...
+    * therefore would need two sets of audio:
     * one for display and one for saving as part of submission, which could be 
     * done given that saving audio is done as a background Web Worker process
     *
-    * 3. Sometimes get scratches and pops when recording with Smartphone.
+    * 3. Sometimes get scratches and pops when recording with Smartphone (Android 442 Samsung Galazy)
+    * set recording to 32-bit float and still get scratches and pops in Firefox...
+    * Chrome seems to work better
+    *
     * This might be the result of truncation distortion when converting from 
     * 32-bit float to 16-bit... may need to apply dithering and noise shapping
     * to address this issue
@@ -137,7 +164,13 @@ function Audio () {
     * processing power and the result is scratches and pops...
     */
 
-
+    /**
+    * FireFox (on Linux) can record in 32-bit float, but cannot replay what 
+    * it just recorded...
+    * see: https://stackoverflow.com/questions/26169678/why-certain-wav-files-cannot-be-decoded-in-firefox
+    * https://bugzilla.mozilla.org/show_bug.cgi?id=524109
+    
+    */
     /**
     * set up audio nodes that are connected together in a graph so that the 
     * source microphone input can be captured, and volume node can be created 
