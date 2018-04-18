@@ -179,6 +179,12 @@ license:
 num_prompts:
   label: Nombre de phrases à lire
 
+instructions:
+  label: Instructions
+  line1: 1. Press <b>Record</b> to start, saying only the sentence that appears in the box below.
+  line2: 2. Press <b>Stop</b> when completed.
+  line3: 3. When all the requested prompts are completed, you'll be prompted to <b>Upload</b> your recordings.
+
 controls:
   record: Enregistrer
   stop: Arrêter

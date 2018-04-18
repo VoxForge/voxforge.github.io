@@ -149,8 +149,8 @@ Profile.prototype.toHash = function () {
 
     profile_hash["os"] = platform.os.toString();
     profile_hash["browser"] = platform.name + ' ' + platform.version;
-    profile_hash["product"] = platform.product;
-    profile_hash["manufacturer"] = platform.manufacturer;
+    profile_hash["product"] = platform.product || "";
+    profile_hash["manufacturer"] = platform.manufacturer || "";
 
     profile_hash["license"] = $("#license").val();
 

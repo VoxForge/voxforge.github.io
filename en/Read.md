@@ -210,13 +210,13 @@ license:
 num_prompts:
   label: Number of prompts to read
 
+instructions:
+  label: Instructions
+  line1: 1. Press <b>Record</b> to start, saying only the sentence that appears in the box below.
+  line2: 2. Press <b>Stop</b> when completed.
+  line3: 3. When all the requested prompts are completed, you'll be prompted to <b>Upload</b> your recordings.
 # not supporting Edge yet... Edge needs to support FormData
 # convert to popup for Edge browsers only...
-#instructions:
-#  label: Instructions
-#  line1: 1. Press <b>Record</b> to start, saying only the sentence that appears in the box below.
-#  line2: 2. Press <b>Stop</b> when completed.
-#  line3: 3. When all the requested prompts are completed, you'll be prompted to <b>Upload</b> your recordings.
 #  edge:
 #    mouse_over_text: For Microsoft Edge browser, click here to see how to give your browser permission to use your microphone.
 #  popup:
