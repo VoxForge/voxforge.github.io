@@ -215,6 +215,10 @@ instructions:
   line1: 1. Press <b>Record</b> to start, saying only the sentence that appears in the box below.
   line2: 2. Press <b>Stop</b> when completed.
   line3: 3. When all the requested prompts are completed, you'll be prompted to <b>Upload</b> your recordings.
+  line4: >
+    (<small><small>Please Note: we are collecting your browser's <a href="https://en.wikipedia.org/wiki/User_agent">user agent string</a> to help
+    determine which devices work best with the VoxForge HTML5 audio recording
+    app</small></small>)
 # not supporting Edge yet... Edge needs to support FormData
 # convert to popup for Edge browsers only...
 #  edge:

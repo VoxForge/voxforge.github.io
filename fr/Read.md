@@ -184,6 +184,11 @@ instructions:
   line1: 1. Appuyez sur <b>Enregistrer</b> pour commencer, en disant seulement la phrase qui apparaît dans la boîte ci-dessous.
   line2: 2. Appuyez sur <b>Arrêter</b> lorsque vous avez terminé.
   line3: 3. Quand tous les enregistrements demandées sont completés, vous serez invité à les <b>Téléchargers</b>.
+  line4: >
+    (<small><small>Veuillez noter: nous collectons la 
+    <a href="https://fr.wikipedia.org/wiki/User_agent">chaîne d'agent utilisateur</a> 
+    de votre navigateur pour nous aider déterminer quels appareils fonctionnent
+    le mieux avec le logiciel d'enregistrement HTML5 de VoxForge</small></small>)
 
 controls:
   record: Enregistrer
