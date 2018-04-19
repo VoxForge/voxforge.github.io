@@ -48,9 +48,10 @@ http://darkroommastering.com/blog/dithering-explained
       view.setUint8(offset + i, str.charCodeAt(i));
   };
 
-  var Encoder = function(sampleRate, numChannels) {
+  //var Encoder = function(sampleRate, numChannels) {
+  var Encoder = function(sampleRate) {
     this.sampleRate = sampleRate;
-    this.numChannels = numChannels;
+//    this.numChannels = numChannels;
     this.numSamples = 0;
     this.dataViews = [];
   };
@@ -70,22 +71,33 @@ http://darkroommastering.com/blog/dithering-explained
   // see: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/copyFromChannel
 
   Encoder.prototype.encode = function(buffer) {
-    var len = buffer[0].length,
-        nCh = this.numChannels,
-        view = new DataView(new ArrayBuffer(len * nCh * 2)),
-        offset = 0;
-    for (var i = 0; i < len; ++i)
-      for (var ch = 0; ch < nCh; ++ch) {
-        var x = buffer[ch][i] * 0x7fff; // 0x7fff = 32767
-        view.setInt16(offset, x < 0 ? max(x, -0x8000) : min(x, 0x7fff), true);
+    //var len = buffer[0].length,
+    //    nCh = this.numChannels,
+    //    view = new DataView(new ArrayBuffer(len * nCh * 2)),
+    //    offset = 0;
+    //for (var i = 0; i < len; ++i)
+    // for (var ch = 0; ch < nCh; ++ch) {
+    //    var x = buffer[ch][i] * 0x7fff; // 0x7fff = 32767
+    //    view.setInt16(offset, x < 0 ? max(x, -0x8000) : min(x, 0x7fff), true);
+    //    offset += 2;
+    //  }
+    var len = buffer.length;
+    var view = new DataView(new ArrayBuffer(len * 2));
+    var offset = 0;
+
+    for (var i = 0; i < len; ++i) {
+        var x = buffer[i] * 0x7fff; // 0x7fff = 32767
+        // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
+        view.setInt16(offset, x , true);
         offset += 2;
-      }
+    }
     this.dataViews.push(view);
     this.numSamples += len;
   };
 
   Encoder.prototype.finish = function(mimeType) {
-    var dataSize = this.numChannels * this.numSamples * 2,
+    //var dataSize = this.numChannels * this.numSamples * 2,
+    var dataSize = this.numSamples * 2;
     view = new DataView(new ArrayBuffer(44));
     /* RIFF identifier */
     setString(view, 0, 'RIFF');
@@ -100,13 +112,15 @@ http://darkroommastering.com/blog/dithering-explained
     /* sample format (raw) */
     view.setUint16(20, 1, true);
     /* channel count */
-    view.setUint16(22, this.numChannels, true);
+    //view.setUint16(22, this.numChannels, true);
+    view.setUint16(22, 1, true);
     /* sample rate */
     view.setUint32(24, this.sampleRate, true);
     /* byte rate (sample rate * block align) */
     view.setUint32(28, this.sampleRate * 4, true);
     /* block align (channel count * bytes per sample) */
-    view.setUint16(32, this.numChannels * 2, true);
+    //view.setUint16(32, this.numChannels * 2, true);
+    view.setUint16(32, 2, true);
     /* bits per sample */
     view.setUint16(34, 16, true);
     /* data chunk identifier */

@@ -96,6 +96,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+// TODO silence detection
+// see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
+
 
 
 // recording Web Worker
@@ -129,7 +132,7 @@ function Audio () {
     this.processor = undefined;  
     this.analyser = null;
     this.mediaStreamOutput = null;
-
+    
     // private variables
     var microphone = null;
 
@@ -199,6 +202,7 @@ function Audio () {
       microphone = self.audioCtx.createMediaStreamSource(stream);
       self.microphoneLevel = self.audioCtx.createGain();
       self.analyser = self.audioCtx.createAnalyser();
+      self.silence_analyser = self.audioCtx.createAnalyser();
       self.processor = self.audioCtx.createScriptProcessor(undefined , 2, 2);
       self.mediaStreamOutput = self.audioCtx.destination;
 
@@ -242,32 +246,39 @@ Audio.prototype.record = function () {
     * this seems like it is not a callback, but an anonymous function used within audioworker
     */
     function getBuffers(event) {
-      var buffers = [];
-      // TODO can we simplify this loop to only capture one channel?
-      for (var ch = 0; ch < 2; ++ch)
-        buffers[ch] = event.inputBuffer.getChannelData(ch);
-      return buffers;
-    }
+      //var buffers = [];
 
+      //for (var ch = 0; ch < 2; ++ch)
+      //  buffers[ch] = event.inputBuffer.getChannelData(ch);
+      //return buffers;
+
+      // return mono signal
+      return ( event.inputBuffer.getChannelData(0) );
+    }
     this.microphoneLevel.connect(this.analyser);
+    this.microphoneLevel.connect(this.silence_analyser);
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
 
     visualize(this.analyser);
 
+
     // clears out audio buffer 
     audioworker.postMessage({
       command: 'start',
       sampleRate: this.audioCtx.sampleRate,
-      numChannels: 1
+//      numChannels: 1
     });
 
+    silence_analyser = this.silence_analyser;
     // start recording
     this.processor.onaudioprocess = function(event) {
       audioworker.postMessage({ 
         command: 'record', 
         buffers: getBuffers(event) 
       });
+
+      startSilenceDetection(silence_analyser); // testing silence detection
     };
 }
 
@@ -285,3 +296,40 @@ Audio.prototype.endRecording = function () {
     // TODO is this needed?
     return "ok";
 }
+
+/**
+* detect silence
+* TODO this should be inside web worker...
+see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
+VAD:
+https://github.com/kdavis-mozilla/vad.js/blob/master/lib/vad.js
+https://github.com/otalk/hark/blob/master/hark.js
+*/
+var start = Date.now();
+var silence_analyser;
+function startSilenceDetection(silence_analyser) {
+
+      function onSilence(elapsedTime) {
+            console.info('silence detected: ' + elapsedTime);
+      }
+
+      silence_analyser.fftSize = 2048;
+      var bufferLength = silence_analyser.fftSize;
+      var dataArray = new Uint8Array(bufferLength);
+ 
+      silence_analyser.getByteTimeDomainData(dataArray);
+ 
+      var curr_value_time = (dataArray[0] / 128) - 1.0;
+ 
+      if (curr_value_time > 0.01 || curr_value_time < -0.01) {
+        start = Date.now();
+      }
+      var newtime = Date.now();
+      var elapsedTime = newtime - start;
+      if (elapsedTime > 1000) {
+        onSilence(elapsedTime);
+      }
+}
+
+
+
