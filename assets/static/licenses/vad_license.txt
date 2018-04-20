@@ -1,0 +1,23 @@
+##Author
+
+Kelly Davis kdavis@mozilla.com
+Mark Panaghiston https://github.com/thepag
+
+##Thanks The code is based on the following implementations:
+
+https://github.com/happyworm/Playful-Demos
+
+===============================================================================
+
+/*
+ * Voice Activity Detection (VAD) Library
+ * http://www.happyworm.com
+ *
+ * Copyright (c) 2014 Happyworm Ltd
+ * Licensed under the MIT license.
+ * http://opensource.org/licenses/MIT
+ *
+ * Author: Mark J Panaghiston
+ * Version: 0.1.0
+ * Date: 6th May 2014
+ */

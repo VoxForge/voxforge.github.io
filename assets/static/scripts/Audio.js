@@ -202,7 +202,7 @@ function Audio () {
       microphone = self.audioCtx.createMediaStreamSource(stream);
       self.microphoneLevel = self.audioCtx.createGain();
       self.analyser = self.audioCtx.createAnalyser();
-      self.silence_analyser = self.audioCtx.createAnalyser();
+      self.vad_analyser = self.audioCtx.createAnalyser();
       self.processor = self.audioCtx.createScriptProcessor(undefined , 2, 2);
       self.mediaStreamOutput = self.audioCtx.destination;
 
@@ -256,9 +256,17 @@ Audio.prototype.record = function () {
       return ( event.inputBuffer.getChannelData(0) );
     }
     this.microphoneLevel.connect(this.analyser);
-    this.microphoneLevel.connect(this.silence_analyser);
+    this.microphoneLevel.connect(this.vad_analyser);
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
+
+    //see: https://github.com/happyworm/Playful-Demos/blob/728cef5bbde8c5ffe6e61bf01073b4a6ce6eaae6/proofs/vad/README.md
+    var options = {
+     source: this.vad_analyser,
+     voice_stop: function() {console.log('voice_stop');}, 
+     voice_start: function() {console.log('voice_start');}
+    }; 
+    var vad = new VAD(options);
 
     visualize(this.analyser);
 
@@ -270,7 +278,6 @@ Audio.prototype.record = function () {
 //      numChannels: 1
     });
 
-    silence_analyser = this.silence_analyser;
     // start recording
     this.processor.onaudioprocess = function(event) {
       audioworker.postMessage({ 
@@ -278,7 +285,6 @@ Audio.prototype.record = function () {
         buffers: getBuffers(event) 
       });
 
-      startSilenceDetection(silence_analyser); // testing silence detection
     };
 }
 
@@ -297,39 +303,7 @@ Audio.prototype.endRecording = function () {
     return "ok";
 }
 
-/**
-* detect silence
-* TODO this should be inside web worker...
-see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
-VAD:
-https://github.com/kdavis-mozilla/vad.js/blob/master/lib/vad.js
-https://github.com/otalk/hark/blob/master/hark.js
-*/
-var start = Date.now();
-var silence_analyser;
-function startSilenceDetection(silence_analyser) {
 
-      function onSilence(elapsedTime) {
-            console.info('silence detected: ' + elapsedTime);
-      }
-
-      silence_analyser.fftSize = 2048;
-      var bufferLength = silence_analyser.fftSize;
-      var dataArray = new Uint8Array(bufferLength);
- 
-      silence_analyser.getByteTimeDomainData(dataArray);
- 
-      var curr_value_time = (dataArray[0] / 128) - 1.0;
- 
-      if (curr_value_time > 0.01 || curr_value_time < -0.01) {
-        start = Date.now();
-      }
-      var newtime = Date.now();
-      var elapsedTime = newtime - start;
-      if (elapsedTime > 1000) {
-        onSilence(elapsedTime);
-      }
-}
 
 
 
