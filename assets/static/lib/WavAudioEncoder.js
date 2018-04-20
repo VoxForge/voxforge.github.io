@@ -86,8 +86,9 @@ http://darkroommastering.com/blog/dithering-explained
     var offset = 0;
 
     for (var i = 0; i < len; ++i) {
+        var x = buffer[i] * 0x7fff; // 0x7fff = 32767
         // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
-        view.setInt16(offset, buffer[i] * 0x7fff , true); // 0x7fff = 32767
+        view.setInt16(offset, x , true);
         offset += 2;
     }
     this.dataViews.push(view);
@@ -95,8 +96,6 @@ http://darkroommastering.com/blog/dithering-explained
   };
 
   Encoder.prototype.finish = function(mimeType) {
-    var audioArray = trim_silence(this.dataViews);
-
     //var dataSize = this.numChannels * this.numSamples * 2,
     var dataSize = this.numSamples * 2;
     view = new DataView(new ArrayBuffer(44));
@@ -129,10 +128,8 @@ http://darkroommastering.com/blog/dithering-explained
     /* data chunk length */
     view.setUint32(40, dataSize, true);
 
-    //this.dataViews.unshift(view);
-    //var blob = new Blob(this.dataViews, { type: 'audio/wav' });
-    this.audioArray.unshift(view);
-    var blob = new Blob(this.audioArray, { type: 'audio/wav' });
+    this.dataViews.unshift(view);
+    var blob = new Blob(this.dataViews, { type: 'audio/wav' });
     this.cleanup();
     return blob;
   };
@@ -140,41 +137,6 @@ http://darkroommastering.com/blog/dithering-explained
   Encoder.prototype.cancel = Encoder.prototype.cleanup = function() {
     delete this.dataViews;
   };
-
-  // TODO how to normalize so no DC offset...
-  Encoder.prototype.trim_silence = function(audioArray) {
-    var energy_threshhold = 100^2;
-    var zero_cross_threshold = this.sampleRate * 0.1; // 0.1 secs
-    var speech_starts = 0;
-    var speech_ends = 0;
-    var audio_to_save = this.sampleRate * 0.25; // 0.25 secs
-
-    var frame = this.sampleRate  *0.1; // 0.1 secs
-    var zero_cross = 0;
-
-    var ste = audioArray[0]^2; // short term energy
-    for (var i = 1; i < audioArray.length; ++i) {
-        if (audioArray[i-1] < 0 & audioArray[i] > 0 || audioArray[i-1] > 0 & audioArray[i] < 0)
-          //TODO how to deal with noise generating lots of zero crossings...
-          zero_cross = zero_cross + 1;
-
-        ste = ste + audioArray[i]^2;
-        // TODO need to process sliding frame/window of audio
-        // should move to frequency domain to calculat this...
-        if (i % frame = 0) {
-          var avg_energy = ste / (i+1);
-          if ( avg_energy > energy_threshhold || zero_cross > zero_cross_threshold)
-              speech_starts = i;
-              zero_cross = 0;
-              break;
-        }
-    }
-
-    leading_silence_end = max(
-    return audioArray.slice(leading_silence_end, trailing_silence_start)
-  };
-
-
 
   self.WavAudioEncoder = Encoder;
 })(self);
