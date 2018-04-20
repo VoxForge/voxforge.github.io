@@ -245,15 +245,47 @@ Audio.prototype.record = function () {
     * TODO couldn't this be used inside EncoderWorker?
     * this seems like it is not a callback, but an anonymous function used within audioworker
     */
+    var leading_silence_clipped = false;
+    var energy_treshhold = 0.05;
+    var lowest_energy_event;
+    var lowest_energy = 1.0;
+    // using view meter code for silcence detetion
+    // see https://gist.github.com/yying/754313510c62ca07230c
     function getBuffers(event) {
-      //var buffers = [];
+      //return ( event.inputBuffer.getChannelData(0) );
+      var inputData = event.inputBuffer.getChannelData(0);
+      var num_event_samples = inputData.length;
+      var total_event_energy = 0;
+      for (var i = 0; i < num_event_samples; i++) {
+          total_event_energy += Math.abs(inputData[i++]);
+      }
+      
+      var average_energy = Math.sqrt(total_event_energy / num_event_samples);
+      console.log('average_energy= ' + average_energy);
 
-      //for (var ch = 0; ch < 2; ++ch)
-      //  buffers[ch] = event.inputBuffer.getChannelData(ch);
-      //return buffers;
+      if ( ! leading_silence_clipped) {
+          if (average_energy < lowest_energy) {
+            lowest_energy = average_energy;
+            lowest_energy_event = inputData;
+          }
 
-      // return mono signal
-      return ( event.inputBuffer.getChannelData(0) );
+          if (average_energy < energy_treshhold) {
+            return new Float32Array(); // skip silence
+          }
+
+          var tempTypedArray = new Float32Array(inputData.length * 5); 
+          tempTypedArray.set(lowest_energy_event);
+          tempTypedArray.set(lowest_energy_event, lowest_energy_event.length);
+          tempTypedArray.set(lowest_energy_event, lowest_energy_event.length);
+          tempTypedArray.set(lowest_energy_event, lowest_energy_event.length);
+          tempTypedArray.set(lowest_energy_event, lowest_energy_event.length);
+          tempTypedArray.set(inputData, lowest_energy_event.length);
+          inputData = tempTypedArray;
+      } 
+
+      leading_silence_clipped = true;
+      return (inputData);
+
     }
     this.microphoneLevel.connect(this.analyser);
     this.microphoneLevel.connect(this.vad_analyser);
