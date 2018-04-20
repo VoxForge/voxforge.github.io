@@ -26,7 +26,8 @@ self.onmessage = function(event) {
       buffers.push(data.buffers);
       break;
     case 'voice_start':
-      if ( ! voice_started ) {
+      // don't care about silences between words; only tracking leadin silence.
+      if ( ! voice_started ) { 
           voice_start = buffers.length;
           console.log('worker voice_start= ' + voice_start);
           voice_started = true;
