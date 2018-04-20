@@ -249,44 +249,7 @@ Audio.prototype.record = function () {
     var energy_treshhold = 0.05;
     var lowest_energy_event;
     var lowest_energy = 1.0;
-    // using view meter code for silcence detetion
-    // see https://gist.github.com/yying/754313510c62ca07230c
-    function getBuffers(event) {
-      //return ( event.inputBuffer.getChannelData(0) );
-      var inputData = event.inputBuffer.getChannelData(0);
-      var num_event_samples = inputData.length;
-      var total_event_energy = 0;
-      for (var i = 0; i < num_event_samples; i++) {
-          total_event_energy += Math.abs(inputData[i++]);
-      }
-      
-      var average_energy = Math.sqrt(total_event_energy / num_event_samples);
-      console.log('average_energy= ' + average_energy);
 
-      if ( ! leading_silence_clipped) {
-          if (average_energy < lowest_energy) {
-            lowest_energy = average_energy;
-            lowest_energy_event = inputData;
-          }
-
-          if (average_energy < energy_treshhold) {
-            return new Float32Array(); // skip silence
-          }
-
-          var tempTypedArray = new Float32Array(inputData.length * 5); 
-          tempTypedArray.set(lowest_energy_event);
-          tempTypedArray.set(lowest_energy_event, lowest_energy_event.length);
-          tempTypedArray.set(lowest_energy_event, lowest_energy_event.length);
-          tempTypedArray.set(lowest_energy_event, lowest_energy_event.length);
-          tempTypedArray.set(lowest_energy_event, lowest_energy_event.length);
-          tempTypedArray.set(inputData, lowest_energy_event.length);
-          inputData = tempTypedArray;
-      } 
-
-      leading_silence_clipped = true;
-      return (inputData);
-
-    }
     this.microphoneLevel.connect(this.analyser);
     this.microphoneLevel.connect(this.vad_analyser);
     this.microphoneLevel.connect(this.processor); 
@@ -294,14 +257,21 @@ Audio.prototype.record = function () {
 
     //see: https://github.com/happyworm/Playful-Demos/blob/728cef5bbde8c5ffe6e61bf01073b4a6ce6eaae6/proofs/vad/README.md
     var options = {
-     source: this.vad_analyser,
-     voice_stop: function() {console.log('voice_stop');}, 
-     voice_start: function() {console.log('voice_start');}
+        source: this.vad_analyser,
+        voice_stop: function() {
+          audioworker.postMessage({ 
+            command: 'voice_stop', 
+          });
+        }, 
+        voice_start: function() {
+          audioworker.postMessage({ 
+            command: 'voice_start', 
+          });
+        }
     }; 
     var vad = new VAD(options);
 
     visualize(this.analyser);
-
 
     // clears out audio buffer 
     audioworker.postMessage({
@@ -314,7 +284,7 @@ Audio.prototype.record = function () {
     this.processor.onaudioprocess = function(event) {
       audioworker.postMessage({ 
         command: 'record', 
-        buffers: getBuffers(event) 
+        buffers: event.inputBuffer.getChannelData(0) 
       });
 
     };
