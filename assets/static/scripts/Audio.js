@@ -202,8 +202,8 @@ function Audio () {
       microphone = self.audioCtx.createMediaStreamSource(stream);
       self.microphoneLevel = self.audioCtx.createGain();
       self.analyser = self.audioCtx.createAnalyser();
-      self.vad_analyser = self.audioCtx.createAnalyser();
-      self.processor = self.audioCtx.createScriptProcessor(undefined , 2, 2);
+      // mono input and output
+      self.processor = self.audioCtx.createScriptProcessor(undefined , 1, 1);
       self.mediaStreamOutput = self.audioCtx.destination;
 
       microphone.channelCount = 1;
@@ -241,9 +241,6 @@ Audio.prototype.record = function () {
     /**
     * function used as a parameter to audioworker captures audio buffer data 
     * from processor worker
-    *
-    * TODO couldn't this be used inside EncoderWorker?
-    * this seems like it is not a callback, but an anonymous function used within audioworker
     */
     var leading_silence_clipped = false;
     var energy_treshhold = 0.05;
@@ -251,23 +248,23 @@ Audio.prototype.record = function () {
     var lowest_energy = 1.0;
 
     this.microphoneLevel.connect(this.analyser);
-    this.microphoneLevel.connect(this.vad_analyser);
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
 
-    //see: https://github.com/happyworm/Playful-Demos/blob/728cef5bbde8c5ffe6e61bf01073b4a6ce6eaae6/proofs/vad/README.md
+    // TODO should this be in a worker - sub worker to audioworker perhaps...???
+    //see: https://github.com/kdavis-mozilla/vad.js
     var options = {
-        source: this.vad_analyser,
+        source: this.microphoneLevel,
+        voice_start: function() {
+          audioworker.postMessage({ 
+            command: 'voice_start', 
+          });
+        },
         voice_stop: function() {
           audioworker.postMessage({ 
             command: 'voice_stop', 
           });
         }, 
-        voice_start: function() {
-          audioworker.postMessage({ 
-            command: 'voice_start', 
-          });
-        }
     }; 
     var vad = new VAD(options);
 
@@ -277,14 +274,14 @@ Audio.prototype.record = function () {
     audioworker.postMessage({
       command: 'start',
       sampleRate: this.audioCtx.sampleRate,
-//      numChannels: 1
     });
 
     // start recording
+    // only record left channel (mono)
     this.processor.onaudioprocess = function(event) {
       audioworker.postMessage({ 
         command: 'record', 
-        buffers: event.inputBuffer.getChannelData(0) 
+        buffers: event.inputBuffer.getChannelData(0),
       });
 
     };

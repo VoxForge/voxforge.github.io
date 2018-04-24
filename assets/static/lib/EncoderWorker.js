@@ -4,15 +4,21 @@
 // (see dev-coffee branch for original source)
 importScripts('WavAudioEncoder.js'); 
 
+// TODO click to stop recording should continue for a bit now that we have silence removal...
+var leading_silence_sec = 0.4; // secs
+// shorter because of lag before vad recognizes final silence...
+var trailing_silence_sec = 0.2; // secs
+var leading_silence_buffer = 0;
+var trailing_silence_buffer = 0;
+
 var buffers = undefined,
     encoder = undefined;
 var voice_start;
-var voice_started = false;
 var voice_stop;
-// TODO should be a function of sample rate
-// TODO click to stop recording should continue for a but now that we have silence removal...
-var leading_silence_buffer = 10;
-var trailing_silence_buffer = 5;
+var voice_started;
+var samples_per_sec;
+var first_buffer = true;
+var buffer_size;
 
 self.onmessage = function(event) {
   var data = event.data;
@@ -21,16 +27,31 @@ self.onmessage = function(event) {
       //encoder = new WavAudioEncoder(data.sampleRate, data.numChannels);
       encoder = new WavAudioEncoder(data.sampleRate);
       buffers = [];
+      voice_start = 0;
+      voice_stop = 0;
+      voice_started = false;
+      samples_per_sec = data.sampleRate;
       break;
     case 'record':
+      if (first_buffer) {
+        // TODO what if very short recording??? less than buffer length
+        //                 samples per second / number of samples in buffer
+        var buffers_per_sec = samples_per_sec / data.buffers.length; 
+        leading_silence_buffer = Math.round(leading_silence_sec * buffers_per_sec);
+        trailing_silence_buffer = Math.round(trailing_silence_sec * buffers_per_sec);
+        console.log('worker leading_silence_buffer= ' + leading_silence_buffer + '; trailing_silence_buffer= ' + trailing_silence_buffer);
+        first_buffer = false;
+      }
       buffers.push(data.buffers);
       break;
     case 'voice_start':
-      // don't care about silences between words; only tracking leadin silence.
+      // don't care about silences between words; only tracking leading silence.
       if ( ! voice_started ) { 
           voice_start = buffers.length;
-          console.log('worker voice_start= ' + voice_start);
+          console.log('worker first voice_start= ' + voice_start);
           voice_started = true;
+      } else {
+          console.log('worker next voice_start= ' + voice_start + '; current frame= ' + buffers.length);
       }
       break;
     case 'voice_stop':
@@ -44,7 +65,7 @@ self.onmessage = function(event) {
          voice_stop = buffers.length;
       // should not happen
       if (voice_start > voice_stop) {
-        console.warn('voice_start='+ voice_start + ' is bigger than voice_stop='+ voice_stop);
+        console.warn( 'voice_stop=' + voice_stop + ' starts before voice_start=' + voice_start + ', capturing entire recording');
         voice_start = 0;
         voice_stop = buffers.length;
       }
