@@ -17,7 +17,7 @@ var voice_start;
 var voice_stop;
 var voice_started;
 var samples_per_sec;
-var first_buffer = true;
+var first_buffer;
 var buffer_size;
 
 self.onmessage = function(event) {
@@ -30,6 +30,7 @@ self.onmessage = function(event) {
       voice_start = 0;
       voice_stop = 0;
       voice_started = false;
+      first_buffer = true;
       samples_per_sec = data.sampleRate;
       break;
     case 'record':
@@ -38,7 +39,7 @@ self.onmessage = function(event) {
         //                 samples per second / number of samples in buffer
         var buffers_per_sec = samples_per_sec / data.buffers.length; 
         leading_silence_buffer = Math.round(leading_silence_sec * buffers_per_sec);
-        trailing_silence_buffer = Math.round(trailing_silence_sec * buffers_per_sec);
+        trailing_silence_buffer = Math.floor(trailing_silence_sec * buffers_per_sec);
         console.log('worker leading_silence_buffer= ' + leading_silence_buffer + '; trailing_silence_buffer= ' + trailing_silence_buffer);
         first_buffer = false;
       }
