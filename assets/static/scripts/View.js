@@ -322,7 +322,7 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 * then review and if needed delete an erroneous recording, which can then be
 * re-recorded
 */
-View.prototype.waveformdisplay = function (blob) {
+View.prototype.waveformdisplay = function (blob, clipping, max_energy) {
     // 'self' used to save the current context when calling function references
     var self = this;
 
@@ -395,10 +395,16 @@ View.prototype.waveformdisplay = function (blob) {
       var waveformElement = document.createElement('div');
       // hook for wavesurfer
       waveformElement.setAttribute("id", waveformdisplay_id);
-      // TODO move this to css
-      waveformElement.setAttribute("style", 
+      if (clipping) {
+        // TODO tell user what the problem is...
+        // TODO should not be able to upload if too loud
+        waveformElement.setAttribute("style", 
+          "border-style: solid; min-width:100px; background: #ff3300");
+      } else {
+        // TODO move this to css
+        waveformElement.setAttribute("style", 
           "border-style: solid; min-width:100px; ");
-
+      }
       var style = document.createElement('div');
       style.setAttribute("style", "text-align: center");
 
