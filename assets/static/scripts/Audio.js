@@ -102,7 +102,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 // recording Web Worker
-var audioworker = new Worker('/assets/static/lib/EncoderWorker.js');
+var audioworker = new Worker('/assets/static/scripts/EncoderWorker.js');
 
 /**
 * if page reloaded kill background worker threads before page reload

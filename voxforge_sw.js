@@ -42,7 +42,6 @@ var CACHE_NAME = 'voxforge-cache-v0.1';
 var PATH = '/assets/static/';
 
 var urlsToCache = [
-  PATH + 'lib/EncoderWorker.js',
   PATH + 'lib/jquery-1.12.4.js',
   PATH + 'lib/jquery.mobile-1.4.5.js',
   PATH + 'lib/languages.js',
@@ -55,7 +54,7 @@ var urlsToCache = [
   PATH + 'lib/state-machine.js',
   PATH + 'lib/WavAudioEncoder.js',
 
-  PATH + 'scripts/app.js',
+  PATH + 'scripts/EncoderWorker.js',
   PATH + 'scripts/Audio.js',
   PATH + 'scripts/processSavedSubmissions.js',
   PATH + 'scripts/Profile.js',
@@ -64,7 +63,7 @@ var urlsToCache = [
   PATH + 'scripts/View.js',
   PATH + 'scripts/UploadWorker.js',
   PATH + 'scripts/ZipWorker.js',
-
+  PATH + 'scripts/app.js',
 
   PATH + 'styles/app.css',
   PATH + 'styles/jquery.mobile-1.4.5.css',
