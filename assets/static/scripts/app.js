@@ -82,7 +82,7 @@ if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || p
 var SPEECHSUBMISSIONAPPVERSION = "0.1";
 
 var RECORDING_TIMEOUT = 15000; // 15 seconds
-var RECORDING_STOP_DELAY = 300; 
+var RECORDING_STOP_DELAY = 600; 
 
 // upload uses shadow DOM entries as database of audio... if browser does not have
 // enough time to process the last prompt, it will not be included in upload...

@@ -199,10 +199,12 @@ num_prompts:
 
 instructions:
   label: Instructions
-  line1: 1. Press <b>Record</b> to start, saying only the sentence that appears in the box below.
-  line2: 2. Press <b>Stop</b> when completed.
-  line3: 3. When all the requested prompts are completed, you'll be prompted to <b>Upload</b> your recordings.
-  line4: >
+  lines:
+    - 1. Press <b>Record</b> to start, saying only the words that appear in the box below.
+    - 2. Press <b>Stop</b> when completed.
+    - 3. <b>Listen</b> to your recording and delete and re-record if necessary.
+    - 4. When done, press <b>Upload</b> to send your recordings to VoxForge server.
+  lastline: >
     (<small><small>Please Note: we are collecting your browser's <a href="https://en.wikipedia.org/wiki/User_agent">user agent string</a> to help
     determine which devices work best with the VoxForge HTML5 audio recording
     app</small></small>)
