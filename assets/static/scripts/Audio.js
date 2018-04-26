@@ -240,11 +240,6 @@ Audio.prototype.record = function () {
     * function used as a parameter to audioworker captures audio buffer data 
     * from processor worker
     */
-    var leading_silence_clipped = false;
-    var energy_treshhold = 0.05;
-    var lowest_energy_event;
-    var lowest_energy = 1.0;
-
     this.microphoneLevel.connect(this.analyser);
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
