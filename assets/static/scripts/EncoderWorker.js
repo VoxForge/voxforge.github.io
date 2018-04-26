@@ -28,51 +28,17 @@ self.onmessage = function(event) {
   var data = event.data;
   switch (data.command) {
     case 'start':
-      //encoder = new WavAudioEncoder(data.sampleRate, data.numChannels);
-      encoder = new WavAudioEncoder(data.sampleRate);
-      buffers = [];
-      voice_start = 0;
-      voice_stop = 0;
-      voice_started = false;
-      first_buffer = true;
+      resetVariables(data.sampleRate);
       samples_per_sec = data.sampleRate;
       break;
-
     case 'record':
       if (first_buffer) {
-        // TODO what if very short recording??? less than buffer length
-        // what if recording is all silence?
-
-        //                 samples per second / number of samples in buffer
-        var buffers_per_sec = samples_per_sec / data.buffers.length; 
-        leading_silence_buffer = Math.round(leading_silence_sec * buffers_per_sec);
-        trailing_silence_buffer = Math.floor(trailing_silence_sec * buffers_per_sec);
-        console.log('worker leading_silence_buffer= ' + leading_silence_buffer + '; trailing_silence_buffer= ' + trailing_silence_buffer);
+        [leading_silence_buffer,trailing_silence_buffer] = calculateSilencePadding(data.buffers.length, samples_per_sec);
         first_buffer = false;
       }
 
       buffers.push(data.buffers);
       break;
-
-    case 'voice_start':
-      // don't care about silences between words; only tracking leading silence.
-      if ( ! voice_started ) { 
-          voice_start = buffers.length;
-          console.log('worker first voice_start= ' + voice_start);
-          voice_started = true;
-      } else {
-          console.log('worker next voice_start= ' + voice_start + '; current frame= ' + buffers.length);
-      }
-      speaking = true;
-
-      break;
-
-    case 'voice_stop':
-      voice_stop = buffers.length;
-      console.log('worker voice_stop= ' + voice_stop);
-      speaking = false;
-      break;
-
     case 'finish':
       if (typeof voice_start == 'undefined')
          voice_start = 0;
@@ -122,8 +88,51 @@ self.onmessage = function(event) {
       encoder = undefined;
       break;
 
+    case 'voice_start':
+      // don't care about silences between words; only tracking leading silence.
+      if ( ! voice_started ) { 
+          voice_start = buffers.length;
+          console.log('worker first voice_start= ' + voice_start);
+          voice_started = true;
+      } else {
+          console.log('worker next voice_start= ' + voice_start + '; current frame= ' + buffers.length);
+      }
+      speaking = true;
+
+      break;
+
+    case 'voice_stop':
+      voice_stop = buffers.length;
+      console.log('worker voice_stop= ' + voice_stop);
+      speaking = false;
+      break;
+
     case 'cancel':
       encoder.cancel();
       encoder = undefined;
   }
 };
+
+function resetVariables(sampleRate) {
+  encoder = new WavAudioEncoder(sampleRate);
+  buffers = [];
+  voice_start = 0;
+  voice_stop = 0;
+  voice_started = false;
+  first_buffer = true;
+}
+
+// TODO what if very short recording??? less than buffer length
+function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
+  var buffers_per_sec = samples_per_sec / num_samples_in_buffer; 
+
+  leading_silence_buffer = Math.round(leading_silence_sec * buffers_per_sec);
+  trailing_silence_buffer = Math.floor(trailing_silence_sec * buffers_per_sec);
+
+  console.log('worker leading_silence_buffer= ' + leading_silence_buffer + '; trailing_silence_buffer= ' + trailing_silence_buffer);
+
+  return [leading_silence_buffer,trailing_silence_buffer];
+
+}
+
+

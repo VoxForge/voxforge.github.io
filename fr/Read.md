@@ -231,6 +231,9 @@ alert_message:
     Your browser storage contains
   uploaded_message: >
     uploaded to VoxForge Server
+  audio_too_loud: >
+    "Votre enregistrement est trop fort, veuillez réduire votre volume et
+    réenregistrer"
 
 # script below gets loaded in {{ content }} section of layout page
 ---

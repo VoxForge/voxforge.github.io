@@ -99,8 +99,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // TODO silence detection
 // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
 
-
-
 // recording Web Worker
 var audioworker = new Worker('/assets/static/scripts/EncoderWorker.js');
 

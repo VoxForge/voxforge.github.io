@@ -395,16 +395,9 @@ View.prototype.waveformdisplay = function (blob, clipping, max_energy) {
       var waveformElement = document.createElement('div');
       // hook for wavesurfer
       waveformElement.setAttribute("id", waveformdisplay_id);
-      if (clipping) {
-        // TODO tell user what the problem is...
-        // TODO should not be able to upload if too loud
-        waveformElement.setAttribute("style", 
-          "border-style: solid; min-width:100px; background: #ff3300");
-      } else {
-        // TODO move this to css
-        waveformElement.setAttribute("style", 
-          "border-style: solid; min-width:100px; ");
-      }
+      // TODO move this to css
+      waveformElement.setAttribute("style", 
+        "border-style: solid; min-width:100px; ");
       var style = document.createElement('div');
       style.setAttribute("style", "text-align: center");
 
@@ -420,6 +413,13 @@ View.prototype.waveformdisplay = function (blob, clipping, max_energy) {
 
       style.appendChild(button);
       waveformElement.appendChild(style);
+
+      if (clipping) {
+        // TODO tell user what the problem is...
+        // TODO should not be able to upload if too loud
+        waveformElement.setAttribute("style", "background: #ff3300");
+        waveformElement.innerHTML = "<h4>" + page_alert_message.audio_too_loud + "</h4>";
+      }
 
       console.log("clip_id: " + self.clip_id);
 
@@ -439,7 +439,8 @@ View.prototype.waveformdisplay = function (blob, clipping, max_energy) {
       container: '#' + waveformdisplay_id,
       scrollParent: true,
       waveColor : 'OliveDrab',
-      minPxPerSec: 200
+      minPxPerSec: 200,
+      barHeight: 2,
     });
     wavesurfer[self.clip_id].load(audioURL);
 
