@@ -440,7 +440,6 @@ View.prototype.waveformdisplay = function (blob, clipping, max_energy) {
       scrollParent: true,
       waveColor : 'OliveDrab',
       minPxPerSec: 200,
-      barHeight: 2,
     });
     wavesurfer[self.clip_id].load(audioURL);
 
