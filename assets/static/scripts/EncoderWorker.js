@@ -120,10 +120,32 @@ function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
 * with leading and trailing silence padding
 */
 function getSpeech() {
+  function calculateMaxEnergy(sample) {
+    var max_energy=0;
+
+    for (var i = 0; i < sample.length; i++) {
+      var total_buffer_energy = 0;
+
+      // calculate RMS (root mean square) of speech array
+      for (var j = 0; j < sample[i].length; j++) {
+          total_buffer_energy += Math.abs( sample[i][j]);
+      }
+      var avg_buffer_energy = Math.sqrt(total_buffer_energy / sample[i].length);
+
+      if (avg_buffer_energy > max_energy) {
+         max_energy = avg_buffer_energy;
+      }
+    }
+  
+    return max_energy;
+  }
+  
   if (typeof voice_start == 'undefined')
      voice_start = 0;
-  if (typeof voice_stop == 'undefined')
+
+  if (typeof voice_stop == 'undefined' || voice_stop == 0)
      voice_stop = buffers.length;
+
   // should not happen
   if (voice_start > voice_stop) {
     console.warn( 'voice_stop=' + voice_stop + ' starts before voice_start=' + voice_start + ', capturing entire recording');
@@ -135,22 +157,11 @@ function getSpeech() {
 
   var record_start = Math.max(voice_start - leading_silence_buffer, 0);
   var record_end = Math.min(voice_stop + trailing_silence_buffer, buffers.length);
+
   console.log('worker record_start='+ record_start + '; record_end='+ record_end);
 
   var speech_array =  buffers.slice(record_start, record_end);
-
-  var max_energy=0;
-  for (var i = 0; i < speech_array.length; i++) {
-    var total_buffer_energy = 0;
-    for (var j = 0; j < speech_array[i].length; j++) {
-        total_buffer_energy += Math.abs( speech_array[i][j]);
-    }
-    var avg_buffer_energy = Math.sqrt(total_buffer_energy / speech_array[i].length);
-    if (avg_buffer_energy > max_energy) {
-       max_energy = avg_buffer_energy;
-    }
-  }
-  console.log('max_energy=' + max_energy );
+  var max_energy = calculateMaxEnergy(speech_array);
 
   return [speech_array, max_energy];
 }

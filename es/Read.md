@@ -248,6 +248,9 @@ alert_message:
     uploaded to VoxForge Server
   audio_too_loud: >
     Your recording is too loud, please reduce your volume and re-record
+  audio_too_soft: >
+    Your recording is too soft!  </br>Please increase your volume, delete this 
+    recording and re-record
 
 # script below gets loaded in {{ content }} section of layout page
 ---

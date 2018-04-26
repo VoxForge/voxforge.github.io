@@ -226,7 +226,7 @@ function Audio () {
     * worker sends back the recorded data as an audio blob
     */
     audioworker.onmessage = function(event) { 
-      view.waveformdisplay(event.data.blob, event.data.clipping, event.data.max_energy); 
+      view.waveformdisplay(event.data.blob, event.data.clipping, event.data.too_soft, event.data.max_energy); 
     }; 
 }
 
@@ -294,8 +294,4 @@ Audio.prototype.endRecording = function () {
     // TODO is this needed?
     return "ok";
 }
-
-
-
-
 
