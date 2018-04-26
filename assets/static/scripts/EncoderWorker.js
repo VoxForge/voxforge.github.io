@@ -62,11 +62,11 @@ self.onmessage = function(event) {
     case 'voice_start':
       // don't care about silences between words; only tracking leading silence.
       if ( ! voice_started ) { 
-          voice_start = buffers.length;
-          console.log('worker first voice_start= ' + voice_start);
-          voice_started = true;
+        voice_start = buffers.length;
+        console.log('worker first voice_start= ' + voice_start);
+        voice_started = true;
       } else {
-          console.log('worker next voice_start= ' + voice_start + '; current frame= ' + buffers.length);
+        console.log('worker next voice_start= ' + voice_start + '; current frame= ' + buffers.length);
       }
       speaking = true;
 
