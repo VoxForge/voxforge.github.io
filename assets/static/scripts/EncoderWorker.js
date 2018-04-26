@@ -40,43 +40,12 @@ self.onmessage = function(event) {
       buffers.push(data.buffers);
       break;
     case 'finish':
-      if (typeof voice_start == 'undefined')
-         voice_start = 0;
-      if (typeof voice_stop == 'undefined')
-         voice_stop = buffers.length;
-      // should not happen
-      if (voice_start > voice_stop) {
-        console.warn( 'voice_stop=' + voice_stop + ' starts before voice_start=' + voice_start + ', capturing entire recording');
-        voice_start = 0;
-        voice_stop = buffers.length;
-      }
+      var [arrayslice, max_energy] = getSpeech();
 
-      console.log('worker buffers.length=' + buffers.length + '; voice_start='+ voice_start + '; voice_stop='+ voice_stop);
-
-      var record_start = Math.max(voice_start - leading_silence_buffer, 0);
-      var record_end = Math.min(voice_stop + trailing_silence_buffer, buffers.length);
-      console.log('worker record_start='+ record_start + '; record_end='+ record_end);
-
-      var arrayslice =  buffers.slice(record_start, record_end);
-
-      var max_energy=0;
-      for (var i = 0; i < arrayslice.length; i++) {
-        var total_buffer_energy = 0;
-        for (var j = 0; j < arrayslice[i].length; j++) {
-            total_buffer_energy += Math.abs( arrayslice[i][j]);
-        }
-        var avg_buffer_energy = Math.sqrt(total_buffer_energy / arrayslice[i].length);
-        if (avg_buffer_energy > max_energy) {
-           max_energy = avg_buffer_energy;
-        }
-      }
-      console.log('max_energy=' + max_energy );
       var clipping = false;
       if (max_energy > 0.65)
         clipping = true;
 
-      //while (buffers.length > 0)
-      //  encoder.encode(buffers.shift());
       while (arrayslice.length > 0) {
         encoder.encode(arrayslice.shift());
       }
@@ -112,6 +81,42 @@ self.onmessage = function(event) {
       encoder = undefined;
   }
 };
+
+function getSpeech() {
+  if (typeof voice_start == 'undefined')
+     voice_start = 0;
+  if (typeof voice_stop == 'undefined')
+     voice_stop = buffers.length;
+  // should not happen
+  if (voice_start > voice_stop) {
+    console.warn( 'voice_stop=' + voice_stop + ' starts before voice_start=' + voice_start + ', capturing entire recording');
+    voice_start = 0;
+    voice_stop = buffers.length;
+  }
+
+  console.log('worker buffers.length=' + buffers.length + '; voice_start='+ voice_start + '; voice_stop='+ voice_stop);
+
+  var record_start = Math.max(voice_start - leading_silence_buffer, 0);
+  var record_end = Math.min(voice_stop + trailing_silence_buffer, buffers.length);
+  console.log('worker record_start='+ record_start + '; record_end='+ record_end);
+
+  var arrayslice =  buffers.slice(record_start, record_end);
+
+  var max_energy=0;
+  for (var i = 0; i < arrayslice.length; i++) {
+    var total_buffer_energy = 0;
+    for (var j = 0; j < arrayslice[i].length; j++) {
+        total_buffer_energy += Math.abs( arrayslice[i][j]);
+    }
+    var avg_buffer_energy = Math.sqrt(total_buffer_energy / arrayslice[i].length);
+    if (avg_buffer_energy > max_energy) {
+       max_energy = avg_buffer_energy;
+    }
+  }
+  console.log('max_energy=' + max_energy );
+
+  return [arrayslice, max_energy];
+}
 
 function resetVariables(sampleRate) {
   encoder = new WavAudioEncoder(sampleRate);
