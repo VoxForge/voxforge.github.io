@@ -3,6 +3,8 @@
 // manually rewritten from CoffeeScript output
 // (see dev-coffee branch for original source)
 importScripts('../lib/WavAudioEncoder.js'); 
+var MAX_ENERGY_THRESHOLD = 0.65;
+var LOW_ENERGY_THRESHOLD = 0.1;
 
 // TODO click to stop recording should continue for a bit now that we have silence removal...
 var leading_silence_sec = 0.4; // secs
@@ -54,7 +56,6 @@ self.onmessage = function(event) {
       });
       encoder = undefined;
       break;
-
     case 'voice_start':
       // don't care about silences between words; only tracking leading silence.
       if ( ! voice_started ) { 
@@ -67,13 +68,11 @@ self.onmessage = function(event) {
       speaking = true;
 
       break;
-
     case 'voice_stop':
       voice_stop = buffers.length;
       console.log('worker voice_stop= ' + voice_stop);
       speaking = false;
       break;
-
     case 'cancel':
       encoder.cancel();
       encoder = undefined;
@@ -84,17 +83,20 @@ function getEnergyLevels(max_energy) {
   var clipping;
   var too_soft;
 
-  if (max_energy > 0.65) {
+  if (max_energy > MAX_ENERGY_THRESHOLD) {
     clipping = true;
   } else {
     clipping = false;
   }
 
-  if (max_energy < 0.1) {
+  if (max_energy < LOW_ENERGY_THRESHOLD) {
     too_soft = true;
   } else {
     too_soft = false;
   }
+
+  console.log( 'max_energy=' + max_energy.toFixed(2) + ' LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD + ', MAX_ENERGY_THRESHOLD=' + MAX_ENERGY_THRESHOLD);
+
   return [clipping, too_soft];
 }
 
