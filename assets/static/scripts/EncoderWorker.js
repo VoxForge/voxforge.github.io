@@ -33,6 +33,7 @@ self.onmessage = function(event) {
       resetVariables(data.sampleRate);
       samples_per_sec = data.sampleRate;
       break;
+
     case 'record':
       if (first_buffer) {
         calculateSilencePadding(data.buffers.length, samples_per_sec);
@@ -40,9 +41,10 @@ self.onmessage = function(event) {
       }
       buffers.push(data.buffers);
       break;
+
     case 'finish':
       var [speech_array, max_energy] = getSpeech();
-      var [clipping, too_soft] = getEnergyLevels(max_energy);
+      var [clipping, too_soft] = getEnergyThreshholds(max_energy);
 
       while (speech_array.length > 0) {
         encoder.encode(speech_array.shift());
@@ -56,6 +58,7 @@ self.onmessage = function(event) {
       });
       encoder = undefined;
       break;
+
     case 'voice_start':
       // don't care about silences between words; only tracking leading silence.
       if ( ! voice_started ) { 
@@ -68,38 +71,54 @@ self.onmessage = function(event) {
       speaking = true;
 
       break;
+
     case 'voice_stop':
       voice_stop = buffers.length;
       console.log('worker voice_stop= ' + voice_stop);
       speaking = false;
       break;
+
     case 'cancel':
       encoder.cancel();
       encoder = undefined;
   }
 };
 
-function getEnergyLevels(max_energy) {
-  var clipping;
-  var too_soft;
+/**
+* set variables to their defaul values
+*/
+function resetVariables(sampleRate) {
+  encoder = new WavAudioEncoder(sampleRate);
+  buffers = [];
+  voice_start = 0;
+  voice_stop = 0;
+  voice_started = false;
+  first_buffer = true;
 
-  if (max_energy > MAX_ENERGY_THRESHOLD) {
-    clipping = true;
-  } else {
-    clipping = false;
-  }
-
-  if (max_energy < LOW_ENERGY_THRESHOLD) {
-    too_soft = true;
-  } else {
-    too_soft = false;
-  }
-
-  console.log( 'max_energy=' + max_energy.toFixed(2) + ' LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD + ', MAX_ENERGY_THRESHOLD=' + MAX_ENERGY_THRESHOLD);
-
-  return [clipping, too_soft];
+  clipping = false;
+  too_soft = false;
 }
 
+/**
+* Calculate silence padding.  Must be calculated from event buffer because 
+* there is no other way to get it... and buffer sizes differ markedly 
+* depending on device (e.g. Linux 2048 samples per event buffer; Android 16384 
+* samples)
+*/
+// TODO what if very short recording??? less than buffer length
+function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
+  var buffers_per_sec = samples_per_sec / num_samples_in_buffer; 
+
+  leading_silence_buffer = Math.round(leading_silence_sec * buffers_per_sec);
+  trailing_silence_buffer = Math.floor(trailing_silence_sec * buffers_per_sec);
+
+  console.log('worker leading_silence_buffer= ' + leading_silence_buffer + '; trailing_silence_buffer= ' + trailing_silence_buffer);
+}
+
+/**
+* skip silence in a recording and only return those buffer containing speech,
+* with leading and trailing silence padding
+*/
 function getSpeech() {
   if (typeof voice_start == 'undefined')
      voice_start = 0;
@@ -136,26 +155,27 @@ function getSpeech() {
   return [speech_array, max_energy];
 }
 
-function resetVariables(sampleRate) {
-  encoder = new WavAudioEncoder(sampleRate);
-  buffers = [];
-  voice_start = 0;
-  voice_stop = 0;
-  voice_started = false;
-  first_buffer = true;
+/**
+* determine if energy level threshholds have been passed
+*/
+function getEnergyThreshholds(max_energy) {
+  var clipping;
+  var too_soft;
 
-  clipping = false;
-  too_soft = false;
+  if (max_energy > MAX_ENERGY_THRESHOLD) {
+    clipping = true;
+  } else {
+    clipping = false;
+  }
+
+  if (max_energy < LOW_ENERGY_THRESHOLD) {
+    too_soft = true;
+  } else {
+    too_soft = false;
+  }
+
+  console.log( 'max_energy=' + max_energy.toFixed(2) + ' LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD + ', MAX_ENERGY_THRESHOLD=' + MAX_ENERGY_THRESHOLD);
+
+  return [clipping, too_soft];
 }
-
-// TODO what if very short recording??? less than buffer length
-function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
-  var buffers_per_sec = samples_per_sec / num_samples_in_buffer; 
-
-  leading_silence_buffer = Math.round(leading_silence_sec * buffers_per_sec);
-  trailing_silence_buffer = Math.floor(trailing_silence_sec * buffers_per_sec);
-
-  console.log('worker leading_silence_buffer= ' + leading_silence_buffer + '; trailing_silence_buffer= ' + trailing_silence_buffer);
-}
-
 
