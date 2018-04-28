@@ -43,6 +43,6 @@ collections:
     output: true
     title: FAQs
     permalink: /faq/:path/ # this is for faq item path
-plugins:
+plugins_dir:
   - jekyll-redirect-from
 

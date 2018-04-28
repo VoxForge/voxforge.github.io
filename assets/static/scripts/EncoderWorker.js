@@ -6,10 +6,9 @@ importScripts('../lib/WavAudioEncoder.js');
 var MAX_ENERGY_THRESHOLD = 0.65;
 var LOW_ENERGY_THRESHOLD = 0.1;
 
-// TODO click to stop recording should continue for a bit now that we have silence removal...
-var leading_silence_sec = 0.4; // secs
-// shorter because of lag before vad recognizes final silence...
-var trailing_silence_sec = 0.3; // secs
+var LEADING_SILENCE_SEC = 0.5; // secs
+var TRAILING_SILENCE_SEC = 0.5; // secs
+
 var leading_silence_buffer = 0;
 var trailing_silence_buffer = 0;
 
@@ -109,8 +108,8 @@ function resetVariables(sampleRate) {
 function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
   var buffers_per_sec = samples_per_sec / num_samples_in_buffer; 
 
-  leading_silence_buffer = Math.round(leading_silence_sec * buffers_per_sec);
-  trailing_silence_buffer = Math.floor(trailing_silence_sec * buffers_per_sec);
+  leading_silence_buffer = Math.round(LEADING_SILENCE_SEC * buffers_per_sec);
+  trailing_silence_buffer = Math.floor(TRAILING_SILENCE_SEC * buffers_per_sec);
 
   console.log('worker leading_silence_buffer= ' + leading_silence_buffer + '; trailing_silence_buffer= ' + trailing_silence_buffer);
 }
@@ -120,18 +119,30 @@ function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
 * with leading and trailing silence padding
 */
 function getSpeech() {
-  function calculateMaxEnergy(sample) {
+  /**
+  * Window size is a function of device user is operating on.
+
+rename these functions more accurately window frame buffer wtf?????
+
+  */
+  function calculateSampleEnergy(sampleArray) {
+    var total_buffer_energy = 0;
+
+    // calculate RMS (root mean square) of speech array
+    for (var j = 0; j < sampleArray.length; j++) {
+        total_buffer_energy += Math.abs( sampleArray[j]);
+    }
+    return Math.sqrt(total_buffer_energy / (sampleArray.length - 1) );
+  }
+
+  // buffer is an array of Float32Arrays (with a size specific to 
+  // the device we are operating on e.g. Linux - size=2048); the size
+  // of buffer array is a function of length of audio file.
+  function calculateMaxEnergy(buffer) {
     var max_energy=0;
 
-    for (var i = 0; i < sample.length; i++) {
-      var total_buffer_energy = 0;
-
-      // calculate RMS (root mean square) of speech array
-      for (var j = 0; j < sample[i].length; j++) {
-          total_buffer_energy += Math.abs( sample[i][j]);
-      }
-      var avg_buffer_energy = Math.sqrt(total_buffer_energy / sample[i].length);
-
+    for (var i = 0; i < buffer.length; i++) {
+      var avg_buffer_energy = calculateSampleEnergy(buffer[i]);
       if (avg_buffer_energy > max_energy) {
          max_energy = avg_buffer_energy;
       }
@@ -144,21 +155,33 @@ function getSpeech() {
      voice_start = 0;
 
   if (typeof voice_stop == 'undefined' || voice_stop == 0)
-     voice_stop = buffers.length;
+     voice_stop = buffers.length - 1;
 
   // should not happen
   if (voice_start > voice_stop) {
     console.warn( 'voice_stop=' + voice_stop + ' starts before voice_start=' + voice_start + ', capturing entire recording');
     voice_start = 0;
-    voice_stop = buffers.length;
+    voice_stop = buffers.length - 1;
   }
 
-  console.log('worker buffers.length=' + buffers.length + '; voice_start='+ voice_start + '; voice_stop='+ voice_stop);
+  console.log('worker buffers.length=' + (buffers.length -1) + '; voice_start='+ voice_start + '; voice_stop='+ voice_stop);
 
   var record_start = Math.max(voice_start - leading_silence_buffer, 0);
-  var record_end = Math.min(voice_stop + trailing_silence_buffer, buffers.length);
+  var record_end = Math.min(voice_stop + trailing_silence_buffer, buffers.length - 1);
 
-  console.log('worker record_start='+ record_start + '; record_end='+ record_end);
+  // using energy check (i.e. volume) to confirm that VAD actually found 
+  // end of speech... it sometimes makes mistakes...
+  // TODO why is VAD voice_stop detection sometimes wrong??
+  // this will cause problems in noisy enviroments, may need to skip this for those...
+  var original_record_end = record_end;
+  console.log('record_end sample maxEnergy=' + calculateSampleEnergy(buffers[record_end]) + ' ; LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD);
+  while (calculateSampleEnergy(buffers[record_end]) > LOW_ENERGY_THRESHOLD) {
+    record_end = record_end + 1;
+    if (record_end > (buffers.length - 1) )
+      break;
+  }
+
+  console.log('worker record_start='+ record_start + '; original_record_end='+ original_record_end + '; vol_adjusted_record_end='+ record_end);
 
   var speech_array =  buffers.slice(record_start, record_end);
   var max_energy = calculateMaxEnergy(speech_array);
