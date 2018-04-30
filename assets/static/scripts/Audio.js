@@ -261,6 +261,22 @@ Audio.prototype.record = function () {
     }; 
     var vad = new VAD(options);
 
+
+    var options2 = {
+      onVoiceStart: function() {
+        console.log('voice2 start');
+      },
+      onVoiceStop: function() {
+        console.log('voice2 stop');
+      },
+      onUpdate: function(val) {
+        console.log('curr val:', val);
+      }
+    };
+    var vad2 = voice_activity_detection(this.microphoneLevel, options);
+
+
+
     visualize(this.analyser);
 
     // clears out audio buffer 
@@ -284,14 +300,14 @@ Audio.prototype.record = function () {
 * disconnect audio nodes; send message to audio worker to stop recording
 */
 Audio.prototype.endRecording = function () {
+    // trying to clear buffer because second recording sometimes includes end 
+    // of previous recording
+    this.processor.onaudioprocess=null; 
     this.microphoneLevel.disconnect();
     this.processor.disconnect();
 
     audioworker.postMessage({ 
       command: 'finish' 
     });
-
-    // TODO is this needed?
-    return "ok";
 }
 
