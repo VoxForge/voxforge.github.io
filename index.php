@@ -14,7 +14,7 @@ $UPLOADFOLDER = './submissions/'; // testing
 //!!!!!!
 
 // max upload size should be a function of the number of prompts
-$MAX_UPLOAD_SIZE = 100 * 1024 * 1024; //100 megabytes
+$MAX_UPLOAD_SIZE = 200 * 1024 * 1024; //100 megabytes
 $MAX_UNZIPPED_SIZE = 150 * 1024 * 1024; // 150 megabytes
 
 header("Access-Control-Allow-Origin: $ALLOWEDURL");
