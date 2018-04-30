@@ -26,6 +26,21 @@ var speaking = false;
 var total_buffer_energy = 0;
 
 self.onmessage = function(event) {
+  /**
+  * set variables to their defaul values
+  */
+  function resetVariables(sampleRate) {
+    encoder = new WavAudioEncoder(sampleRate);
+    buffers = [];
+    voice_start = 0;
+    voice_stop = 0;
+    voice_started = false;
+    first_buffer = true;
+
+    clipping = false;
+    too_soft = false;
+  }
+
   var data = event.data;
   switch (data.command) {
     case 'start':
@@ -44,7 +59,8 @@ self.onmessage = function(event) {
       break;
 
     case 'finish':
-      var [speech_array, max_energy] = getSpeech();
+      var [speech_array, max_energy] = 
+          extractSpeechFromRecording(buffers, voice_start, voice_stop);
       var [clipping, too_soft] = getEnergyThreshholds(max_energy);
 
       while (speech_array.length > 0) {
@@ -86,21 +102,6 @@ self.onmessage = function(event) {
 };
 
 /**
-* set variables to their defaul values
-*/
-function resetVariables(sampleRate) {
-  encoder = new WavAudioEncoder(sampleRate);
-  buffers = [];
-  voice_start = 0;
-  voice_stop = 0;
-  voice_started = false;
-  first_buffer = true;
-
-  clipping = false;
-  too_soft = false;
-}
-
-/**
 * Calculate silence padding.  Must be calculated from event buffer because 
 * there is no other way to get it... and buffer sizes differ markedly 
 * depending on device (e.g. Linux 2048 samples per event buffer; Android 16384 
@@ -122,13 +123,9 @@ function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
 * skip silence in a recording and only return those buffer containing speech,
 * with leading and trailing silence padding
 */
-function getSpeech() {
+function extractSpeechFromRecording(buffers, voice_start, voice_stop) {
   /**
   * Window size is a function of device user is operating on.
-
-!!!!!!
-rename these functions more accurately window frame buffer wtf?????
-!!!!!!
 
     Number of elements in Floar32Array corresponds to the 'Frame' or 'Window' size 
     of a Wav audio recording.  (Linux = 2048; Android = 16384) and each element 
@@ -138,6 +135,8 @@ rename these functions more accurately window frame buffer wtf?????
     var total_buffer_energy = 0;
 
     // calculate RMS (root mean square) of speech array
+    // An envelope of a signal is a curve that describes its magnitude over 
+    // time, independently of how its frequency content makes it oscillate 
     for (var j = 0; j < sampleArray.length; j++) {
         total_buffer_energy += Math.abs( sampleArray[j]);
     }
@@ -185,8 +184,13 @@ rename these functions more accurately window frame buffer wtf?????
   // TODO why is VAD voice_stop detection sometimes wrong??
   // this will cause problems in noisy enviroments, may need to skip this for those...
   var original_record_end = record_end;
-  console.log('record_end sample maxEnergy=' + calculateWindowEnergy(buffers[record_end]).toFixed(2) + ' ; LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD);
+
+  // https://dsp.stackexchange.com/questions/1522/simplest-way-of-detecting-where-audio-envelopes-start-and-stop?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+  //https://ccrma.stanford.edu/~jos/filters
+  // https://github.com/corbanbrook/dsp.js/
+  console.log('start buffers[' + record_end + '] maxEnergy=' + calculateWindowEnergy(buffers[record_end]).toFixed(2) + ' ; LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD);
   while (calculateWindowEnergy(buffers[record_end]) > LOW_ENERGY_THRESHOLD) {
+    console.log('buffers[' + record_end + '] maxEnergy=' + calculateWindowEnergy(buffers[record_end]).toFixed(2) + ' ; LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD);
     record_end = record_end + 1;
     if (record_end > last_index )
       break;
