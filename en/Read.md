@@ -275,7 +275,7 @@ alert_message:
     Your recording is too loud!  </br>Please reduce your volume, delete this 
     recording and re-record
   audio_too_soft: >
-    Your recording is too soft!  </br>Please increase your volume, delete this 
+    Your recording levels are too low!  </br>Please raise your volume, delete this 
     recording and re-record
 
 # script below gets loaded in {{ content }} section of layout page
