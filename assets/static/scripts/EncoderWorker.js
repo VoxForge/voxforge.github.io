@@ -75,7 +75,7 @@ self.onmessage = function(event) {
       });
       encoder = undefined;
       break;
-
+/*
     case 'voice_start':
       // tracking leading silence.
       if ( ! voice_started ) { 
@@ -94,12 +94,41 @@ self.onmessage = function(event) {
       console.log('worker voice_stop= ' + voice_stop);
       speaking = false;
       break;
-
+*/
     case 'cancel':
       encoder.cancel();
       encoder = undefined;
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
 * Calculate silence padding.  Must be calculated from event buffer because 

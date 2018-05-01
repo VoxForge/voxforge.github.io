@@ -219,21 +219,6 @@ function Audio () {
       console.info('channels: ' + self.mediaStreamOutput.channelCount);
       console.info('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
       console.info('microphoneLevel.gain.value: ' + self.microphoneLevel.gain.value);
-
-/* DOES NOT WORK....
-      var options2 = {
-        onVoiceStart: function() {
-          console.log('voice2 start');
-        },
-        onVoiceStop: function() {
-          console.log('voice2 stop');
-        },
-        onUpdate: function(val) {
-          console.log('curr val:', val);
-        }
-      };
-      var vad2 = voice_activity_detection(self.audioCtx, stream, options2);
-*/
     }
 
     /**
@@ -258,7 +243,7 @@ Audio.prototype.record = function () {
     this.microphoneLevel.connect(this.analyser);
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
-
+/*
     // TODO should this be in a worker - sub worker to audioworker perhaps...???
     //see: https://github.com/kdavis-mozilla/vad.js
     var options = {
@@ -275,7 +260,7 @@ Audio.prototype.record = function () {
         }, 
     }; 
     var vad = new VAD(options);
-
+*/
     visualize(this.analyser);
 
     // clears out audio buffer 

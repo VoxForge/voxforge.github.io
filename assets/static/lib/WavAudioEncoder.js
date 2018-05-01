@@ -57,7 +57,6 @@ http://darkroommastering.com/blog/dithering-explained
   };
 
   // why convert to 16-bit... because takes up less space...
-  // TODO only one channel for audio... therefore simplify loop...
 
   //  convert raw 32-bit floating point audio samples to 16-bit signed integer
   // see https://stackoverflow.com/questions/43881026/convert-32-bit-floating-points-to-16-bit-pcm-range
