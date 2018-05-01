@@ -88,7 +88,9 @@ http://darkroommastering.com/blog/dithering-explained
     for (var i = 0; i < len; ++i) {
         var x = buffer[i] * 0x7fff; // 0x7fff = 32767
         // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
-        view.setInt16(offset, x , true);
+        // trying to see if no min max causingn scratichin and pops...
+        //view.setInt16(offset, x , true);
+        view.setInt16(offset, x < 0 ? max(x, -0x8000) : min(x, 0x7fff), true);
         offset += 2;
     }
     this.dataViews.push(view);
