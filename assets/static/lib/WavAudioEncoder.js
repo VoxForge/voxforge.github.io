@@ -81,7 +81,11 @@ http://darkroommastering.com/blog/dithering-explained
     //    offset += 2;
     //  }
     var len = buffer.length;
+    // array of twos-complement 16-bit signed integers in the platform byte order.
+    //var buffer_pcm = new Int16Array(len); // webrtc_vad
+    // If control over byte order is needed, use DataView instead.
     var view = new DataView(new ArrayBuffer(len * 2));
+
     var offset = 0;
 
     for (var i = 0; i < len; ++i) {
@@ -89,11 +93,15 @@ http://darkroommastering.com/blog/dithering-explained
         // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
         // trying to see if no min max causingn scratichin and pops...
         //view.setInt16(offset, x , true);
-        view.setInt16(offset, x < 0 ? max(x, -0x8000) : min(x, 0x7fff), true);
+        var sample16bit =  x < 0 ? max(x, -0x8000) : min(x, 0x7fff);
+        //buffer_pcm[i] = sample16bit;  // webrtc_vad
+        view.setInt16(offset, sample16bit, true);
         offset += 2;
     }
     this.dataViews.push(view);
     this.numSamples += len;
+
+    //return buffer_pcm; // !!!!!! for webrtc_vad
   };
 
   Encoder.prototype.finish = function(mimeType) {

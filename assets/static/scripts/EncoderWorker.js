@@ -3,6 +3,7 @@
 // manually rewritten from CoffeeScript output
 // (see dev-coffee branch for original source)
 importScripts('../lib/WavAudioEncoder.js'); 
+importScripts('../lib/webrtc_vad.js'); 
 var MAX_ENERGY_THRESHOLD = 0.65;
 var LOW_ENERGY_THRESHOLD = 0.1;
 
@@ -25,6 +26,51 @@ var buffer_size;
 var speaking = false;
 var total_buffer_energy = 0;
 
+// #############################################################################
+// emscripten required variables
+var Module = {};
+Module.noInitialRun = true;
+Module['onRuntimeInitialized'] = function() { setupwebrtc(); };
+// webRTC_VAD required variables
+var main;
+var setmode;
+var process_data;
+const sizeBufferVad = 480;
+let leftovers = 0;
+let buffer_vad = new Int16Array(sizeBufferVad);
+const minvoice = 250;
+//const maxsilence = 1500; // 
+const maxsilence = 250; // 
+const maxtime = 20; // 20 secs?
+let silenceblocks = 0;
+let skipsamples = 0;
+let finishedvoice = false;
+let samplesvoice = 0 ;
+let samplessilence = 0 ;
+let touchedvoice = false;
+let touchedsilence = false;
+let dtantes = Date.now();
+let dtantesmili = Date.now();
+let raisenovoice = false;
+//let done = false;
+
+//
+var speechstart_index = 0;
+var speechend_index = 0;
+
+
+function setupwebrtc() {
+  console.log('******************** setupwebrtc');
+  main = cwrap('main');
+  setmode = cwrap('setmode', 'number', ['number']);
+  process_data = cwrap('process_data', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
+
+  main();
+  var setmode = cwrap('setmode', 'number', ['number']);
+  console.log(setmode(3));
+}
+// #############################################################################
+
 self.onmessage = function(event) {
   /**
   * set variables to their defaul values
@@ -32,33 +78,59 @@ self.onmessage = function(event) {
   function resetVariables(sampleRate) {
     encoder = new WavAudioEncoder(sampleRate);
     buffers = [];
+    voice_started = false;
+    voice_stopped= false;
+    first_buffer = true;
+/*
     voice_start = 0;
     voice_stop = 0;
-    voice_started = false;
     first_buffer = true;
 
     clipping = false;
     too_soft = false;
+*/
+    leftovers = 0;
+    buffer_vad = new Int16Array(sizeBufferVad);
+    silenceblocks = 0;
+    skipsamples = 0;
+    finishedvoice = false;
+    samplesvoice = 0 ;
+    samplessilence = 0 ;
+    touchedvoice = false;
+    touchedsilence = false;
+    dtantes = Date.now();
+    dtantesmili = Date.now();
+    raisenovoice = false;
   }
 
   var data = event.data;
   switch (data.command) {
     case 'start':
+      setupwebrtc(); 
       resetVariables(data.sampleRate);
       samples_per_sec = data.sampleRate;
       break;
 
     case 'record':
+/*
+      // num_samples_in_buffer whould be able to calculate with: event.inputBuffer.getChannelData(0).length
       if (first_buffer) {
         [leading_silence_buffer, trailing_silence_buffer] = 
             calculateSilencePadding(data.buffers.length, samples_per_sec);
 
         first_buffer = false;
       }
+*/
       buffers.push(data.buffers);
+      recorderProcess(data.buffers, buffers.length - 1);
       break;
 
     case 'finish':
+      //while (buffers.length > 0) {
+      //  var index = buffers.length - 1;
+      //  var buffer_pcm = encoder.encode(buffers.shift());
+      //}
+/*
       var [speech_array, max_energy] = 
           extractSpeechFromRecording(buffers, voice_start, voice_stop);
       var [clipping, too_soft] = getEnergyThreshholds(max_energy);
@@ -66,12 +138,26 @@ self.onmessage = function(event) {
       while (speech_array.length > 0) {
         encoder.encode(speech_array.shift());
       }
+*/
+      var start_index = Math.max(speechstart_index - 10, 0);
+      var end_index = Math.min(speechend_index + 2,buffers.length);
+      console.log("start_index=" + start_index + 
+                  " ;end_index=" + end_index +
+                  " ;buffer length=" + buffers.length);
+      var speech_array =  buffers.slice(start_index, end_index);
+      console.log("speech_array length=" + speech_array.length);
+      while (speech_array.length > 0) {
+        encoder.encode(speech_array.shift());
+      }
 
       self.postMessage({ 
         blob: encoder.finish(),
-        clipping: clipping,
-        too_soft: too_soft,
-        max_energy: max_energy,
+//        clipping: clipping,
+//        too_soft: too_soft,
+//       max_energy: max_energy,
+        clipping: false,
+        too_soft: false,
+        max_energy: false,
       });
       encoder = undefined;
       break;
@@ -101,6 +187,124 @@ self.onmessage = function(event) {
   }
 };
 
+
+/**
+*
+*/
+function recorderProcess(buffer, index) {
+  function floatTo16BitPCM(output, input) {
+    for (let i = 0; i < input.length; i++) {
+      let s = Math.max(-1, Math.min(1, input[i]));
+      output[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
+    }
+  }
+
+  function isSilence(buffer_pcm){
+      // Get data byte size, allocate memory on Emscripten heap, and get pointer
+      let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
+      let dataPtr = _malloc(nDataBytes);
+
+      // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
+      let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
+      dataHeap.set(new Uint8Array(buffer_pcm.buffer));
+
+      // Call function and get result
+      let result = process_data(dataHeap.byteOffset, buffer_pcm.length, 48000, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
+
+      // Free memory
+      _free(dataHeap.byteOffset);
+      return result;
+  }
+
+
+  let buffer_pcm = new Int16Array(buffer.length);
+  floatTo16BitPCM(buffer_pcm, buffer);
+  
+  //for (let i = 0; i < Math.ceil(buffer_pcm.length/sizeBufferVad) && !done; i++) {
+  for (let i = 0; i < Math.ceil(buffer_pcm.length/sizeBufferVad); i++) {
+    let start = i * sizeBufferVad;
+    let end = start+sizeBufferVad;
+    if ((start + sizeBufferVad) > buffer_pcm.length) {
+      // store to the next
+      buffer_vad.set(buffer_pcm.slice(start));
+      leftovers =  buffer_pcm.length - start;
+    } else {
+      if (leftovers > 0) {
+        // we have leftovers from previous array
+        end = end - leftovers;
+        buffer_vad.set((buffer_pcm.slice(start, end)), leftovers);
+        leftovers =  0;
+      } else {
+        // send for vad
+        buffer_vad.set(buffer_pcm.slice(start, end));
+      }
+
+      // whole vad algorithm comes here
+      let vad = isSilence(buffer_vad);
+      buffer_vad = new Int16Array(sizeBufferVad);
+      let dtdepois = Date.now();
+      if (vad == 0) {
+        if (touchedvoice) {
+          samplessilence += dtdepois - dtantesmili;
+          if (samplessilence >  maxsilence) {
+            touchedsilence = true;
+            nospeech();
+          }
+        }
+      }
+      else {
+        samplesvoice  += dtdepois - dtantesmili;
+        if (samplesvoice >  minvoice) {
+          touchedvoice = true;
+          speaking();
+        }
+      }
+      dtantesmili = dtdepois;
+
+      if (touchedvoice && touchedsilence)
+        finishedvoice = true;
+      
+      //if (finishedvoice){
+      //  done = true;
+      //  console.log('finishedvoice');
+     // }
+      // alread have alg that checks for max duration of recording
+      //if ((dtdepois - dtantes)/1000 > maxtime ) {
+      //  done = true;
+      //  if (touchedvoice) {
+      //    console.log('timeout with touchedvoice true');
+      //  } else {
+      //    console.log('timeout with touchedvoice false');
+      //    raisenovoice = true;
+      //  }
+      //}
+
+    }
+  }
+
+// #############################################################################
+
+  function speaking() {
+    voice_started = true;
+    voice_stopped = false;
+    if ( first_buffer ) {
+      console.log("* voice_started=" + index);
+      speechstart_index = index;
+      first_buffer = false;
+    }
+  }
+
+  function nospeech() {
+    // only want first stop after speech ends
+    if ( ! voice_stopped ) { // so won't print to console a million times...
+      console.log("* voice_stopped=" + index);
+      speechend_index = index;
+    }
+    voice_stopped = true;
+  }
+
+  return [speechstart_index, speechend_index];
+}
 
 
 

@@ -53,6 +53,7 @@ var urlsToCache = [
   PATH + 'lib/localforage.js',
   PATH + 'lib/state-machine.js',
   PATH + 'lib/WavAudioEncoder.js',
+  PATH + 'lib/webrtc_vad.js',
 
   PATH + 'scripts/EncoderWorker.js',
   PATH + 'scripts/Audio.js',

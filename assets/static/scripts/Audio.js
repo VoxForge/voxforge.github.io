@@ -271,10 +271,12 @@ Audio.prototype.record = function () {
 
     // start recording
     // only record left channel (mono)
+//    var length = event.inputBuffer.getChannelData(0).length;
     this.processor.onaudioprocess = function(event) {
       audioworker.postMessage({ 
         command: 'record', 
         buffers: event.inputBuffer.getChannelData(0),
+//        length: length,
       });
 
     };
