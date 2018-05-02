@@ -30,7 +30,7 @@ var total_buffer_energy = 0;
 // emscripten required variables
 var Module = {};
 Module.noInitialRun = true;
-Module['onRuntimeInitialized'] = function() { setupwebrtc(); };
+Module['onRuntimeInitialized'] = function() { setupwebrtc(); }; // this does not work in webworker???
 // webRTC_VAD required variables
 var main;
 var setmode;
@@ -52,15 +52,12 @@ let touchedsilence = false;
 let dtantes = Date.now();
 let dtantesmili = Date.now();
 let raisenovoice = false;
-//let done = false;
-
 //
 var speechstart_index = 0;
 var speechend_index = 0;
 
-
 function setupwebrtc() {
-  console.log('******************** setupwebrtc');
+  console.log('setupwebrtc');
   main = cwrap('main');
   setmode = cwrap('setmode', 'number', ['number']);
   process_data = cwrap('process_data', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
@@ -122,7 +119,7 @@ self.onmessage = function(event) {
       }
 */
       buffers.push(data.buffers);
-      recorderProcess(data.buffers, buffers.length - 1);
+      var [speechstart_index, speechend_index] = recorderProcess(data.buffers, buffers.length - 1);
       break;
 
     case 'finish':
@@ -187,11 +184,13 @@ self.onmessage = function(event) {
   }
 };
 
+//TODO re-implement clipping and audio too low warnings
 
 /**
 *
 */
 function recorderProcess(buffer, index) {
+  // TODO should use the output from WAVAudioEncoder...
   function floatTo16BitPCM(output, input) {
     for (let i = 0; i < input.length; i++) {
       let s = Math.max(-1, Math.min(1, input[i]));
@@ -200,27 +199,25 @@ function recorderProcess(buffer, index) {
   }
 
   function isSilence(buffer_pcm){
-      // Get data byte size, allocate memory on Emscripten heap, and get pointer
-      let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
-      let dataPtr = _malloc(nDataBytes);
+    // Get data byte size, allocate memory on Emscripten heap, and get pointer
+    let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
+    let dataPtr = _malloc(nDataBytes);
 
-      // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
-      let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
-      dataHeap.set(new Uint8Array(buffer_pcm.buffer));
+    // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
+    let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
+    dataHeap.set(new Uint8Array(buffer_pcm.buffer));
 
-      // Call function and get result
-      let result = process_data(dataHeap.byteOffset, buffer_pcm.length, 48000, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
+    // Call function and get result
+    let result = process_data(dataHeap.byteOffset, buffer_pcm.length, 48000, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
 
-      // Free memory
-      _free(dataHeap.byteOffset);
-      return result;
+    // Free memory
+    _free(dataHeap.byteOffset);
+    return result;
   }
-
 
   let buffer_pcm = new Int16Array(buffer.length);
   floatTo16BitPCM(buffer_pcm, buffer);
   
-  //for (let i = 0; i < Math.ceil(buffer_pcm.length/sizeBufferVad) && !done; i++) {
   for (let i = 0; i < Math.ceil(buffer_pcm.length/sizeBufferVad); i++) {
     let start = i * sizeBufferVad;
     let end = start+sizeBufferVad;
@@ -263,32 +260,19 @@ function recorderProcess(buffer, index) {
 
       if (touchedvoice && touchedsilence)
         finishedvoice = true;
-      
-      //if (finishedvoice){
-      //  done = true;
-      //  console.log('finishedvoice');
-     // }
-      // alread have alg that checks for max duration of recording
-      //if ((dtdepois - dtantes)/1000 > maxtime ) {
-      //  done = true;
-      //  if (touchedvoice) {
-      //    console.log('timeout with touchedvoice true');
-      //  } else {
-      //    console.log('timeout with touchedvoice false');
-      //    raisenovoice = true;
-      //  }
-      //}
-
     }
   }
 
 // #############################################################################
+  var speechstart_index = 0;
+  var speechend_index = 0;
 
   function speaking() {
     voice_started = true;
     voice_stopped = false;
     if ( first_buffer ) {
-      console.log("* voice_started=" + index);
+      // really only recognizing non-silence (i.e. any sound that is not silence")
+      console.log("webrtc: voice_started=" + index);
       speechstart_index = index;
       first_buffer = false;
     }
@@ -297,7 +281,7 @@ function recorderProcess(buffer, index) {
   function nospeech() {
     // only want first stop after speech ends
     if ( ! voice_stopped ) { // so won't print to console a million times...
-      console.log("* voice_stopped=" + index);
+      console.log("webrtc: voice_stopped=" + index);
       speechend_index = index;
     }
     voice_stopped = true;

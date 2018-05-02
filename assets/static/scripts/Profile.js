@@ -147,12 +147,23 @@ Profile.prototype.toHash = function () {
 
     profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
 
-    profile_hash["user_agent_string"] = platform.ua;
-    // attempts to parse the ua string
-    profile_hash["os"] = platform.os.toString();
-    profile_hash["browser"] = platform.name + ' ' + platform.version;
-    profile_hash["product"] = platform.product || "";
-    profile_hash["manufacturer"] = platform.manufacturer || "";
+    // see http://www.whatsmyua.info/
+    // https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
+    if ($('#noise_type').val() !== page_localized_ua_string) {
+      profile_hash["user_agent_string"] = platform.ua;
+      // attempts to parse the ua string
+      profile_hash["os"] = platform.os.toString();
+      profile_hash["browser"] = platform.name + ' ' + platform.version;
+      profile_hash["product"] = platform.product || "";
+      profile_hash["manufacturer"] = platform.manufacturer || "";
+    } else {
+      profile_hash["user_agent_string"] = '';
+      // attempts to parse the ua string
+      profile_hash["os"] = '';
+      profile_hash["browser"] = '';
+      profile_hash["product"] = '';
+      profile_hash["manufacturer"] = '';
+    }
 
     profile_hash["license"] = $("#license").val();
 

@@ -176,6 +176,23 @@ license:
     - { value: 'CC_BY-SA',  option: 'CC BY-SA -  Creative Commons - Attribution - Partage dans les Mêmes Conditions' }
     - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License' }
 
+ua_string:
+  label: inclure l'agent utilisateur
+  popup:
+    title: Collecter les informations de l'agent utilisateur
+    link: https://www.whatismybrowser.com/detect/what-is-my-user-agent
+    hover_text: >
+      Inclure l'agent utilisateur avec votre soumission
+    text:  > 
+      L'agent d'utilisateur de votre navigateur indique quelque chose de 
+      particulier a propos de votre système. </ Br>
+      VoxForge peut collecter la chaîne de l'agent utilisateur de votre navigateur
+      pour dépanner et aider à déterminer quels appareils fonctionnent le mieux avec
+      Application d'enregistrement VoxForge
+  selection_default: { value: 'Oui',  item: 'Oui' }
+  selection:
+    - { value: 'Non',  option: 'Non' }
+
 num_prompts:
   label: Nombre de phrases à lire
 
@@ -185,12 +202,8 @@ instructions:
     - 1. Appuyez sur <b>Enregistrer</b> pour commencer, en disant seulement la phrase qui apparaît dans la boîte ci-dessous.
     - 2. Appuyez sur <b>Arrêter</b> lorsque vous avez terminé.
     - 3. <b>Écoutez</b> votre enregistrement et supprimez-le et ré-enregistrez-le si nécessaire.
-    - 4. Quand terminé, appuyez sur <b>Télécharger</b> pour envoyer vos enregistrements au serveur VoxForge.
   lastline: >
-    (<small><small>Veuillez noter: nous collectons la 
-    <a href="https://fr.wikipedia.org/wiki/User_agent">chaîne d'agent utilisateur</a> 
-    de votre navigateur pour nous aider déterminer quels appareils fonctionnent
-    le mieux avec le logiciel d'enregistrement HTML5 de VoxForge</small></small>)
+    4. Quand terminé, appuyez sur <b>Télécharger</b> pour envoyer vos enregistrements au serveur VoxForge.
 
 controls:
   record: Enregistrer

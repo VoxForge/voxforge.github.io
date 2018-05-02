@@ -194,6 +194,22 @@ license:
     - CC BY-SA - Creative Commons Attribution-ShareAlike
     - GPLv3 - GNU General Public License
 
+ua_string:
+  label: Include User Agent
+  popup:
+    title: Collect User Agent String Information
+    link: https://www.whatismybrowser.com/detect/what-is-my-user-agent
+    hover_text: >
+      Include User Agent string with submission
+    text:  > 
+      Your browser's user agent indicates something particular about your system.</br>
+      The VoxForge app can collect your browser's user agent string
+      to troubleshoot and help determine which devices work best with the
+      VoxForge recording app
+  selection_default: { value: 'Yes',  item: 'Yes' }
+  selection:
+    - { value: 'No',  option: 'No' }
+
 num_prompts:
   label: Number of prompts to read
 
@@ -203,11 +219,8 @@ instructions:
     - 1. Press <b>Record</b> to start, saying only the words that appear in the box below.
     - 2. Press <b>Stop</b> when completed.
     - 3. <b>Listen</b> to your recording and delete and re-record if necessary.
-    - 4. When done, press <b>Upload</b> to send your recordings to VoxForge server.
   lastline: >
-    (<small><small>Please Note: we are collecting your browser's <a href="https://en.wikipedia.org/wiki/User_agent">user agent string</a> to help
-    determine which devices work best with the VoxForge HTML5 audio recording
-    app</small></small>)
+    4. When done, press <b>Upload</b> to send your recordings to VoxForge server.
 
 controls:
   record: Record

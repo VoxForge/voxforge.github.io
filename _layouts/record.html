@@ -235,6 +235,23 @@
                 <option value="{{ item.value }}">{{ item.option }}</option>
               {% endfor %}
               </select>
+<!-- !!!!!! -->
+           <label  style="display: inline;"  for="ua_string"><small>{{ page.ua_string.label }}</small></label>
+           <a href="#ua_string_popupInfo" data-rel="popup" data-transition="pop" 
+             class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
+             title="{{ page.ua_string.popup.hover_text }}">
+           </a>
+           <div data-role="popup" id="ua_string_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
+            <p><a href="{{ page.ua_string.popup.link }}" target="_blank">{{ page.ua_string.label }}</a>: {{ page.ua_string.popup.text }}</p>
+           </div>
+           <select type="text" id="ua_string"/></br>
+            <option selected value="{{ page.ua_string.selection_default.value }}">{{ page.ua_string.selection_default.item }}</option>
+            {% for item in page.ua_string.selection %}
+              <option value="{{ item.value }}">{{ item.option }}</option>
+            {% endfor %}
+            </select>
+
+<!-- !!!!!! -->
 	       </div> <!-- recording_information_display -->
 	     </div><!-- readme -->
 	   </div> <!-- profile-display -->
