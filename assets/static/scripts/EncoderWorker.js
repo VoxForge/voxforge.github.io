@@ -31,28 +31,8 @@ var total_buffer_energy = 0;
 var Module = {};
 Module.noInitialRun = true;
 Module['onRuntimeInitialized'] = function() { setupwebrtc(); }; // this does not work in webworker???
-// webRTC_VAD required variables
-var main;
-var setmode;
-var process_data;
-const sizeBufferVad = 480;
-let leftovers = 0;
-let buffer_vad = new Int16Array(sizeBufferVad);
-const minvoice = 250;
-//const maxsilence = 1500; // 
-const maxsilence = 250; // 
-const maxtime = 20; // 20 secs?
-let silenceblocks = 0;
-let skipsamples = 0;
-let finishedvoice = false;
-let samplesvoice = 0 ;
-let samplessilence = 0 ;
-let touchedvoice = false;
-let touchedsilence = false;
-let dtantes = Date.now();
-let dtantesmili = Date.now();
-let raisenovoice = false;
-//
+
+// VAD indexes
 var speechstart_index = 0;
 var speechend_index = 0;
 
@@ -78,14 +58,10 @@ self.onmessage = function(event) {
     voice_started = false;
     voice_stopped= false;
     first_buffer = true;
-/*
-    voice_start = 0;
-    voice_stop = 0;
-    first_buffer = true;
 
     clipping = false;
     too_soft = false;
-*/
+
     leftovers = 0;
     buffer_vad = new Int16Array(sizeBufferVad);
     silenceblocks = 0;
@@ -119,7 +95,11 @@ self.onmessage = function(event) {
       }
 */
       buffers.push(data.buffers);
-      recorderProcess(data.buffers, buffers.length - 1);
+      [speechstart_index, speechend_index] = 
+          recorderProcess(data.buffers,
+                          speechstart_index, 
+                          speechend_index,
+          );
       break;
 
     case 'finish':
@@ -186,10 +166,37 @@ self.onmessage = function(event) {
 
 //TODO re-implement clipping and audio too low warnings
 
+
+// webRTC_VAD required variables
+var main;
+var setmode;
+var process_data;
+const sizeBufferVad = 480;
+let leftovers = 0;
+let buffer_vad = new Int16Array(sizeBufferVad);
+const minvoice = 250;
+//const maxsilence = 1500; // 
+const maxsilence = 250; // 
+const maxtime = 20; // 20 secs?
+let silenceblocks = 0;
+let skipsamples = 0;
+let finishedvoice = false;
+let samplesvoice = 0 ;
+let samplessilence = 0 ;
+let touchedvoice = false;
+let touchedsilence = false;
+let dtantes = Date.now();
+let dtantesmili = Date.now();
+let raisenovoice = false;
+//
+
+
 /**
 *
 */
-function recorderProcess(buffer, index) {
+function recorderProcess(buffer, speechstart_index, speechend_index) {
+  var index = buffer.length - 1;
+
   // TODO should use the output from WAVAudioEncoder...
   function floatTo16BitPCM(output, input) {
     for (let i = 0; i < input.length; i++) {
