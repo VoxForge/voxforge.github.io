@@ -2,28 +2,25 @@ importScripts('../lib/webrtc_vad.js');
 
 //TODO re-implement clipping and audio too low warnings
 
-// #############################################################################
-// emscripten required variables
-var Module = {};
-Module.noInitialRun = true;
-// this does not work in webworker???
-// therefor call from object constructor
-//Module['onRuntimeInitialized'] = function() { setupwebrtc(); }; 
-
-
 var MAX_ENERGY_THRESHOLD = 0.65;
 var LOW_ENERGY_THRESHOLD = 0.1;
 
 var LEADING_SILENCE_SEC = 0.5; // secs
 var TRAILING_SILENCE_SEC = 0.5; // secs
 
+
+// emscripten required variables
+var Module = {};
+Module.noInitialRun = true;
+// onRuntimeInitialized does not work in webworker???
+// therefor call from object constructor
+//Module['onRuntimeInitialized'] = function() { setupwebrtc(); }; 
 var process_data;
+
 /**
 * Constructor
 */
 function Vad() {
-  this.process_data;
-
   this.sizeBufferVad = 480;
   this.leftovers = 0;
   this.buffer_vad = new Int16Array(this.sizeBufferVad);
@@ -47,30 +44,32 @@ function Vad() {
   this.clipping = false;
   this.too_soft = false;
 
-  function setupwebrtc_vad() {
-    var main = cwrap('main');
-    var setmode = cwrap('setmode', 'number', ['number']);
-    process_data = cwrap('process_data', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
+  // setup webrtc VAD
+  var main = cwrap('main');
+  var setmode = cwrap('setmode', 'number', ['number']);
+  process_data = cwrap('process_data', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
 
-    main();
-    console.log('setmode(3)=' + setmode(3));
-  }
-
-  setupwebrtc_vad();
+  main();
+  console.log('setmode(3)=' + setmode(3));
 }
 
 /**
 *
 */
 Vad.prototype.calculateSilenceBoundaries = function (buffer, index) {
+    // save reference to current context for use in inner functions
     var self = this;
 
     // TODO should use the output from WAVAudioEncoder...
-    function floatTo16BitPCM(output, input) {
-      for (let i = 0; i < input.length; i++) {
-        let s = Math.max(-1, Math.min(1, input[i]));
-        output[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
+    function floatTo16BitPCM(buffer) {
+      var buffer_pcm = new Int16Array(buffer.length);
+
+      for (let i = 0; i < buffer.length; i++) {
+        let s = Math.max(-1, Math.min(1, buffer[i]));
+        buffer_pcm[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
       }
+
+      return buffer_pcm;
     }
     
     //
@@ -91,6 +90,7 @@ Vad.prototype.calculateSilenceBoundaries = function (buffer, index) {
       return result;
     }
 
+    //
     function speaking() {
       self.voice_started = true;
       self.voice_stopped = false;
@@ -102,6 +102,7 @@ Vad.prototype.calculateSilenceBoundaries = function (buffer, index) {
       }
     }
 
+    //
     function nospeech() {
       // only want first stop after speech ends
       if ( ! self.voice_stopped ) { // so won't print to console a million times...
@@ -113,8 +114,7 @@ Vad.prototype.calculateSilenceBoundaries = function (buffer, index) {
 
     // ### main ################################################################
 
-    let buffer_pcm = new Int16Array(buffer.length);
-    floatTo16BitPCM(buffer_pcm, buffer);
+    var buffer_pcm = floatTo16BitPCM(buffer);
     
     for (let i = 0; i < Math.ceil(buffer_pcm.length/this.sizeBufferVad); i++) {
       let start = i * this.sizeBufferVad;
