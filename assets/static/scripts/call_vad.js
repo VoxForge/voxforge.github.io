@@ -47,6 +47,8 @@ function Vad(sampleRate) {
   this.leading_silence_buffer = 0;
   this.trailing_silence_buffe = 0;
 
+  this.max_energy = 0;
+
   this.clipping = false;
   this.too_soft = false;
 
@@ -66,16 +68,69 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     // save reference to current context for use in inner functions
     var self = this;
 
+
+
+/**
+* Window size is a function of device user is operating on.
+
+  Number of elements in Floar32Array corresponds to the 'Frame' or 'Window' size 
+  of a Wav audio recording.  (Linux = 2048; Android = 16384) and each element 
+  contained therein is a Sample
+*/
+function calculateWindowEnergy(sampleArray) {
+  var total_buffer_energy = 0;
+
+  // calculate RMS (root mean square) of speech array
+  // An envelope of a signal is a curve that describes its magnitude over 
+  // time, independently of how its frequency content makes it oscillate 
+  for (var j = 0; j < sampleArray.length; j++) {
+      total_buffer_energy += Math.abs( sampleArray[j]);
+  }
+  return Math.sqrt(total_buffer_energy / (sampleArray.length - 1) );
+}
+
+// buffer is an array of Float32Arrays (with a size specific to 
+// the device we are operating on e.g. Linux - size=2048); the size
+// of buffer array is a function of length of audio file.
+function calculateMaxEnergy(buffer) {
+  var max_energy=0;
+
+  for (var i = 0; i < buffer.length; i++) {
+    var avg_buffer_energy = calculateWindowEnergy(buffer[i]);
+    if (avg_buffer_energy > max_energy) {
+       max_energy = avg_buffer_energy;
+    }
+  }
+
+  return max_energy;
+}
+
+
+
+
+
     // TODO should use the output from WAVAudioEncoder...but is that premature optimization??
+    /**
+    * Convert from 32-bit float to 16bit PCM, and
+    * calculate root-mean-square of samples tp
+    */
+    // see: https://github.com/cwilso/volume-meter/blob/master/volume-meter.js
     function floatTo16BitPCM(buffer) {
       var buffer_pcm = new Int16Array(buffer.length);
+      var total_energy_squared = 0;
 
       for (let i = 0; i < buffer.length; i++) {
+        var sample_energy = Math.abs( buffer[i] );
+        total_energy_squared += sample_energy * sample_energy;
+ 
         let s = Math.max(-1, Math.min(1, buffer[i]));
         buffer_pcm[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
       }
 
-      return buffer_pcm;
+      var avg_energy_for_sample = total_energy_squared / (buffer.length - 1);
+      var rms_buffer_energy = Math.sqrt( avg_energy_for_sample );
+
+      return [buffer_pcm, rms_buffer_energy];
     }
     
     //
@@ -120,12 +175,14 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
 
 
     /**
-    * Calculate silence padding.  Must be calculated from event buffer because 
-    * there is no other way to get it... and buffer sizes differ markedly 
+    * Must be calculated from event buffer because there is no other way
+    * to get buffer size... and buffer sizes differ markedly 
     * depending on device (e.g. Linux 2048 samples per event buffer; Android 16384 
     * samples)
     */
     // TODO what if very short recording??? less than buffer length
+    // TODO what if talking when press stop so that end_voice is after length of array
+    // TODO what if sound from start to end of recording when user clicks stop
     function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
       var buffers_per_sec = samples_per_sec / num_samples_in_buffer; 
 
@@ -142,7 +199,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     }
 
 
-    var buffer_pcm = floatTo16BitPCM(buffer);
+    var [buffer_pcm, avg_buffer_energy] = floatTo16BitPCM(buffer);
     
     for (let i = 0; i < Math.ceil(buffer_pcm.length/this.sizeBufferVad); i++) {
       let start = i * this.sizeBufferVad;
@@ -241,40 +298,7 @@ Vad.prototype.getSpeech = function(buffers) {
 * with leading and trailing silence padding
 */
 function extractSpeechFromRecording(buffers, voice_start, voice_stop) {
-  /**
-  * Window size is a function of device user is operating on.
 
-    Number of elements in Floar32Array corresponds to the 'Frame' or 'Window' size 
-    of a Wav audio recording.  (Linux = 2048; Android = 16384) and each element 
-    contained therein is a Sample
-  */
-  function calculateWindowEnergy(sampleArray) {
-    var total_buffer_energy = 0;
-
-    // calculate RMS (root mean square) of speech array
-    // An envelope of a signal is a curve that describes its magnitude over 
-    // time, independently of how its frequency content makes it oscillate 
-    for (var j = 0; j < sampleArray.length; j++) {
-        total_buffer_energy += Math.abs( sampleArray[j]);
-    }
-    return Math.sqrt(total_buffer_energy / (sampleArray.length - 1) );
-  }
-
-  // buffer is an array of Float32Arrays (with a size specific to 
-  // the device we are operating on e.g. Linux - size=2048); the size
-  // of buffer array is a function of length of audio file.
-  function calculateMaxEnergy(buffer) {
-    var max_energy=0;
-
-    for (var i = 0; i < buffer.length; i++) {
-      var avg_buffer_energy = calculateWindowEnergy(buffer[i]);
-      if (avg_buffer_energy > max_energy) {
-         max_energy = avg_buffer_energy;
-      }
-    }
-  
-    return max_energy;
-  }
 
   var last_index = buffers.length - 1;
 
