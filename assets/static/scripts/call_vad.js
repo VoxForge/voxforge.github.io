@@ -6,156 +6,186 @@ importScripts('../lib/webrtc_vad.js');
 // emscripten required variables
 var Module = {};
 Module.noInitialRun = true;
-Module['onRuntimeInitialized'] = function() { setupwebrtc(); }; // this does not work in webworker???
-
-// VAD indexes
-var speechstart_index = 0;
-var speechend_index = 0;
-
-function setupwebrtc() {
-  console.log('setupwebrtc');
-  main = cwrap('main');
-  setmode = cwrap('setmode', 'number', ['number']);
-  process_data = cwrap('process_data', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
-
-  main();
-  var setmode = cwrap('setmode', 'number', ['number']);
-  console.log(setmode(3));
-}
+// this does not work in webworker???
+// therefor call from object constructor
+//Module['onRuntimeInitialized'] = function() { setupwebrtc(); }; 
 
 
+var MAX_ENERGY_THRESHOLD = 0.65;
+var LOW_ENERGY_THRESHOLD = 0.1;
 
-// webRTC_VAD required variables
-var main;
-var setmode;
+var LEADING_SILENCE_SEC = 0.5; // secs
+var TRAILING_SILENCE_SEC = 0.5; // secs
+
 var process_data;
-const sizeBufferVad = 480;
-let leftovers = 0;
-let buffer_vad = new Int16Array(sizeBufferVad);
-const minvoice = 250;
-//const maxsilence = 1500; // 
-const maxsilence = 250; // 
-const maxtime = 20; // 20 secs?
-let silenceblocks = 0;
-let skipsamples = 0;
-let finishedvoice = false;
-let samplesvoice = 0 ;
-let samplessilence = 0 ;
-let touchedvoice = false;
-let touchedsilence = false;
-let dtantes = Date.now();
-let dtantesmili = Date.now();
-let raisenovoice = false;
-//
+/**
+* Constructor
+*/
+function Vad() {
+  this.process_data;
 
+  this.sizeBufferVad = 480;
+  this.leftovers = 0;
+  this.buffer_vad = new Int16Array(this.sizeBufferVad);
+  this.minvoice = 250;
+  //const maxsilence = 1500; // 
+  this.maxsilence = 250; // 
+  this.finishedvoice = false;
+  this.samplesvoice = 0 ;
+  this.samplessilence = 0 ;
+  this.touchedvoice = false;
+  this.touchedsilence = false;
+  this.dtantesmili = Date.now();
+
+  this.voice_started = false;
+  this.voice_stopped= false;
+  this.first_buffer = true;
+
+  this.speechstart_index = 0;
+  this.speechend_index = 0;
+
+  this.clipping = false;
+  this.too_soft = false;
+
+  function setupwebrtc_vad() {
+    var main = cwrap('main');
+    var setmode = cwrap('setmode', 'number', ['number']);
+    process_data = cwrap('process_data', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
+
+    main();
+    console.log('setmode(3)=' + setmode(3));
+  }
+
+  setupwebrtc_vad();
+}
 
 /**
 *
 */
-function recorderProcess(buffer, index, speechstart_index, speechend_index) {
+Vad.prototype.calculateSilenceBoundaries = function (buffer, index) {
+    var self = this;
 
-  // TODO should use the output from WAVAudioEncoder...
-  function floatTo16BitPCM(output, input) {
-    for (let i = 0; i < input.length; i++) {
-      let s = Math.max(-1, Math.min(1, input[i]));
-      output[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
-    }
-  }
-
-  function isSilence(buffer_pcm){
-    // Get data byte size, allocate memory on Emscripten heap, and get pointer
-    let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
-    let dataPtr = _malloc(nDataBytes);
-
-    // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
-    let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
-    dataHeap.set(new Uint8Array(buffer_pcm.buffer));
-
-    // Call function and get result
-    let result = process_data(dataHeap.byteOffset, buffer_pcm.length, 48000, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
-
-    // Free memory
-    _free(dataHeap.byteOffset);
-    return result;
-  }
-
-  let buffer_pcm = new Int16Array(buffer.length);
-  floatTo16BitPCM(buffer_pcm, buffer);
-  
-  for (let i = 0; i < Math.ceil(buffer_pcm.length/sizeBufferVad); i++) {
-    let start = i * sizeBufferVad;
-    let end = start+sizeBufferVad;
-    if ((start + sizeBufferVad) > buffer_pcm.length) {
-      // store to the next
-      buffer_vad.set(buffer_pcm.slice(start));
-      leftovers =  buffer_pcm.length - start;
-    } else {
-      if (leftovers > 0) {
-        // we have leftovers from previous array
-        end = end - leftovers;
-        buffer_vad.set((buffer_pcm.slice(start, end)), leftovers);
-        leftovers =  0;
-      } else {
-        // send for vad
-        buffer_vad.set(buffer_pcm.slice(start, end));
+    // TODO should use the output from WAVAudioEncoder...
+    function floatTo16BitPCM(output, input) {
+      for (let i = 0; i < input.length; i++) {
+        let s = Math.max(-1, Math.min(1, input[i]));
+        output[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
       }
+    }
+    
+    //
+    function isSilence(buffer_pcm){
+      // Get data byte size, allocate memory on Emscripten heap, and get pointer
+      let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
+      let dataPtr = _malloc(nDataBytes);
 
-      // whole vad algorithm comes here
-      let vad = isSilence(buffer_vad);
-      buffer_vad = new Int16Array(sizeBufferVad);
-      let dtdepois = Date.now();
-      if (vad == 0) {
-        if (touchedvoice) {
-          samplessilence += dtdepois - dtantesmili;
-          if (samplessilence >  maxsilence) {
-            touchedsilence = true;
-            nospeech();
+      // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
+      let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
+      dataHeap.set(new Uint8Array(buffer_pcm.buffer));
+
+      // Call function and get result
+      let result = process_data(dataHeap.byteOffset, buffer_pcm.length, 48000, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
+
+      // Free memory
+      _free(dataHeap.byteOffset);
+      return result;
+    }
+
+    function speaking() {
+      self.voice_started = true;
+      self.voice_stopped = false;
+      if ( self.first_buffer ) {
+        // really only recognizing non-silence (i.e. any sound that is not silence")
+        console.log("webrtc: voice_started=" + index);
+        self.speechstart_index = index;
+        self.first_buffer = false;
+      }
+    }
+
+    function nospeech() {
+      // only want first stop after speech ends
+      if ( ! self.voice_stopped ) { // so won't print to console a million times...
+        console.log("webrtc: voice_stopped=" + index);
+        self.speechend_index = index;
+      }
+      self.voice_stopped = true;
+    }
+
+    // ### main ################################################################
+
+    let buffer_pcm = new Int16Array(buffer.length);
+    floatTo16BitPCM(buffer_pcm, buffer);
+    
+    for (let i = 0; i < Math.ceil(buffer_pcm.length/this.sizeBufferVad); i++) {
+      let start = i * this.sizeBufferVad;
+      let end = start+this.sizeBufferVad;
+      if ((start + this.sizeBufferVad) > buffer_pcm.length) {
+        // store to the next
+        this.buffer_vad.set(buffer_pcm.slice(start));
+        this.leftovers =  buffer_pcm.length - start;
+      } else {
+        if (this.leftovers > 0) {
+          // we have leftovers from previous array
+          end = end - this.leftovers;
+          this.buffer_vad.set((buffer_pcm.slice(start, end)), this.leftovers);
+          this.leftovers =  0;
+        } else {
+          // send for vad
+          this.buffer_vad.set(buffer_pcm.slice(start, end));
+        }
+
+        // whole vad algorithm comes here
+        let vad = isSilence(this.buffer_vad);
+        this.buffer_vad = new Int16Array(this.sizeBufferVad);
+        let dtdepois = Date.now();
+        if (vad == 0) {
+          if (this.touchedvoice) {
+            this.samplessilence += dtdepois - this.dtantesmili;
+            if (this.samplessilence >  this.maxsilence) {
+              this.touchedsilence = true;
+              nospeech();
+            }
           }
         }
-      }
-      else {
-        samplesvoice  += dtdepois - dtantesmili;
-        if (samplesvoice >  minvoice) {
-          touchedvoice = true;
-          speaking();
+        else {
+          this.samplesvoice  += dtdepois - this.dtantesmili;
+          if (this.samplesvoice >  this.minvoice) {
+            this.touchedvoice = true;
+            speaking();
+          }
         }
+        this.dtantesmili = dtdepois;
+
+        if (this.touchedvoice && this.touchedsilence)
+          this.finishedvoice = true;
       }
-      dtantesmili = dtdepois;
-
-      if (touchedvoice && touchedsilence)
-        finishedvoice = true;
     }
-  }
-
-// #############################################################################
-
-  function speaking() {
-    voice_started = true;
-    voice_stopped = false;
-    if ( first_buffer ) {
-      // really only recognizing non-silence (i.e. any sound that is not silence")
-      console.log("webrtc: voice_started=" + index);
-      speechstart_index = index;
-      first_buffer = false;
-    }
-  }
-
-  function nospeech() {
-    // only want first stop after speech ends
-    if ( ! voice_stopped ) { // so won't print to console a million times...
-      console.log("webrtc: voice_stopped=" + index);
-      speechend_index = index;
-    }
-    voice_stopped = true;
-  }
-
-  return [speechstart_index, speechend_index];
 }
 
+/**
+*
+*/
+Vad.prototype.getSpeech = function(buffers) {
+/*
+    var [speech_array, max_energy] = 
+        extractSpeechFromRecording(buffers, voice_start, voice_stop);
+    var [clipping, too_soft] = getEnergyThreshholds(max_energy);
 
+    while (speech_array.length > 0) {
+      encoder.encode(speech_array.shift());
+    }
+*/
+    var start_index = Math.max(this.speechstart_index - 10, 0);
+    var end_index = Math.min(this.speechend_index + 2,buffers.length);
+    console.log("start_index=" + start_index + 
+                "; end_index=" + end_index +
+                "; buffer length=" + buffers.length);
 
+    var speech_array =  buffers.slice(start_index, end_index);
+    console.log("speech_array length=" + speech_array.length);
 
-
+    return speech_array;
+}
 
 
 
