@@ -119,7 +119,7 @@ self.onmessage = function(event) {
       }
 */
       buffers.push(data.buffers);
-      var [speechstart_index, speechend_index] = recorderProcess(data.buffers, buffers.length - 1);
+      recorderProcess(data.buffers, buffers.length - 1);
       break;
 
     case 'finish':
@@ -264,8 +264,6 @@ function recorderProcess(buffer, index) {
   }
 
 // #############################################################################
-  var speechstart_index = 0;
-  var speechend_index = 0;
 
   function speaking() {
     voice_started = true;
