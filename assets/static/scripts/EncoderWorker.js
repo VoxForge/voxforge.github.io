@@ -21,7 +21,7 @@ self.onmessage = function(event) {
     case 'start':
       buffers = [];
       encoder = new WavAudioEncoder(data.sampleRate);
-      vad = new Vad();
+      vad = new Vad(data.sampleRate);
 //      samples_per_sec = data.sampleRate;
       break;
 

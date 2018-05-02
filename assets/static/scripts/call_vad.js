@@ -6,7 +6,7 @@ var MAX_ENERGY_THRESHOLD = 0.65;
 var LOW_ENERGY_THRESHOLD = 0.1;
 
 var LEADING_SILENCE_SEC = 0.5; // secs
-var TRAILING_SILENCE_SEC = 0.5; // secs
+var TRAILING_SILENCE_SEC = 0.3; // little less because of lag in VAD detecting end of speech
 
 
 // emscripten required variables
@@ -20,7 +20,9 @@ var process_data;
 /**
 * Constructor
 */
-function Vad() {
+function Vad(sampleRate) {
+  this.sampleRate = sampleRate;
+
   this.sizeBufferVad = 480;
   this.leftovers = 0;
   this.buffer_vad = new Int16Array(this.sizeBufferVad);
@@ -36,10 +38,14 @@ function Vad() {
 
   this.voice_started = false;
   this.voice_stopped= false;
+  this.first_speak = true;
   this.first_buffer = true;
 
   this.speechstart_index = 0;
   this.speechend_index = 0;
+
+  this.leading_silence_buffer = 0;
+  this.trailing_silence_buffe = 0;
 
   this.clipping = false;
   this.too_soft = false;
@@ -56,11 +62,11 @@ function Vad() {
 /**
 *
 */
-Vad.prototype.calculateSilenceBoundaries = function (buffer, index) {
+Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     // save reference to current context for use in inner functions
     var self = this;
 
-    // TODO should use the output from WAVAudioEncoder...
+    // TODO should use the output from WAVAudioEncoder...but is that premature optimization??
     function floatTo16BitPCM(buffer) {
       var buffer_pcm = new Int16Array(buffer.length);
 
@@ -94,11 +100,11 @@ Vad.prototype.calculateSilenceBoundaries = function (buffer, index) {
     function speaking() {
       self.voice_started = true;
       self.voice_stopped = false;
-      if ( self.first_buffer ) {
+      if ( self.first_speak ) {
         // really only recognizing non-silence (i.e. any sound that is not silence")
         console.log("webrtc: voice_started=" + index);
         self.speechstart_index = index;
-        self.first_buffer = false;
+        self.first_speak = false;
       }
     }
 
@@ -112,7 +118,29 @@ Vad.prototype.calculateSilenceBoundaries = function (buffer, index) {
       self.voice_stopped = true;
     }
 
+
+    /**
+    * Calculate silence padding.  Must be calculated from event buffer because 
+    * there is no other way to get it... and buffer sizes differ markedly 
+    * depending on device (e.g. Linux 2048 samples per event buffer; Android 16384 
+    * samples)
+    */
+    // TODO what if very short recording??? less than buffer length
+    function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
+      var buffers_per_sec = samples_per_sec / num_samples_in_buffer; 
+
+      self.leading_silence_buffer = Math.round(LEADING_SILENCE_SEC * buffers_per_sec);
+      self.trailing_silence_buffer = Math.floor(TRAILING_SILENCE_SEC * buffers_per_sec);
+
+      console.log('worker leading_silence_buffer= ' + self.leading_silence_buffer + '; trailing_silence_buffer= ' + self.trailing_silence_buffer);
+    }
+
     // ### main ################################################################
+    if (this.first_buffer) {
+      calculateSilencePadding(buffer.length, this.sampleRate);
+      this.first_buffer = false;
+    }
+
 
     var buffer_pcm = floatTo16BitPCM(buffer);
     
@@ -175,8 +203,11 @@ Vad.prototype.getSpeech = function(buffers) {
       encoder.encode(speech_array.shift());
     }
 */
-    var start_index = Math.max(this.speechstart_index - 10, 0);
-    var end_index = Math.min(this.speechend_index + 2,buffers.length);
+
+    //var start_index = Math.max(this.speechstart_index - 10, 0);
+    //var end_index = Math.min(this.speechend_index + 2,buffers.length);
+    var start_index = Math.max(this.speechstart_index - this.leading_silence_buffer, 0);
+    var end_index = Math.min(this.speechend_index + this.trailing_silence_buffer, buffers.length);
     console.log("start_index=" + start_index + 
                 "; end_index=" + end_index +
                 "; buffer length=" + buffers.length);
@@ -203,23 +234,7 @@ Vad.prototype.getSpeech = function(buffers) {
 
 
 
-/**
-* Calculate silence padding.  Must be calculated from event buffer because 
-* there is no other way to get it... and buffer sizes differ markedly 
-* depending on device (e.g. Linux 2048 samples per event buffer; Android 16384 
-* samples)
-*/
-// TODO what if very short recording??? less than buffer length
-function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
-  var buffers_per_sec = samples_per_sec / num_samples_in_buffer; 
 
-  var leading_silence_buffer = Math.round(LEADING_SILENCE_SEC * buffers_per_sec);
-  var trailing_silence_buffer = Math.floor(TRAILING_SILENCE_SEC * buffers_per_sec);
-
-  console.log('worker leading_silence_buffer= ' + leading_silence_buffer + '; trailing_silence_buffer= ' + trailing_silence_buffer);
-
-  return [leading_silence_buffer, trailing_silence_buffer];
-}
 
 /**
 * skip silence in a recording and only return those buffer containing speech,
@@ -287,16 +302,7 @@ function extractSpeechFromRecording(buffers, voice_start, voice_stop) {
   // this will cause problems in noisy enviroments, may need to skip this for those...
   var original_record_end = record_end;
 
-  // https://dsp.stackexchange.com/questions/1522/simplest-way-of-detecting-where-audio-envelopes-start-and-stop?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-  //https://ccrma.stanford.edu/~jos/filters
-  // https://github.com/corbanbrook/dsp.js/
-  console.log('start buffers[' + record_end + '] maxEnergy=' + calculateWindowEnergy(buffers[record_end]).toFixed(2) + ' ; LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD);
-  while (calculateWindowEnergy(buffers[record_end]) > LOW_ENERGY_THRESHOLD) {
-    console.log('buffers[' + record_end + '] maxEnergy=' + calculateWindowEnergy(buffers[record_end]).toFixed(2) + ' ; LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD);
-    record_end = record_end + 1;
-    if (record_end > last_index )
-      break;
-  }
+
 
   console.log('worker record_start='+ record_start + '; original_record_end='+ original_record_end + '; vol_adjusted_record_end='+ record_end);
 
