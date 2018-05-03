@@ -201,9 +201,8 @@ instructions:
   lines: 
     - 1. Appuyez sur <b>Enregistrer</b> pour commencer, en disant seulement la phrase qui apparaît dans la boîte ci-dessous.
     - 2. Appuyez sur <b>Arrêter</b> lorsque vous avez terminé.
-    - 3. <b>Écoutez</b> votre enregistrement et supprimez-le et ré-enregistrez-le si nécessaire.
   lastline: >
-    4. Quand terminé, appuyez sur <b>Télécharger</b> pour envoyer vos enregistrements au serveur VoxForge.
+    3. Quand terminé, appuyez sur <b>Télécharger</b> pour envoyer vos enregistrements au serveur VoxForge.
 
 controls:
   record: Enregistrer

@@ -226,7 +226,7 @@ function Audio () {
     * worker sends back the recorded data as an audio blob
     */
     audioworker.onmessage = function(event) { 
-      view.waveformdisplay(event.data.blob, event.data.clipping, event.data.too_soft, event.data.max_energy); 
+      view.waveformdisplay(event.data.blob, event.data.clipping, event.data.too_soft); 
     }; 
 }
 
@@ -243,24 +243,7 @@ Audio.prototype.record = function () {
     this.microphoneLevel.connect(this.analyser);
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
-/*
-    // TODO should this be in a worker - sub worker to audioworker perhaps...???
-    //see: https://github.com/kdavis-mozilla/vad.js
-    var options = {
-        source: this.microphoneLevel,
-        voice_start: function() {
-          audioworker.postMessage({ 
-            command: 'voice_start', 
-          });
-        },
-        voice_stop: function() {
-          audioworker.postMessage({ 
-            command: 'voice_stop', 
-          });
-        }, 
-    }; 
-    var vad = new VAD(options);
-*/
+
     visualize(this.analyser);
 
     // clears out audio buffer 

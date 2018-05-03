@@ -218,9 +218,8 @@ instructions:
   lines:
     - 1. Press <b>Record</b> to start, saying only the words that appear in the box below.
     - 2. Press <b>Stop</b> when completed.
-    - 3. <b>Listen</b> to your recording and delete and re-record if necessary.
   lastline: >
-    4. When done, press <b>Upload</b> to send your recordings to VoxForge server.
+    3. When done, press <b>Upload</b> to send your recordings to VoxForge server.
 
 controls:
   record: Record

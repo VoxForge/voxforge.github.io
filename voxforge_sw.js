@@ -42,29 +42,29 @@ var CACHE_NAME = 'voxforge-cache-v0.1';
 var PATH = '/assets/static/';
 
 var urlsToCache = [
-  PATH + 'lib/jquery-1.12.4.js',
   PATH + 'lib/jquery.mobile-1.4.5.js',
-  PATH + 'lib/languages.js',
-  PATH + 'lib/platform.js',
-  PATH + 'lib/visualize.js',
-  PATH + 'lib/wavesurfer.js',
-  PATH + 'lib/idb-keyval.js',
+  PATH + 'lib/jquery-1.12.4.js',
   PATH + 'lib/jszip.js',
+  PATH + 'lib/languages.js',
   PATH + 'lib/localforage.js',
+  PATH + 'lib/platform.js',
   PATH + 'lib/state-machine.js',
+  PATH + 'lib/visualize.js',
   PATH + 'lib/WavAudioEncoder.js',
+  PATH + 'lib/wavesurfer.js',
   PATH + 'lib/webrtc_vad.js',
 
-  PATH + 'scripts/EncoderWorker.js',
-  PATH + 'scripts/call_vad.js',
   PATH + 'scripts/Audio.js',
+  PATH + 'scripts/EncoderWorker.js',
   PATH + 'scripts/processSavedSubmissions.js',
   PATH + 'scripts/Profile.js',
   PATH + 'scripts/Prompts.js',
   PATH + 'scripts/upload.js',
-  PATH + 'scripts/View.js',
   PATH + 'scripts/UploadWorker.js',
+  PATH + 'scripts/Vad.js',
+  PATH + 'scripts/View.js',
   PATH + 'scripts/ZipWorker.js',
+
   PATH + 'scripts/app.js',
 
   PATH + 'styles/app.css',

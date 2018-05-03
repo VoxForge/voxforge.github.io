@@ -231,9 +231,8 @@ instructions:
   lines:
     - 1. Press <b>Record</b> to start, saying only the words that appear in the box below.
     - 2. Press <b>Stop</b> when completed.
-    - 3. <b>Listen</b> to your recording and delete and re-record if necessary.
   lastline: >
-    4. When done, press <b>Upload</b> to send your recordings to VoxForge server.
+    3. When done, press <b>Upload</b> to send your recordings to VoxForge server.
 
 # not supporting Edge yet... Edge needs to support FormData
 # convert to popup for Edge browsers only...
@@ -288,8 +287,8 @@ alert_message:
     Your recording is too loud!  </br>Please reduce your volume, delete this 
     recording and re-record
   audio_too_soft: >
-    Your recording levels are too low!  </br>Please raise your volume, delete this 
-    recording and re-record
+    Your recording levels are too low!  </br>Please increase your mic volume, 
+    then delete this prompt recording and re-record it.
 
 # script below gets loaded in {{ content }} section of layout page
 # these are used by Javascript, therefore need special handling for them to 

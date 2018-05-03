@@ -1,7 +1,5 @@
 importScripts('../lib/webrtc_vad.js'); 
 
-//TODO re-implement clipping and audio too low warnings
-
 var MAX_ENERGY_THRESHOLD = 0.65;
 var LOW_ENERGY_THRESHOLD = 0.1;
 
@@ -48,9 +46,7 @@ function Vad(sampleRate) {
   this.trailing_silence_buffe = 0;
 
   this.max_energy = 0;
-
-  this.clipping = false;
-  this.too_soft = false;
+  this.min_energy = 1;
 
   // setup webrtc VAD
   var main = cwrap('main');
@@ -67,112 +63,6 @@ function Vad(sampleRate) {
 Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     // save reference to current context for use in inner functions
     var self = this;
-
-
-
-/**
-* Window size is a function of device user is operating on.
-
-  Number of elements in Floar32Array corresponds to the 'Frame' or 'Window' size 
-  of a Wav audio recording.  (Linux = 2048; Android = 16384) and each element 
-  contained therein is a Sample
-*/
-function calculateWindowEnergy(sampleArray) {
-  var total_buffer_energy = 0;
-
-  // calculate RMS (root mean square) of speech array
-  // An envelope of a signal is a curve that describes its magnitude over 
-  // time, independently of how its frequency content makes it oscillate 
-  for (var j = 0; j < sampleArray.length; j++) {
-      total_buffer_energy += Math.abs( sampleArray[j]);
-  }
-  return Math.sqrt(total_buffer_energy / (sampleArray.length - 1) );
-}
-
-// buffer is an array of Float32Arrays (with a size specific to 
-// the device we are operating on e.g. Linux - size=2048); the size
-// of buffer array is a function of length of audio file.
-function calculateMaxEnergy(buffer) {
-  var max_energy=0;
-
-  for (var i = 0; i < buffer.length; i++) {
-    var avg_buffer_energy = calculateWindowEnergy(buffer[i]);
-    if (avg_buffer_energy > max_energy) {
-       max_energy = avg_buffer_energy;
-    }
-  }
-
-  return max_energy;
-}
-
-
-
-
-
-    // TODO should use the output from WAVAudioEncoder...but is that premature optimization??
-    /**
-    * Convert from 32-bit float to 16bit PCM, and
-    * calculate root-mean-square of samples tp
-    */
-    // see: https://github.com/cwilso/volume-meter/blob/master/volume-meter.js
-    function floatTo16BitPCM(buffer) {
-      var buffer_pcm = new Int16Array(buffer.length);
-      var total_energy_squared = 0;
-
-      for (let i = 0; i < buffer.length; i++) {
-        var sample_energy = Math.abs( buffer[i] );
-        total_energy_squared += sample_energy * sample_energy;
- 
-        let s = Math.max(-1, Math.min(1, buffer[i]));
-        buffer_pcm[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
-      }
-
-      var avg_energy_for_sample = total_energy_squared / (buffer.length - 1);
-      var rms_buffer_energy = Math.sqrt( avg_energy_for_sample );
-
-      return [buffer_pcm, rms_buffer_energy];
-    }
-    
-    //
-    function isSilence(buffer_pcm){
-      // Get data byte size, allocate memory on Emscripten heap, and get pointer
-      let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
-      let dataPtr = _malloc(nDataBytes);
-
-      // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
-      let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
-      dataHeap.set(new Uint8Array(buffer_pcm.buffer));
-
-      // Call function and get result
-      let result = process_data(dataHeap.byteOffset, buffer_pcm.length, 48000, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
-
-      // Free memory
-      _free(dataHeap.byteOffset);
-      return result;
-    }
-
-    //
-    function speaking() {
-      self.voice_started = true;
-      self.voice_stopped = false;
-      if ( self.first_speak ) {
-        // really only recognizing non-silence (i.e. any sound that is not silence")
-        console.log("webrtc: voice_started=" + index);
-        self.speechstart_index = index;
-        self.first_speak = false;
-      }
-    }
-
-    //
-    function nospeech() {
-      // only want first stop after speech ends
-      if ( ! self.voice_stopped ) { // so won't print to console a million times...
-        console.log("webrtc: voice_stopped=" + index);
-        self.speechend_index = index;
-      }
-      self.voice_stopped = true;
-    }
-
 
     /**
     * Must be calculated from event buffer because there is no other way
@@ -192,15 +82,90 @@ function calculateMaxEnergy(buffer) {
       console.log('worker leading_silence_buffer= ' + self.leading_silence_buffer + '; trailing_silence_buffer= ' + self.trailing_silence_buffer);
     }
 
+    /**
+    * 1. Convert buffer samples from 32-bit float to 16bit PCM, and
+    * 2. Calculate root-mean-square to get an 'energy' measure of loudness of 
+    * audio samples in buffer
+    */
+    // see: https://github.com/cwilso/volume-meter/blob/master/volume-meter.js
+    // https://www.gaussianwaves.com/2015/07/significance-of-rms-root-mean-square-value/
+    // TODO should use the output from WAVAudioEncoder... premature optimization??
+    function floatTo16BitPCM(buffer) {
+      var buffer_pcm = new Int16Array(buffer.length);
+      var sum = 0;
+      for (let i = 0; i < buffer.length; i++) {
+        sum += buffer[i] * buffer[i];
+        let s = Math.max(-1, Math.min(1, buffer[i]));
+        buffer_pcm[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
+      }
+      var rms = Math.sqrt( sum / buffer.length );
+
+      return [buffer_pcm, rms];
+    }
+    
+    /**
+    * calls webrtc VAD code
+    */
+    // start: original Mozilla code segment to call webrtc_vad
+    function isSilence(buffer_pcm){
+      // Get data byte size, allocate memory on Emscripten heap, and get pointer
+      let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
+      let dataPtr = _malloc(nDataBytes);
+
+      // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
+      let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
+      dataHeap.set(new Uint8Array(buffer_pcm.buffer));
+
+      // Call function and get result
+      let result = process_data(dataHeap.byteOffset, buffer_pcm.length, 48000, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
+
+      // Free memory
+      _free(dataHeap.byteOffset);
+      return result;
+    }
+    // end: original Mozilla code segment to call webrtc_vad
+
+    /**
+    * called when non-silence detected (any sound, not just speech)
+    */
+    function speaking() {
+      self.voice_started = true;
+      self.voice_stopped = false;
+      if ( self.first_speak ) {
+        // really only recognizing non-silence (i.e. any sound that is not silence")
+        console.log("webrtc: voice_started=" + index);
+        self.speechstart_index = index;
+        self.first_speak = false;
+      }
+    }
+
+    /**
+    * called when silence detected
+    */
+    function nospeech() {
+      // only want first stop after speech ends
+      if ( ! self.voice_stopped ) { // so won't print to console a million times...
+        console.log("webrtc: voice_stopped=" + index);
+        self.speechend_index = index;
+      }
+      self.voice_stopped = true;
+    }
+
     // ### main ################################################################
+
     if (this.first_buffer) {
       calculateSilencePadding(buffer.length, this.sampleRate);
       this.first_buffer = false;
     }
 
+    var [buffer_pcm, rms] = floatTo16BitPCM(buffer);
+    if (rms > this.max_energy) {
+      this.max_energy = rms;
+    } else if (rms < this.min_energy) {
+      this.min_energy = rms;
+    }
 
-    var [buffer_pcm, avg_buffer_energy] = floatTo16BitPCM(buffer);
-    
+    // start: original Mozilla code segment to call webrtc_vad
     for (let i = 0; i < Math.ceil(buffer_pcm.length/this.sizeBufferVad); i++) {
       let start = i * this.sizeBufferVad;
       let end = start+this.sizeBufferVad;
@@ -245,34 +210,65 @@ function calculateMaxEnergy(buffer) {
           this.finishedvoice = true;
       }
     }
+    // end: original Mozilla code segment to call webrtc_vad
 }
 
 /**
 *
 */
 Vad.prototype.getSpeech = function(buffers) {
-/*
-    var [speech_array, max_energy] = 
-        extractSpeechFromRecording(buffers, voice_start, voice_stop);
-    var [clipping, too_soft] = getEnergyThreshholds(max_energy);
+  // save context for inner functions
+  var self = this;
 
-    while (speech_array.length > 0) {
-      encoder.encode(speech_array.shift());
+  /**
+  * determine if energy level threshholds have been passed
+  */
+  function getEnergyThreshholds() {
+    var clipping = false;
+    var too_soft = false;
+
+    if (self.max_energy > MAX_ENERGY_THRESHOLD) {
+      clipping = true;
+    } else {
+      clipping = false;
     }
-*/
 
-    //var start_index = Math.max(this.speechstart_index - 10, 0);
-    //var end_index = Math.min(this.speechend_index + 2,buffers.length);
-    var start_index = Math.max(this.speechstart_index - this.leading_silence_buffer, 0);
-    var end_index = Math.min(this.speechend_index + this.trailing_silence_buffer, buffers.length);
+    if (self.max_energy < LOW_ENERGY_THRESHOLD) {
+      too_soft = true;
+    } else {
+      too_soft = false;
+    }
+
+    console.log( 'max_energy=' + self.max_energy.toFixed(2) + ' LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD + ', MAX_ENERGY_THRESHOLD=' + MAX_ENERGY_THRESHOLD);
+
+    return [clipping, too_soft];
+  }
+
+  /**
+  * using calculated speechstart and speechsopt indexes, extract audio segment
+  * that includes speech (i.e. remove leading and trailing silence from 
+  * recording)
+  */
+  function extractSpeechFromRecording() {
+    var start_index = Math.max(self.speechstart_index - self.leading_silence_buffer, 0);
+    var end_index = Math.min(self.speechend_index + self.trailing_silence_buffer, buffers.length);
     console.log("start_index=" + start_index + 
                 "; end_index=" + end_index +
                 "; buffer length=" + buffers.length);
 
     var speech_array =  buffers.slice(start_index, end_index);
+
     console.log("speech_array length=" + speech_array.length);
 
     return speech_array;
+  }
+
+  // ### main ##################################################################
+
+  var speech_array = extractSpeechFromRecording();
+  var [clipping, too_soft] = getEnergyThreshholds();
+
+  return [speech_array, clipping, too_soft];
 }
 
 
@@ -292,6 +288,48 @@ Vad.prototype.getSpeech = function(buffers) {
 
 
 
+
+
+
+
+
+
+
+
+/**
+* Window size is a function of device user is operating on.
+
+  Number of elements in Floar32Array corresponds to the 'Frame' or 'Window' size 
+  of a Wav audio recording.  (Linux = 2048; Android = 16384) and each element 
+  contained therein is a Sample
+*/
+function calculateWindowEnergy(sampleArray) {
+  var total_buffer_energy = 0;
+
+  // calculate RMS (root mean square) of speech array
+  // An envelope of a signal is a curve that describes its magnitude over 
+  // time, independently of how its frequency content makes it oscillate 
+  for (var j = 0; j < sampleArray.length; j++) {
+      total_buffer_energy += Math.abs( sampleArray[j]);
+  }
+  return Math.sqrt(total_buffer_energy / (sampleArray.length - 1) );
+}
+
+// buffer is an array of Float32Arrays (with a size specific to 
+// the device we are operating on e.g. Linux - size=2048); the size
+// of buffer array is a function of length of audio file.
+function calculateMaxEnergy(buffer) {
+  var max_energy=0;
+
+  for (var i = 0; i < buffer.length; i++) {
+    var avg_buffer_energy = calculateWindowEnergy(buffer[i]);
+    if (avg_buffer_energy > max_energy) {
+       max_energy = avg_buffer_energy;
+    }
+  }
+
+  return max_energy;
+}
 
 /**
 * skip silence in a recording and only return those buffer containing speech,
@@ -336,28 +374,6 @@ function extractSpeechFromRecording(buffers, voice_start, voice_stop) {
   return [speech_array, max_energy];
 }
 
-/**
-* determine if energy level threshholds have been passed
-*/
-function getEnergyThreshholds(max_energy) {
-  var clipping;
-  var too_soft;
 
-  if (max_energy > MAX_ENERGY_THRESHOLD) {
-    clipping = true;
-  } else {
-    clipping = false;
-  }
-
-  if (max_energy < LOW_ENERGY_THRESHOLD) {
-    too_soft = true;
-  } else {
-    too_soft = false;
-  }
-
-  console.log( 'max_energy=' + max_energy.toFixed(2) + ' LOW_ENERGY_THRESHOLD=' + LOW_ENERGY_THRESHOLD + ', MAX_ENERGY_THRESHOLD=' + MAX_ENERGY_THRESHOLD);
-
-  return [clipping, too_soft];
-}
 
 

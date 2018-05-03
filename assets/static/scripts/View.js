@@ -322,7 +322,7 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 * then review and if needed delete an erroneous recording, which can then be
 * re-recorded
 */
-View.prototype.waveformdisplay = function (blob, clipping, too_soft, max_energy) {
+View.prototype.waveformdisplay = function (blob, clipping, too_soft) {
     // 'self' used to save the current context when calling function references
     var self = this;
 
@@ -415,13 +415,12 @@ View.prototype.waveformdisplay = function (blob, clipping, too_soft, max_energy)
       waveformElement.appendChild(style);
 
       if (clipping) {
-        // TODO tell user what the problem is...
         // TODO should not be able to upload if too loud
         waveformElement.setAttribute("style", "background: #ff3300");
         waveformElement.innerHTML = "<h4>" + page_alert_message.audio_too_loud + "</h4>";
       } else if (too_soft) {
-        // TODO tell user what the problem is...
-        // TODO should not be able to upload if too loud
+        // TODO if too low, increase volume of recording and automatically
+        //      increase it for subsequent recordings...
         waveformElement.setAttribute("style", "background: #ff3300");
         waveformElement.innerHTML = "<h4>" + page_alert_message.audio_too_soft + "</h4>";
       }
