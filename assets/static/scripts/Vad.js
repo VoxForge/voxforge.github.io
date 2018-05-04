@@ -274,7 +274,7 @@ Vad.prototype.getSpeech = function(buffers) {
       var clipping = false;
       var too_soft = false;
 
-      if ( self.voice_stopped ) { // user stopped talking before clicking stop button
+      if ( self.voice_stopped ) { // user stopped talking then clicked stop button.
         if (self.max_energy > MAX_ENERGY_THRESHOLD) {
           clipping = true;
           console.warn( 'audio clipping');
@@ -289,7 +289,7 @@ Vad.prototype.getSpeech = function(buffers) {
           self.speechend_index = buffers.length;
           no_speech = true;
           console.warn( 'no speech recorded');
-        } else {// user cut recording off too early
+        } else { // user cut recording off too early
           self.speechend_index = buffers.length;
           no_trailing_silence = true;
           console.warn( 'no trailing silence');
@@ -297,15 +297,14 @@ Vad.prototype.getSpeech = function(buffers) {
       }
       console.log( 'max_energy=' + self.max_energy.toFixed(2) + ' MIN_ENERGY_THRESHOLD=' + MIN_ENERGY_THRESHOLD + ', MAX_ENERGY_THRESHOLD=' + MAX_ENERGY_THRESHOLD);
 
-      // should not happen
-      // catches: 
-      // 1. user clicks record and says nothing then clicks stop or auto-stop,
-      //    VAD never engaged (because no speech or noise) and voice_started 
-      //    never goes true, and speechend_index never gets updated from its
-      //    default value of 0;
-      if (self.speechend_index == 0) {
+      if (self.speechend_index == 0) { // should never occur
         self.speechend_index = buffers.length;
         console.warn( 'speechend_index never set, setting to end of recording');
+      }
+      if (self.speechend_index < self.speechstart_index) {// should never occur
+        self.speechend_index =0;
+        self.speechend_index = buffers.length;
+        console.warn( 'speechend_index bigger than speechstart_index');
       }
 
       return [no_speech, no_trailing_silence, clipping, too_soft];
