@@ -25,7 +25,8 @@ self.onmessage = function(event) {
       break;
 
     case 'finish':
-      var [speech_array, clipping, too_soft] = vad.getSpeech(buffers);
+      var [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
+          vad.getSpeech(buffers);
 
       while (speech_array.length > 0) {
         encoder.encode(speech_array.shift());
@@ -33,8 +34,11 @@ self.onmessage = function(event) {
 
       self.postMessage({ 
         blob: encoder.finish(),
+        no_trailing_silence: no_trailing_silence,
+        no_speech: no_speech,
         clipping: clipping,
         too_soft: too_soft,
+
       });
 
       encoder = undefined;

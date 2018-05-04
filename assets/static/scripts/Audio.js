@@ -226,7 +226,12 @@ function Audio () {
     * worker sends back the recorded data as an audio blob
     */
     audioworker.onmessage = function(event) { 
-      view.waveformdisplay(event.data.blob, event.data.clipping, event.data.too_soft); 
+      view.waveformdisplay(event.data.blob, 
+                           event.data.no_speech,
+                           event.data.no_trailing_silence,
+                           event.data.clipping, 
+                           event.data.too_soft, 
+      ); 
     }; 
 }
 
@@ -269,7 +274,8 @@ Audio.prototype.record = function () {
 Audio.prototype.endRecording = function () {
     // trying to clear buffer because second recording sometimes includes end 
     // of previous recording
-    this.processor.onaudioprocess=null; 
+    this.processor.onaudioprocess=null;
+
     this.microphoneLevel.disconnect();
     this.processor.disconnect();
 

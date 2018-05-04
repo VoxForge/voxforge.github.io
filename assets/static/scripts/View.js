@@ -322,7 +322,9 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 * then review and if needed delete an erroneous recording, which can then be
 * re-recorded
 */
-View.prototype.waveformdisplay = function (blob, clipping, too_soft) {
+View.prototype.waveformdisplay = function (
+       blob, no_speech, no_trailing_silence, clipping, too_soft ) 
+{
     // 'self' used to save the current context when calling function references
     var self = this;
 
@@ -414,14 +416,20 @@ View.prototype.waveformdisplay = function (blob, clipping, too_soft) {
       style.appendChild(button);
       waveformElement.appendChild(style);
 
-      if (clipping) {
+      if (no_speech) {
+        waveformElement.setAttribute("style", "background: #ff4500");
+        waveformElement.innerHTML = "<h4>" + page_alert_message.no_speech + "</h4>";
+      } else if (no_trailing_silence) {
+        waveformElement.setAttribute("style", "background: #ffA500");
+        waveformElement.innerHTML = "<h4>" + page_alert_message.no_trailing_silence + "</h4>";
+      } else if (clipping) {
         // TODO should not be able to upload if too loud
-        waveformElement.setAttribute("style", "background: #ff3300");
+        waveformElement.setAttribute("style", "background: #ff4500");
         waveformElement.innerHTML = "<h4>" + page_alert_message.audio_too_loud + "</h4>";
       } else if (too_soft) {
         // TODO if too low, increase volume of recording and automatically
         //      increase it for subsequent recordings...
-        waveformElement.setAttribute("style", "background: #ff3300");
+        waveformElement.setAttribute("style", "background: #ff4500");
         waveformElement.innerHTML = "<h4>" + page_alert_message.audio_too_soft + "</h4>";
       }
 

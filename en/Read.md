@@ -284,11 +284,16 @@ alert_message:
   uploaded_message: >
     uploaded to VoxForge Server
   audio_too_loud: >
-    Your recording is too loud!  </br>Please reduce your volume, delete this 
-    recording and re-record
+    Your recording is too loud!  </br>Please reduce your microphone volume, delete this 
+    recording and re-record the prompt
   audio_too_soft: >
-    Your recording levels are too low!  </br>Please increase your mic volume, 
+    Your recording levels are too low!  </br>Please increase your microphone volume, 
     then delete this prompt recording and re-record it.
+  no_trailing_silence: >
+    No trailing silence!  You cut the end of your recording off (you clicked 'stop' too early) </br>Please delete and 
+    re-record this prompt.
+  no_speech: >
+    No Speech or recording volume too low</br>Please delete and re-record this prompt.
 
 # script below gets loaded in {{ content }} section of layout page
 # these are used by Javascript, therefore need special handling for them to 

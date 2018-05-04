@@ -245,10 +245,15 @@ alert_message:
     uploaded to VoxForge Server
   audio_too_loud: >
     Votre enregistrement est trop fort.  </br>Veuillez réduire votre volume et
-    réenregistrer
+    réenregistrer.
   audio_too_soft: >
     Votre enregistrement est trop doux.  </br>Veuillez augmenter votre volume et
-    réenregistrer
+    réenregistrer.
+  no_trailing_silence: >
+    Vous avez couper votre enregistrement (vous avez cliqué trop tôt) </ br> 
+    Veuillez ré-enregistrer.
+  no_speech: >
+    Pas d'audio vocal enregistré! </ br> Veuillez supprimer et réenregistrer.
 
 # script below gets loaded in {{ content }} section of layout page
 ---

@@ -263,6 +263,11 @@ alert_message:
   audio_too_soft: >
     Your recording is too soft!  </br>Please increase your volume, delete this 
     recording and re-record
+  no_trailing_silence: >
+    No trailing silence.  You cut your recording off (clicked 'stop' too early) </br>Please delete and 
+    re-record this prompt.
+  no_speech: >
+    No Speech </br>Please delete and re-record this prompt.
 
 # script below gets loaded in {{ content }} section of layout page
 ---
