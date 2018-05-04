@@ -20,8 +20,8 @@ self.onmessage = function(event) {
       break;
 
     case 'record':
-      buffers.push(data.buffers);
-      vad.calculateSilenceBoundaries(data.buffers, buffers.length - 1);
+      buffers.push(data.event_buffer);
+      vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
       break;
 
     case 'finish':

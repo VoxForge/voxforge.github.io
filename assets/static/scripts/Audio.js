@@ -257,7 +257,7 @@ Audio.prototype.record = function () {
     this.processor.onaudioprocess = function(event) {
       audioworker.postMessage({ 
         command: 'record', 
-        buffers: event.inputBuffer.getChannelData(0),
+        event_buffer: event.inputBuffer.getChannelData(0),
      });
 
     };

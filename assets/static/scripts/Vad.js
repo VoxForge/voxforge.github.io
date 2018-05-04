@@ -1,7 +1,8 @@
 importScripts('../lib/webrtc_vad.js'); 
 
-var MAX_ENERGY_THRESHOLD = 0.65;
-var LOW_ENERGY_THRESHOLD = 0.1;
+// 
+var MAX_ENERGY_THRESHOLD = 0.50;
+var LOW_ENERGY_THRESHOLD = 0.01;
 
 var LEADING_SILENCE_SEC = 0.5; // secs
 var TRAILING_SILENCE_SEC = 0.3; // little less because of lag in VAD detecting end of speech
@@ -46,7 +47,7 @@ function Vad(sampleRate) {
   this.trailing_silence_buffe = 0;
 
   this.max_energy = 0;
-  this.min_energy = 1;
+  this.min_energy = 1.0;
 
   // setup webrtc VAD
   var main = cwrap('main');
@@ -86,6 +87,14 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     * 1. Convert buffer samples from 32-bit float to 16bit PCM, and
     * 2. Calculate root-mean-square to get an 'energy' measure of loudness of 
     * audio samples in buffer
+
+    * http://www.statisticshowto.com/quadratic-mean/
+    * The quadratic mean (also called the root mean square*) is a type of 
+    * average. This type of mean gives a greater weight to larger items in the 
+    * set and is always equal to or greater than the arithmetic mean. ... 
+    * https://en.wikipedia.org/wiki/Root_mean_square#In_frequency_domain
+    * RMS of a signal in the time domain is directly proportional to the RMS of 
+    * the signal in the frequency domain
     */
     // see: https://github.com/cwilso/volume-meter/blob/master/volume-meter.js
     // https://www.gaussianwaves.com/2015/07/significance-of-rms-root-mean-square-value/
@@ -93,14 +102,23 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     function floatTo16BitPCM(buffer) {
       var buffer_pcm = new Int16Array(buffer.length);
       var sum = 0;
-      for (let i = 0; i < buffer.length; i++) {
-        sum += buffer[i] * buffer[i];
-        let s = Math.max(-1, Math.min(1, buffer[i]));
-        buffer_pcm[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
-      }
-      var rms = Math.sqrt( sum / buffer.length );
 
-      return [buffer_pcm, rms];
+      for (let i = 0; i < buffer.length; i++) {
+        var sample = buffer[i];
+        //sum += Math.abs( sample );
+        sum += sample * sample;
+
+        // original Mozilla 32-bit float to 16bit PCM encoder
+        //let s = Math.max(-1, Math.min(1, sample));
+        //buffer_pcm[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
+
+        var x = buffer[i] * 0x7fff; // 0x7fff = 32767
+        buffer_pcm[i] =  x < 0 ? Math.max(x, -0x8000) : Math.min(x, 0x7fff);
+      }
+      //var energy = sum / buffer.length;
+      var energy = Math.sqrt( sum / buffer.length ); // rms
+
+      return [buffer_pcm, energy];
     }
     
     /**
@@ -158,11 +176,13 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
       this.first_buffer = false;
     }
 
-    var [buffer_pcm, rms] = floatTo16BitPCM(buffer);
-    if (rms > this.max_energy) {
-      this.max_energy = rms;
-    } else if (rms < this.min_energy) {
-      this.min_energy = rms;
+    var [buffer_pcm, energy] = floatTo16BitPCM(buffer);
+    if (energy > this.max_energy) {
+      this.max_energy = energy;
+    } else if (energy < this.min_energy) {
+      // TODO need to ignore silence selections, therefore do this after 
+      // speech has been extracted...
+      this.min_energy = energy;
     }
 
     // start: original Mozilla code segment to call webrtc_vad
@@ -251,6 +271,12 @@ Vad.prototype.getSpeech = function(buffers) {
   */
   function extractSpeechFromRecording() {
     var start_index = Math.max(self.speechstart_index - self.leading_silence_buffer, 0);
+    // if user clicks start while speaking and then clicks without stopping 
+    // speaking... VAD does not get engaged...
+    if (self.speechend_index == 0) {
+      self.speechend_index == buffers.length;
+    }
+
     var end_index = Math.min(self.speechend_index + self.trailing_silence_buffer, buffers.length);
     console.log("start_index=" + start_index + 
                 "; end_index=" + end_index +
@@ -336,7 +362,6 @@ function calculateMaxEnergy(buffer) {
 * with leading and trailing silence padding
 */
 function extractSpeechFromRecording(buffers, voice_start, voice_stop) {
-
 
   var last_index = buffers.length - 1;
 
