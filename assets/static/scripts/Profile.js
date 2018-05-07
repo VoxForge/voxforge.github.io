@@ -58,6 +58,9 @@ function Profile () {
   this.sample_rate = null;
   this.sample_rate_format = null;
   this.channels = null;
+  this.echoCancellation = null;
+  this.autoGainSupported = null;
+  this.noiseSuppression = null;
 
   this.suffix = makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
   this.randomDigits = makeRandString (10,'1234567890');
@@ -173,6 +176,10 @@ Profile.prototype.toHash = function () {
     profile_hash["sample_rate"] = this.sample_rate;
     profile_hash["sample_rate_format"] = this.sample_rate_format;
     profile_hash["channels"] = this.channels;
+
+    profile_hash["echoCancellation"] = this.echoCancellation;
+    profile_hash["autoGainSupported"] = this.autoGainSupported;
+    profile_hash["noiseSuppression"] = this.noiseSuppression;
 
     return profile_hash;
 };

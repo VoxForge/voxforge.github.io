@@ -206,19 +206,25 @@ function Audio () {
       var c = navigator.mediaDevices.getSupportedConstraints();
 
       if ( c.echoCancellation ) {
-        console.log('getUserMedia - echoCancellation supported')
+        console.log('getUserMedia - echoCancellation supported');
+        profile.echoCancellation = c.echoCancellation;
       } else {
-        console.log('getUserMedia - no echoCancellation')
+        console.log('getUserMedia - no echoCancellation');
+        profile.echoCancellation = false;
       }
       if ( c.autoGainSupported ) {
-        console.log('getUserMedia - autoGainSupported supported')
+        console.log('getUserMedia - autoGainSupported supported');
+        profile.autoGainSupported = c.autoGainSupported;
       } else {
-        console.log('getUserMedia - no autoGain')
+        console.log('getUserMedia - no autoGain');
+        profile.autoGainSupported = false;
       }
       if ( c.noiseSuppression ) {
-        console.log('getUserMedia - noiseSuppression supported')
+        console.log('getUserMedia - noiseSuppression supported');
+        profile.noiseSuppression = c.noiseSuppression;
       } else {
-        console.log('getUserMedia - no noiseSuppression')
+        console.log('getUserMedia - no noiseSuppression');
+        profile.noiseSuppression = false;
       }
     }
 
