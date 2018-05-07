@@ -27,9 +27,15 @@ function Vad(sampleRate) {
     this.sizeBufferVad = 480;
     this.leftovers = 0;
     this.buffer_vad = new Int16Array(this.sizeBufferVad);
-    this.minvoice = 250;
-    //const maxsilence = 1500; // 
-    this.maxsilence = 250; // 
+
+    //this.minvoice = 250;//  original
+    //const maxsilence = 1500; //  original
+    //this.maxsilence = 250; // works well with linux; not so well on Android 4.4.2
+
+    this.minvoice = 250; // since only need first occurence of speech, can be a little longer
+
+    this.maxsilence = 250; // be less aggressivin silence detection on Android????
+
     this.finishedvoice = false;
     this.samplesvoice = 0 ;
     this.samplessilence = 0 ;
@@ -289,6 +295,9 @@ Vad.prototype.getSpeech = function(buffers) {
           self.speechend_index = buffers.length;
           no_speech = true;
           console.warn( 'no speech recorded');
+        // TODO this assumes the VAD is working correctly; on Android 4.4.2
+        // voice_stopped never gets set even though user stopped talking
+        // and long trailing silence gest added to recording
         } else { // user cut recording off too early
           self.speechend_index = buffers.length;
           no_trailing_silence = true;

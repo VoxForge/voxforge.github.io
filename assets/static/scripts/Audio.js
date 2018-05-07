@@ -177,13 +177,50 @@ function Audio () {
     */
     navigator.mediaDevices.getUserMedia(constraints)
     .then(function(stream) {
-      console.log('getUserMedia supported.');
+      supportedContraints();
       setupAudioNodes(stream);
     })
     .catch(function(err) {
       window.alert("Could not get audio input - reason: " + err);
       console.error('The following error occured: ' + err);
     });
+
+    // see: https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
+    // TODO firefox supports;
+    //    let set = track.getSettings();
+    //    set.echoCancellation;
+    //    set.noiseSuppression;
+    //    Set.autoGainControl;
+    // Chrome does not...
+    /*
+      see: https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints#Applying_constraints
+      constraints vs settings: Constraints are a way to specify 
+      what values you need, want, and are willing to accept for the various 
+      constrainable properties (as described in the documentation for 
+      MediaTrackConstraints), while settings are the actual values of each 
+      constrainable property at the current time.
+      https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
+      https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
+    */
+    function supportedContraints() {
+      var c = navigator.mediaDevices.getSupportedConstraints();
+
+      if ( c.echoCancellation ) {
+        console.log('getUserMedia - echoCancellation supported')
+      } else {
+        console.log('getUserMedia - no echoCancellation')
+      }
+      if ( c.autoGainSupported ) {
+        console.log('getUserMedia - autoGainSupported supported')
+      } else {
+        console.log('getUserMedia - no autoGain')
+      }
+      if ( c.noiseSuppression ) {
+        console.log('getUserMedia - noiseSuppression supported')
+      } else {
+        console.log('getUserMedia - no noiseSuppression')
+      }
+    }
 
     /**
     * set up audio nodes that are connected together in a graph so that the 
@@ -200,8 +237,33 @@ function Audio () {
       microphone = self.audioCtx.createMediaStreamSource(stream);
       self.microphoneLevel = self.audioCtx.createGain();
       self.analyser = self.audioCtx.createAnalyser();
-      // mono input and output
-      self.processor = self.audioCtx.createScriptProcessor(undefined , 1, 1);
+
+      // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
+/*    The buffer size in units of sample-frames. If specified, the bufferSize 
+      must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384. 
+      This value controls how frequently the audioprocess event is dispatched
+      and how many sample-frames need to be processed each call. Lower values
+      for bufferSize will result in a lower (better) latency. Higher values
+      will be necessary to avoid audio breakup and glitches. It is recommended 
+      for authors to not specify this buffer size and allow the implementation 
+      to pick a good buffer size to balance between latency and audio quality.
+            -but-
+      But VAD does not work good enough with Android 4.4.2 default buffer size of
+      16384, so set Android 4.4.2 to 8192
+      TODO test with with other versions od Android
+*/
+      /**
+      * Android's higher buffer value causing problems with WebRTC VAD.  Need to 
+      * manually set.
+      */
+      if (platform.os.family === "Android" ) {
+        self.processor = self.audioCtx.createScriptProcessor(8192 , 1, 1);
+        console.warn('resetting bufferSize to 8192 sample frames, for VAD support');
+      } else {
+        // mono input and output
+        self.processor = self.audioCtx.createScriptProcessor(undefined , 1, 1);
+      }
+
       self.mediaStreamOutput = self.audioCtx.destination;
 
       microphone.channelCount = 1;

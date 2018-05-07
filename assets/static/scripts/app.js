@@ -257,14 +257,16 @@ function setUpFSM() {
         }
     }
 
-    //TODO use actual function reference instead of function calling function
-    // but might mess up this context value...
     view.stop.onclick = function() { 
           clearTimeout(rec_timeout_obj);
+          var start =  Date.now();
+          console.log("stop clicked" );
           view.hidePromptDisplay();
           // actual stopping of recording is delayed because some users hit it
           // early and cut off the end of their recording.
           setTimeout( function () {
+            var elasped = Date.now() - start;
+            console.log("stop transition called; millesconds elapsed: " + elasped );
             fsm.stopclicked(); 
           }, RECORDING_STOP_DELAY);
     }
