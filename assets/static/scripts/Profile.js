@@ -162,7 +162,6 @@ Profile.prototype.toHash = function () {
       profile_hash["manufacturer"] = platform.manufacturer || "";
     } else {
       profile_hash["user_agent_string"] = '';
-      // attempts to parse the ua string
       profile_hash["os"] = '';
       profile_hash["browser"] = '';
       profile_hash["product"] = '';

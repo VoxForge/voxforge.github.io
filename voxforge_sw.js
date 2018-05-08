@@ -85,6 +85,7 @@ self.addEventListener('install', function(event) {
 });
 
 /**
+// TODO don't need to cache requests that are not listed above...
 * If we want to cache new requests cumulatively, we can do so by handling the
 * response of the fetch request and then adding it to the cache, like below.
 *
