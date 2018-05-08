@@ -1,0 +1,12 @@
+{
+  "short_name": "VoxForge",
+  "name": "Voxforge speech submission app",
+  "icons": [
+    {
+      "src": "/voxforge.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+  ],
+  "start_url": "/en/read"
+}
