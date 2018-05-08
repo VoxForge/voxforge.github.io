@@ -20,7 +20,7 @@ var process_data;
 /**
 * Constructor
 */
-function Vad(sampleRate, os_family) {
+function Vad(sampleRate) {
     this.sampleRate = sampleRate;
 
     this.sizeBufferVad = 480;
@@ -30,13 +30,13 @@ function Vad(sampleRate, os_family) {
     //this.minvoice = 250;//  original
     //const maxsilence = 1500; //  original
 
-    if (os_family === "Android" ) {
-      this.maxsilence = 1000; // use more aggressive silence detection on Android
-      this.minvoice = 125; // since only need first occurence of speech, can be a little longer
-    } else {
+    //if (os_family === "Android" ) {
+    //  this.maxsilence = 1000; // use more aggressive silence detection on Android
+    //  this.minvoice = 125; // since only need first occurence of speech, can be a little longer
+    //} else {
       this.maxsilence = 250; // works well with linux; not so well on Android 4.4.2
       this.minvoice = 250; // since only need first occurence of speech, can be a little longer
-    }
+    //}
 
     this.finishedvoice = false;
     this.samplesvoice = 0 ;

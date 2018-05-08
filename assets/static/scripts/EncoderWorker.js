@@ -16,20 +16,37 @@ self.onmessage = function(event) {
     case 'start':
       buffers = [];
       encoder = new WavAudioEncoder(data.sampleRate);
-      vad = new Vad(data.sampleRate, data.os_family);
+      if ( data.with_vad ) {
+          vad = new Vad(data.sampleRate);
+          console.log('VAD enabled');
+      } else {
+          console.log('VAD disabled');
+      }
       break;
 
     case 'record':
       buffers.push(data.event_buffer);
-      vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
+      if ( data.with_vad ) {
+         vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
+      }
       break;
 
     case 'finish':
-      var [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
-          vad.getSpeech(buffers);
-
-      while (speech_array.length > 0) {
-        encoder.encode(speech_array.shift());
+      var speech_array, 
+          no_speech, 
+          no_trailing_silence, 
+          clipping, 
+          too_soft;
+      if ( data.with_vad  ) {
+        [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
+            vad.getSpeech(buffers);
+        while (speech_array.length > 0) {
+          encoder.encode(speech_array.shift());
+        }
+      } else {
+        while (buffers.length > 0) {
+          encoder.encode(buffers.shift());
+        }
       }
 
       self.postMessage({ 

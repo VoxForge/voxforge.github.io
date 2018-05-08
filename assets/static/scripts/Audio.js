@@ -320,9 +320,13 @@ Audio.prototype.record = function () {
     visualize(this.analyser);
 
     // clears out audio buffer 
+    var run_with_vad = true;
+    if (platform.os.family === "Android" ) {
+      with_vad = false;
+    }
     audioworker.postMessage({
       command: 'start',
-      os_family: platform.os.family,
+      with_vad: with_vad,
       sampleRate: this.audioCtx.sampleRate,
     });
 
