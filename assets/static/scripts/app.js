@@ -74,6 +74,11 @@ if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || p
   window.alert( page_browser_support.no_edgeSupport_message );         
 }
 
+var vad = true;
+var low_powered_device = false;
+if (platform.os.family === "Android" ) {
+  vad = false;
+}
 
 
 // #############################################################################
@@ -95,9 +100,9 @@ var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400;
 * Instantiate classes
 */
 var prompts = new Prompts();
-var view = new View(); // needs to be before profile object creation
-var profile = new Profile();
-var audio = new Audio();
+var view = new View();
+var profile = new Profile(view.update);
+var audio = new Audio(vad, low_powered_device);
 
 // finite state machine object
 var fsm = setUpFSM();
@@ -242,7 +247,7 @@ function setUpFSM() {
                 view.reset();
                 fsm.donesubmission();
                 // reset random 3 digit characters for submission name
-                profile = new Profile(); 
+                profile = new Profile(view.update);
               } 
           );
         },

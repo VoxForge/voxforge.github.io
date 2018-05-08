@@ -20,7 +20,7 @@ var process_data;
 /**
 * Constructor
 */
-function Vad(sampleRate) {
+function Vad(sampleRate, low_powered_device) {
     this.sampleRate = sampleRate;
 
     this.sizeBufferVad = 480;
@@ -30,13 +30,13 @@ function Vad(sampleRate) {
     //this.minvoice = 250;//  original
     //const maxsilence = 1500; //  original
 
-    //if (os_family === "Android" ) {
-    //  this.maxsilence = 1000; // use more aggressive silence detection on Android
-    //  this.minvoice = 125; // since only need first occurence of speech, can be a little longer
-    //} else {
+    if (low_powered_device) {
+      this.maxsilence = 1000; // use more aggressive silence detection on Android
+      this.minvoice = 125; // since only need first occurence of speech, can be a little longer
+    } else {
       this.maxsilence = 250; // works well with linux; not so well on Android 4.4.2
       this.minvoice = 250; // since only need first occurence of speech, can be a little longer
-    //}
+    }
 
     this.finishedvoice = false;
     this.samplesvoice = 0 ;
@@ -65,7 +65,13 @@ function Vad(sampleRate) {
     process_data = cwrap('process_data', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
 
     main();
-    console.log('setmode(3)=' + setmode(3));
+
+ * VAD configs:
+ *      - mode      : Aggressiveness degree
+ *                    0 (High quality) - 3 (Highly aggressive)
+    var mode = 0;
+    var result = setmode(mode);
+    console.log('WebRTC VAD setmode(' + mode + ')=' + result);
 }
 
 /**
@@ -145,6 +151,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
       dataHeap.set(new Uint8Array(buffer_pcm.buffer));
 
       // Call function and get result
+      //         int process_data(int16_t  data[], int n_samples, int samplerate, int val0, int val100, int val2000){
       let result = process_data(dataHeap.byteOffset, buffer_pcm.length, 48000, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
 
       // Free memory

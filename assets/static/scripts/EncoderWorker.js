@@ -7,6 +7,7 @@ importScripts('../scripts/Vad.js');
 
 var buffers = undefined;
 var encoder = undefined;
+var vad_obj = undefined;
 var vad = undefined;
 
 self.onmessage = function(event) {
@@ -16,9 +17,9 @@ self.onmessage = function(event) {
     case 'start':
       buffers = [];
       encoder = new WavAudioEncoder(data.sampleRate);
-      if ( data.with_vad ) {
-          vad = new Vad(data.sampleRate);
-          console.log('VAD enabled');
+      vad = data.vad;
+      if ( vad ) {
+          vad_obj = new Vad(data.sampleRate, data.low_powered_device);
       } else {
           console.log('VAD disabled');
       }
@@ -26,20 +27,20 @@ self.onmessage = function(event) {
 
     case 'record':
       buffers.push(data.event_buffer);
-      if ( data.with_vad ) {
-         vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
+      if ( vad ) {
+         vad_obj.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
       }
       break;
 
     case 'finish':
-      var speech_array, 
-          no_speech, 
-          no_trailing_silence, 
-          clipping, 
-          too_soft;
-      if ( data.with_vad  ) {
+      var speech_array = null;
+      var no_speech = false;
+      var no_trailing_silence = false; 
+      var clipping = false;
+      var too_soft = false;
+      if ( vad ) {
         [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
-            vad.getSpeech(buffers);
+            vad_obj.getSpeech(buffers);
         while (speech_array.length > 0) {
           encoder.encode(speech_array.shift());
         }

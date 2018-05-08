@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Class declaration
 */
-function Profile () {
+function Profile (updateView_func) {
   /**
   * get profile information from local storage and if it exists, return parsed
   * JSON object, otherwise return null.
@@ -37,7 +37,7 @@ function Profile () {
   */
   var parsedLocalStorageObject;
   if ( parsedLocalStorageObject = getProfileFromLocalStorage() ) {
-      view.update(parsedLocalStorageObject);
+      updateView_func(parsedLocalStorageObject);
   }
 
   /**

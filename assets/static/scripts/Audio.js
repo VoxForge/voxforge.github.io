@@ -120,7 +120,10 @@ var wavesurfer = [];
 /**
 * Class definition
 */
-function Audio () {
+function Audio (vad, low_powered_device) {
+    this.vad = vad;
+    this.low_powered_device = low_powered_device;
+
     // 'self' used to save current context when calling function references
     var self = this;
 
@@ -262,7 +265,7 @@ function Audio () {
       * Android's higher buffer value causing problems with WebRTC VAD.  Need to 
       * manually set.
       */
-      if (platform.os.family === "Android" ) {
+      if ( this.vad && this.low_powered_device ) {
         self.processor = self.audioCtx.createScriptProcessor(8192 , 1, 1);
         console.warn('resetting bufferSize to 8192 sample frames, for VAD support');
       } else {
@@ -320,13 +323,10 @@ Audio.prototype.record = function () {
     visualize(this.analyser);
 
     // clears out audio buffer 
-    var run_with_vad = true;
-    if (platform.os.family === "Android" ) {
-      with_vad = false;
-    }
     audioworker.postMessage({
       command: 'start',
-      with_vad: with_vad,
+      vad: this.vad,
+      low_powered_device: this.low_powered_device,
       sampleRate: this.audioCtx.sampleRate,
     });
 

@@ -40,7 +40,7 @@ if ('serviceWorker' in navigator) {
       console.log('ServiceWorker registration successful with scope: ', registration.scope);
     }, function(err) {
       console.warn('ServiceWorker registration failed: ', err);
-      window.alert('Error: no SSL certificate installed on device - uploads will fail silently');
+      window.alert('Error: no SSL certificate installed on device - VoxForge uploads will fail silently');
     });
   });
 }
