@@ -227,7 +227,7 @@ View.prototype.update = function (json_object) {
     // $('#page_language').val( json_object.page_language );
 
     $('#native_speaker').val( json_object.native_speaker );
-    if ( $('#native_speaker').val()==="Yes" )
+    if ( $('#native_speaker').val() === page_localized_yes )
     {
       $("#sub_dialect_display").show();
     } else {
@@ -257,7 +257,7 @@ View.prototype.update = function (json_object) {
       $("#recording_location_other_display").show();
     }
     $('#background_noise').val( json_object.background_noise );
-    if ( $('#background_noise').val()==="Yes" )
+    if ( $('#background_noise').val() === page_localized_yes )
     {
       $("#background_noise_display").show();
     }
@@ -269,6 +269,7 @@ View.prototype.update = function (json_object) {
       $("#noise_type_other_display").show();
     }
     $('#license').val( json_object.license );
+    $('#ua_string').val( json_object.ua_string );
 }
 
 /**

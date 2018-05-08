@@ -254,7 +254,7 @@ function Audio () {
       for authors to not specify this buffer size and allow the implementation 
       to pick a good buffer size to balance between latency and audio quality.
             -but-
-      But VAD does not work good enough with Android 4.4.2 default buffer size of
+      But VAD does not work well enough with Android 4.4.2 default buffer size of
       16384, so set Android 4.4.2 to 8192
       TODO test with with other versions od Android
 */
@@ -322,6 +322,7 @@ Audio.prototype.record = function () {
     // clears out audio buffer 
     audioworker.postMessage({
       command: 'start',
+      os_family: platform.os.family,
       sampleRate: this.audioCtx.sampleRate,
     });
 

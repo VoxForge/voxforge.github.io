@@ -208,7 +208,7 @@ license:
     - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License' }
 
 ua_string:
-  label: Include User Agent
+  label: Include User Agent String
   popup:
     title: Collect User Agent String Information
     link: https://www.whatismybrowser.com/detect/what-is-my-user-agent

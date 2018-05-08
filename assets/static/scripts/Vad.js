@@ -9,7 +9,6 @@ var MIN_ENERGY_THRESHOLD = 0.02;
 var LEADING_SILENCE_SEC = 0.5; // secs
 var TRAILING_SILENCE_SEC = 0.3; // little less because of lag in VAD detecting end of speech
 
-
 // emscripten required variables
 var Module = {};
 Module.noInitialRun = true;
@@ -21,7 +20,7 @@ var process_data;
 /**
 * Constructor
 */
-function Vad(sampleRate) {
+function Vad(sampleRate, os_family) {
     this.sampleRate = sampleRate;
 
     this.sizeBufferVad = 480;
@@ -30,11 +29,14 @@ function Vad(sampleRate) {
 
     //this.minvoice = 250;//  original
     //const maxsilence = 1500; //  original
-    //this.maxsilence = 250; // works well with linux; not so well on Android 4.4.2
 
-    this.minvoice = 250; // since only need first occurence of speech, can be a little longer
-
-    this.maxsilence = 250; // be less aggressivin silence detection on Android????
+    if (os_family === "Android" ) {
+      this.maxsilence = 1000; // use more aggressive silence detection on Android
+      this.minvoice = 125; // since only need first occurence of speech, can be a little longer
+    } else {
+      this.maxsilence = 250; // works well with linux; not so well on Android 4.4.2
+      this.minvoice = 250; // since only need first occurence of speech, can be a little longer
+    }
 
     this.finishedvoice = false;
     this.samplesvoice = 0 ;
@@ -52,7 +54,7 @@ function Vad(sampleRate) {
     this.speechend_index = 0;
 
     this.leading_silence_buffer = 0;
-    this.trailing_silence_buffe = 0;
+    this.trailing_silence_buffer = 0;
 
     this.max_energy = 0;
     this.min_energy = 1.0;
