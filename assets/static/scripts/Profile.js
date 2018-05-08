@@ -153,7 +153,7 @@ Profile.prototype.toHash = function () {
     profile_hash["ua_string"] = $("#ua_string").val();
     // see http://www.whatsmyua.info/
     // https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
-    if ($('#ua_string').val() !== page_localized_yes) {
+    if ($('#ua_string').val() === page_localized_yes) {
       profile_hash["user_agent_string"] = platform.ua;
       // attempts to parse the ua string
       profile_hash["os"] = platform.os.toString();
