@@ -66,10 +66,10 @@ function Vad(sampleRate, low_powered_device) {
 
     main();
 
- * VAD configs:
- *      - mode      : Aggressiveness degree
- *                    0 (High quality) - 3 (Highly aggressive)
-    var mode = 0;
+// * VAD configs:
+// *      - mode      : Aggressiveness degree
+// *                    0 (High quality) - 3 (Highly aggressive)
+    var mode = 3;
     var result = setmode(mode);
     console.log('WebRTC VAD setmode(' + mode + ')=' + result);
 }
@@ -150,9 +150,11 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
       let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
       dataHeap.set(new Uint8Array(buffer_pcm.buffer));
 
-      // Call function and get result
       //         int process_data(int16_t  data[], int n_samples, int samplerate, int val0, int val100, int val2000){
+      // since chrome/FF default sample rate on Linux is 44100, but VAD does 
+      // not support 44100... hardocde 48000 - works OK
       let result = process_data(dataHeap.byteOffset, buffer_pcm.length, 48000, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
+      //let result = process_data(dataHeap.byteOffset, buffer_pcm.length, self.sampleRate, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
 
       // Free memory
       _free(dataHeap.byteOffset);

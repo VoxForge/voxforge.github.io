@@ -127,7 +127,6 @@ function Audio (vad, low_powered_device) {
     // 'self' used to save current context when calling function references
     var self = this;
 
-    // object attributes
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphoneLevel = null;
     this.processor = undefined;  
@@ -265,7 +264,7 @@ function Audio (vad, low_powered_device) {
       * Android's higher buffer value causing problems with WebRTC VAD.  Need to 
       * manually set.
       */
-      if ( this.vad && this.low_powered_device ) {
+      if ( self.vad && self.low_powered_device ) {
         self.processor = self.audioCtx.createScriptProcessor(8192 , 1, 1);
         console.warn('resetting bufferSize to 8192 sample frames, for VAD support');
       } else {

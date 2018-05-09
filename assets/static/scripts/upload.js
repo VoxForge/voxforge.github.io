@@ -321,7 +321,9 @@ function upload( when_audio_processing_completed_func ) {
 // Handler for messages coming from the service worker
 */
 navigator.serviceWorker.addEventListener('message', function(event){
-  console.log("*** serviceworker says: " + event.data.message);
+  if (event.data.message) {
+    console.log("serviceworker says: " + event.data.message);
+  }
   processWorkerEventMessage(page_alert_message.serviceworker, event);
 });
 

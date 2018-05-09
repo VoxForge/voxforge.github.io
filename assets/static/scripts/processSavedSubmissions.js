@@ -98,8 +98,8 @@ function processSavedSubmissions() {
             }
         })
         .catch(function (error) {
-          console.warn('upload of saved submission failed for: ' + saved_submission_name + ' ...will try again on next upload attempt');
-          reject('Request failed', error);
+          //console.warn('upload of saved submission failed for: ' + saved_submission_name + ' ...will try again on next upload attempt');
+          reject('Upload request failed for: ' + saved_submission_name + ' ', error);
         });
 
       });
@@ -128,6 +128,7 @@ function processSavedSubmissions() {
     * it and if successful, removes the submission from storage
     */
     return new Promise(function (resolve, reject) {
+      // check to see if any submissions saved in indexedDB
       submissionCache.length()
       .then(function(numberOfKeys) {
         console.info('number of submissions saved in browser storage: ' + numberOfKeys);
@@ -143,6 +144,7 @@ function processSavedSubmissions() {
         reject(err);
       });
 
+      // process submissions saved in indexedDB
       submissionCache.keys()
       .then(function(savedSubmissionArray) {
           var uploadList = [];
@@ -168,7 +170,10 @@ function processSavedSubmissions() {
           })
           .catch(function(err) {
              console.error('processSavedSubmissions err: ' + err);
-             reject(uploadList);
+             //   reject(uploadList);
+             localforage.keys().then(function(keys) {
+               reject(keys);
+             });
           });
 
       })

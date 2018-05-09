@@ -14,7 +14,7 @@ $UPLOADFOLDER = './submissions/'; // testing
 //!!!!!!
 
 // max upload size should be a function of the number of prompts
-$MAX_UPLOAD_SIZE = 200 * 1024 * 1024; //100 megabytes
+$MAX_UPLOAD_SIZE = 200 * 1024 * 1024; //200 megabytes
 $MAX_UNZIPPED_SIZE = 150 * 1024 * 1024; // 150 megabytes
 
 header("Access-Control-Allow-Origin: $ALLOWEDURL");
@@ -83,7 +83,7 @@ function errorChecking($file_error, $file_size, $tmp_name) {
       !isset($file_error) ||
       is_array($file_error)
     ) {
-      throw new RuntimeException('Invalid parameters.');
+     throw new RuntimeException('Invalid parameters.');
     }
 
     // Check $_FILES['file']['error'] value.
@@ -93,6 +93,13 @@ function errorChecking($file_error, $file_size, $tmp_name) {
       case UPLOAD_ERR_NO_FILE:
           throw new RuntimeException('No file sent.');
       case UPLOAD_ERR_INI_SIZE:
+    // see: php.ini 
+    // upload_max_filesize = 500M
+    // post_max_size = 200M
+    // phpinfo.php to confirm apache2 is picking this up
+    // e.g. https://jekyll_voxforge.org/phpinfo.php
+    // apache2 uses /etc/php/7.2/apache2/php.ini by default
+    // $ sudo ln  /home/daddy/git/voxforge.github.io /etc/php/7.2/apache2/php.ini
       case UPLOAD_ERR_FORM_SIZE:
           throw new RuntimeException('Exceeded filesize limit.');
       default:

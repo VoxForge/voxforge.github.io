@@ -21,7 +21,7 @@ self.onmessage = function(event) {
       if ( vad ) {
           vad_obj = new Vad(data.sampleRate, data.low_powered_device);
       } else {
-          console.log('VAD disabled');
+         console.log('VAD disabled');
       }
       break;
 
