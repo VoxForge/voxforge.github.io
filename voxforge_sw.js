@@ -117,6 +117,14 @@ upload of submission to VoxForge server:
 If it fulfills, the sync is complete. 
 If it fails, another sync will be scheduled to retry. 
 Retry syncs also wait for connectivity, and employ an exponential back-off.
+
+* .catch function:
+        // TODO causes weird behaviour in Chrome Android 4.4.2: rather than
+        // firing off as soon as internet disconnected after user tries to 
+        // upload to server, it queues and fires just before actual upload
+        // occurs after internet is re-connected????
+        // Chrome on LInux fires this off as soon as user tries to upload
+        // when there is no Internet connection...
 */
 self.addEventListener('sync', function(event) {
   if (event.tag == 'voxforgeSync') {
@@ -129,17 +137,14 @@ self.addEventListener('sync', function(event) {
     // https://googlechrome.github.io/samples/service-worker/post-message/index.html
     event.waitUntil(
       processSavedSubmissions()
-      .then(function(uploadList) {
-        sendMessage("uploaded", uploadList);
+      //.then(function(uploadList) {
+      //  sendMessage("uploaded", uploadList);
+      //})
+      .then(function(returnObj) {
+        sendMessage(returnObj);
       })
-      .catch(function(uploadList) {
-        // TODO causes weird behaviour in Chrome Android 4.4.2: rather than
-        // firing off as soon as internet disconnected after user tries to 
-        // upload to server, it queues and fires just before actual upload
-        // occurs after internet is re-connected????
-        // Chrome on LInux fires this off as soon as user tries to upload
-        // when there is no Internet connection...
-        sendMessage("savedtoLocalStorage", uploadList);
+      .catch(function(returnObj) {
+        sendMessage(returnObj);
       })
     ); 
 
@@ -160,13 +165,18 @@ self.addEventListener('sync', function(event) {
 //https://developer.mozilla.org/en-US/docs/Web/API/Client/postMessage
 //https://serviceworke.rs/message-relay_service-worker_doc.html
 */
-function sendMessage(status, submissionList) {
+//function sendMessage(status, returnObj) {
+function sendMessage(returnObj) {
   self.clients.matchAll({includeUncontrolled: true, type: 'window'})
   .then(function(clientList) {
     clientList.forEach(function(client) {
+      //client.postMessage({
+      //  status: status,
+      //  submissionList: submissionList
+      //});
       client.postMessage({
-        status: status,
-        submissionList: submissionList
+        status: returnObj.status,
+        returnObj: returnObj,
       });
     });
   });

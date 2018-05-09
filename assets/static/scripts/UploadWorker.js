@@ -48,16 +48,28 @@ self.onmessage = function(event) {
 */
 function upload(self, data) {
     processSavedSubmissions()
-    .then((uploadList) => {
+    //.then((uploadList) => {
+    //  self.postMessage({
+     //   status: 'AllUploaded',
+    //    submissionList: uploadList,
+    //  });
+    //})
+    //.catch(function(uploadList) {
+    //  self.postMessage({
+    //    status: 'savedtoLocalStorage',
+    //    submissionList: uploadList,
+    //  });
+    //})
+    .then((returnObj) => {
       self.postMessage({
-        status: 'uploaded',
-        submissionList: uploadList,
+        status: returnObj.status,
+        returnObj: returnObj,
       });
     })
-    .catch(function(uploadList) {
-      self.postMessage({
-        status: 'savedtoLocalStorage',
-        submissionList: uploadList,
+    .catch(function(returnObj) {
+       self.postMessage({
+        status: returnObj.status,
+        returnObj: returnObj,
       });
     })
 }

@@ -331,32 +331,57 @@ navigator.serviceWorker.addEventListener('message', function(event){
 * process messages from service worker or web worker
 */
 function processWorkerEventMessage(workertype, event) {
-    var status = event.data.status;
+    var returnObj = event.data.returnObj;
 
-    if (status === "uploaded" || status === "savedtoLocalStorage") {
-      var submissionList = event.data.submissionList;
-      var submissionText = (submissionList.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
-
-      if (status === "uploaded") {
-        var m = submissionList.length + " " + 
+    switch (event.data.status) {
+      case 'AllUploaded':
+        var filesUploaded = returnObj.filesUploaded;
+        var submissionText = (filesUploaded.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
+        var m = filesUploaded.length + " " + 
                 submissionText + " " +
-                page_alert_message.uploaded_message  + " (" + 
-                workertype + "):\n\n    " +
-                submissionList.join("\n    ");
-        console.info(m);
+                page_alert_message.uploaded_message  + "\n    " +
+                filesUploaded.join("\n    ");
+        console.info(workertype + ": " + m);
         window.alert(m);
+        break;
 
-      } else if (status === "savedtoLocalStorage") {
+      case 'noneUploaded': // files saved to browser storage
+        var filesNotUploaded =  returnObj.filesNotUploaded;
+        var submissionText = (filesNotUploaded.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
         var m = page_alert_message.localstorage_message + "\n" +
-                page_alert_message.browsercontains_message.trim() + " " + // remove newline
-                submissionList.length + " " + 
-                submissionText + ":\n    " + 
-                submissionList.join("\n    "); 
-        console.info(m);
+              page_alert_message.browsercontains_message.trim() + " " + // remove newline
+              filesNotUploaded.length + " " + 
+              submissionText + ":\n    " + 
+              filesNotUploaded.join("\n    "); 
+        console.info(workertype + ": " + m);
         window.alert(m);
-      }
-    } else {
-      console.error('message from upload worker: transfer error: ' +
-                    status + " " + event.data.message);
-    }
+        break;
+
+      case 'partialUpload':
+        var filesNotUploaded = returnObj.filesNotUploaded;
+        var filesUploaded = returnObj.filesUploaded;
+        var savedText = (filesNotUploaded.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
+        var uploadedText = (filesNotUploaded.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
+
+        var m = "Partial Upload:\n" +
+              filesUploaded.length + " " + 
+              savedText + " " +
+              page_alert_message.uploaded_message  + "\n    " +
+              filesUploaded.join("\n    ") +
+              "\n========================\n" +
+              page_alert_message.browsercontains_message.trim() + " " + // remove newline
+              filesNotUploaded.length + " " + 
+              uploadedText + ":\n    " + 
+              filesNotUploaded.join("\n    ") +
+              "\ncheck your console messages for more information on why it " +
+              "did not download";
+        console.info(workertype + ": " + m);
+        window.alert(m);
+        break;
+
+      default:
+        console.error('message from upload worker: transfer error: ' +
+                      event.data.status + " " + event.data.message);
+  }
 }
+

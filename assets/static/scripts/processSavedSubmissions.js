@@ -39,6 +39,10 @@ var submissionCache = localforage.createInstance({
 * if saved submissions exists, get then upload the submission 
 */
 function processSavedSubmissions() {
+    var uploadList = [];
+    var j = 0;
+    var filesWereUploaded = false;
+
     /**
     * get the submission object from browser storage
     *
@@ -90,6 +94,10 @@ function processSavedSubmissions() {
             if (response_text === "submission uploaded successfully." ) {
               //console.info("transferComplete: upload to VoxForge server successfully completed for: " + saved_submission_name);
 
+              uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
+              j++;
+              filesWereUploaded = true;
+
               // resolve sends this as parameter to next promise in chain
               resolve(saved_submission_name);
 
@@ -99,7 +107,7 @@ function processSavedSubmissions() {
         })
         .catch(function (error) {
           //console.warn('upload of saved submission failed for: ' + saved_submission_name + ' ...will try again on next upload attempt');
-          reject('Upload request failed for: ' + saved_submission_name + ' ', error);
+          reject('Upload request failed for: ' + saved_submission_name.replace(/\[.*\]/gi, '') + ' ', error);
         });
 
       });
@@ -147,15 +155,10 @@ function processSavedSubmissions() {
       // process submissions saved in indexedDB
       submissionCache.keys()
       .then(function(savedSubmissionArray) {
-          var uploadList = [];
-          var j = 0;
-
           // https://stackoverflow.com/questions/31426740/how-to-return-many-promises-in-a-loop-and-wait-for-them-all-to-do-other-stuff?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
           var promises = [];
           for (var i = 0; i < savedSubmissionArray.length; i++) {
             var saved_submission_name = savedSubmissionArray[i];
-            uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
-            j++;
             promises.push(
               getSavedSubmission( saved_submission_name )
               .then(uploadSubmission)
@@ -165,14 +168,38 @@ function processSavedSubmissions() {
 
           // wait for all async promises to complete
           Promise.all(promises) 
-          .then(function() { 
-            resolve(uploadList);
+          .then(function() { // allUploaded
+            //resolve(uploadList);
+            var returnObj = {
+              status: 'AllUploaded',
+              filesUploaded: uploadList,
+            };
+            resolve(returnObj);
           })
           .catch(function(err) {
-             console.error('processSavedSubmissions err: ' + err);
+             console.warn('processSavedSubmissions one or more submissions not uploaded: ' + err);
              //   reject(uploadList);
-             localforage.keys().then(function(keys) {
-               reject(keys);
+             // TODO if one submission of 2 or more submissions does not upload
+             // for some reason (e.g. file too big), then user only gets message 
+             // that failed upload submission is saved to browser storage, but
+             // receives no message of the successfull uploads or why one
+             // one particular submission was saved rather than uploaded...
+             // distinguish between allUpload; partialUpload; noUpload
+             submissionCache.keys().then(function(filesNotUploaded) {
+               if ( filesWereUploaded ) { // partialUpload
+                   var returnObj = {
+                     status: 'partialUpload',
+                     filesNotUploaded: filesNotUploaded,
+                     filesUploaded: uploadList,
+                   };
+                   reject(returnObj);
+                } else { // noneUploaded
+                   var returnObj = {
+                     status: 'noneUploaded',
+                     filesNotUploaded: filesNotUploaded,
+                   }
+                   reject(returnObj);
+                }
              });
           });
 

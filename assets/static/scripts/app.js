@@ -271,7 +271,6 @@ function setUpFSM() {
           // early and cut off the end of their recording.
           setTimeout( function () {
             var elasped = Date.now() - start;
-            console.log("stop transition called; millesconds elapsed: " + elasped );
             fsm.stopclicked(); 
           }, RECORDING_STOP_DELAY);
     }
