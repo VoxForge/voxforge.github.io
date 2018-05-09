@@ -207,7 +207,6 @@ function Prompts() {
     validate_Readmd_file();
 
     var random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
-    var random_prompt_file = 0 // TEST
 
     console.log("prompt file id: " + page_prompt_list_files[random_prompt_file].id + 
                 " (prompt file array index: " + random_prompt_file + ")");
