@@ -17,6 +17,7 @@ $UPLOADFOLDER = './submissions/'; // testing
 // dev location of apache2 PHP7 configs: /etc/php/7.2/apache2/PHP.ini
 // post_max_size = 100M
 // upload_max_filesize = 100m
+// if change php.ini, restart apache2 for it to take effect
 // TODO max upload size should be a function of the number of prompts
 // but also need to change php.ini configs...
 $MAX_UPLOAD_SIZE = 100 * 1024 * 1024; //100 megabytes
