@@ -379,6 +379,7 @@ function processWorkerEventMessage(workertype, returnObj) {
               uploadedText + ":\n" + 
               "    " + filesNotUploaded.join("\n    ");
         if (returnObj.err) {
+            m = m + "\n========================\n" +
             m = m + "\n\nserver error message: " + returnObj.err;
         }
 
