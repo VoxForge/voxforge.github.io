@@ -13,9 +13,14 @@ $ALLOWEDURL = "https://jekyll_voxforge.org"; // testing
 $UPLOADFOLDER = './submissions/'; // testing
 //!!!!!!
 
-// max upload size should be a function of the number of prompts
-$MAX_UPLOAD_SIZE = 200 * 1024 * 1024; //200 megabytes
-$MAX_UNZIPPED_SIZE = 150 * 1024 * 1024; // 150 megabytes
+// see: https://jekyll_voxforge.org/phpinfo.php
+// dev location of apache2 PHP7 configs: /etc/php/7.2/apache2/PHP.ini
+// post_max_size = 100M
+// upload_max_filesize = 100m
+// TODO max upload size should be a function of the number of prompts
+// but also need to change php.ini configs...
+$MAX_UPLOAD_SIZE = 100 * 1024 * 1024; //100 megabytes
+$MAX_UNZIPPED_SIZE = 100 * 1024 * 1024; // 100 megabytes
 
 header("Access-Control-Allow-Origin: $ALLOWEDURL");
 header("Content-Type: multipart/form-data");
