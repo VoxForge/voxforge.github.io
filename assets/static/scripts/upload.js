@@ -302,8 +302,10 @@ function upload( when_audio_processing_completed_func ) {
             });
 
             upload_worker.onmessage = function webWorkerUploadDone(event) { 
-              console.log("*** webworker says: " + event.data.message);
-              processWorkerEventMessage(page_alert_message.webworker, event);
+              var returnObj = event.data;
+              console.log("*** webworker says: " + returnObj.status);
+
+              processWorkerEventMessage(page_alert_message.webworker, returnObj);
             };
         }
 
@@ -321,19 +323,17 @@ function upload( when_audio_processing_completed_func ) {
 // Handler for messages coming from the service worker
 */
 navigator.serviceWorker.addEventListener('message', function(event){
-  if (event.data.message) {
-    console.log("serviceworker says: " + event.data.message);
-  }
-  processWorkerEventMessage(page_alert_message.serviceworker, event);
+  var returnObj = event.data;
+  console.log("serviceworker says: " + returnObj.status);
+
+  processWorkerEventMessage(page_alert_message.serviceworker, returnObj);
 });
 
 /** 
 * process messages from service worker or web worker
 */
-function processWorkerEventMessage(workertype, event) {
-    var returnObj = event.data.returnObj;
-
-    switch (event.data.status) {
+function processWorkerEventMessage(workertype, returnObj) {
+    switch (returnObj.status) {
       case 'AllUploaded':
         var filesUploaded = returnObj.filesUploaded;
         var submissionText = (filesUploaded.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
@@ -353,6 +353,11 @@ function processWorkerEventMessage(workertype, event) {
               filesNotUploaded.length + " " + 
               submissionText + ":\n    " + 
               filesNotUploaded.join("\n    "); 
+        if (returnObj.err) {
+            m = m + "\n========================\n" +
+            m = m + "\n\nserver error message: " + returnObj.err;
+        }
+
         console.info(workertype + ": " + m);
         window.alert(m);
         break;
@@ -363,25 +368,27 @@ function processWorkerEventMessage(workertype, event) {
         var savedText = (filesNotUploaded.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
         var uploadedText = (filesNotUploaded.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
 
-        var m = "Partial Upload:\n" +
+        var m = "Partial Upload:\n\n" +
               filesUploaded.length + " " + 
               savedText + " " +
-              page_alert_message.uploaded_message  + "\n    " +
-              filesUploaded.join("\n    ") +
+              page_alert_message.uploaded_message + 
+              "    " + filesUploaded.join("\n    ") +
               "\n========================\n" +
-              page_alert_message.browsercontains_message.trim() + " " + // remove newline
+              page_alert_message.browsercontains_message.trim() + " " + // removes newline
               filesNotUploaded.length + " " + 
-              uploadedText + ":\n    " + 
-              filesNotUploaded.join("\n    ") +
-              "\ncheck your console messages for more information on why it " +
-              "did not download";
+              uploadedText + ":\n" + 
+              "    " + filesNotUploaded.join("\n    ");
+        if (returnObj.err) {
+            m = m + "\n\nserver error message: " + returnObj.err;
+        }
+
         console.info(workertype + ": " + m);
         window.alert(m);
         break;
 
       default:
         console.error('message from upload worker: transfer error: ' +
-                      event.data.status + " " + event.data.message);
+                      returnObj.status + " " + returnObj.message);
   }
 }
 

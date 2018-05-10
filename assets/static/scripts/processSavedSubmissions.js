@@ -40,8 +40,9 @@ var submissionCache = localforage.createInstance({
 */
 function processSavedSubmissions() {
     var uploadList = [];
-    var j = 0;
-    var filesWereUploaded = false;
+    var noUploadList = [];
+    var uploadIdx = 0;
+    var noUploadIdx = 0;
 
     /**
     * get the submission object from browser storage
@@ -69,6 +70,18 @@ function processSavedSubmissions() {
     * a networking error occurs, such a DNS lookup failure.
     * see: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/
     * research: https://medium.com/@shahata/why-i-wont-be-using-fetch-api-in-my-apps-6900e6c6fe78
+    *
+    * also may fail if file is greater than settings in php.ini on server:
+        server error message: Request failed - invalid server response: 
+        <br />
+        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>56</b><br />
+        <br />
+        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>59</b><br />
+        <br />
+        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>60</b><br />
+        <br />
+        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>61</b><br />
+        Invalid parameters.
     */
     function uploadSubmission(data) {
       var [saved_submission_name, jsonOnject, uploadURL] = data;
@@ -92,22 +105,28 @@ function processSavedSubmissions() {
         .then((response_text) => {
             console.log('post URL ' +  uploadURL);
             if (response_text === "submission uploaded successfully." ) {
-              //console.info("transferComplete: upload to VoxForge server successfully completed for: " + saved_submission_name);
+              console.info("transferComplete: upload to VoxForge server successfully completed for: " + saved_submission_name);
 
-              uploadList[j] = saved_submission_name.replace(/\[.*\]/gi, '');
-              j++;
-              filesWereUploaded = true;
+              uploadList[uploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
 
               // resolve sends this as parameter to next promise in chain
               resolve(saved_submission_name);
 
             } else {
-              reject('Request failed - server configuration issues', response);
+              noUploadList[noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
+
+              var m = 'Request failed - invalid server response: \n' +  response_text;
+              console.error(m);
+              reject(m); // skips all inner catches to go to outermost catch
             }
         })
-        .catch(function (error) {
-          //console.warn('upload of saved submission failed for: ' + saved_submission_name + ' ...will try again on next upload attempt');
-          reject('Upload request failed for: ' + saved_submission_name.replace(/\[.*\]/gi, '') + ' ', error);
+        .catch(function (err) {
+          noUploadList[noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
+          // reject message does not show up anywhere???
+          var m = 'Upload request failed for: ' + saved_submission_name.replace(/\[.*\]/gi, '') + '\n\n' +
+                   '...will try again on next upload attempt.  error: ' + err;
+          console.error(m);
+          reject(m);
         });
 
       });
@@ -120,13 +139,15 @@ function processSavedSubmissions() {
       return new Promise(function (resolve, reject) {
         // only remove saved submission if upload completed successfully
         submissionCache.removeItem(saved_submission_name).then(function() {
-          //console.log('Backup submission removed from browser: ' + saved_submission_name);
+          console.log('Backup submission removed from browser: ' + saved_submission_name);
 
           resolve(saved_submission_name);
 
         })
         .catch(function(err) {
-          reject('Error: cannot remove saved submission: ' + saved_submission_name + ' err: ' + err);
+          var m = 'Error: cannot remove saved submission: ' + saved_submission_name + ' err: ' + err;
+          console.error(m);
+          reject(m);
         });  
       });
     }
@@ -139,7 +160,7 @@ function processSavedSubmissions() {
       // check to see if any submissions saved in indexedDB
       submissionCache.length()
       .then(function(numberOfKeys) {
-        console.info('number of submissions saved in browser storage: ' + numberOfKeys);
+        console.log('number of submissions saved in browser storage: ' + numberOfKeys);
 
         // TODO since later loop iterates through all saved submissions, this 
         // prevents service worker from turning into a zombie thread 
@@ -149,7 +170,9 @@ function processSavedSubmissions() {
         }
       })
       .catch(function(err) {
-        reject(err);
+        var m = 'submissionCache - IndexedDB error: ' + err;
+        console.error(m);
+        reject(m);
       });
 
       // process submissions saved in indexedDB
@@ -169,7 +192,6 @@ function processSavedSubmissions() {
           // wait for all async promises to complete
           Promise.all(promises) 
           .then(function() { // allUploaded
-            //resolve(uploadList);
             var returnObj = {
               status: 'AllUploaded',
               filesUploaded: uploadList,
@@ -185,27 +207,26 @@ function processSavedSubmissions() {
              // receives no message of the successfull uploads or why one
              // one particular submission was saved rather than uploaded...
              // distinguish between allUpload; partialUpload; noUpload
-             submissionCache.keys().then(function(filesNotUploaded) {
-               var list = [];
-               for (var i = 0; i < filesNotUploaded.length; i++) {
-                  list[i] = filesNotUploaded[i].replace(/\[.*\]/gi, '')
-               }
-
-               if ( filesWereUploaded.length > 0 ) { // partialUpload
-                   var returnObj = {
-                     status: 'partialUpload',
-                     filesNotUploaded: list,
-                     filesUploaded: uploadList,
-                   };
-                   reject(returnObj);
-                } else { // noneUploaded
-                   var returnObj = {
-                     status: 'noneUploaded',
-                     filesNotUploaded: list,
-                   }
-                   reject(returnObj);
-                }
-             });
+             if ( uploadList.length > 0 ) { // partialUpload
+                 var returnObj = {
+                   status: 'partialUpload',
+                   filesNotUploaded: noUploadList,
+                   filesUploaded: uploadList,
+                   err: err,
+                 };
+                 reject(returnObj);
+              } else if ( noUploadList.length > 0 ) { 
+                 var returnObj = {
+                   status: 'noneUploaded',
+                   filesNotUploaded: noUploadList,
+                   err: err,
+                 }
+                 reject(returnObj);
+              } else {
+                var m = 'no submissions in uploadList or noUploadList - something is wrong';
+                console.error(m);
+                reject(m);
+              }
           });
 
       })

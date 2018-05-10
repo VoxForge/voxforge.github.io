@@ -174,10 +174,7 @@ function sendMessage(returnObj) {
       //  status: status,
       //  submissionList: submissionList
       //});
-      client.postMessage({
-        status: returnObj.status,
-        returnObj: returnObj,
-      });
+      client.postMessage(returnObj);
     });
   });
 }

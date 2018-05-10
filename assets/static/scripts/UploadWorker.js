@@ -61,15 +61,9 @@ function upload(self, data) {
     //  });
     //})
     .then((returnObj) => {
-      self.postMessage({
-        status: returnObj.status,
-        returnObj: returnObj,
-      });
+      self.postMessage(returnObj);
     })
     .catch(function(returnObj) {
-       self.postMessage({
-        status: returnObj.status,
-        returnObj: returnObj,
-      });
+       self.postMessage(returnObj);
     })
 }

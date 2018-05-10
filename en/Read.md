@@ -278,11 +278,11 @@ alert_message:
   submission_singular: submission
   submission_plural: submissions
   localstorage_message: >
-    No Internet Connection.  Submission saved to browser storage.
+    Submission saved to browser storage.
   browsercontains_message: >
     Your browser storage contains
   uploaded_message: >
-    uploaded to VoxForge Server
+    uploaded to VoxForge Server:
   audio_too_loud: >
     Your recording is too loud!  </br>Please reduce your microphone volume, delete this 
     recording and re-record the prompt
