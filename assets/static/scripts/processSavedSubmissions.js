@@ -186,17 +186,22 @@ function processSavedSubmissions() {
              // one particular submission was saved rather than uploaded...
              // distinguish between allUpload; partialUpload; noUpload
              submissionCache.keys().then(function(filesNotUploaded) {
-               if ( filesWereUploaded ) { // partialUpload
+               var list = [];
+               for (var i = 0; i < filesNotUploaded.length; i++) {
+                  list[i] = filesNotUploaded[i].replace(/\[.*\]/gi, '')
+               }
+
+               if ( filesWereUploaded.length > 0 ) { // partialUpload
                    var returnObj = {
                      status: 'partialUpload',
-                     filesNotUploaded: filesNotUploaded,
+                     filesNotUploaded: list,
                      filesUploaded: uploadList,
                    };
                    reject(returnObj);
                 } else { // noneUploaded
                    var returnObj = {
                      status: 'noneUploaded',
-                     filesNotUploaded: filesNotUploaded,
+                     filesNotUploaded: list,
                    }
                    reject(returnObj);
                 }

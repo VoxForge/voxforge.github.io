@@ -278,7 +278,7 @@ alert_message:
   submission_singular: submission
   submission_plural: submissions
   localstorage_message: >
-    Submission saved to browser storage.
+    No Internet Connection.  Submission saved to browser storage.
   browsercontains_message: >
     Your browser storage contains
   uploaded_message: >
