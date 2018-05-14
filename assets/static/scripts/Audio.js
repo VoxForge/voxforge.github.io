@@ -120,9 +120,11 @@ var wavesurfer = [];
 /**
 * Class definition
 */
-function Audio (vad, low_powered_device) {
+function Audio (scriptProcessor_bufferSize, vad, maxsilence, minvoice) {
     this.vad = vad;
-    this.low_powered_device = low_powered_device;
+    this.scriptProcessor_bufferSize = scriptProcessor_bufferSize;
+    this.maxsilence = maxsilence;
+    this.minvoice = minvoice;
 
     // 'self' used to save current context when calling function references
     var self = this;
@@ -265,17 +267,8 @@ function Audio (vad, low_powered_device) {
       16384, so set Android 4.4.2 to 8192
       TODO test with with other versions od Android
 */
-      /**
-      * Android's higher buffer value causing problems with WebRTC VAD.  Need to 
-      * manually set.
-      */
-      if ( self.vad && self.low_powered_device ) {
-        self.processor = self.audioCtx.createScriptProcessor(8192 , 1, 1);
-        console.warn('resetting bufferSize to 8192 sample frames, for VAD support');
-      } else {
-        // mono input and output
-        self.processor = self.audioCtx.createScriptProcessor(undefined , 1, 1);
-      }
+
+      self.processor = self.audioCtx.createScriptProcessor(this.scriptProcessor_bufferSize , 1, 1);
 
       self.mediaStreamOutput = self.audioCtx.destination;
 
@@ -330,7 +323,8 @@ Audio.prototype.record = function () {
     audioworker.postMessage({
       command: 'start',
       vad: this.vad,
-      low_powered_device: this.low_powered_device,
+      maxsilence: this.maxsilence,
+      minvoice: this.minvoice,
       sampleRate: this.audioCtx.sampleRate,
     });
 

@@ -32,7 +32,7 @@ self.onmessage = function(event) {
       encoder = new WavAudioEncoder(data.sampleRate);
       vad = data.vad;
       if ( vad ) {
-          vad_obj = new Vad(data.sampleRate, data.low_powered_device);
+          vad_obj = new Vad(data.sampleRate, data.maxsilence, data.minvoice);
       } else {
          console.log('VAD disabled');
       }

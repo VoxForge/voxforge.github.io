@@ -54,7 +54,7 @@ var uploadURL = 'https://upload.voxforge1.org'; // prod
 // !!!!!!
 // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
 // /etc/hosts or on local DNS server;
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // !!!!!!
 
@@ -80,21 +80,34 @@ if( ! window.FormData )
 }
 
 // TODO Edge does not yet support FormData, even though it says it does... 
-
 if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
 {
   window.alert( page_browser_support.no_edgeSupport_message );         
 }
 
 var vad = true;
-var low_powered_device = false;
+var scriptProcessor_bufferSize = undefined; // let device decide appropriate buffer size
+//vad_maxsilence = 1500; //  original
+//vad_minvoice = 250;//  original
+var vad_maxsilence = 250; // works well with linux; not so well on Android 4.4.2
+var vad_minvoice = 250; 
+// Note: cannot change device sample rate from browser...
 if (platform.os.family === "Android" ) {
+  // Android's higher buffer value causing problems with WebRTC VAD.  Need to 
+  // manually set.
+  // The buffer size in units of sample-frames. If specified, the bufferSize 
+  // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
+  // Android 4.4.2 has default buffer size of: 16384
+  scriptProcessor_bufferSize = 8192;
+  console.warn('resetting bufferSize to ' + scriptProcessor_bufferSize + 
+               ' sample-frames, for VAD support');
+  vad_maxsilence = 1000; // use more aggressive silence detection on Android
+  vad_minvoice = 125; // use shorter min voice on Android
+
   if (platform.os.version && parseFloat(platform.os.version) < 5) {
     vad = false;
     console.warn("low powered device - disabling automatic silence detection (VAD)");
-  } else {
-    low_powered_device = true;
-  }
+  } 
 }
 
 // #############################################################################
@@ -118,7 +131,7 @@ var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400;
 var prompts = new Prompts();
 var view = new View();
 var profile = new Profile(view.update);
-var audio = new Audio(vad, low_powered_device);
+var audio = new Audio(scriptProcessor_bufferSize, vad, vad_maxsilence, vad_minvoice);
 
 // finite state machine object
 var fsm = setUpFSM();

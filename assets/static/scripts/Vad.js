@@ -26,6 +26,10 @@ var MIN_ENERGY_THRESHOLD = 0.02;
 var LEADING_SILENCE_SEC = 0.5; // secs
 var TRAILING_SILENCE_SEC = 0.3; // little less because of lag in VAD detecting end of speech
 
+// since chrome/FF default sample rate on Linux is 44100, but VAD does 
+// not support 44100... hardocde 48000 - works OK
+var VAD_SAMPLE_RATE = 48000;
+
 // emscripten required variables
 var Module = {};
 Module.noInitialRun = true;
@@ -37,8 +41,10 @@ var process_data;
 /**
 * Constructor
 */
-function Vad(sampleRate, low_powered_device) {
+function Vad(sampleRate, maxsilence, minvoice) {
     this.sampleRate = sampleRate;
+    this.maxsilence = maxsilence;
+    this.minvoice = minvoice;
 
     this.sizeBufferVad = 480;
     this.leftovers = 0;
@@ -46,14 +52,6 @@ function Vad(sampleRate, low_powered_device) {
 
     //const maxsilence = 1500; //  original
     //this.minvoice = 250;//  original
-
-    if (low_powered_device) {
-      this.maxsilence = 1000; // use more aggressive silence detection on Android
-      this.minvoice = 125; 
-    } else {
-      this.maxsilence = 250; // works well with linux; not so well on Android 4.4.2
-      this.minvoice = 250; // since only need first occurence of speech, can be a little longer
-    }
 
     this.finishedvoice = false;
     this.samplesvoice = 0 ;
@@ -168,10 +166,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
       dataHeap.set(new Uint8Array(buffer_pcm.buffer));
 
       //         int process_data(int16_t  data[], int n_samples, int samplerate, int val0, int val100, int val2000){
-      // since chrome/FF default sample rate on Linux is 44100, but VAD does 
-      // not support 44100... hardocde 48000 - works OK
-      let result = process_data(dataHeap.byteOffset, buffer_pcm.length, 48000, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
-      //let result = process_data(dataHeap.byteOffset, buffer_pcm.length, self.sampleRate, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
+      let result = process_data(dataHeap.byteOffset, buffer_pcm.length, VAD_SAMPLE_RATE, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
 
       // Free memory
       _free(dataHeap.byteOffset);
