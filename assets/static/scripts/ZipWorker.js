@@ -83,7 +83,8 @@ function createZipFile(self, data) {
   }
 
   /* inner function: create zip file in memory and puts it in a blob object */
-  zip.generateAsync({type:"blob"}).then(
+  zip.generateAsync({type:"blob"})
+  .then(
     function(zip_file_in_memory) {
       saveSubmissionLocally(data, zip_file_in_memory);
     }
@@ -107,14 +108,16 @@ function saveSubmissionLocally(data, zip_file_in_memory) {
   jsonOnject['timestamp'] = Date.now();
   jsonOnject['file'] = zip_file_in_memory;
 
-  submissionCache.setItem(data.temp_submission_name, jsonOnject).then(function (value) {
+  submissionCache.setItem(data.temp_submission_name, jsonOnject)
+  .then(function (value) {
     console.info('saveSubmissionLocally: saved submission to localforage browser storage using this key: ' + data.temp_submission_name);
 
     self.postMessage({ 
       status: "savedInBrowserStorage"
     });
 
-  }).catch(function(err) {
+  })
+  .catch(function(err) {
       console.error('saveSubmissionLocally failed!', err);
   });
 }

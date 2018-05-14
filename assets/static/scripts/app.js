@@ -80,6 +80,13 @@ if (platform.os.family === "Android" ) {
   vad = false;
 }
 
+// ### GLOBALS #################################################################
+
+//TODO: how to make these global or pass as service worker and web worker parameters
+
+var uploadURL = 'https://upload.voxforge1.org'; // prod
+// !!!!!!
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 
 // #############################################################################
 

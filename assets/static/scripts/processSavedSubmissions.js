@@ -71,7 +71,8 @@ function processSavedSubmissions() {
     * see: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/
     * research: https://medium.com/@shahata/why-i-wont-be-using-fetch-api-in-my-apps-6900e6c6fe78
     *
-    * also may fail if file is greater than settings in php.ini on server:
+    * also may fail if file size is greater than settings in php.ini on server;
+    * if this happens, get this cryptic error:
         server error message: Request failed - invalid server response: 
         <br />
         <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>56</b><br />
@@ -200,13 +201,6 @@ function processSavedSubmissions() {
           })
           .catch(function(err) {
              console.warn('processSavedSubmissions one or more submissions not uploaded: ' + err);
-             //   reject(uploadList);
-             // TODO if one submission of 2 or more submissions does not upload
-             // for some reason (e.g. file too big), then user only gets message 
-             // that failed upload submission is saved to browser storage, but
-             // receives no message of the successfull uploads or why one
-             // one particular submission was saved rather than uploaded...
-             // distinguish between allUpload; partialUpload; noUpload
              if ( uploadList.length > 0 ) { // partialUpload
                  var returnObj = {
                    status: 'partialUpload',
@@ -215,7 +209,7 @@ function processSavedSubmissions() {
                    err: err,
                  };
                  reject(returnObj);
-              } else if ( noUploadList.length > 0 ) { 
+              } else if ( noUploadList.length > 0 ) {  // noUploads
                  var returnObj = {
                    status: 'noneUploaded',
                    filesNotUploaded: noUploadList,

@@ -70,13 +70,17 @@ var urlsToCache = [
   PATH + 'styles/app.css',
   PATH + 'styles/jquery.mobile-1.4.5.css',
 
+  '/voxforge_sw.js',
   '/en/read/',
 ];
 
+
 self.addEventListener('install', function(event) {
+  event.waitUntil(self.skipWaiting()); // Activate worker immediately
+
   // Perform install steps
   event.waitUntil(
-    caches.open(CACHE_NAME)
+      caches.open(CACHE_NAME)
       .then(function(cache) {
         console.log('Opened cache');
         return cache.addAll(urlsToCache);
@@ -84,6 +88,23 @@ self.addEventListener('install', function(event) {
   );
 });
 
+// https://stackoverflow.com/questions/38168276/navigator-serviceworker-controller-is-null-until-page-refresh?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+//  To take control over all open pages without waiting for refresh/reopen, 
+// you have to add these commands to your Service Worker:
+// self.skipWaiting(); // added above in install
+// see also: https://gist.github.com/Rich-Harris/fd6c3c73e6e707e312d7c5d7d0f3b2f9
+// https://stackoverflow.com/questions/37050383/unable-to-post-message-to-service-worker-because-controller-value-is-null
+self.addEventListener('activate', function(event) {
+    event.waitUntil(self.clients.claim()); // Become available to all pages
+});
+
+self.addEventListener('message', function(event) {
+    var data = event.data;
+
+    if (data.command == "uploadURL") {
+        console.log("   ***** service worker upload URL : ", data.message);
+    } 
+});
 /**
 // TODO don't need to cache requests that are not listed above...
 * If we want to cache new requests cumulatively, we can do so by handling the
@@ -93,12 +114,13 @@ self.addEventListener('install', function(event) {
 
 // TODO do we need a manifest file???
 // http://diveintohtml5.info/offline.html
-
+// TODO is this even required given that we have a list of the files we want
+// cached above and we cache those...
 */
 self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request)
-      .then(function(response) {
+    .then(function(response) {
         // Cache hit - return response
         if (response) {
           return response;
@@ -125,29 +147,26 @@ Retry syncs also wait for connectivity, and employ an exponential back-off.
         // occurs after internet is re-connected????
         // Chrome on LInux fires this off as soon as user tries to upload
         // when there is no Internet connection...
-*/
-self.addEventListener('sync', function(event) {
-  if (event.tag == 'voxforgeSync') {
-     console.log('voxforgeSync: background sync request received by serviceworker');
 
     // waitUntil method is used to tell the browser not to terminate the 
     // service worker until the promise passed to waitUntil is either resolved 
     // or rejected.
 
     // https://googlechrome.github.io/samples/service-worker/post-message/index.html
-    event.waitUntil(
-      processSavedSubmissions()
-      //.then(function(uploadList) {
-      //  sendMessage("uploaded", uploadList);
-      //})
-      .then(function(returnObj) {
-        sendMessage(returnObj);
-      })
-      .catch(function(returnObj) {
-        sendMessage(returnObj);
-      })
-    ); 
+*/
+self.addEventListener('sync', function(event) {
+    if (event.tag == 'voxforgeSync') {
+       console.log('voxforgeSync: background sync request received by serviceworker');
 
+    event.waitUntil(
+        processSavedSubmissions()
+        .then(function(returnObj) {
+            sendMessage(returnObj);
+        })
+        .catch(function(returnObj) {
+            sendMessage(returnObj);
+        })
+    ); 
   }
 });
 
@@ -165,15 +184,10 @@ self.addEventListener('sync', function(event) {
 //https://developer.mozilla.org/en-US/docs/Web/API/Client/postMessage
 //https://serviceworke.rs/message-relay_service-worker_doc.html
 */
-//function sendMessage(status, returnObj) {
 function sendMessage(returnObj) {
   self.clients.matchAll({includeUncontrolled: true, type: 'window'})
   .then(function(clientList) {
     clientList.forEach(function(client) {
-      //client.postMessage({
-      //  status: status,
-      //  submissionList: submissionList
-      //});
       client.postMessage(returnObj);
     });
   });

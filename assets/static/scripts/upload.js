@@ -33,17 +33,65 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * use service worker to perform background sync to upload submissions
 * to server (if browser supports it: Chrome:yes, Firefox:no), and to 
 * cache all javascript files so app can be run offline
+
+pass parameters to service worker:
+http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.WvXYnWCEeis
 */
 if ('serviceWorker' in navigator) {
+  const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
+// https://github.com/GoogleChromeLabs/sw-precache/issues/104
+// https://github.com/GoogleChromeLabs/sw-precache/blob/master/demo/app/js/service-worker-registration.js#L25
+
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/voxforge_sw.js').then(function(registration) {
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    navigator.serviceWorker.register('/voxforge_sw.js')
+    .then(function(reg) {
+      console.log('ServiceWorker registration successful with scope: ', reg.scope);
+// !!!!!!
+      // see https://raw.githubusercontent.com/GoogleChromeLabs/sw-precache/master/demo/app/js/service-worker-registration.js
+      // updatefound is fired if service-worker.js changes.
+      reg.onupdatefound = function() {
+        // The updatefound event implies that reg.installing is set; see
+        // https://w3c.github.io/ServiceWorker/#service-worker-registration-updatefound-event
+        var installingWorker = reg.installing;
+
+        installingWorker.onstatechange = function() {
+          switch (installingWorker.state) {
+            case 'installed':
+              if (navigator.serviceWorker.controller) {
+                // At this point, the old content will have been purged and the fresh content will
+                // have been added to the cache.
+                // It's the perfect time to display a "New content is available; please refresh."
+                // message in the page's interface.
+                console.log('New or updated content is available.');
+                 navigator.serviceWorker.controller.postMessage({
+                    "command": "uploadURL",
+                    "message": uploadURL
+                 });
+                console.log('app URL sent to service worker: ' + uploadURL);
+              } else {
+                // At this point, everything has been precached.
+                // It's the perfect time to display a "Content is cached for offline use." message.
+                console.log('Content is now available offline!');
+              }
+              break;
+
+            case 'redundant':
+              console.error('The installing service worker became redundant.');
+              break;
+          }
+        };
+      };
+// !!!!! 
+
+
     }, function(err) {
       console.warn('ServiceWorker registration failed: ', err);
       window.alert('Error: no SSL certificate installed on device - VoxForge uploads will fail silently');
-    });
+    })
   });
 }
+
+
 
 // zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
@@ -233,7 +281,8 @@ function upload( when_audio_processing_completed_func ) {
     */
     function uploadZippedSubmission() {
         if (typeof navigator.serviceWorker !== 'undefined') { 
-            navigator.serviceWorker.ready.then(function(swRegistration) { // service workers supported
+            navigator.serviceWorker.ready
+            .then(function(swRegistration) { // service workers supported
               if (typeof swRegistration.sync !== 'undefined') { 
                 serviceWorkerUpload(swRegistration);  // background sync supported
               } else { 
@@ -283,7 +332,8 @@ function upload( when_audio_processing_completed_func ) {
         function serviceWorkerUpload(swRegistration) {
           // for processing of return values from service worker, see 
           // service worker event above (i.e. navigator.serviceWorker.addEventListener... )
-          swRegistration.sync.register('voxforgeSync').then(function() {
+          swRegistration.sync.register('voxforgeSync')
+          .then(function() {
             console.info('service worker background sync event called - submission will be uploaded shortly');
            }, function() {
             console.error('service worker background sync failed, will retry later');
@@ -354,7 +404,7 @@ function processWorkerEventMessage(workertype, returnObj) {
               submissionText + ":\n    " + 
               filesNotUploaded.join("\n    "); 
         if (returnObj.err) {
-            m = m + "\n========================\n" +
+            m = m + "\n========================\n";
             m = m + "\n\nserver error message: " + returnObj.err;
         }
 
@@ -379,7 +429,7 @@ function processWorkerEventMessage(workertype, returnObj) {
               uploadedText + ":\n" + 
               "    " + filesNotUploaded.join("\n    ");
         if (returnObj.err) {
-            m = m + "\n========================\n" +
+            m = m + "\n========================\n";
             m = m + "\n\nserver error message: " + returnObj.err;
         }
 

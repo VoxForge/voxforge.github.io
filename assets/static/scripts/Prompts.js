@@ -145,9 +145,11 @@ function Prompts() {
       jsonOnject['id'] = page_prompt_list_files[random_prompt_file].id;
       jsonOnject['list'] = self.list;
 
-      self.promptCache.setItem(local_prompt_file_name, jsonOnject).then(function (value) {
+      self.promptCache.setItem(local_prompt_file_name, jsonOnject)
+      .then(function (value) {
         console.info('savePromptListLocally: saved promptfile to localforage browser storage: ' + local_prompt_file_name);
-      }).catch(function(err) {
+      })
+      .catch(function(err) {
           console.error('savePromptListLocally failed!', err);
       });
     }
