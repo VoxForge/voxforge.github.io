@@ -44,49 +44,24 @@ if ('serviceWorker' in navigator) {
 
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('/voxforge_sw.js')
+    .then(function() {
+        return navigator.serviceWorker.ready;
+    })
     .then(function(reg) {
+      // Here we add the event listener in service worker for receiving messages
+      navigator.serviceWorker.addEventListener('message', function(event){
+          console.log("*****************" + event.data)
+      });
       console.log('ServiceWorker registration successful with scope: ', reg.scope);
-// !!!!!!
-      // see https://raw.githubusercontent.com/GoogleChromeLabs/sw-precache/master/demo/app/js/service-worker-registration.js
-      // updatefound is fired if service-worker.js changes.
-      reg.onupdatefound = function() {
-        // The updatefound event implies that reg.installing is set; see
-        // https://w3c.github.io/ServiceWorker/#service-worker-registration-updatefound-event
-        var installingWorker = reg.installing;
-
-        installingWorker.onstatechange = function() {
-          switch (installingWorker.state) {
-            case 'installed':
-              if (navigator.serviceWorker.controller) {
-                // At this point, the old content will have been purged and the fresh content will
-                // have been added to the cache.
-                // It's the perfect time to display a "New content is available; please refresh."
-                // message in the page's interface.
-                console.log('New or updated content is available.');
-                 navigator.serviceWorker.controller.postMessage({
-                    "command": "uploadURL",
-                    "message": uploadURL
-                 });
-                console.log('app URL sent to service worker: ' + uploadURL);
-              } else {
-                // At this point, everything has been precached.
-                // It's the perfect time to display a "Content is cached for offline use." message.
-                console.log('Content is now available offline!');
-              }
-              break;
-
-            case 'redundant':
-              console.error('The installing service worker became redundant.');
-              break;
-          }
-        };
-      };
-// !!!!! 
-
-
+      return reg;
     }, function(err) {
       console.warn('ServiceWorker registration failed: ', err);
       window.alert('Error: no SSL certificate installed on device - VoxForge uploads will fail silently');
+    })
+    .then(function(reg) {
+        navigator.serviceWorker.controller.postMessage({
+          message: 'zipAndSave',
+        });
     })
   });
 }

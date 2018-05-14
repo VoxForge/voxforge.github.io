@@ -98,13 +98,13 @@ self.addEventListener('activate', function(event) {
     event.waitUntil(self.clients.claim()); // Become available to all pages
 });
 
-self.addEventListener('message', function(event) {
-    var data = event.data;
+//self.addEventListener('message', function(event) {
+//    var data = event.data;
 
-    if (data.command == "uploadURL") {
-        console.log("   ***** service worker upload URL : ", data.message);
-    } 
-});
+//    if (data.command == "uploadURL") {
+//        console.log("   ***** service worker upload URL : ", data.message);
+//    } 
+//});
 /**
 // TODO don't need to cache requests that are not listed above...
 * If we want to cache new requests cumulatively, we can do so by handling the
