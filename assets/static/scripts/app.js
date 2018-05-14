@@ -82,11 +82,16 @@ if (platform.os.family === "Android" ) {
 
 // ### GLOBALS #################################################################
 
-//TODO: how to make these global or pass as service worker and web worker parameters
+//debugging service workers: chrome://serviceworker-internals
 
+// Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
+// /etc/hosts or on local DNS server;
+// (passed as a paramter to serviceworker or webworker)
 var uploadURL = 'https://upload.voxforge1.org'; // prod
 // !!!!!!
 var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+//var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
+// !!!!!!
 
 // #############################################################################
 

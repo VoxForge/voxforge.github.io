@@ -38,30 +38,18 @@ pass parameters to service worker:
 http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.WvXYnWCEeis
 */
 if ('serviceWorker' in navigator) {
-  const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
 // https://github.com/GoogleChromeLabs/sw-precache/issues/104
 // https://github.com/GoogleChromeLabs/sw-precache/blob/master/demo/app/js/service-worker-registration.js#L25
 
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/voxforge_sw.js')
-    .then(function() {
-        return navigator.serviceWorker.ready;
-    })
+    const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
+    //navigator.serviceWorker.register('/voxforge_sw.js')
+    navigator.serviceWorker.register(swUrl)
     .then(function(reg) {
-      // Here we add the event listener in service worker for receiving messages
-      navigator.serviceWorker.addEventListener('message', function(event){
-          console.log("*****************" + event.data)
-      });
       console.log('ServiceWorker registration successful with scope: ', reg.scope);
-      return reg;
     }, function(err) {
       console.warn('ServiceWorker registration failed: ', err);
       window.alert('Error: no SSL certificate installed on device - VoxForge uploads will fail silently');
-    })
-    .then(function(reg) {
-        navigator.serviceWorker.controller.postMessage({
-          message: 'zipAndSave',
-        });
     })
   });
 }
@@ -324,6 +312,7 @@ function upload( when_audio_processing_completed_func ) {
         function webWorkerUpload() {
             upload_worker.postMessage({
               command: 'upload',
+              uploadURL: uploadURL,
             });
 
             upload_worker.onmessage = function webWorkerUploadDone(event) { 

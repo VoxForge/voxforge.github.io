@@ -33,7 +33,7 @@ self.onmessage = function(event) {
   var data = event.data;
   switch (data.command) {
     case 'upload':
-      upload(self, data);
+      upload(self, data.uploadURL);
       break;
     default:
       console.error('UploadWorker error. Invalid command: ' + data.command);
@@ -46,20 +46,8 @@ self.onmessage = function(event) {
 * check for any saved submissions that were recorded offline, or which
 * had problems uploading to server
 */
-function upload(self, data) {
-    processSavedSubmissions()
-    //.then((uploadList) => {
-    //  self.postMessage({
-     //   status: 'AllUploaded',
-    //    submissionList: uploadList,
-    //  });
-    //})
-    //.catch(function(uploadList) {
-    //  self.postMessage({
-    //    status: 'savedtoLocalStorage',
-    //    submissionList: uploadList,
-    //  });
-    //})
+function upload(self, uploadURL) {
+    processSavedSubmissions(uploadURL)
     .then((returnObj) => {
       self.postMessage(returnObj);
     })

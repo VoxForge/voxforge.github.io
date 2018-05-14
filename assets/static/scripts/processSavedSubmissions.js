@@ -15,30 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//debugging service workers: chrome://serviceworker-internals
-
-// Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
-// /etc/hosts or on local DNS server;
-
-var uploadURL = 'https://upload.voxforge1.org'; // prod
-// !!!!!!
-var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
-//var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
-// !!!!!!
-
 // cannot put importScripts here even though code is being shared by voxforge_sw.js and 
 // UploadWorker.js because they are stored in different places and have 
-// different relative paths
+// different relative paths to localforage
 // importScripts('assets/static/lib/localforage.js');
 var submissionCache = localforage.createInstance({
     name: "submissionCache"
 });
 
-
 /**
 * if saved submissions exists, get then upload the submission 
 */
-function processSavedSubmissions() {
+function processSavedSubmissions(uploadURL) {
     var uploadList = [];
     var noUploadList = [];
     var uploadIdx = 0;

@@ -74,9 +74,9 @@ var urlsToCache = [
   '/en/read/',
 ];
 
-
+var uploadURL;
 self.addEventListener('install', function(event) {
-  event.waitUntil(self.skipWaiting()); // Activate worker immediately
+  //event.waitUntil(self.skipWaiting()); // Activate worker immediately
 
   // Perform install steps
   event.waitUntil(
@@ -86,6 +86,8 @@ self.addEventListener('install', function(event) {
         return cache.addAll(urlsToCache);
       })
   );
+
+  uploadURL = new URL(location).searchParams.get('uploadURL');
 });
 
 // https://stackoverflow.com/questions/38168276/navigator-serviceworker-controller-is-null-until-page-refresh?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
@@ -94,17 +96,11 @@ self.addEventListener('install', function(event) {
 // self.skipWaiting(); // added above in install
 // see also: https://gist.github.com/Rich-Harris/fd6c3c73e6e707e312d7c5d7d0f3b2f9
 // https://stackoverflow.com/questions/37050383/unable-to-post-message-to-service-worker-because-controller-value-is-null
-self.addEventListener('activate', function(event) {
-    event.waitUntil(self.clients.claim()); // Become available to all pages
-});
-
-//self.addEventListener('message', function(event) {
-//    var data = event.data;
-
-//    if (data.command == "uploadURL") {
-//        console.log("   ***** service worker upload URL : ", data.message);
-//    } 
+//self.addEventListener('activate', function(event) {
+//    event.waitUntil(self.clients.claim()); // Become available to all pages
 //});
+
+
 /**
 // TODO don't need to cache requests that are not listed above...
 * If we want to cache new requests cumulatively, we can do so by handling the
@@ -159,7 +155,7 @@ self.addEventListener('sync', function(event) {
        console.log('voxforgeSync: background sync request received by serviceworker');
 
     event.waitUntil(
-        processSavedSubmissions()
+        processSavedSubmissions(uploadURL)
         .then(function(returnObj) {
             sendMessage(returnObj);
         })
