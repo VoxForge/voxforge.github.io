@@ -258,8 +258,9 @@
 
         </br>
 
-      <label for="max_num_prompts_disp">{{ page.num_prompts.label }}</label>
-      <select type="number" id="max_num_prompts_disp"/></br>
+
+ <!-- <label for="max_num_prompts_disp">{{ page.num_prompts.label }}</label>
+    <select type="number" id="max_num_prompts_disp"/></br>
         <option selected value="10">10</option>
         <option value="15">15</option>
         <option value="20">20</option>
@@ -270,6 +271,11 @@
         <option value="45">45</option>
         <option value="50">50</option>
       </select>
+ -->
+      <label for="max_num_prompts">{{ page.num_prompts.label }}</label>
+      <select type="text" id="max_num_prompts"/></br>
+      </select>
+
 
       <button style="display: none;" 
               id="directions-button-display" 

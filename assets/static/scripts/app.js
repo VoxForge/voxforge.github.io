@@ -85,6 +85,7 @@ if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || p
   window.alert( page_browser_support.no_edgeSupport_message );         
 }
 
+var max_numPrompts = 50;
 var vad = true;
 var scriptProcessor_bufferSize = undefined; // let device decide appropriate buffer size
 //vad_maxsilence = 1500; //  original
@@ -101,13 +102,16 @@ if (platform.os.family === "Android" ) {
   scriptProcessor_bufferSize = 8192;
   console.warn('resetting bufferSize to ' + scriptProcessor_bufferSize + 
                ' sample-frames, for VAD support');
-  vad_maxsilence = 1000; // use more aggressive silence detection on Android
-  vad_minvoice = 125; // use shorter min voice on Android
 
   if (platform.os.version && parseFloat(platform.os.version) < 5) {
     vad = false;
     console.warn("low powered device - disabling automatic silence detection (VAD)");
-  } 
+    max_numPrompts = 10;
+  } else {
+    vad_maxsilence = 1000; // use more aggressive silence detection on Android
+    vad_minvoice = 125; // use shorter min voice on Android
+    max_numPrompts = 25;
+  }
 }
 
 // #############################################################################
@@ -129,7 +133,7 @@ var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400;
 * Instantiate classes
 */
 var prompts = new Prompts();
-var view = new View();
+var view = new View(max_numPrompts);
 var profile = new Profile(view.update);
 var audio = new Audio(scriptProcessor_bufferSize, vad, vad_maxsilence, vad_minvoice);
 

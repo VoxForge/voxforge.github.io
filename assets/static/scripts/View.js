@@ -15,7 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-function View () {
+function View (max_numPrompts) {
+    this.max_numPrompts = max_numPrompts;
+
     // buttons
     this.record = document.querySelector('.record');
     this.stop = document.querySelector('.stop');
@@ -24,8 +26,6 @@ function View () {
     this.soundClips = document.querySelector('.sound-clips');
     // where audio visualiser (vue meter) will be displayed in HTML
     this.canvas = document.querySelector('.visualizer');
-
-    this.maxnumpromptschanged = document.querySelector('#max_num_prompts_disp');
 
     // unique id for wavesurfer objects in DOM
     this.clip_id = 0;
@@ -132,6 +132,10 @@ function View () {
     option += '<option value="' + page_localized_other + '">' + page_localized_other + '</option>'; 
     $('#first_language').append(option);
 
+    // Prompts
+    //this.maxnumpromptschanged = document.querySelector('#max_num_prompts_disp');
+    this.maxnumpromptschanged = document.querySelector('#max_num_prompts');
+
     /**
     * updates the current number of prompts that the user selected from dropdown
     *
@@ -139,7 +143,8 @@ function View () {
     * will causes the promptIDs to be in non-consecutive order, 
     * and may result in user reading exactly same prompts again...
     */
-    $('#max_num_prompts_disp').click(function () { 
+    //$('#max_num_prompts_disp').click(function () { 
+    $('#max_num_prompts').click(function () { 
         prompts.previous_max_num_prompts = prompts.max_num_prompts;
         prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
         view.updateProgress();
@@ -150,6 +155,14 @@ function View () {
 
         console.log('max_num_prompts:' + prompts.max_num_prompts);
     });
+
+    option = ''; // clear previous use of option var
+    var startPrompt = 10;
+    var incr = 5;
+    for (var i=startPrompt; i <= this.max_numPrompts; i = i + incr){
+       option += '<option value="'+ i + '">' + i +  '</option>';
+    }
+    $('#max_num_prompts').append(option);
 }
 
 /** 
