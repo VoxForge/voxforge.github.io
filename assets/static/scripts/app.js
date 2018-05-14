@@ -46,6 +46,18 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 // need Google Chrome version > 58 for wavesurfer to work correctly
 */
 
+// ### GLOBALS #################################################################
+
+//debugging service workers: chrome://serviceworker-internals
+
+var uploadURL = 'https://upload.voxforge1.org'; // prod
+// !!!!!!
+// Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
+// /etc/hosts or on local DNS server;
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+//var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
+// !!!!!!
+
 // #############################################################################
 
 // see: http://diveintohtml5.info/everything.html
@@ -77,21 +89,13 @@ if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || p
 var vad = true;
 var low_powered_device = false;
 if (platform.os.family === "Android" ) {
-  vad = false;
+  if (platform.os.version && parseFloat(platform.os.version) < 5) {
+    vad = false;
+    console.warn("low powered device - disabling automatic silence detection (VAD)");
+  } else {
+    low_powered_device = true;
+  }
 }
-
-// ### GLOBALS #################################################################
-
-//debugging service workers: chrome://serviceworker-internals
-
-// Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
-// /etc/hosts or on local DNS server;
-// (passed as a paramter to serviceworker or webworker)
-var uploadURL = 'https://upload.voxforge1.org'; // prod
-// !!!!!!
-var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
-//var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
-// !!!!!!
 
 // #############################################################################
 

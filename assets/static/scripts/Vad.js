@@ -1,3 +1,20 @@
+/*
+Copyright 2018 VoxForge
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 importScripts('../lib/webrtc_vad.js'); 
 
 // arbitrary trial and error values to determine when audio sample is too
@@ -27,12 +44,12 @@ function Vad(sampleRate, low_powered_device) {
     this.leftovers = 0;
     this.buffer_vad = new Int16Array(this.sizeBufferVad);
 
-    //this.minvoice = 250;//  original
     //const maxsilence = 1500; //  original
+    //this.minvoice = 250;//  original
 
     if (low_powered_device) {
       this.maxsilence = 1000; // use more aggressive silence detection on Android
-      this.minvoice = 125; // since only need first occurence of speech, can be a little longer
+      this.minvoice = 125; 
     } else {
       this.maxsilence = 250; // works well with linux; not so well on Android 4.4.2
       this.minvoice = 250; // since only need first occurence of speech, can be a little longer

@@ -145,6 +145,11 @@ function Audio (vad, low_powered_device) {
       navigator.mediaDevices = {};
     }
 
+    // Note: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext
+    // BaseAudioContext.sampleRate Read only
+    //    Returns a float representing the sample rate (in samples per second) 
+    //    used by all nodes in this context. The sample-rate of an
+    //    AudioContext cannot be changed.
     var constraints = { audio: true };
     if (navigator.mediaDevices.getUserMedia === undefined) {
       navigator.mediaDevices.getUserMedia = function(constraints) {

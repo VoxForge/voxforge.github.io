@@ -54,8 +54,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-
-
 // zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
 var upload_worker = new Worker('/assets/static/scripts/UploadWorker.js');
