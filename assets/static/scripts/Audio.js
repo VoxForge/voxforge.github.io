@@ -215,9 +215,9 @@ function Audio (view,
     */
     function supportedContraints() {
       var c = navigator.mediaDevices.getSupportedConstraints();
-      profile.echoCancellation = c.echoCancellation;
-      profile.autoGainSupported = c.autoGainSupported;
-      profile.noiseSuppression = c.noiseSuppression;
+      profile.echoCancellation = c.echoCancellation || false;
+      profile.autoGainSupported = c.autoGainSupported || false;
+      profile.noiseSuppression = c.noiseSuppression || false;
 
       if ( c.echoCancellation ) {
         console.log('getUserMedia - echoCancellation supported');
