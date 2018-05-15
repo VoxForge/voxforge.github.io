@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+'use strict';
+
 importScripts('../lib/webrtc_vad.js'); 
 
 // arbitrary trial and error values to determine when audio sample is too

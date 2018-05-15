@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * need to install rootCA in browser...
 */
 
+'use strict';
 
 /**
 * use service worker to perform background sync to upload submissions
@@ -103,7 +104,6 @@ function upload( when_audio_processing_completed_func ) {
           var audioBlobUrl = clip.querySelector('audio').src;
           var prompt = clip.querySelector('prompt').innerText;
           var prompt_id = prompt.split(/(\s+)/).shift();
-          //prompts.prompts_recorded[clipIndex] = prompt + '\n';
           prompts.prompts_recorded.push(prompt + '\n');
 
           // Ajax is asynchronous - once the request is sent script will 
@@ -128,7 +128,6 @@ function upload( when_audio_processing_completed_func ) {
                 // Q1: why doesnt createZipFile get called many times as the call stack unrolls???
                 // ... because status no longer status == 200???
 
-                //callWorker2createZipFile(audioArray);
                 resolve(audioArray); // audioArray passed as parameter to next function in call chain
               }
             }

@@ -96,8 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// TODO silence detection
-// see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
+'use strict';
 
 // recording Web Worker
 var audioworker = new Worker('/assets/static/scripts/EncoderWorker.js');
@@ -268,7 +267,7 @@ function Audio (scriptProcessor_bufferSize, vad, maxsilence, minvoice) {
       TODO test with with other versions od Android
 */
 
-      self.processor = self.audioCtx.createScriptProcessor(this.scriptProcessor_bufferSize , 1, 1);
+      self.processor = self.audioCtx.createScriptProcessor(self.scriptProcessor_bufferSize , 1, 1);
 
       self.mediaStreamOutput = self.audioCtx.destination;
 

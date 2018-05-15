@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+'use strict';
+
 function View (max_numPrompts) {
     this.max_numPrompts = max_numPrompts;
 
@@ -40,7 +42,7 @@ function View (max_numPrompts) {
     *
     * see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
     */
-    showDivBasedonValue = function (independent_div, value, dependent_div, handler_already_created) {
+    var showDivBasedonValue = function (independent_div, value, dependent_div, handler_already_created) {
       function test ( boolean_result ) {
         if( boolean_result ){
           $(dependent_div).show();
@@ -98,9 +100,9 @@ function View (max_numPrompts) {
     var $select1 = $( '#dialect' );
     $( '#sub_dialect select' ).val("Unknown");
     var $select2 = $( '#sub_dialect' );
-    $optgroup = $select2.find( 'optgroup' );
-    $selected = $select2.find( ':selected' );
-    $result = $optgroup.add( $selected );
+    var $optgroup = $select2.find( 'optgroup' );
+    var $selected = $select2.find( ':selected' );
+    var $result = $optgroup.add( $selected );
 
     $select1.on( 'change', function() {
         var filter =  $result.filter( '[name="' + this.value + '"]' );

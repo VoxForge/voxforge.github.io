@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+'use strict';
+
 // cannot put importScripts here even though code is being shared by voxforge_sw.js and 
 // UploadWorker.js because they are stored in different places and have 
 // different relative paths to localforage

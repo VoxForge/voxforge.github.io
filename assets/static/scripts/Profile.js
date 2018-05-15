@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+'use strict';
+
 /**
 * Class declaration
 */
@@ -23,7 +25,7 @@ function Profile (updateView_func) {
   * get profile information from local storage and if it exists, return parsed
   * JSON object, otherwise return null.
   */
-  getProfileFromLocalStorage = function () {
+  var getProfileFromLocalStorage = function () {
       var retrievedObject = localStorage.getItem(page_language);
       // boolean expression. Second part is evaluated only if left one is true. 
       // therefore if retrievedObject is null, that gets returned

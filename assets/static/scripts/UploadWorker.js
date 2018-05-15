@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+'use strict';
+
 /*
 for testing:
 if get Failed to load ‘https://jekyll2_voxforge.org/index.php’. A ServiceWorker 

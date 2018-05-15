@@ -46,6 +46,8 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 // need Google Chrome version > 58 for wavesurfer to work correctly
 */
 
+'use strict';
+
 // ### GLOBALS #################################################################
 
 //debugging service workers: chrome://serviceworker-internals
@@ -117,7 +119,7 @@ if (platform.os.family === "Android" ) {
 // #############################################################################
 
 // constants
-var SPEECHSUBMISSIONAPPVERSION = "0.1";
+var SPEECHSUBMISSIONAPPVERSION = "0.2";
 
 var RECORDING_TIMEOUT = 20000; // 20 seconds - silence detection should remove leading and trailing silence
 var RECORDING_STOP_DELAY = 1000; 
@@ -133,7 +135,7 @@ var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400;
 * Instantiate classes
 */
 var prompts = new Prompts();
-var view = new View(max_numPrompts);
+var view = new View(max_numPrompts); // TODO prompts object referenced in here...
 var profile = new Profile(view.update);
 var audio = new Audio(scriptProcessor_bufferSize, vad, vad_maxsilence, vad_minvoice);
 
