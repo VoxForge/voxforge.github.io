@@ -151,7 +151,7 @@ function Audio (view, profile, scriptProcessor_bufferSize, vad, maxsilence, minv
     // BaseAudioContext.sampleRate Read only
     //    Returns a float representing the sample rate (in samples per second) 
     //    used by all nodes in this context. The sample-rate of an
-    //    AudioContext cannot be changed.
+    //    AudioContext _cannot_ be changed.
     var constraints = { audio: true };
     if (navigator.mediaDevices.getUserMedia === undefined) {
       navigator.mediaDevices.getUserMedia = function(constraints) {
@@ -196,7 +196,7 @@ function Audio (view, profile, scriptProcessor_bufferSize, vad, maxsilence, minv
 
     // see: https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
     // TODO firefox supports;
-    //    let set = track.getSettings();
+    //    var set = track.getSettings();
     //    set.echoCancellation;
     //    set.noiseSuppression;
     //    Set.autoGainControl;
@@ -213,27 +213,24 @@ function Audio (view, profile, scriptProcessor_bufferSize, vad, maxsilence, minv
     */
     function supportedContraints() {
       var c = navigator.mediaDevices.getSupportedConstraints();
+      profile.echoCancellation = c.echoCancellation;
+      profile.autoGainSupported = c.autoGainSupported;
+      profile.noiseSuppression = c.noiseSuppression;
 
       if ( c.echoCancellation ) {
         console.log('getUserMedia - echoCancellation supported');
-        profile.echoCancellation = c.echoCancellation;
       } else {
         console.log('getUserMedia - no echoCancellation');
-        profile.echoCancellation = false;
       }
       if ( c.autoGainSupported ) {
         console.log('getUserMedia - autoGainSupported supported');
-        profile.autoGainSupported = c.autoGainSupported;
       } else {
         console.log('getUserMedia - no autoGain');
-        profile.autoGainSupported = false;
       }
       if ( c.noiseSuppression ) {
         console.log('getUserMedia - noiseSuppression supported');
-        profile.noiseSuppression = c.noiseSuppression;
       } else {
         console.log('getUserMedia - no noiseSuppression');
-        profile.noiseSuppression = false;
       }
     }
 
