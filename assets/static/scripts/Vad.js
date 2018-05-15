@@ -29,7 +29,7 @@ var LEADING_SILENCE_SEC = 0.5; // secs
 var TRAILING_SILENCE_SEC = 0.3; // little less because of lag in VAD detecting end of speech
 
 // since chrome/FF default sample rate on Linux is 44100, but VAD does 
-// not support 44100... hardocde 48000 - works OK
+// not support 44100... hardcode 48000 - works OK
 var VAD_SAMPLE_RATE = 48000;
 
 // emscripten required variables

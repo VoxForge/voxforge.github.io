@@ -208,17 +208,16 @@ license:
     - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License' }
 
 ua_string:
-  label: Include User Agent String
+  label: User Agent String
   popup:
     title: Collect User Agent String Information
     link: https://www.whatismybrowser.com/detect/what-is-my-user-agent
     hover_text: >
       Include User Agent string with submission
     text:  > 
-      Your browser's user agent indicates something particular about your system.</br>
+      Your browser's user agent string indicates something about your system.</br>
       The VoxForge app can collect your browser's user agent string
-      to troubleshoot and help determine which devices work best with the
-      VoxForge recording app
+      to help troubleshoot and determine which devices work best with this app.
   selection_default: { value: 'Yes',  item: 'Yes' }
   selection:
     - { value: 'No',  option: 'No' }
@@ -229,10 +228,10 @@ num_prompts:
 instructions:
   label: Instructions
   lines:
-    - 1. Press <b>Record</b> to start, saying only the words that appear in the box below.
-    - 2. Press <b>Stop</b> when completed.
+    - 1. Click <b>Record</b> to start, saying only the words that appear in the box below.
+    - 2. v <b>Stop</b> when completed.
   lastline: >
-    3. When done, press <b>Upload</b> to send your recordings to VoxForge server.
+    3. When done, click <b>Upload</b> to send your recordings to VoxForge server.
 
 # not supporting Edge yet... Edge needs to support FormData
 # convert to popup for Edge browsers only...

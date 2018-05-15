@@ -56,10 +56,12 @@ var uploadURL = 'https://upload.voxforge1.org'; // prod
 // !!!!!!
 // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
 // /etc/hosts or on local DNS server;
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // !!!!!!
 
+//  TODO generate 
+var view;  // needs to be global so can be accessible to index.html
 // #############################################################################
 
 (function () {
@@ -91,8 +93,10 @@ if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || p
 
 var max_numPrompts = 50;
 
-var scriptProcessor_bufferSize = undefined; // let device decide appropriate buffer size
+// buffer size is in units of sample-frames. If specified, the bufferSize 
+// must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
 
+var scriptProcessor_bufferSize = undefined; // let device decide appropriate buffer size
 
 var vad_parms = {
     run: true,
@@ -105,11 +109,9 @@ var vad_parms = {
 };
 // Note: cannot change device sample rate from browser...
 if (platform.os.family === "Android" ) {
+  // Android 4.4.2 has default buffer size of: 16384
   // Android's higher buffer value causing problems with WebRTC VAD.  Need to 
   // manually set.
-  // The buffer size in units of sample-frames. If specified, the bufferSize 
-  // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
-  // Android 4.4.2 has default buffer size of: 16384
   scriptProcessor_bufferSize = 8192;
   console.warn('resetting bufferSize to ' + scriptProcessor_bufferSize + 
                ' sample-frames, for VAD support');
@@ -142,7 +144,7 @@ const process_last_recording_delay = recording_stop_delay + 400;
 * Instantiate classes
 */
 var prompts = new Prompts();
-var view = new View(prompts, 
+view = new View(prompts, 
                     max_numPrompts); 
 var profile = new Profile(view.update, 
                           appversion);
