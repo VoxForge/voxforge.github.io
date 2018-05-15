@@ -22,14 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 * see: https://github.com/jakesgordon/javascript-state-machine
 */
-function Fsm(prompts, 
-             view, 
-             profile, 
-             audio,
-             recording_timeout,
-             recording_stop_delay,
-             process_last_recording_delay,
-             appversion,)
+function Controller(prompts, 
+                    view, 
+                    profile, 
+                    audio,
+                    recording_timeout,
+                    recording_stop_delay,
+                    process_last_recording_delay,
+                    appversion,)
 {
     //  recording timeout object
     var rec_timeout_obj;

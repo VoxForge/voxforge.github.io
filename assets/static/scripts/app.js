@@ -96,8 +96,9 @@ var scriptProcessor_bufferSize = undefined; // let device decide appropriate buf
 
 var vad_parms = {
     run: true,
-    // maxsilence: 1500; //  original
-    // minvoice: 250;//  original
+    // maxsilence: 1500; //  original value
+    // minvoice: 250; //  original value
+    // buffersize: 480, //  original value
     maxsilence: 250, // works well with linux; not so well on Android 4.4.2
     minvoice: 250, 
     buffersize: 480,
@@ -141,25 +142,23 @@ const process_last_recording_delay = recording_stop_delay + 400;
 * Instantiate classes
 */
 var prompts = new Prompts();
-var view = new View(prompts, max_numPrompts); 
-var profile = new Profile(view.update, appversion);
+var view = new View(prompts, 
+                    max_numPrompts); 
+var profile = new Profile(view.update, 
+                          appversion);
 var audio = new Audio(view, 
                       profile, 
                       scriptProcessor_bufferSize, 
                       vad_parms);
-
-// finite state machine object
-var fsm = new Fsm(prompts, 
-                  view, 
-                  profile, 
-                  audio,
-                  recording_timeout,
-                  recording_stop_delay,
-                  process_last_recording_delay,
-                  appversion,
-);
-view.set_fsm(fsm);
-
+var controller = new Controller(prompts, 
+                                view, 
+                                profile, 
+                                audio,
+                                recording_timeout,
+                                recording_stop_delay,
+                                process_last_recording_delay,
+                                appversion);
+view.set_controller(controller);
 
 })();
 

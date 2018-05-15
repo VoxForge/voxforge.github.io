@@ -341,8 +341,8 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 * that must be instantiated before fsm, and view has a Audio depends n profile 
 * and view and View depends on Prompts... 
 */
-View.prototype.set_fsm = function(fsm) {
-  this.fsm = fsm;
+View.prototype.set_controller = function(controller) {
+  this.controller = controller;
 }
 
 /**
@@ -395,7 +395,7 @@ View.prototype.waveformdisplay = function (
         evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
 
         //fsm.deleteclicked();
-        self.fsm.deleteclicked();
+        self.controller.deleteclicked();
       }
 
       return deleteButton;

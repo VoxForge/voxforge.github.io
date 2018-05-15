@@ -55,8 +55,8 @@ var urlsToCache = [
   PATH + 'lib/webrtc_vad.js',
 
   PATH + 'scripts/Audio.js',
+  PATH + 'scripts/Controller.js',
   PATH + 'scripts/EncoderWorker.js',
-  PATH + 'scripts/Fsm.js',
   PATH + 'scripts/processSavedSubmissions.js',
   PATH + 'scripts/Profile.js',
   PATH + 'scripts/Prompts.js',
