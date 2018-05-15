@@ -4,7 +4,7 @@
 * 
 * see https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser
 */
-function visualize(analyser) {
+function visualize(view, analyser) {
   var canvasCtx = view.canvas.getContext("2d");
 
   var bufferLength = analyser.frequencyBinCount;

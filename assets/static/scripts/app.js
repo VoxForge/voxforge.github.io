@@ -62,6 +62,8 @@ var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 
 // #############################################################################
 
+(function () {
+
 // see: http://diveintohtml5.info/everything.html
 if( ! window.Worker )
 {
@@ -135,9 +137,14 @@ var PROCESS_LAST_RECORDING_DELAY = RECORDING_STOP_DELAY + 400;
 * Instantiate classes
 */
 var prompts = new Prompts();
-var view = new View(max_numPrompts); // TODO prompts object referenced in here...
+var view = new View(prompts, max_numPrompts); 
 var profile = new Profile(view.update);
-var audio = new Audio(scriptProcessor_bufferSize, vad, vad_maxsilence, vad_minvoice);
+var audio = new Audio(view, 
+                      profile, 
+                      scriptProcessor_bufferSize, 
+                      vad, 
+                      vad_maxsilence, 
+                      vad_minvoice);
 
 // finite state machine object
 var fsm = setUpFSM();
@@ -270,7 +277,7 @@ function setUpFSM() {
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
           // TODO convert passing in of anonymous function to promise...
-          upload( 
+          upload( prompts, profile, SPEECHSUBMISSIONAPPVERSION, 
               // anonymous function to be executed after processsing of shadow DOM
               // audio elements completed, otherwise submission package will be
               // missing prompt lines and audio files...
@@ -283,7 +290,8 @@ function setUpFSM() {
                 fsm.donesubmission();
                 // reset random 3 digit characters for submission name
                 profile = new Profile(view.update);
-              } 
+              },
+
           );
         },
       }
@@ -326,4 +334,6 @@ function setUpFSM() {
 
     return fsm;
 }
+
+})();
 

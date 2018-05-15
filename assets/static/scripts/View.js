@@ -17,7 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-function View (max_numPrompts) {
+function View (prompts, max_numPrompts) {
+    var self = this; // save context
+
+    this.prompts = prompts;
     this.max_numPrompts = max_numPrompts;
 
     // buttons
@@ -149,7 +152,7 @@ function View (max_numPrompts) {
     $('#max_num_prompts').click(function () { 
         prompts.previous_max_num_prompts = prompts.max_num_prompts;
         prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
-        view.updateProgress();
+        self.updateProgress();
 
         // promptId start point will be randomized and not be consecutive
         // to previous prompt IDs.
@@ -291,15 +294,15 @@ View.prototype.update = function (json_object) {
 * set record, stop button display
 */
 View.prototype.setRSButtonDisplay = function (record, stop) {
-    view.record.disabled = ! record;
-    view.stop.disabled = ! stop;
+    this.record.disabled = ! record;
+    this.stop.disabled = ! stop;
 }
 
 /**
 * set upload button display
 */
 View.prototype.setUButtonDisplay = function (upload) {
-    view.upload.disabled = ! upload;
+    this.upload.disabled = ! upload;
 }
 
 /**
@@ -341,7 +344,7 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 View.prototype.waveformdisplay = function (
        blob, no_speech, no_trailing_silence, clipping, too_soft ) 
 {
-    // 'self' used to save the current context when calling function references
+    // 'self' used to save the current context when calling function
     var self = this;
 
     var clipContainer = document.createElement('article');
@@ -376,7 +379,7 @@ View.prototype.waveformdisplay = function (
         evtTgt = e.target;
         var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
         
-        prompts.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
+        self.prompts.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
         console.log("prompt deleted: " + prompt_id);
 
         evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
@@ -454,24 +457,26 @@ View.prototype.waveformdisplay = function (
       return waveformElement;
     }
 
+    // #########################################################################
+
     clipContainer.appendChild(createClipLabel());
     clipContainer.appendChild(createDeleteButton());
     clipContainer.appendChild(createWaveformElement());
     clipContainer.appendChild(createAudioPlayer());
 
-    view.soundClips.insertBefore(clipContainer, view.soundClips.children[0]);
+    this.soundClips.insertBefore(clipContainer, this.soundClips.children[0]);
 
     // add waveform to waveformElement
     // see http://wavesurfer-js.org/docs/
-    wavesurfer[self.clip_id] = WaveSurfer.create({
+    wavesurfer[this.clip_id] = WaveSurfer.create({
       container: '#' + waveformdisplay_id,
       scrollParent: true,
       waveColor : 'OliveDrab',
       minPxPerSec: 200,
     });
-    wavesurfer[self.clip_id].load(audioURL);
+    wavesurfer[this.clip_id].load(audioURL);
 
-    self.clip_id++;
+    this.clip_id++;
 }
 
 /**
@@ -489,7 +494,7 @@ View.prototype.reset = function () {
 * update number of prompts recorded and total number of prompts to record
 */
 View.prototype.updateProgress = function () {
-    var progress = prompts.getProgressDescription();
+    var progress = this.prompts.getProgressDescription();
     document.querySelector('.progress-display').innerText = progress;
 }
 

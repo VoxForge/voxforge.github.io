@@ -75,7 +75,10 @@ $( window ).unload(function() {
 * Notes:
 * service workers: https://www.twilio.com/blog/2017/02/send-messages-when-youre-back-online-with-service-workers-and-background-sync.html
 */
-function upload( when_audio_processing_completed_func ) {
+function upload( prompts, 
+                 profile, 
+                 speechSubmissionAppVersion, 
+                 when_audio_processing_completed_func ) {
 
     var allClips = document.querySelectorAll('.clip');
     var clipIndex = 0;
@@ -154,7 +157,7 @@ function upload( when_audio_processing_completed_func ) {
         zip_worker.postMessage({
           command: 'zipAndSave',
 
-          speechSubmissionAppVersion: SPEECHSUBMISSIONAPPVERSION,
+          speechSubmissionAppVersion: speechSubmissionAppVersion,
           temp_submission_name: profile.getTempSubmissionName(),
           short_submission_name: profile.getShortSubmissionName(),
           username: profile.getUserName(),

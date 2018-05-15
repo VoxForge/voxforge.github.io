@@ -119,9 +119,10 @@ var wavesurfer = [];
 /**
 * Class definition
 */
-function Audio (scriptProcessor_bufferSize, vad, maxsilence, minvoice) {
-    this.vad = vad;
+function Audio (view, profile, scriptProcessor_bufferSize, vad, maxsilence, minvoice) {
+    this.view = view;
     this.scriptProcessor_bufferSize = scriptProcessor_bufferSize;
+    this.vad = vad;
     this.maxsilence = maxsilence;
     this.minvoice = minvoice;
 
@@ -316,7 +317,7 @@ Audio.prototype.record = function () {
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
 
-    visualize(this.analyser);
+    visualize(this.view, this.analyser);
 
     // clears out audio buffer 
     audioworker.postMessage({
