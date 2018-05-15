@@ -90,12 +90,17 @@ if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || p
 }
 
 var max_numPrompts = 50;
-var vad = true;
+
 var scriptProcessor_bufferSize = undefined; // let device decide appropriate buffer size
 //vad_maxsilence = 1500; //  original
 //vad_minvoice = 250;//  original
-var vad_maxsilence = 250; // works well with linux; not so well on Android 4.4.2
-var vad_minvoice = 250; 
+
+var vad_parms = {
+    run: true,
+    maxsilence: 250, // works well with linux; not so well on Android 4.4.2
+    minvoice: 250, 
+    buffersize: 480,
+};
 // Note: cannot change device sample rate from browser...
 if (platform.os.family === "Android" ) {
   // Android's higher buffer value causing problems with WebRTC VAD.  Need to 
@@ -112,8 +117,8 @@ if (platform.os.family === "Android" ) {
     console.warn("low powered device - disabling automatic silence detection (VAD)");
     max_numPrompts = 10;
   } else {
-    vad_maxsilence = 1000; // use more aggressive silence detection on Android
-    vad_minvoice = 125; // use shorter min voice on Android
+    vad_parms.maxsilence = 1000; // use more aggressive silence detection on Android
+    vad_parms.minvoice = 125; // use shorter min voice on Android
     max_numPrompts = 25;
   }
 }
@@ -142,19 +147,18 @@ var profile = new Profile(view.update);
 var audio = new Audio(view, 
                       profile, 
                       scriptProcessor_bufferSize, 
-                      vad, 
-                      vad_maxsilence, 
-                      vad_minvoice);
+                      vad_parms);
 
 // finite state machine object
-var fsm = setUpFSM();
+var fsm = setUpFSM(prompts, view, profile, audio);
+view.set_fsm(fsm);
 
 /**
 * ### Finite State Machine #####################################################
 *
 * see: https://github.com/jakesgordon/javascript-state-machine
 */
-function setUpFSM() {
+function setUpFSM(prompts, view, profile, audio) {
     //  recording timeout object
     var rec_timeout_obj;
 

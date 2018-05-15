@@ -43,12 +43,12 @@ var process_data;
 /**
 * Constructor
 */
-function Vad(sampleRate, maxsilence, minvoice) {
+function Vad(sampleRate, parms) {
     this.sampleRate = sampleRate;
-    this.maxsilence = maxsilence;
-    this.minvoice = minvoice;
+    this.maxsilence = parms.maxsilence;
+    this.minvoice = parms.minvoice;
+    this.sizeBufferVad = parms.buffersize;
 
-    this.sizeBufferVad = 480;
     this.leftovers = 0;
     this.buffer_vad = new Int16Array(this.sizeBufferVad);
 

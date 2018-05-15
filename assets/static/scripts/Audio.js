@@ -119,12 +119,14 @@ var wavesurfer = [];
 /**
 * Class definition
 */
-function Audio (view, profile, scriptProcessor_bufferSize, vad, maxsilence, minvoice) {
+function Audio (view, 
+                profile, 
+                scriptProcessor_bufferSize, 
+                vad_parms) 
+{
     this.view = view;
     this.scriptProcessor_bufferSize = scriptProcessor_bufferSize;
-    this.vad = vad;
-    this.maxsilence = maxsilence;
-    this.minvoice = minvoice;
+    this.vad_parms = vad_parms;
 
     // 'self' used to save current context when calling function references
     var self = this;
@@ -262,7 +264,7 @@ function Audio (view, profile, scriptProcessor_bufferSize, vad, maxsilence, minv
             -but-
       But VAD does not work well enough with Android 4.4.2 default buffer size of
       16384, so set Android 4.4.2 to 8192
-      TODO test with with other versions od Android
+      TODO test with with other versions of Android
 */
 
       self.processor = self.audioCtx.createScriptProcessor(self.scriptProcessor_bufferSize , 1, 1);
@@ -319,9 +321,7 @@ Audio.prototype.record = function () {
     // clears out audio buffer 
     audioworker.postMessage({
       command: 'start',
-      vad: this.vad,
-      maxsilence: this.maxsilence,
-      minvoice: this.minvoice,
+      vad_parms: this.vad_parms,
       sampleRate: this.audioCtx.sampleRate,
     });
 

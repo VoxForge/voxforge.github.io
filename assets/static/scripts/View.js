@@ -336,6 +336,13 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 }
 
 /**
+* need fsm object so can set deleteclicked in fsm
+*/
+View.prototype.set_fsm = function(fsm) {
+  this.fsm = fsm;
+}
+
+/**
 * run after worker completes audio recording; creates a waveform display of 
 * recorded audio and displays text of associated prompt line.  User can
 * then review and if needed delete an erroneous recording, which can then be
@@ -376,7 +383,7 @@ View.prototype.waveformdisplay = function (
       * can re-record
       */
       deleteButton.onclick = function(e) {
-        evtTgt = e.target;
+        var evtTgt = e.target;
         var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
         
         self.prompts.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
@@ -384,8 +391,8 @@ View.prototype.waveformdisplay = function (
 
         evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
 
-        // TODO use a callback?
-        fsm.deleteclicked();
+        //fsm.deleteclicked();
+        self.fsm.deleteclicked();
       }
 
       return deleteButton;
