@@ -336,7 +336,10 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 }
 
 /**
-* need fsm object so can set deleteclicked in fsm
+* need fsm object so can set deleteclicked in fsm; can't add it to constructor
+* because fsm has dependencies on other classes (prompts, view, profile, audio)
+* that must be instantiated before fsm, and view has a Audio depends n profile 
+* and view and View depends on Prompts... 
 */
 View.prototype.set_fsm = function(fsm) {
   this.fsm = fsm;

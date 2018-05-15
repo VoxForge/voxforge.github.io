@@ -20,7 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Class declaration
 */
-function Profile (updateView_func) {
+function Profile (updateView_func, appversion) {
+  this.appversion = appversion;
+
   /**
   * get profile information from local storage and if it exists, return parsed
   * JSON object, otherwise return null.
@@ -95,7 +97,6 @@ Profile.cleanUserInput = function (user_input) {
 */
 Profile.prototype.toHash = function () {
     var profile_hash = {};
-    var i=0;
 
     // note, this leaves the contents of Form unchanged, only when user 
     // comes back does content of Other form field get removed
@@ -151,6 +152,7 @@ Profile.prototype.toHash = function () {
     }
 
     profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
+    profile_hash["app_version"] = this.appversion;
 
     profile_hash["ua_string"] = $("#ua_string").val();
     // see http://www.whatsmyua.info/
