@@ -56,7 +56,7 @@ var uploadURL = 'https://upload.voxforge1.org'; // prod
 // !!!!!!
 // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
 // /etc/hosts or on local DNS server;
-var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // !!!!!!
 
@@ -115,7 +115,7 @@ if (platform.os.family === "Android" ) {
                ' sample-frames, for VAD support');
 
   if (platform.os.version && parseFloat(platform.os.version) < 5) {
-    vad = false;
+    vad_parms.run = false;
     console.warn("low powered device - disabling automatic silence detection (VAD)");
     max_numPrompts = 10;
   } else {

@@ -17,11 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-/**
-* ### Finite State Machine #####################################################
-*
-* see: https://github.com/jakesgordon/javascript-state-machine
-*/
 function Controller(prompts, 
                     view, 
                     profile, 
@@ -59,6 +54,11 @@ function Controller(prompts,
 
     view.setRSUButtonDisplay(true, false, false); 
 
+    /**
+    * ### Finite State Machine #####################################################
+    *
+    * see: https://github.com/jakesgordon/javascript-state-machine
+    */
     var fsm = new StateMachine({
       init: 'waveformdisplay',
 
