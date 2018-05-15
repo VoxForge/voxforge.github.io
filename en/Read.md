@@ -229,7 +229,7 @@ instructions:
   label: Instructions
   lines:
     - 1. Click <b>Record</b> to start, saying only the words that appear in the box below.
-    - 2. v <b>Stop</b> when completed.
+    - 2. Click <b>Stop</b> when completed.
   lastline: >
     3. When done, click <b>Upload</b> to send your recordings to VoxForge server.
 
