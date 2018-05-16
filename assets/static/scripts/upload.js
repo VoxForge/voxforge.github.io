@@ -81,7 +81,6 @@ function upload( prompts,
                  allClips,
                  when_audio_processing_completed ) {
 
-    //var allClips = document.querySelectorAll('.clip');
     var clipIndex = 0;
     var audioArray = [];
 

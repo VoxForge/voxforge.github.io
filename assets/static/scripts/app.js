@@ -86,7 +86,7 @@ if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || p
 // corresponds to the maximum number of prompts that a user can select from the 
 // drop-down menu selector;  Changes based on type of device being used.
 var max_numPrompts_selector = 50;
-//var num_prompts_to_trigger_upload = 10;
+//var num_prompts_to_trigger_upload = 10; // user can upload anytime after recording 10 prompts
 var num_prompts_to_trigger_upload = 3; // debug
 
 // buffer size is in units of sample-frames. If specified, the bufferSize 
@@ -147,9 +147,9 @@ const process_last_recording_delay = recording_stop_delay + 400;
 /**
 * Instantiate classes
 */
-var prompts = new Prompts(num_prompts_to_trigger_upload); 
-view = new View(prompts, 
-                max_numPrompts_selector); 
+var prompts = new Prompts(max_numPrompts_selector,
+                          num_prompts_to_trigger_upload); 
+view = new View(prompts); 
 var profile = new Profile(view.update, 
                           appversion);
 var audio = new Audio(view, 

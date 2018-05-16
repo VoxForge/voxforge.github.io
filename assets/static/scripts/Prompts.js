@@ -20,10 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * ### Contructor ##############################################
 */
-function Prompts(num_prompts_to_trigger_upload) {
+function Prompts(max_numPrompts_selector, num_prompts_to_trigger_upload) {
     // this value triggers the display of the upload button and upload 
     // windows.alert
     this.max_num_prompts = num_prompts_to_trigger_upload;
+    // this is used by View class
+    this.max_numPrompts_selector = max_numPrompts_selector;
 
     // TODO duplicate definition in service worker file: processSavedSubmission.js
     var local_prompt_file_name = page_language + '_' + 'prompt_file';
@@ -284,9 +286,6 @@ Prompts.splitPromptLine = function(promptLine) {
 */
 Prompts.prototype.initPromptStack = function () {
     this.prompt_stack = [];
-    // TODO why is this 'one' indexed... no longer makes sense
-    // wouldn't first element always be lost?
-    //this.index = Math.floor((Math.random() * this.list.length) + 1); // one indexed
     this.index = Math.floor((Math.random() * this.list.length));
 
     for (var i = this.max_num_prompts -1 ; i >=0; i--) { 
@@ -375,13 +374,6 @@ Prompts.prototype.toJsonString = function () {
     }
 
     return JSON.stringify(obj,null,"  ");
-}
-
-/**
-* true when max number of prompts user wants to record is reached
-*/
-Prompts.prototype.maxPromptsReached = function () {
-    return this.prompt_count >= this.max_num_prompts;
 }
 
 /**

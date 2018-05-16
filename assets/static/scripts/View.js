@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-function View (prompts, max_numPrompts_selector) {
+function View (prompts) {
     var self = this; // save context
 
     this.prompts = prompts;
@@ -142,9 +142,9 @@ function View (prompts, max_numPrompts_selector) {
 
     // set default (device dependent) max number of prompts the user can record 
     option = ''; // clear previous use of option var
-    var startPrompt = 10;
+    var startPrompt = 10; // min number of prompts no matter what device
     var incr = 5;
-    for (var i=startPrompt; i <= max_numPrompts_selector; i = i + incr){
+    for (var i=startPrompt; i <= prompts.max_numPrompts_selector; i = i + incr){
        option += '<option value="'+ i + '">' + i +  '</option>';
     }
     $('#max_num_prompts').append(option);
