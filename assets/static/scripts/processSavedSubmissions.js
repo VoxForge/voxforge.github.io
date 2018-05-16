@@ -78,8 +78,10 @@ function processSavedSubmissions(uploadURL) {
       var [saved_submission_name, jsonOnject, uploadURL] = data;
 
       return new Promise(function (resolve, reject) {
+        //https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/13596540/
         var form = new FormData();
-        form.append('file', jsonOnject['file'], "webworker_file.zip");
+        //form.append('file', jsonOnject['file'], "webworker_file.zip"); // optional filename not supported in Edge
+        form.append('file', jsonOnject['file']);
         form.append('language', jsonOnject['language']);
         form.append('username', jsonOnject['username']);
         form.append('suffix',   jsonOnject['suffix']);

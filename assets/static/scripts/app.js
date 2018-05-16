@@ -77,15 +77,7 @@ if( ! window.indexedDB )
   window.alert( page_browser_support.no_indexedDB_message );          
 }
 
-if( ! window.FormData )
-{
-  // this does not work in Windows Edge
-  // for work around, see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest#Submitting_forms_and_uploading_files
-  // this check does not actually catch anything...
-  window.alert( page_browser_support.no_formDataSupport_message );           
-}
-
-// TODO Edge does not yet support FormData, even though it says it does... 
+// Edge webworkers do not support FormData, and their web worker debugging is not there yet...
 if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
 {
   window.alert( page_browser_support.no_edgeSupport_message );         

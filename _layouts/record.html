@@ -38,7 +38,7 @@
                  placeholder="{{ page.username_label }}" value="" 
                  type="text">
           <div id=anonymous_instructions_display>
-            <small>{{ page.anonymous_submission }}</small></br></br>
+            <small>{{ page.anonymous_submission }}</small><br><br>
           </div>
       <button style="background: #cedfe8;" onclick="view.speakerCharacteristics()">{{ page.speaker_characteristics }}</button>
 	    <div style="display: none;" id="speaker_characteristics_display">
@@ -51,7 +51,7 @@
           </select>
 
           <label for="age">{{ page.age.label }}</label>
-          <select type="text" id="age"/></br>
+          <select type="text" id="age">
             <option selected value="Unknown">{{ page.please_select }}</option>
             {% for item in page.age.selection %}
               <option old_value="{{ item.old_value }}" value="{{ item.value }}">{{ item.value }}</option> 
@@ -67,7 +67,7 @@
           <div data-role="popup" id="native_speaker_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
             <p><a href="{{ page.native_speaker.popup_link }}" target="_blank">{{ page.native_speaker.label }}</a>: {{ page.native_speaker.popup_text }}</p>
           </div>
-          <select type="text" id="native_speaker"/></br>
+          <select type="text" id="native_speaker">
             <option selected value="Unknown">{{ page.please_select }}</option>
             {% for item in page.native_speaker.selection %}
               <option value="{{ item }}">{{ item }}</option>
@@ -85,7 +85,7 @@
                 <p><a href="{{ page.first_language.popup_link }}" target="_blank">{{ page.first_language.label }}</a>: {{ page.first_language.popup_text }}</p>
               </div>
           <div class="other">
-              <select type="text" id="first_language"/></br>
+              <select type="text" id="first_language">
               </select>
               <div style="display: none;"  id="first_language_other_display">
                 <input id="first_language_other" 
@@ -160,7 +160,7 @@
 	      <div style="display: none;" id="recording_information_display">
           <label for="microphone">{{ page.microphone.label }}</label>
           <div class="other">
-            <select type="text" id="microphone"/></br>
+            <select type="text" id="microphone">
               <option selected value="Unknown">{{ page.please_select }}</option>
               {% for item in page.microphone.selection %}
                 <option value="{{ item }}">{{ item }}</option>    
@@ -175,7 +175,7 @@
 
         <label for="recording_location">{{ page.recording_location.label }}</label>
         <div class="other">
-          <select type="text" id="recording_location"/></br>
+          <select type="text" id="recording_location">
             <option selected value="Unknown">{{ page.please_select }}</option>
               {% for item in page.recording_location.selection %}
                 <option value="{{ item }}">{{ item }}</option>    
@@ -188,7 +188,7 @@
           </div><!--recording_location_other_display-->
         </div> <!--other-->
         <label for="background_noise">{{ page.background_noise.label }}</label>
-        <select type="text" id="background_noise"/></br>
+        <select type="text" id="background_noise">
           <option selected value="Unknown">{{ page.please_select }}</option>
           {% for item in page.background_noise.selection %}
             <option value="{{ item }}">{{ item }}</option>
@@ -198,7 +198,7 @@
         <div id=background_noise_display>
           <label for="noise_volume">{{ page.noise_volume.label }}</label>
           <div class="other">
-            <select type="text" id="noise_volume"/></br>
+            <select type="text" id="noise_volume">
               <option selected value="Unknown">{{ page.please_select }}</option>
               {% for item in page.noise_volume.selection %}
                 <option value="{{ item }}">{{ item }}</option>
@@ -207,7 +207,7 @@
           </div><!--other-->
           <label for="noise_type">{{ page.noise_type.label }}</label>
           <div class="other">
-            <select type="text" id="noise_type"/></br>
+            <select type="text" id="noise_type">
               <option selected value="Unknown">{{ page.please_select }}</option>
               {% for item in page.noise_type.selection %}
                 <option value="{{ item }}">{{ item }}</option>
@@ -229,7 +229,7 @@
            <div data-role="popup" id="license_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
             <p><a href="{{ page.license.popup.link }}" target="_blank">{{ page.license.label }}</a>: {{ page.license.popup.text }}</p>
            </div>
-             <select type="text" id="license"/></br>
+             <select type="text" id="license">
               <option selected value="{{ page.license.selection_default.value }}">{{ page.license.selection_default.item }}</option>
               {% for item in page.license.selection %}
                 <option value="{{ item.value }}">{{ item.option }}</option>
@@ -244,7 +244,7 @@
            <div data-role="popup" id="ua_string_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
             <p><a href="{{ page.ua_string.popup.link }}" target="_blank">{{ page.ua_string.label }}</a>: {{ page.ua_string.popup.text }}</p>
            </div>
-           <select type="text" id="ua_string"/></br>
+           <select type="text" id="ua_string">
             <option selected value="{{ page.ua_string.selection_default.value }}">{{ page.ua_string.selection_default.item }}</option>
             {% for item in page.ua_string.selection %}
               <option value="{{ item.value }}">{{ item.option }}</option>
@@ -256,11 +256,11 @@
 	     </div><!-- readme -->
 	   </div> <!-- profile-display -->
 
-        </br>
+        <br>
 
 
  <!-- <label for="max_num_prompts_disp">{{ page.num_prompts.label }}</label>
-    <select type="number" id="max_num_prompts_disp"/></br>
+    <select type="number" id="max_num_prompts_disp">
         <option selected value="10">10</option>
         <option value="15">15</option>
         <option value="20">20</option>
@@ -273,7 +273,7 @@
       </select>
  -->
       <label for="max_num_prompts">{{ page.num_prompts.label }}</label>
-      <select type="text" id="max_num_prompts"/></br>
+      <select type="text" id="max_num_prompts">
       </select>
 
 
@@ -283,7 +283,7 @@
               onclick="view.directionsInfo()">{{ page.instructions.label }}</button>
       <div id="directions-display">
         {% for line in page.instructions.lines %}
-            {{ line }} <br/>
+            {{ line }} <br>
         {% endfor %}
         {{ page.instructions.lastline }}
       </div>
@@ -337,7 +337,10 @@
     <script src="/assets/static/lib/languages.js"></script>
     <script src="/assets/static/lib/visualize.js"></script>
     <script src="/assets/static/lib/localforage.js"></script>
-    <script src="/assets/static/lib/webrtc_vad.js"></script>
+
+<!-- to address Firefox on windows error of:"unable to cache asm.js in synchronous scripts" -->
+    <script async src="/assets/static/lib/webrtc_vad.js"></script>
+
     <script src="/assets/static/lib/state-machine.js"></script>
 <!--
     <script src="/assets/static/lib/state-machine-visualize.js"></script>

@@ -60,7 +60,7 @@ gender:
 age:
   label: Age
   selection:
-    - { value: '<20', old_value: 'Youth' }
+    - { value: '< 20', old_value: 'Youth' }
     - { value: '20 - 29', old_value: 'Adult' }
     - { value: '30 - 39', old_value: 'Adult' }
     - { value: '40 - 49', old_value: 'Adult' }
@@ -68,7 +68,7 @@ age:
     - { value: '60 - 69', old_value: 'Adult' }
     - { value: '70 - 79', old_value: 'Senior' }
     - { value: '80 - 89', old_value: 'Senior' }
-    - { value: '>89', old_value: 'Senior' }
+    - { value: '> 89', old_value: 'Senior' }
 
 language_id: EN
 # - leave a blank line between groupings of hash/objects; otherwise liquid does 
@@ -191,14 +191,14 @@ license:
     text:  > 
       <b>CC0 - Creative Commons Public Domain Dedication</b> you dedicate this work to the
       public domain by waiving all of your rights to the work worldwide
-      under copyright law.  If you don't know which license to choose, choose: <b>CC0</b>.</br>
+      under copyright law.  If you don't know which license to choose, choose: <b>CC0</b>.<br>
       <b>CC BY - Creative Commons Attribution</b>  This license lets others distribute, remix, 
       tweak, and build upon your work, even commercially, as long as they 
-      credit you for the original creation.</br>
+      credit you for the original creation.<br>
       <b>CC Creative Commons BY-SA - Attribution-ShareAlike </b>  This license lets others 
       remix, tweak, and build upon your work even for commercial purposes, 
       as long as they credit you and license their new creations under the 
-      identical terms.  </br>
+      identical terms.  <br>
       <b>GPLv3 GNU General Public License</b> similar to CC BY-SA, but made for software... used by
       VoxForge 1.0 corpus.
   selection_default: { value: 'CC0',  item: 'CC0 - Creative Commons - No rights Reserved (recommended)' }
@@ -215,7 +215,7 @@ ua_string:
     hover_text: >
       Include User Agent string with submission
     text:  > 
-      Your browser's user agent string indicates something about your system.</br>
+      Your browser's user agent string indicates something about your system.<br>
       The VoxForge app can collect your browser's user agent string
       to help troubleshoot and determine which devices work best with this app.
   selection_default: { value: 'Yes',  item: 'Yes' }
@@ -241,9 +241,9 @@ instructions:
 #     title: Windows - How to give your Edge browser permission to use your microphone
 #      link: https://privacy.microsoft.com/en-us/windows-10-camera-and-privacy
 #      text:  > 
-#        1. Go to Start, then select Settings > Privacy > Microphone.</br> 
-#        2. Choose your preferred setting for Let apps use my microphone.</br>
-#        3. Under Choose apps that can use your microphone, turn on the individual setting for the Edge browser.</br>
+#        1. Go to Start, then select Settings > Privacy > Microphone.<br> 
+#        2. Choose your preferred setting for Let apps use my microphone.<br>
+#        3. Under Choose apps that can use your microphone, turn on the individual setting for the Edge browser.<br>
 
 controls:
   record: Record
@@ -283,16 +283,16 @@ alert_message:
   uploaded_message: >
     uploaded to VoxForge Server:
   audio_too_loud: >
-    Your recording is too loud!  </br>Please reduce your microphone volume, delete this 
+    Your recording is too loud!  <br>Please reduce your microphone volume, delete this 
     recording and re-record the prompt
   audio_too_soft: >
-    Your recording levels are too low!  </br>Please increase your microphone volume, 
+    Your recording levels are too low!  <br>Please increase your microphone volume, 
     then delete this prompt recording and re-record it.
   no_trailing_silence: >
-    No trailing silence!  You cut the end of your recording off (you clicked 'stop' too early) </br>Please delete and 
+    No trailing silence!  You cut the end of your recording off (you clicked 'stop' too early) <br>Please delete and 
     re-record this prompt.
   no_speech: >
-    No Speech or recording volume too low</br>Please delete and re-record this prompt.
+    No Speech or recording volume too low<br>Please delete and re-record this prompt.
 
 # script below gets loaded in {{ content }} section of layout page
 # these are used by Javascript, therefore need special handling for them to 
