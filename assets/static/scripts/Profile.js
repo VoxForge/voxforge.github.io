@@ -337,7 +337,7 @@ Profile.prototype.getShortSubmissionName = function () {
   var day = d.getDate();
   day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
   var date = d.getFullYear().toString() + month.toString() + day.toString();
-  var result = page_language + '-' + this.getUserName() + '-' + date + '-' + this.suffix;
+  var result = page_language.toUpperCase() + '-' + this.getUserName() + '-' + date + '-' + this.suffix;
 
   return result;
 }

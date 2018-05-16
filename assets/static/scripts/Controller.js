@@ -207,13 +207,6 @@ function Controller(prompts,
 
     view.maxnumpromptschanged.onclick = function() { 
       var p = prompts;
-      // only return to waveform_display state if user _increases_ the maximum 
-      // number of prompts
-      //if (p.max_num_prompts > p.previous_max_num_prompts) {
-      //  fsm.maxnumpromptsincreased();
-      //} else  if (prompts.max_num_prompts < prompts.previous_max_num_prompts) {
-      //  fsm.recordedmorethancurrentmaxprompts();
-      //} // no transition fired if max_num_prompts == previous_max_num_prompts
 
       if (p.max_num_prompts >= p.previous_max_num_prompts) {
         fsm.maxnumpromptsincreased();
