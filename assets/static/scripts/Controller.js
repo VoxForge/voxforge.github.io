@@ -52,6 +52,22 @@ function Controller(prompts,
         }, recording_timeout);
     }
 
+    /**
+    * function to be executed after processsing of shadow DOM
+    * audio elements completed, otherwise submission package will be
+    * missing prompt lines and audio files...
+    * basically a blocking wait until audio files get converted into
+    * blobs for later processing by zipupload web worker.
+    */
+    function when_audio_processing_completed () {
+      profile.addProfile2LocalStorage();
+      prompts.resetIndices();
+      view.reset();
+      fsm.donesubmission();
+      // reset random 3 digit characters for submission name
+      profile = new Profile(view.update);
+    }
+
     view.setRSUButtonDisplay(true, false, false); 
 
     /**
@@ -153,21 +169,12 @@ function Controller(prompts,
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
           // TODO convert passing in of anonymous function to promise...
-          upload( prompts, profile, appversion, 
-              // anonymous function to be executed after processsing of shadow DOM
-              // audio elements completed, otherwise submission package will be
-              // missing prompt lines and audio files...
-              // basically a blocking wait until audio files get converted into
-              // blobs for later processing by zipupload web worker.
-              function when_audio_processing_completed_func () {
-                profile.addProfile2LocalStorage();
-                prompts.resetIndices();
-                view.reset();
-                fsm.donesubmission();
-                // reset random 3 digit characters for submission name
-                profile = new Profile(view.update);
-              },
-
+          var allClips = document.querySelectorAll('.clip');
+          upload( prompts, 
+                  profile, 
+                  appversion, 
+                  allClips,
+                  when_audio_processing_completed,
           );
         },
       }

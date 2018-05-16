@@ -78,9 +78,10 @@ $( window ).unload(function() {
 function upload( prompts, 
                  profile, 
                  speechSubmissionAppVersion, 
-                 when_audio_processing_completed_func ) {
+                 allClips,
+                 when_audio_processing_completed ) {
 
-    var allClips = document.querySelectorAll('.clip');
+    //var allClips = document.querySelectorAll('.clip');
     var clipIndex = 0;
     var audioArray = [];
 
@@ -190,7 +191,7 @@ function upload( prompts,
         };
 
         // wait until zip_worker postMesasge completed before resetting everything
-        when_audio_processing_completed_func(); 
+        when_audio_processing_completed(); 
 
       }); // Promise
     } // callWorker2createZipFile

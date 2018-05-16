@@ -83,7 +83,11 @@ if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || p
   window.alert( page_browser_support.no_edgeSupport_message );         
 }
 
-var max_numPrompts = 50;
+// corresponds to the maximum number of prompts that a user can select from the 
+// drop-down menu selector;  Changes based on type of device being used.
+var max_numPrompts_selector = 50;
+//var num_prompts_to_trigger_upload = 10;
+var num_prompts_to_trigger_upload = 3; // debug
 
 // buffer size is in units of sample-frames. If specified, the bufferSize 
 // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
@@ -102,12 +106,18 @@ var vad_parms = {
 // Note: cannot change device sample rate from browser...
 if (platform.os.family === "Android" ) {
   if (platform.os.version && parseFloat(platform.os.version) < 5) {
+    // Android 4.4.2 has default buffer size of: 16384
+    // Firefox on Android 4.4.2 audio recording quality sucks
+    // Android 4.4.2 trailing silence removal custs of end of recording, 
+    // need longer delay on Android 4.4.2
+    // prompts with unvoiced words at end of prompt trip up VAD on Android 4.4.2
+    // large number of prompts affect audio recording quality on Andoir 4.4.2
     vad_parms.run = false;
     console.warn("low powered device - disabling automatic silence detection (VAD)");
 
-    max_numPrompts = 10;
+    max_numPrompts_selector = 10;
   } else {
-    // Android 4.4.2 has default buffer size of: 16384
+
     // Android's higher buffer value causing problems with WebRTC VAD.  Need to 
     // manually set.
     scriptProcessor_bufferSize = 8192;
@@ -117,7 +127,7 @@ if (platform.os.family === "Android" ) {
     vad_parms.maxsilence = 1000; // use more aggressive silence detection on Android
     vad_parms.minvoice = 125; // use shorter min voice on Android
 
-    max_numPrompts = 25;
+    max_numPrompts_selector = 25;
   }
 }
 
@@ -137,9 +147,9 @@ const process_last_recording_delay = recording_stop_delay + 400;
 /**
 * Instantiate classes
 */
-var prompts = new Prompts();
+var prompts = new Prompts(num_prompts_to_trigger_upload); 
 view = new View(prompts, 
-                max_numPrompts); 
+                max_numPrompts_selector); 
 var profile = new Profile(view.update, 
                           appversion);
 var audio = new Audio(view, 

@@ -20,7 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * ### Contructor ##############################################
 */
-function Prompts() {
+function Prompts(num_prompts_to_trigger_upload) {
+    // this value triggers the display of the upload button and upload 
+    // windows.alert
+    this.max_num_prompts = num_prompts_to_trigger_upload;
+
     // TODO duplicate definition in service worker file: processSavedSubmission.js
     var local_prompt_file_name = page_language + '_' + 'prompt_file';
     this.promptCache = localforage.createInstance({
@@ -248,9 +252,6 @@ function Prompts() {
 * object instances, that is, the variables and methods of the object
 */
 Prompts.prototype = {
-    //max_num_prompts: 10, // prod
-    max_num_prompts: 3, // TODO testing
-
     previous_max_num_prompts: 0, // to decide what to do when use changes max number of prompts
     list: [], // list of prompts to be read by user
     index: 0, // pointer to position in prompt list array
