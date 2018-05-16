@@ -56,7 +56,7 @@ var uploadURL = 'https://upload.voxforge1.org'; // prod
 // !!!!!!
 // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
 // /etc/hosts or on local DNS server;
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // !!!!!!
 
@@ -109,20 +109,22 @@ var vad_parms = {
 };
 // Note: cannot change device sample rate from browser...
 if (platform.os.family === "Android" ) {
-  // Android 4.4.2 has default buffer size of: 16384
-  // Android's higher buffer value causing problems with WebRTC VAD.  Need to 
-  // manually set.
-  scriptProcessor_bufferSize = 8192;
-  console.warn('resetting bufferSize to ' + scriptProcessor_bufferSize + 
-               ' sample-frames, for VAD support');
-
   if (platform.os.version && parseFloat(platform.os.version) < 5) {
     vad_parms.run = false;
     console.warn("low powered device - disabling automatic silence detection (VAD)");
+
     max_numPrompts = 10;
   } else {
+    // Android 4.4.2 has default buffer size of: 16384
+    // Android's higher buffer value causing problems with WebRTC VAD.  Need to 
+    // manually set.
+    scriptProcessor_bufferSize = 8192;
+    console.warn('resetting bufferSize to ' + scriptProcessor_bufferSize + 
+                 ' sample-frames, for VAD support');
+
     vad_parms.maxsilence = 1000; // use more aggressive silence detection on Android
     vad_parms.minvoice = 125; // use shorter min voice on Android
+
     max_numPrompts = 25;
   }
 }
@@ -145,7 +147,7 @@ const process_last_recording_delay = recording_stop_delay + 400;
 */
 var prompts = new Prompts();
 view = new View(prompts, 
-                    max_numPrompts); 
+                max_numPrompts); 
 var profile = new Profile(view.update, 
                           appversion);
 var audio = new Audio(view, 
