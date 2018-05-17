@@ -76,27 +76,30 @@ function Controller(prompts,
     * see: https://github.com/jakesgordon/javascript-state-machine
     */
     var fsm = new StateMachine({
-      init: 'waveformdisplay',
+      init: 'nopromptsrecorded',
 
       //  name: TRANSITION              from: STATE                  to: STATE                                        
       transitions: [
-        { name: 'recordclickedltn',     from: 'waveformdisplay',     to: 'recordingltn' },
-        { name: 'recordclickedeqn',     from: 'waveformdisplay',     to: 'recordinglastprompt' },
-        { name: 'stopclicked',          from: 'recordingltn',        to: 'waveformdisplay'  },
-        { name: 'recordingtimeout',     from: 'recordingltn',        to: 'waveformdisplay' },  
+        { name: 'recordclickedltn',     from: 'nopromptsrecorded',   to: 'recordingltn' },
+        { name: 'recordclickedltn',     from: 'promptsrecorded',     to: 'recordingltn' },
+        { name: 'recordclickedeqn',     from: 'promptsrecorded',     to: 'recordinglastprompt' },
+        { name: 'stopclicked',          from: 'recordingltn',        to: 'promptsrecorded'  },
+        { name: 'recordingtimeout',     from: 'recordingltn',        to: 'promptsrecorded' },  
         { name: 'stopclicked',          from: 'recordinglastprompt', to: 'displaymessage'  },
         { name: 'recordingtimeout',     from: 'recordinglastprompt', to: 'displaymessage'  },
         { name: 'yesuploadmessage',     from: 'displaymessage',      to: 'uploading' },
-        { name: 'canceluploadmessage',  from: 'displaymessage',      to: 'maxprompts' },
-        { name: 'uploadclicked',        from: 'maxprompts',          to: 'uploading' },
-        { name: 'deleteclicked',        from: 'maxprompts',          to: 'waveformdisplay'  },
-        { name: 'deleteclicked',        from: 'waveformdisplay',     to: 'waveformdisplay'  },
-        { name: 'maxnumpromptsincreased', from: 'maxprompts',        to: 'waveformdisplay' },
-        { name: 'maxnumpromptsincreased', from: 'waveformdisplay',   to: 'waveformdisplay' },
-        { name: 'recordedmorethancurrentmaxprompts', from: 'maxprompts', to: 'displaymessage' },
-        { name: 'recordedmorethancurrentmaxprompts', from: 'waveformdisplay', to: 'displaymessage' },
-        { name: 'uploadclicked',        from: 'waveformdisplay',     to: 'uploading' },
-        { name: 'donesubmission',       from: 'uploading',           to: 'waveformdisplay' },
+        { name: 'canceluploadmessage',  from: 'displaymessage',      to: 'maxpromptsrecorded' },
+        { name: 'uploadclicked',        from: 'maxpromptsrecorded',  to: 'uploading' },
+        { name: 'deleteclickedgt1',     from: 'maxpromptsrecorded',  to: 'promptsrecorded'  },
+        { name: 'deleteclickedgt1',     from: 'promptsrecorded',     to: 'promptsrecorded'  },
+        { name: 'deleteclickedlast',    from: 'promptsrecorded',     to: 'nopromptsrecorded'  },
+        { name: 'maxnumpromptsincreased', from: 'maxpromptsrecorded',to: 'promptsrecorded' },
+        { name: 'maxnumpromptsincreased', from: 'promptsrecorded',   to: 'promptsrecorded' },
+        { name: 'maxnumpromptsincreased', from: 'nopromptsrecorded', to: 'nopromptsrecorded' },
+        { name: 'recordedmorethancurrentmaxprompts', from: 'maxpromptsrecorded', to: 'displaymessage' },
+        { name: 'recordedmorethancurrentmaxprompts', from: 'promptsrecorded', to: 'displaymessage' },
+        { name: 'uploadclicked',        from: 'promptsrecorded',     to: 'uploading' },
+        { name: 'donesubmission',       from: 'uploading',           to: 'nopromptsrecorded' },
       ],
 
       // javascript-state-machine does not like underscores in method or state names...
@@ -107,7 +110,11 @@ function Controller(prompts,
           audio.endRecording();
         },
 
-        onDeleteclicked: function() { 
+        onDeleteclickedgt1: function() { 
+          view.updateProgress();
+        },
+
+        onDeleteclickedlast: function() { 
           view.updateProgress();
         },
 
@@ -119,7 +126,7 @@ function Controller(prompts,
 
         // #####################################################################
         // States (Actions to take on entry into given state)
-        onWaveformdisplay: function() { 
+        onPromptsrecorded: function() { 
           view.setRSButtonDisplay(true, false);   
           //console.log('   *** onWaveformdisplay state: ' + this.state + " trans: " + this.transitions() );
         },
@@ -159,9 +166,15 @@ function Controller(prompts,
 
         // at maximum selected prompts, cannot record anymore, must upload to 
         // continue, or delete then upload
-        onMaxprompts: function() { 
+        onMaxpromptsrecorded: function() { 
           view.setRSUButtonDisplay(false, false, true);
           //console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
+        },
+
+        // hide upload button when no prompts have been recorded
+        onNopromptsrecorded: function() { 
+          view.setRSUButtonDisplay(true, false, false);
+          //console.log('   *** onNopromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onUploading: function() { 
@@ -169,6 +182,7 @@ function Controller(prompts,
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
           // TODO convert passing in of anonymous function to promise...
+          // uploadZippedSubmission needs to be converted to promise
           var allClips = document.querySelectorAll('.clip');
           upload( prompts, 
                   profile, 
@@ -181,28 +195,28 @@ function Controller(prompts,
     });
 
     view.record.onclick = function() { 
-        if ( prompts.last() ) {
-           fsm.recordclickedeqn(); // eqn = equal n; where n = maxprompts
-        } else {
-          fsm.recordclickedltn(); // ltn = less than n; where n = maxprompts
-        }
+      if ( prompts.last() ) {
+        fsm.recordclickedeqn(); // eqn = equal n; where n = maxprompts
+      } else {
+        fsm.recordclickedltn(); // ltn = less than n; where n = maxprompts
+      }
     }
 
     view.stop.onclick = function() { 
-          clearTimeout(rec_timeout_obj);
-          var start =  Date.now();
-          console.log("stop clicked" );
-          view.hidePromptDisplay();
-          // actual stopping of recording is delayed because some users hit it
-          // early and cut off the end of their recording.
-          setTimeout( function () {
-            var elasped = Date.now() - start;
-            fsm.stopclicked(); 
-          }, recording_stop_delay);
+      clearTimeout(rec_timeout_obj);
+      var start =  Date.now();
+      console.log("stop clicked" );
+      view.hidePromptDisplay();
+      // actual stopping of recording is delayed because some users hit it
+      // early and cut off the end of their recording.
+      setTimeout( function () {
+        var elasped = Date.now() - start;
+        fsm.stopclicked(); 
+      }, recording_stop_delay);
     }
 
     view.upload.onclick = function() { 
-        fsm.uploadclicked();
+      fsm.uploadclicked();
     }
 
     view.maxnumpromptschanged.onclick = function() { 
@@ -217,6 +231,21 @@ function Controller(prompts,
       } 
     }
 
+    /** 
+     * using a dummy 'delete' div that is triggered by clicking any one
+     * delete buttons of a recorded prompt
+    */
+    view.delete_clicked.onclick = function() { 
+      if (prompts.prompt_count > 0) {
+         //console.log('deleteclickedgt1: ');
+         fsm.deleteclickedgt1();
+      } else {
+         //console.log('deleteclickedlast: ');
+         fsm.deleteclickedlast();
+      }
+    }
+
     return fsm;
 }
+
 

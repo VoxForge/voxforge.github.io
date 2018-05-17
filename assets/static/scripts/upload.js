@@ -180,8 +180,8 @@ function upload( prompts,
           if (event.data.status === "savedInBrowserStorage") {
             console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
 
-            //uploadZippedSubmission();
             resolve('OK');
+
           } else {
             var m = 'webworker says: zip error: ' + event.data.status;
             console.error(m);

@@ -26,6 +26,8 @@ function View (prompts) {
     this.record = document.querySelector('.record');
     this.stop = document.querySelector('.stop');
     this.upload = document.querySelector('.upload');
+    this.delete_clicked = document.querySelector('#delete_clicked'); // gets first class=delete in DOM
+
     // where audio files will be displayed in HTML
     this.soundClips = document.querySelector('.sound-clips');
     // where audio visualiser (vue meter) will be displayed in HTML
@@ -390,12 +392,11 @@ View.prototype.waveformdisplay = function (
         var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
         
         self.prompts.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
+        evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
         console.log("prompt deleted: " + prompt_id);
 
-        evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
-
-        //fsm.deleteclicked();
-        self.controller.deleteclicked();
+        //self.controller.deleteclicked();
+        $('#delete_clicked').click();
       }
 
       return deleteButton;
@@ -451,10 +452,12 @@ View.prototype.waveformdisplay = function (
       } else if (no_trailing_silence) {
         waveformElement.setAttribute("style", "background: #ffA500");
         waveformElement.innerHTML = "<h4>" + page_alert_message.no_trailing_silence + "</h4>";
+      //TODO need confidence level for clipping
       } else if (clipping) {
         // TODO should not be able to upload if too loud
         waveformElement.setAttribute("style", "background: #ff4500");
         waveformElement.innerHTML = "<h4>" + page_alert_message.audio_too_loud + "</h4>";
+      //TODO need confidence level for soft speaker
       } else if (too_soft) {
         // TODO if too low, increase volume of recording and automatically
         //      increase it for subsequent recordings...
