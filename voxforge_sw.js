@@ -88,7 +88,7 @@ self.addEventListener('install', function(event) {
       })
   );
 
-  uploadURL = new URL(location).searchParams.get('uploadURL');
+
 });
 
 // https://stackoverflow.com/questions/38168276/navigator-serviceworker-controller-is-null-until-page-refresh?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
@@ -154,7 +154,7 @@ Retry syncs also wait for connectivity, and employ an exponential back-off.
 self.addEventListener('sync', function(event) {
     if (event.tag == 'voxforgeSync') {
        console.log('voxforgeSync: background sync request received by serviceworker');
-
+/*
     event.waitUntil(
         processSavedSubmissions(uploadURL)
         .then(function(returnObj) {
@@ -164,6 +164,18 @@ self.addEventListener('sync', function(event) {
             sendMessage(returnObj);
         })
     ); 
+*/
+    let uploadURL = new URL(location).searchParams.get('uploadURL');
+    event.waitUntil(
+        processSavedSubmissions(uploadURL)
+        .then(function(returnObj) {
+            sendMessage(returnObj);
+        })
+        .catch(function(returnObj) {
+            sendMessage(returnObj);
+        })
+    ); 
+
   }
 });
 

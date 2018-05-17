@@ -98,9 +98,9 @@ function processSavedSubmissions(uploadURL) {
         .then((response_text) => {
             console.log('post URL ' +  uploadURL);
             if (response_text === "submission uploaded successfully." ) {
-              console.info("transferComplete: upload to VoxForge server successfully completed for: " + saved_submission_name);
-
-              uploadList[uploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
+              var short_name = saved_submission_name.replace(/\[.*\]/gi, '');
+              console.info("transferComplete: upload to VoxForge server successfully completed for: " + short_name);
+              uploadList[uploadIdx++] = short_name;
 
               // resolve sends this as parameter to next promise in chain
               resolve(saved_submission_name);

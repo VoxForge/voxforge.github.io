@@ -56,7 +56,9 @@ var uploadURL = 'https://upload.voxforge1.org'; // prod
 // !!!!!!
 // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
 // /etc/hosts or on local DNS server;
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+// if get 'Bad Request' error after clearing caches, make sure to prefix URL
+// with 'HTTPS://' in browser
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // !!!!!!
 
