@@ -158,16 +158,16 @@ license:
     text:  > 
       <b>CC0 - Creative Commons - Pas de droit d’auteur</b> permet aux titulaires de droits de 
       renoncer à tous leurs droits et de placer une œuvre dans le domaine 
-      public. </br>
+      public. <br>
       <b>CC BY - Creative Commons - Attribution</b>  Cette licence permet aux autres de distribuer,
       remixer, arranger, et adapter votre œuvre, même à des fins commerciales, 
       tant qu’on vous accorde le mérite de la création originale en citant 
-      votre nom.</br>
+      votre nom.<br>
       <b>CC BY-SA - Creative Commons - Attribution - Partage dans les Mêmes Conditions</b>  Cette 
       licence permet aux autres de remixer, arranger, et adapter votre œuvre, 
       même à des fins commerciales, tant qu’on vous accorde le mérite en citant 
       votre nom et qu’on diffuse les nouvelles créations selon des conditions 
-      identiques. </br>
+      identiques. <br>
       <b>GPLv3 GNU General Public License</b> similar to CC BY-SA, but made for software... used by
       VoxForge 1.0 corpus.
   selection_default: { value: 'CC0',  item: 'CC0 - Creative Commons - Pas de droit d’auteur (conseillé)' }
@@ -185,7 +185,7 @@ ua_string:
       Inclure l'agent utilisateur avec votre soumission
     text:  > 
       L'agent d'utilisateur de votre navigateur indique quelque chose de 
-      particulier a propos de votre système. </ Br>
+      particulier a propos de votre système. <br>
       VoxForge peut collecter la chaîne de l'agent utilisateur de votre navigateur
       pour dépanner et aider à déterminer quels appareils fonctionnent le mieux avec
       Application d'enregistrement VoxForge
@@ -244,16 +244,19 @@ alert_message:
   uploaded_message: >
     uploaded to VoxForge Server
   audio_too_loud: >
-    Votre enregistrement est trop fort.  </br>Veuillez réduire votre volume et
+    Votre enregistrement est trop fort.  <br>Veuillez réduire votre volume et
     réenregistrer.
   audio_too_soft: >
-    Votre enregistrement est trop doux.  </br>Veuillez augmenter votre volume et
+    Votre enregistrement est trop doux.  <br>Veuillez augmenter votre volume et
     réenregistrer.
   no_trailing_silence: >
-    Vous avez couper votre enregistrement (vous avez cliqué trop tôt) </ br> 
+    Vous avez couper votre enregistrement (vous avez cliqué trop tôt) <br> 
     Veuillez ré-enregistrer.
   no_speech: >
-    Pas d'audio vocal enregistré! </ br> Veuillez supprimer et réenregistrer.
+    Pas d'audio vocal enregistré! <br> Veuillez supprimer et réenregistrer.
+  getUserMedia_error: >
+    Impossible d'obtenir une entrée audio... assurez-vous que votre microphone 
+    est connecté à votre ordinateur.  <br> Votre navigateur donne ce message d'erreur:
 
 # script below gets loaded in {{ content }} section of layout page
 ---

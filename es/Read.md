@@ -268,6 +268,9 @@ alert_message:
     re-record this prompt.
   no_speech: >
     No Speech </br>Please delete and re-record this prompt.
+  getUserMedia_error: >
+    Could not get audio input,,, make sure your microphone is connected to your 
+    computer.  Your browser is giving this error message:
 
 # script below gets loaded in {{ content }} section of layout page
 ---

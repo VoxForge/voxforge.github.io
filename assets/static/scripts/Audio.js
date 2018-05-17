@@ -192,8 +192,8 @@ function Audio (view,
       setupAudioNodes(stream);
     })
     .catch(function(err) {
-      window.alert("Could not get audio input - reason: " + err);
-      console.error('The following error occured: ' + err);
+      window.alert( page_alert_message.getUserMedia_error + " " + err);
+      console.error(page_alert_message.getUserMedia_error + " " + err);
     });
 
     // see: https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/

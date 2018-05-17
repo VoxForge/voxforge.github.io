@@ -293,6 +293,9 @@ alert_message:
     re-record this prompt.
   no_speech: >
     No Speech or recording volume too low<br>Please delete and re-record this prompt.
+  getUserMedia_error: >
+    Could not get audio input... make sure your microphone is connected to your 
+    computer.  Your browser is giving this error message:
 
 # script below gets loaded in {{ content }} section of layout page
 # these are used by Javascript, therefore need special handling for them to 
