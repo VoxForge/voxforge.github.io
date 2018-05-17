@@ -135,13 +135,13 @@ noise_type:
     - écho
     - Ventilateur / Climatiseur
     - Machinerie
-    - Nature sounds
-    - Talking
-    - Music
-    - Traffic
+    - Sons de la nature
+    - Conversation
+    - Musique
+    - Circulation
     - TV
-    - Video
-    - Weather Related (wind/rain...)
+    - vidéo
+    - Météo (vent / pluie ...)
     - Autre
   other_label: Autre Type de bruit
 
@@ -235,14 +235,14 @@ browser_support:
 alert_message:
   serviceworker: serviceworker
   webworker: webworker
-  submission_singular: submission
-  submission_plural: submissions
+  submission_singular: soumission
+  submission_plural: soumissions
   localstorage_message: >
-    Submission saved to browser storage.
+    Soumission enregistrée dans le stockage du navigateur.
   browsercontains_message: >
-    Your browser storage contains
+    Le stockage de votre navigateur contient
   uploaded_message: >
-    uploaded to VoxForge Server
+    téléchargé sur serveur Web VoxForge
   audio_too_loud: >
     Votre enregistrement est trop fort.  <br>Veuillez réduire votre volume et
     réenregistrer.

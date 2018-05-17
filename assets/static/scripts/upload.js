@@ -376,6 +376,11 @@ function processWorkerEventMessage(workertype, returnObj) {
         window.alert(m);
         break;
 
+      // if there is an error with one prompt (usually server side check - e.g.
+      // too big for server settings, then other submissions will upload, but
+      // erroneous one will stat in browser storage.
+      // TODO need a way for user to save these locally and uplod them to VoxForge 
+      // server some other way.
       case 'partialUpload':
         var filesNotUploaded = returnObj.filesNotUploaded;
         var filesUploaded = returnObj.filesUploaded;
