@@ -45,7 +45,7 @@ function Controller(prompts,
         // silence...
         view.displayPrompt(prompts.getPromptId(),prompts.getPromptSentence());
 
-        audio.record();
+        audio.record( prompts.getPromptId() );
 
         rec_timeout_obj = setTimeout(function(){
           fsm.recordingtimeout();

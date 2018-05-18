@@ -350,7 +350,7 @@ View.prototype.set_controller = function(controller) {
 * re-recorded
 */
 View.prototype.waveformdisplay = function (
-       blob, no_speech, no_trailing_silence, clipping, too_soft ) 
+       prompt_id, blob, no_speech, no_trailing_silence, clipping, too_soft ) 
 {
     // 'self' used to save the current context when calling function
     var self = this;

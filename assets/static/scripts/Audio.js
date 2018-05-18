@@ -99,7 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 // recording Web Worker
-var audioworker = new Worker('/assets/static/scripts/EncoderWorker.js');
+var audioworker = new Worker('/assets/static/scripts/AudioWorker.js');
 
 /**
 * if page reloaded kill background worker threads before page reload
@@ -293,12 +293,18 @@ function Audio (view,
     * worker sends back the recorded data as an audio blob
     */
     audioworker.onmessage = function(event) { 
-      view.waveformdisplay(event.data.blob, 
-                           event.data.no_speech,
-                           event.data.no_trailing_silence,
-                           event.data.clipping, 
-                           event.data.too_soft, 
-      ); 
+        view.waveformdisplay(event.data.prompt_id,
+                             event.data.blob, 
+                             event.data.no_speech,
+                             event.data.no_trailing_silence,
+                             event.data.clipping, 
+                             event.data.too_soft); 
+
+        profile.set_recordingCharacteristics(event.data.prompt_id,
+                                             event.data.no_speech,
+                                             event.data.no_trailing_silence,
+                                             event.data.clipping, 
+                                             event.data.too_soft);
     }; 
 }
 
@@ -307,7 +313,7 @@ function Audio (view,
 *
 //see https://github.com/higuma/wav-audio-encoder-js 
 */
-Audio.prototype.record = function () {
+Audio.prototype.record = function (prompt_id) {
     /**
     * function used as a parameter to audioworker captures audio buffer data 
     * from processor worker
@@ -321,6 +327,7 @@ Audio.prototype.record = function () {
     // clears out audio buffer 
     audioworker.postMessage({
       command: 'start',
+      prompt_id: prompt_id,
       vad_parms: this.vad_parms,
       sampleRate: this.audioCtx.sampleRate,
     });

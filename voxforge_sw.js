@@ -56,7 +56,7 @@ var urlsToCache = [
 
   PATH + 'scripts/Audio.js',
   PATH + 'scripts/Controller.js',
-  PATH + 'scripts/EncoderWorker.js',
+  PATH + 'scripts/AudioWorker.js',
   PATH + 'scripts/processSavedSubmissions.js',
   PATH + 'scripts/Profile.js',
   PATH + 'scripts/Prompts.js',

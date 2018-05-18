@@ -24,12 +24,14 @@ var buffers = undefined;
 var encoder = undefined;
 var vad_obj = undefined;
 var run = undefined;
+var prompt_id = undefined;
 
 self.onmessage = function(event) {
   var data = event.data;
 
   switch (data.command) {
     case 'start':
+      prompt_id = data.prompt_id;
       buffers = [];
       encoder = new WavAudioEncoder(data.sampleRate);
       run = data.vad_parms.run;
@@ -66,6 +68,7 @@ self.onmessage = function(event) {
       }
 
       self.postMessage({ 
+        prompt_id: prompt_id,
         blob: encoder.finish(),
         no_trailing_silence: no_trailing_silence,
         no_speech: no_speech,
