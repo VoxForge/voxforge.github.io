@@ -155,24 +155,11 @@ function View (prompts) {
 
     /**
     * updates the current number of prompts that the user selected from dropdown
-    *
-    * Note: when user changes the number of prompts to read, initPromptStack
-    * will causes the promptIDs to be in non-consecutive order, 
-    * and may result in user reading exactly same prompts again...
+
     */
-    //$('#max_num_prompts_disp').click(function () { 
     $('#max_num_prompts').click(function () { 
-        //prompts.previous_max_num_prompts = prompts.max_num_prompts;
-        //prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
-        //self.updateProgress();
-
-        // promptId start point will be randomized and not be consecutive
-        // to previous prompt IDs.
-        //prompts.initPromptStack();
-
-        let new_max_prompts = prompts.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
-        self.updateProgress();
-        console.log('max_num_prompts:' + prompts.max_num_prompts);
+      prompts.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
+      self.updateProgress();
     });
 }
 

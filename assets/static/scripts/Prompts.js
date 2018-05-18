@@ -396,6 +396,10 @@ Prompts.prototype.getProgressDescription = function () {
 
 /**
 * user changed the maximum number of prompts to record from drop down menu
+*
+* Note: when user changes the number of prompts to read, initPromptStack
+* will causes the promptIDs to be in non-consecutive order, 
+* and may result in user reading exactly same prompts again...
 */
 Prompts.prototype.userChangedMaxNum = function (new_max_prompts) {
     this.previous_max_num_prompts = this.max_num_prompts;
@@ -405,4 +409,5 @@ Prompts.prototype.userChangedMaxNum = function (new_max_prompts) {
     // to previous prompt IDs.
     this.initPromptStack();
 
+    return(this.max_num_prompts);
 }
