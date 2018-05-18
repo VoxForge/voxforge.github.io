@@ -188,53 +188,12 @@ function Audio (view,
     */
     navigator.mediaDevices.getUserMedia(constraints)
     .then(function(stream) {
-      supportedContraints();
       setupAudioNodes(stream);
     })
     .catch(function(err) {
       window.alert( page_alert_message.getUserMedia_error + " " + err);
       console.error(page_alert_message.getUserMedia_error + " " + err);
     });
-
-    // see: https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
-    // TODO firefox supports;
-    //    var set = track.getSettings();
-    //    set.echoCancellation;
-    //    set.noiseSuppression;
-    //    Set.autoGainControl;
-    // Chrome does not...
-    /*
-      see: https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints#Applying_constraints
-      constraints vs settings: Constraints are a way to specify 
-      what values you need, want, and are willing to accept for the various 
-      constrainable properties (as described in the documentation for 
-      MediaTrackConstraints), while settings are the actual values of each 
-      constrainable property at the current time.
-      https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
-      https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
-    */
-    function supportedContraints() {
-      var c = navigator.mediaDevices.getSupportedConstraints();
-      profile.echoCancellation = c.echoCancellation || false;
-      profile.autoGainSupported = c.autoGainSupported || false;
-      profile.noiseSuppression = c.noiseSuppression || false;
-
-      if ( c.echoCancellation ) {
-        console.log('getUserMedia - echoCancellation supported');
-      } else {
-        console.log('getUserMedia - no echoCancellation');
-      }
-      if ( c.autoGainSupported ) {
-        console.log('getUserMedia - autoGainSupported supported');
-      } else {
-        console.log('getUserMedia - no autoGain');
-      }
-      if ( c.noiseSuppression ) {
-        console.log('getUserMedia - noiseSuppression supported');
-      } else {
-        console.log('getUserMedia - no noiseSuppression');
-      }
-    }
 
     /**
     * set up audio nodes that are connected together in a graph so that the 
@@ -278,14 +237,45 @@ function Audio (view,
 
       microphone.connect(self.microphoneLevel); 
 
-      profile.sample_rate = self.audioCtx.sampleRate;
-      profile.sample_rate_format = "16 bit";
+      getAudioPropertiesAndContraints();
+    }
 
-      profile.channels = self.mediaStreamOutput.channelCount;
+    // see: https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
+    // TODO firefox supports;
+    //    var set = track.getSettings();
+    //    set.echoCancellation;
+    //    set.noiseSuppression;
+    //    Set.autoGainControl;
+    // Chrome does not...
+    /*
+      see: https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints#Applying_constraints
+      constraints vs settings: Constraints are a way to specify 
+      what values you need, want, and are willing to accept for the various 
+      constrainable properties (as described in the documentation for 
+      MediaTrackConstraints), while settings are the actual values of each 
+      constrainable property at the current time.
+      https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
+      https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
+    */
+    function getAudioPropertiesAndContraints() {
+      var c = navigator.mediaDevices.getSupportedConstraints();
+      var obj = {
+        'sample_rate' : self.audioCtx.sampleRate,
+        'sample_rate_format' : "16 bit",
+        'channels' : self.mediaStreamOutput.channelCount,
+        'gain_value' : self.microphoneLevel.gain.value,
+        'echoCancellation' : c.echoCancellation || false,
+        'autoGainSupported' : c.autoGainSupported || false,
+        'noiseSuppression' : c.noiseSuppression || false,
+      }
+      profile.setAudioPropertiesAndContraints(obj);
 
-      console.info('channels: ' + self.mediaStreamOutput.channelCount);
-      console.info('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
-      console.info('microphoneLevel.gain.value: ' + self.microphoneLevel.gain.value);
+      console.log('channels: ' + obj.channels);
+      console.log('audioCtx.sampleRate: ' + obj.sampleRate);
+      console.log('microphoneLevel.gain.value: ' + obj.gain_value);
+      console.log('getUserMedia - echoCancellation: ' + obj.echoCancellation);
+      console.log('getUserMedia - autoGainSupported: ' + obj.autoGainSupported);
+      console.log('getUserMedia - noiseSuppression: ' + obj.noiseSuppression);
     }
 
     /**

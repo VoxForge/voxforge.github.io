@@ -214,7 +214,8 @@ Profile.prototype.set_recordingCharacteristics =
         "clipping" : clipping,
         "too_soft" : too_soft,
       };
-      this.debug["audio_node_buffer_size"] = buffer_size;
+      this.debug["scriptProcessor_bufferSize"] = buffer_size;
+      // TODO this.debug["vad_bufferSize"] = vad_buffer_size;
   }
 
 /**
@@ -399,6 +400,22 @@ Profile.prototype.getSuffix = function () {
 Profile.prototype.getLicenseUserName = function () {
     return Profile.prototype.getUserName;
 }
+
+/**
+* return username to be used in license
+*/
+Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
+    this.sample_rate = obj.sample_rate;
+    this.sample_rate_format = obj.sample_rate_format;
+    this.channels = obj.channels;
+    this.gain_value = obj.gain_value;
+    this.echoCancellation = obj.echoCancellation;
+    this.autoGainSupported = obj.autoGainSupported;
+    this.noiseSuppression = obj.noiseSuppression;
+}
+
+
+
 
 /**
 * CC0 1.0 license to array

@@ -131,7 +131,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     */
     // see: https://github.com/cwilso/volume-meter/blob/master/volume-meter.js
     // https://www.gaussianwaves.com/2015/07/significance-of-rms-root-mean-square-value/
-    // TODO should use the output from WAVAudioEncoder... premature optimization??
+    // TODO use the output from WAVAudioEncoder
     function floatTo16BitPCM(buffer) {
       var buffer_pcm = new Int16Array(buffer.length);
       var sum = 0;

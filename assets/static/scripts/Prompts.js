@@ -26,6 +26,8 @@ function Prompts(max_numPrompts_selector, num_prompts_to_trigger_upload) {
     this.max_num_prompts = num_prompts_to_trigger_upload;
     // this is used by View class
     this.max_numPrompts_selector = max_numPrompts_selector;
+    // list of prompts to be recorded by user; iniitlaized in convertPromptDataToArray
+    this.list = [];
 
     // TODO duplicate definition in service worker file: processSavedSubmission.js
     var local_prompt_file_name = page_language + '_' + 'prompt_file';

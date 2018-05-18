@@ -153,7 +153,7 @@ var view;  // needs to be global so can be accessible to index.html
     var prompts = new Prompts(max_numPrompts_selector,
                               num_prompts_to_trigger_upload); 
 
-    view = new View(prompts); 
+    var view = new View(prompts); 
 
     var profile = new Profile(view, 
                               appversion);
