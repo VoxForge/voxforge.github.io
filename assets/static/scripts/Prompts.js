@@ -409,5 +409,5 @@ Prompts.prototype.userChangedMaxNum = function (new_max_prompts) {
     // to previous prompt IDs.
     this.initPromptStack();
 
-    return(this.max_num_prompts);
+    console.log('max_num_prompts:' + new_max_prompts);
 }

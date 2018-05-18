@@ -17,10 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-function View (prompts) {
+function View (max_numPrompts_selector,
+               userChangedMaxNum,
+               movePrompt2Stack,
+               getProgressDescription) 
+{
     var self = this; // save context
 
-    this.prompts = prompts;
+    this.movePrompt2Stack = movePrompt2Stack;
+    this.getProgressDescription = getProgressDescription;
     this.profile = null;
     this.controller = null;
 
@@ -148,7 +153,7 @@ function View (prompts) {
     option = ''; // clear previous use of option var
     var startPrompt = 10; // min number of prompts no matter what device
     var incr = 5;
-    for (var i=startPrompt; i <= prompts.max_numPrompts_selector; i = i + incr){
+    for (var i=startPrompt; i <= max_numPrompts_selector; i = i + incr){
        option += '<option value="'+ i + '">' + i +  '</option>';
     }
     $('#max_num_prompts').append(option);
@@ -158,7 +163,7 @@ function View (prompts) {
 
     */
     $('#max_num_prompts').click(function () { 
-      prompts.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
+      userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
       self.updateProgress();
     });
 }
@@ -338,10 +343,6 @@ View.prototype.set_controller = function(controller) {
   this.controller = controller;
 }
 
-View.prototype.set_profile = function(profile) {
-  this.profile = profile;
-}
-
 /**
 * run after worker completes audio recording; creates a waveform display of 
 * recorded audio and displays text of associated prompt line.  User can
@@ -386,7 +387,7 @@ View.prototype.waveformdisplay = function (
         var evtTgt = e.target;
         var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
         
-        self.prompts.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
+        self.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
         evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
         console.log("prompt deleted: " + prompt_id);
 
@@ -413,7 +414,6 @@ View.prototype.waveformdisplay = function (
     }
 
     var waveformdisplay_id = "waveformContainer_" + prompt_id;
-    profile.set_recordingCharacteristics(prompt_id, no_speech, no_trailing_silence, clipping, too_soft);
     /**
     * this creates the container (i.e. element in the shadow DOM) to be used
     * by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
@@ -503,7 +503,7 @@ View.prototype.reset = function () {
 * update number of prompts recorded and total number of prompts to record
 */
 View.prototype.updateProgress = function () {
-    var progress = this.prompts.getProgressDescription();
+    var progress = this.getProgressDescription();
     document.querySelector('.progress-display').innerText = progress;
 }
 
