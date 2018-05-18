@@ -393,7 +393,7 @@ Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
 
     this.debug["vad_maxsilence"] = obj.vad_parms.maxsilence;
     this.debug["vad_minvoice"] = obj.vad_parms.minvoice;
-    this.debug["vad_bufferSize"] = obj.vad_parms.buffer_size;
+    this.debug["vad_bufferSize"] = obj.vad_parms.buffersize;
     this.debug["scriptProcessor_bufferSize"] = obj.scriptProcessor_bufferSize;
 }
 
