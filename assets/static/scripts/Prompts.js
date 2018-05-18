@@ -29,6 +29,15 @@ function Prompts(max_numPrompts_selector, num_prompts_to_trigger_upload) {
     // list of prompts to be recorded by user; iniitlaized in convertPromptDataToArray
     this.list = [];
 
+    this.previous_max_num_prompts = 0; // to decide what to do when use changes max number of prompts
+    this.list = []; // list of prompts to be read by user
+    this.index = 0; // pointer to position in prompt list array
+    this.prompt_count = 0; // number of prompts user read
+    this.prompts_recorded = []; // list of prompts that have been recorded
+    this.audio_characteristics = {}; // hash of audio characteritics of recroded audio; indexed by promptID
+    this.prompt_stack = []; // stack; makes it easier to add deleted elements for re-record
+    this.current_promptLine = null; // need to keep track of current prompt since no longer tracking index
+
     // TODO duplicate definition in service worker file: processSavedSubmission.js
     var local_prompt_file_name = page_language + '_' + 'prompt_file';
     this.promptCache = localforage.createInstance({
@@ -252,20 +261,6 @@ function Prompts(max_numPrompts_selector, num_prompts_to_trigger_upload) {
 }
 
 /**
-* The prototype for the Prompts object defines the properties of 
-* object instances, that is, the variables and methods of the object
-*/
-Prompts.prototype = {
-    previous_max_num_prompts: 0, // to decide what to do when use changes max number of prompts
-    list: [], // list of prompts to be read by user
-    index: 0, // pointer to position in prompt list array
-    prompt_count: 0, // number of prompts user read
-    prompts_recorded: [], // list of prompts that have been recorded
-    prompt_stack: [], // stack; makes it easier to add deleted elements for re-record
-    current_promptLine: null, // need to keep track of current prompt since no longer tracking index
-}
-
-/**
 * ### Static METHODS ##############################################
 */
 
@@ -304,6 +299,7 @@ Prompts.prototype.initPromptStack = function () {
 Prompts.prototype.resetIndices = function () {
     this.prompt_count = 0; // number of prompts read
     this.prompts_recorded = []; // list of prompts that have been recorded
+    this.audio_characteristics = {};
 
     this.initPromptStack();
 }
@@ -371,13 +367,28 @@ Prompts.prototype.toJsonString = function () {
     {
       var prompt_line = arr[i].split(/\s+/);
       var prompt_id = prompt_line.shift();
+
       // join array back together into a string and remove trailing space
-      obj[prompt_id] = prompt_line.join(' ').replace(/\s+$/, "");
+      obj[prompt_id] = {
+        sentence : prompt_line.join(' ').replace(/\s+$/, ""), 
+        audio: this.audio_characteristics[prompt_id],
+      }
     }
 
     return JSON.stringify(obj,null,"  ");
 }
 
+/**
+*
+*/
+Prompts.prototype.setAaudioCharacteristics = function (obj) {
+  this.audio_characteristics[obj.prompt_id] = {
+      no_trailing_silence : obj.no_trailing_silence,
+      no_speech : obj.no_speech,
+      clipping : obj.clipping,
+      too_soft : obj.too_soft,
+  };
+}
 /**
 * true when max number of prompts user wants to record is reached
 * 0 indexed therefore last prompt is (max_num_prompts -1)

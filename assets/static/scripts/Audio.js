@@ -121,6 +121,7 @@ var wavesurfer = [];
 */
 function Audio (view, 
                 profile, 
+                prompts,
                 scriptProcessor_bufferSize, 
                 vad_parms) 
 {
@@ -225,7 +226,7 @@ function Audio (view,
       16384, so set Android 4.4.2 to 8192
       TODO test with with other versions of Android
 */
-
+      // TODO changing buffersize does not seem toa actually work
       self.processor = self.audioCtx.createScriptProcessor(self.scriptProcessor_bufferSize , 1, 1);
 
       self.mediaStreamOutput = self.audioCtx.destination;
@@ -237,7 +238,7 @@ function Audio (view,
 
       microphone.connect(self.microphoneLevel); 
 
-      getAudioPropertiesAndContraints();
+      updateProfileAudioProperties();
     }
 
     // see: https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
@@ -257,9 +258,9 @@ function Audio (view,
       https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
       https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
     */
-    function getAudioPropertiesAndContraints() {
+    function updateProfileAudioProperties() {
       var c = navigator.mediaDevices.getSupportedConstraints();
-      var obj = {
+      profile.setAudioPropertiesAndContraints({
         'sample_rate' : self.audioCtx.sampleRate,
         'sample_rate_format' : "16 bit",
         'channels' : self.mediaStreamOutput.channelCount,
@@ -267,35 +268,36 @@ function Audio (view,
         'echoCancellation' : c.echoCancellation || false,
         'autoGainSupported' : c.autoGainSupported || false,
         'noiseSuppression' : c.noiseSuppression || false,
-      }
-      profile.setAudioPropertiesAndContraints(obj);
 
-      console.log('channels: ' + obj.channels);
-      console.log('audioCtx.sampleRate: ' + obj.sampleRate);
-      console.log('microphoneLevel.gain.value: ' + obj.gain_value);
-      console.log('getUserMedia - echoCancellation: ' + obj.echoCancellation);
-      console.log('getUserMedia - autoGainSupported: ' + obj.autoGainSupported);
-      console.log('getUserMedia - noiseSuppression: ' + obj.noiseSuppression);
+        'scriptProcessor_bufferSize' : self.scriptProcessor_bufferSize || 'undefined',
+        'vad_parms' : self.vad_parms,
+      });
+
+      console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
     }
 
-    /**
-    * after this process sends a request to the worker to 'finish' recording,
-    * worker sends back the recorded data as an audio blob
-    */
-    audioworker.onmessage = function(event) { 
-        view.waveformdisplay(event.data.prompt_id,
-                             event.data.blob, 
-                             event.data.no_speech,
-                             event.data.no_trailing_silence,
-                             event.data.clipping, 
-                             event.data.too_soft); 
+    var event_buffer_size_updated = false;
+    audioworker.onmessage = function(returnObj) { 
+      switch (returnObj.data.status) {
+          case 'event_buffer_size':
+            if ( ! event_buffer_size_updated ) {
+              profile.updateEventBufferSize(returnObj.data.event_buffer_size);
+              event_buffer_size_updated = true;
+            }
+          break;
 
-        profile.set_recordingCharacteristics(event.data.prompt_id,
-                                             event.data.no_speech,
-                                             event.data.no_trailing_silence,
-                                             event.data.clipping, 
-                                             event.data.too_soft,
-                                             event.data.buffer_size);
+          /**
+          * after this process sends a request to the worker to 'finish' recording,
+          * worker sends back the recorded data as an audio blob
+          */
+          case 'finished':
+            view.waveformdisplay(returnObj.data.obj); 
+            prompts.setAaudioCharacteristics(returnObj.data.obj);
+          break;
+
+          default:
+            console.error('message from audio worker: audio error: ' + returnObj.status);
+      }
     }; 
 }
 

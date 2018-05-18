@@ -25,8 +25,9 @@ var encoder = undefined;
 var vad = undefined;
 var run = undefined;
 var prompt_id = undefined;
-var buffer_size = undefined;
+var event_buffer_size = undefined;
 var got_buffer_size = false;
+var vad_parms = undefined;
 
 self.onmessage = function(event) {
   var data = event.data;
@@ -39,6 +40,7 @@ self.onmessage = function(event) {
       run = data.vad_parms.run;
       if ( run ) {
           vad = new Vad(data.sampleRate, data.vad_parms);
+          vad_parms = data.vad_parms;
       } else {
          console.log('VAD disabled');
       }
@@ -49,9 +51,13 @@ self.onmessage = function(event) {
       if ( run ) {
          vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
       }
-      if ( ! got_buffer_size ) {
-        buffer_size = data.event_buffer.length;
-        console.log("buffer_size: [" + buffer_size + "]");
+      // only way to get default event_buffer size is to look at what audio node 
+      // sends you...therefore look at first event.buffer and save its length
+      if ( ! got_buffer_size ) { 
+        self.postMessage({
+            status: 'event_buffer_size',
+            event_buffer_size: data.event_buffer.length,
+        });
         got_buffer_size = true;
       }
       break;
@@ -74,14 +80,16 @@ self.onmessage = function(event) {
         }
       }
 
-      self.postMessage({ 
-        prompt_id: prompt_id,
-        blob: encoder.finish(),
-        no_trailing_silence: no_trailing_silence,
-        no_speech: no_speech,
-        clipping: clipping,
-        too_soft: too_soft,
-        buffer_size: buffer_size,
+      self.postMessage({
+          status: 'finished',
+          obj : { 
+            prompt_id: prompt_id,
+            blob: encoder.finish(), // convert audio from float to int16
+            no_trailing_silence: no_trailing_silence,
+            no_speech: no_speech,
+            clipping: clipping,
+            too_soft: too_soft,
+          }
       });
 
       encoder = undefined;

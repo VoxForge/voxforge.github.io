@@ -197,28 +197,6 @@ Profile.prototype.toHash = function () {
 };
 
 /**
-* 
-*/
-Profile.prototype.set_recordingCharacteristics = 
-  function (prompt_id, 
-           no_speech, 
-           no_trailing_silence, 
-           clipping, 
-           too_soft,
-           buffer_size,
-) 
-  {
-      this.debug[prompt_id] = {
-        "no_speech" : no_speech,
-        "no_trailing_silence" : no_trailing_silence,
-        "clipping" : clipping,
-        "too_soft" : too_soft,
-      };
-      this.debug["scriptProcessor_bufferSize"] = buffer_size;
-      // TODO this.debug["vad_bufferSize"] = vad_buffer_size;
-  }
-
-/**
 * Convert profile object to JSON string, with line feeds after every key 
 * value line
 */
@@ -402,7 +380,7 @@ Profile.prototype.getLicenseUserName = function () {
 }
 
 /**
-* return username to be used in license
+* 
 */
 Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
     this.sample_rate = obj.sample_rate;
@@ -412,10 +390,19 @@ Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
     this.echoCancellation = obj.echoCancellation;
     this.autoGainSupported = obj.autoGainSupported;
     this.noiseSuppression = obj.noiseSuppression;
+
+    this.debug["vad_maxsilence"] = obj.vad_parms.maxsilence;
+    this.debug["vad_minvoice"] = obj.vad_parms.minvoice;
+    this.debug["vad_bufferSize"] = obj.vad_parms.buffer_size;
+    this.debug["scriptProcessor_bufferSize"] = obj.scriptProcessor_bufferSize;
 }
 
-
-
+/**
+* TODO unfortunately gets called after every prompt recording
+*/
+Profile.prototype.updateEventBufferSize = function (event_buffer_size) {
+    this.debug["event_buffer_size"] = event_buffer_size; // actual buffer size set by device
+}
 
 /**
 * CC0 1.0 license to array

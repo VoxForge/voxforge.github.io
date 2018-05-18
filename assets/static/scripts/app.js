@@ -160,6 +160,7 @@ var view;  // needs to be global so can be accessible to index.html
 
     var audio = new Audio(view, 
                           profile, 
+                          prompts,
                           scriptProcessor_bufferSize, 
                           vad_parms);
 

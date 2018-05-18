@@ -333,9 +333,15 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 * then review and if needed delete an erroneous recording, which can then be
 * re-recorded
 */
-View.prototype.waveformdisplay = function (
-       prompt_id, blob, no_speech, no_trailing_silence, clipping, too_soft ) 
+View.prototype.waveformdisplay = function (obj) 
 {
+    var prompt_id = obj.prompt_id; // TODO not used yet...
+    var blob = obj.blob;
+    var no_speech = obj.no_speech;
+    var no_trailing_silence = obj.no_trailing_silence;
+    var clipping = obj.clipping;
+    var too_soft = obj.too_soft;
+
     // 'self' used to save the current context when calling function
     var self = this;
 
