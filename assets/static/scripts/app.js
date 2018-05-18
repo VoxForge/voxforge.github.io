@@ -176,7 +176,6 @@ var controller = new Controller(prompts,
                                 recording_stop_delay,
                                 process_last_recording_delay,
                                 appversion);
-view.set_controller(controller);
 
 })();
 
