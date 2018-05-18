@@ -56,7 +56,9 @@ self.onmessage = function(event) {
       if ( ! got_buffer_size ) { 
         self.postMessage({
             status: 'event_buffer_size',
-            event_buffer_size: data.event_buffer.length,
+            obj : { 
+              event_buffer_size: data.event_buffer.length,
+            }
         });
         got_buffer_size = true;
       }

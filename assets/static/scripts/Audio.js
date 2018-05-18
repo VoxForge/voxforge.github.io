@@ -278,10 +278,11 @@ function Audio (view,
 
     var event_buffer_size_updated = false;
     audioworker.onmessage = function(returnObj) { 
+      var obj = returnObj.data.obj;
       switch (returnObj.data.status) {
           case 'event_buffer_size':
             if ( ! event_buffer_size_updated ) {
-              profile.updateEventBufferSize(returnObj.data.event_buffer_size);
+              profile.updateEventBufferSize(obj.event_buffer_size);
               event_buffer_size_updated = true;
             }
           break;
@@ -291,8 +292,8 @@ function Audio (view,
           * worker sends back the recorded data as an audio blob
           */
           case 'finished':
-            view.waveformdisplay(returnObj.data.obj); 
-            prompts.setAaudioCharacteristics(returnObj.data.obj);
+            view.waveformdisplay(obj); 
+            prompts.setAaudioCharacteristics(obj);
           break;
 
           default:
