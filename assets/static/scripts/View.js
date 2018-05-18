@@ -21,6 +21,8 @@ function View (prompts) {
     var self = this; // save context
 
     this.prompts = prompts;
+    this.profile = null;
+    this.controller = null;
 
     // buttons
     this.record = document.querySelector('.record');
@@ -160,14 +162,16 @@ function View (prompts) {
     */
     //$('#max_num_prompts_disp').click(function () { 
     $('#max_num_prompts').click(function () { 
-        prompts.previous_max_num_prompts = prompts.max_num_prompts;
-        prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
-        self.updateProgress();
+        //prompts.previous_max_num_prompts = prompts.max_num_prompts;
+        //prompts.max_num_prompts = this.value.replace(/[^0-9\.]/g,'');
+        //self.updateProgress();
 
         // promptId start point will be randomized and not be consecutive
         // to previous prompt IDs.
-        prompts.initPromptStack();
+        //prompts.initPromptStack();
 
+        let new_max_prompts = prompts.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
+        self.updateProgress();
         console.log('max_num_prompts:' + prompts.max_num_prompts);
     });
 }
@@ -347,6 +351,10 @@ View.prototype.set_controller = function(controller) {
   this.controller = controller;
 }
 
+View.prototype.set_profile = function(profile) {
+  this.profile = profile;
+}
+
 /**
 * run after worker completes audio recording; creates a waveform display of 
 * recorded audio and displays text of associated prompt line.  User can
@@ -418,6 +426,7 @@ View.prototype.waveformdisplay = function (
     }
 
     var waveformdisplay_id = "waveformContainer_" + prompt_id;
+    profile.set_recordingCharacteristics(prompt_id, no_speech, no_trailing_silence, clipping, too_soft);
     /**
     * this creates the container (i.e. element in the shadow DOM) to be used
     * by WaveSurfer to display the audio waveform; Wavesurfer needs the container 

@@ -393,3 +393,16 @@ Prompts.prototype.getProgressDescription = function () {
     return this.prompt_count + "/" + this.max_num_prompts;
 }
 
+
+/**
+* user changed the maximum number of prompts to record from drop down menu
+*/
+Prompts.prototype.userChangedMaxNum = function (new_max_prompts) {
+    this.previous_max_num_prompts = this.max_num_prompts;
+    this.max_num_prompts = new_max_prompts;
+
+    // promptId start point will be randomized and not be consecutive
+    // to previous prompt IDs.
+    this.initPromptStack();
+
+}
