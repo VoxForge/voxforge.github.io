@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Class declaration
 */
-function Profile (updateView_func, appversion) {
+function Profile (update_view, appversion) {
   this.appversion = appversion;
 
   /**
@@ -41,7 +41,7 @@ function Profile (updateView_func, appversion) {
   */
   var parsedLocalStorageObject;
   if ( parsedLocalStorageObject = getProfileFromLocalStorage() ) {
-      updateView_func(parsedLocalStorageObject);
+      update_view(parsedLocalStorageObject);
   }
 
   /**
@@ -65,6 +65,8 @@ function Profile (updateView_func, appversion) {
   this.echoCancellation = null;
   this.autoGainSupported = null;
   this.noiseSuppression = null;
+
+  this.debug = {};
 
   this.suffix = makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
   this.randomDigits = makeRandString (10,'1234567890');
@@ -189,8 +191,27 @@ Profile.prototype.toHash = function () {
     profile_hash["autoGainSupported"] = this.autoGainSupported;
     profile_hash["noiseSuppression"] = this.noiseSuppression;
 
+    profile_hash["debug"] = this.debug;
+
     return profile_hash;
 };
+
+/**
+* 
+*/
+Profile.prototype.set_recordingCharacteristics = function (prompt_id, 
+                                                           no_speech, 
+                                                           no_trailing_silence, 
+                                                           clipping, 
+                                                           too_soft) 
+{
+    this.debug[prompt_id] = {
+      "no_speech" : no_speech,
+      "no_trailing_silence" : no_trailing_silence,
+      "clipping" : clipping,
+      "too_soft" : too_soft,
+    };
+}
 
 /**
 * Convert profile object to JSON string, with line feeds after every key 

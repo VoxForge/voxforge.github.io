@@ -117,6 +117,8 @@ if (platform.os.family === "Android" ) {
     vad_parms.run = false;
     console.warn("low powered device - disabling automatic silence detection (VAD)");
 
+    // TODO more testing required to confirm that this should be max number of prompts for android 4.4.2
+    // there was definite degredation of recording quality when too many prompts were recorded
     max_numPrompts_selector = 10;
   } else {
 
@@ -151,13 +153,21 @@ const process_last_recording_delay = recording_stop_delay + 400;
 */
 var prompts = new Prompts(max_numPrompts_selector,
                           num_prompts_to_trigger_upload); 
-view = new View(prompts); 
+
+view = new View(prompts.max_numPrompts_selector,
+                prompts.userChangedMaxNum,
+                prompts.movePrompt2Stack,
+                prompts.getProgressDescription,
+); 
+
 var profile = new Profile(view.update, 
                           appversion);
+
 var audio = new Audio(view, 
                       profile, 
                       scriptProcessor_bufferSize, 
                       vad_parms);
+
 var controller = new Controller(prompts, 
                                 view, 
                                 profile, 
