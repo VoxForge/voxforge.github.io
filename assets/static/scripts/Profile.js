@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Class declaration
 */
-function Profile (update_view, appversion) {
+function Profile (view, appversion) {
   this.appversion = appversion;
 
   /**
@@ -41,7 +41,7 @@ function Profile (update_view, appversion) {
   */
   var parsedLocalStorageObject;
   if ( parsedLocalStorageObject = getProfileFromLocalStorage() ) {
-      update_view(parsedLocalStorageObject);
+      view.update(parsedLocalStorageObject);
   }
 
   /**
@@ -204,7 +204,9 @@ Profile.prototype.set_recordingCharacteristics =
            no_speech, 
            no_trailing_silence, 
            clipping, 
-           too_soft) 
+           too_soft,
+           buffer_size,
+) 
   {
       this.debug[prompt_id] = {
         "no_speech" : no_speech,
@@ -212,6 +214,7 @@ Profile.prototype.set_recordingCharacteristics =
         "clipping" : clipping,
         "too_soft" : too_soft,
       };
+      this.debug["audio_node_buffer_size"] = buffer_size;
   }
 
 /**

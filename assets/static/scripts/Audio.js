@@ -119,17 +119,17 @@ var wavesurfer = [];
 /**
 * Class definition
 */
-function Audio (waveformdisplay, 
+function Audio (view, 
                 profile, 
                 scriptProcessor_bufferSize, 
                 vad_parms) 
 {
+   // 'self' used to save current context when calling function references
+    var self = this;
+
     this.view = view;
     this.scriptProcessor_bufferSize = scriptProcessor_bufferSize;
     this.vad_parms = vad_parms;
-
-    // 'self' used to save current context when calling function references
-    var self = this;
 
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphoneLevel = null;
@@ -293,7 +293,7 @@ function Audio (waveformdisplay,
     * worker sends back the recorded data as an audio blob
     */
     audioworker.onmessage = function(event) { 
-        waveformdisplay(event.data.prompt_id,
+        view.waveformdisplay(event.data.prompt_id,
                              event.data.blob, 
                              event.data.no_speech,
                              event.data.no_trailing_silence,
@@ -304,7 +304,8 @@ function Audio (waveformdisplay,
                                              event.data.no_speech,
                                              event.data.no_trailing_silence,
                                              event.data.clipping, 
-                                             event.data.too_soft);
+                                             event.data.too_soft,
+                                             event.data.buffer_size);
     }; 
 }
 

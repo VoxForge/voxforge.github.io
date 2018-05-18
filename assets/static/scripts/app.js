@@ -62,120 +62,115 @@ var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // !!!!!!
 
-//  TODO generate 
 var view;  // needs to be global so can be accessible to index.html
 // #############################################################################
 
-(function () {
+(function () { // function context
 
-// see: http://diveintohtml5.info/everything.html
-if( ! window.Worker )
-{
-  window.alert( page_browser_support.no_worker_message );           
-}
+    // see: http://diveintohtml5.info/everything.html
+    if( ! window.Worker )
+    {
+      window.alert( page_browser_support.no_worker_message );           
+    }
 
-if( ! window.indexedDB )
-{
-  window.alert( page_browser_support.no_indexedDB_message );          
-}
+    if( ! window.indexedDB )
+    {
+      window.alert( page_browser_support.no_indexedDB_message );          
+    }
 
-// Edge webworkers do not support FormData, and their web worker debugging is not there yet...
-if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
-{
-  window.alert( page_browser_support.no_edgeSupport_message );         
-}
+    // Edge webworkers do not support FormData, and their web worker debugging is not there yet...
+    if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
+    {
+      window.alert( page_browser_support.no_edgeSupport_message );         
+    }
 
-// corresponds to the maximum number of prompts that a user can select from the 
-// drop-down menu selector;  Changes based on type of device being used.
-var max_numPrompts_selector = 50;
-//var num_prompts_to_trigger_upload = 10; // user can upload anytime after recording 10 prompts
-var num_prompts_to_trigger_upload = 3; // debug
+    // corresponds to the maximum number of prompts that a user can select from the 
+    // drop-down menu selector;  Changes based on type of device being used.
+    var max_numPrompts_selector = 50;
+    //var num_prompts_to_trigger_upload = 10; // user can upload anytime after recording 10 prompts
+    var num_prompts_to_trigger_upload = 3; // debug
 
-// buffer size is in units of sample-frames. If specified, the bufferSize 
-// must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
+    // buffer size is in units of sample-frames. If specified, the bufferSize 
+    // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
 
-var scriptProcessor_bufferSize = undefined; // let device decide appropriate buffer size
+    var scriptProcessor_bufferSize = undefined; // let device decide appropriate buffer size
 
-var vad_parms = {
-    run: true,
-    // maxsilence: 1500; //  original value
-    // minvoice: 250; //  original value
-    // buffersize: 480, //  original value
-    maxsilence: 250, // works well with linux; not so well on Android 4.4.2
-    minvoice: 250, 
-    buffersize: 480,
-};
-// Note: cannot change device sample rate from browser...
-if (platform.os.family === "Android" ) {
-  if (platform.os.version && parseFloat(platform.os.version) < 5) {
-    // Android 4.4.2 has default buffer size of: 16384
-    // Firefox on Android 4.4.2 audio recording quality sucks
-    // Android 4.4.2 trailing silence removal custs of end of recording, 
-    // need longer delay on Android 4.4.2
-    // prompts with unvoiced words at end of prompt trip up VAD on Android 4.4.2
-    // large number of prompts affect audio recording quality on Andoir 4.4.2
-    vad_parms.run = false;
-    console.warn("low powered device - disabling automatic silence detection (VAD)");
+    var vad_parms = {
+        run: true,
+        // maxsilence: 1500; //  original value
+        // minvoice: 250; //  original value
+        // buffersize: 480, //  original value
+        maxsilence: 250, // works well with linux; not so well on Android 4.4.2
+        minvoice: 250, 
+        buffersize: 480,
+    };
+    // Note: cannot change device sample rate from browser...
+    if (platform.os.family === "Android" ) {
+      if (platform.os.version && parseFloat(platform.os.version) < 5) {
+        // Android 4.4.2 has default buffer size of: 16384
+        // Firefox on Android 4.4.2 audio recording quality sucks
+        // Android 4.4.2 trailing silence removal custs of end of recording, 
+        // need longer delay on Android 4.4.2
+        // prompts with unvoiced words at end of prompt trip up VAD on Android 4.4.2
+        // large number of prompts affect audio recording quality on Andoir 4.4.2
+        vad_parms.run = false;
+        console.warn("low powered device - disabling automatic silence detection (VAD)");
 
-    // TODO more testing required to confirm that this should be max number of prompts for android 4.4.2
-    // there was definite degredation of recording quality when too many prompts were recorded
-    max_numPrompts_selector = 10;
-  } else {
+        // TODO more testing required to confirm that this should be max number of prompts for android 4.4.2
+        // there was definite degredation of recording quality when too many prompts were recorded
+        max_numPrompts_selector = 10;
+      } else {
 
-    // Android's higher buffer value causing problems with WebRTC VAD.  Need to 
-    // manually set.
-    scriptProcessor_bufferSize = 8192;
-    console.warn('resetting bufferSize to ' + scriptProcessor_bufferSize + 
-                 ' sample-frames, for VAD support');
+        // Android's higher buffer value causing problems with WebRTC VAD.  Need to 
+        // manually set.
+        scriptProcessor_bufferSize = 8192;
+        console.warn('resetting bufferSize to ' + scriptProcessor_bufferSize + 
+                     ' sample-frames, for VAD support');
 
-    vad_parms.maxsilence = 1000; // use more aggressive silence detection on Android
-    vad_parms.minvoice = 125; // use shorter min voice on Android
+        vad_parms.maxsilence = 1000; // use more aggressive silence detection on Android
+        vad_parms.minvoice = 125; // use shorter min voice on Android
 
-    max_numPrompts_selector = 25;
-  }
-}
+        max_numPrompts_selector = 25;
+      }
+    }
 
-// #############################################################################
+    // #############################################################################
 
-const appversion = "0.2";
-const recording_timeout = 20000; // 20 seconds - silence detection should remove leading and trailing silence
-const recording_stop_delay = 1000; 
+    const appversion = "0.2";
+    const recording_timeout = 20000; // 20 seconds - silence detection should remove leading and trailing silence
+    const recording_stop_delay = 1000; 
 
-// upload uses shadow DOM entries as database of audio... if browser does not have
-// enough time to process the last prompt, it will not be included in upload...
-// need to at least wait for RECORDING_STOP_DELAY to complete before displaying
-// upload message, because upload() reads from DOM and if not finished 
-// recording, it will miss last recording.
-const process_last_recording_delay = recording_stop_delay + 400; 
+    // upload uses shadow DOM entries as database of audio... if browser does not have
+    // enough time to process the last prompt, it will not be included in upload...
+    // need to at least wait for RECORDING_STOP_DELAY to complete before displaying
+    // upload message, because upload() reads from DOM and if not finished 
+    // recording, it will miss last recording.
+    const process_last_recording_delay = recording_stop_delay + 400; 
 
-/**
-* Instantiate classes
-*/
-var prompts = new Prompts(max_numPrompts_selector,
-                          num_prompts_to_trigger_upload); 
+    /**
+    * Instantiate classes
+    */
+    var prompts = new Prompts(max_numPrompts_selector,
+                              num_prompts_to_trigger_upload); 
 
-view = new View(prompts.max_numPrompts_selector,
-                prompts.userChangedMaxNum,
-                prompts.movePrompt2Stack,
-                prompts.getProgressDescription,
-); 
+    view = new View(prompts); 
 
-var profile = new Profile(view.update, 
-                          appversion);
+    var profile = new Profile(view, 
+                              appversion);
 
-var audio = new Audio(view.waveformdisplay, 
-                      profile, 
-                      scriptProcessor_bufferSize, 
-                      vad_parms);
+    var audio = new Audio(view, 
+                          profile, 
+                          scriptProcessor_bufferSize, 
+                          vad_parms);
 
-var controller = new Controller(prompts, 
-                                view, 
-                                profile, 
-                                audio,
-                                recording_timeout,
-                                recording_stop_delay,
-                                process_last_recording_delay,
-                                appversion);
+    var controller = new Controller(prompts, 
+                                    view, 
+                                    profile, 
+                                    audio,
+                                    recording_timeout,
+                                    recording_stop_delay,
+                                    process_last_recording_delay,
+                                    appversion);
 
-})();
+})(); // function context
 

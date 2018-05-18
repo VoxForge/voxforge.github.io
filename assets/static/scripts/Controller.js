@@ -65,7 +65,7 @@ function Controller(prompts,
       view.reset();
       fsm.donesubmission();
       // reset random 3 digit characters for submission name
-      profile = new Profile(view.update);
+      profile = new Profile(view);
     }
 
     view.setRSUButtonDisplay(true, false, false); 
