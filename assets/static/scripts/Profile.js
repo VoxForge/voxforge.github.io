@@ -398,7 +398,7 @@ Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
 }
 
 /**
-* TODO unfortunately gets called after every prompt recording
+*
 */
 Profile.prototype.updateEventBufferSize = function (event_buffer_size) {
     this.debug["event_buffer_size"] = event_buffer_size; // actual buffer size set by device
