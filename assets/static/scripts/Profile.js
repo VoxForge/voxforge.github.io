@@ -199,19 +199,20 @@ Profile.prototype.toHash = function () {
 /**
 * 
 */
-Profile.prototype.set_recordingCharacteristics = function (prompt_id, 
-                                                           no_speech, 
-                                                           no_trailing_silence, 
-                                                           clipping, 
-                                                           too_soft) 
-{
-    this.debug[prompt_id] = {
-      "no_speech" : no_speech,
-      "no_trailing_silence" : no_trailing_silence,
-      "clipping" : clipping,
-      "too_soft" : too_soft,
-    };
-}
+Profile.prototype.set_recordingCharacteristics = 
+  function (prompt_id, 
+           no_speech, 
+           no_trailing_silence, 
+           clipping, 
+           too_soft) 
+  {
+      this.debug[prompt_id] = {
+        "no_speech" : no_speech,
+        "no_trailing_silence" : no_trailing_silence,
+        "clipping" : clipping,
+        "too_soft" : too_soft,
+      };
+  }
 
 /**
 * Convert profile object to JSON string, with line feeds after every key 

@@ -27,7 +27,6 @@ function View (max_numPrompts_selector,
     this.movePrompt2Stack = movePrompt2Stack;
     this.getProgressDescription = getProgressDescription;
     this.profile = null;
-    this.controller = null;
 
     // buttons
     this.record = document.querySelector('.record');
@@ -334,16 +333,6 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 }
 
 /**
-* need fsm object so can set deleteclicked in fsm; can't add it to constructor
-* because fsm has dependencies on other classes (prompts, view, profile, audio)
-* that must be instantiated before fsm, and view has a Audio depends n profile 
-* and view and View depends on Prompts... 
-*/
-View.prototype.set_controller = function(controller) {
-  this.controller = controller;
-}
-
-/**
 * run after worker completes audio recording; creates a waveform display of 
 * recorded audio and displays text of associated prompt line.  User can
 * then review and if needed delete an erroneous recording, which can then be
@@ -391,7 +380,6 @@ View.prototype.waveformdisplay = function (
         evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
         console.log("prompt deleted: " + prompt_id);
 
-        //self.controller.deleteclicked();
         $('#delete_clicked').click();
       }
 

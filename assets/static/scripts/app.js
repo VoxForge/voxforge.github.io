@@ -163,7 +163,7 @@ view = new View(prompts.max_numPrompts_selector,
 var profile = new Profile(view.update, 
                           appversion);
 
-var audio = new Audio(view, 
+var audio = new Audio(view.waveformdisplay, 
                       profile, 
                       scriptProcessor_bufferSize, 
                       vad_parms);

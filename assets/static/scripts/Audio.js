@@ -119,7 +119,7 @@ var wavesurfer = [];
 /**
 * Class definition
 */
-function Audio (view, 
+function Audio (waveformdisplay, 
                 profile, 
                 scriptProcessor_bufferSize, 
                 vad_parms) 
@@ -293,7 +293,7 @@ function Audio (view,
     * worker sends back the recorded data as an audio blob
     */
     audioworker.onmessage = function(event) { 
-        view.waveformdisplay(event.data.prompt_id,
+        waveformdisplay(event.data.prompt_id,
                              event.data.blob, 
                              event.data.no_speech,
                              event.data.no_trailing_silence,
