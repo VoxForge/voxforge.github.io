@@ -74,7 +74,6 @@ var urlsToCache = [
   '/voxforge_sw.js',
   '/manifest.json',
   '/en/read/',
-  '/en/read/manifest.json',
 ];
 
 var uploadURL;
