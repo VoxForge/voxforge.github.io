@@ -175,3 +175,14 @@ var view;  // needs to be global so can be accessible to index.html
 
 })(); // function context
 
+
+// !!!!!! testing manifest file creation
+// see: https://developers.google.com/web/fundamentals/app-install-banners/#criteria
+window.addEventListener('appinstalled', (evt) => {
+  app.logEvent('a2hs', 'installed');
+});
+
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  console.log('display-mode is standalone');
+}
+

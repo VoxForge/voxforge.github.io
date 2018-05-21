@@ -2,8 +2,6 @@
   "short_name": "VoxForge",
   "name": "Voxforge speech submission app",
   "description": "app to record and upload speech to VoxForge.org.",
-  "dir": "rtl",
-  "lang": "en",
   "icons": [
     {
       "src": "/voxforge-192.png",

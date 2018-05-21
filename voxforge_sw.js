@@ -72,7 +72,9 @@ var urlsToCache = [
   PATH + 'styles/jquery.mobile-1.4.5.css',
 
   '/voxforge_sw.js',
+  '/manifest.json',
   '/en/read/',
+  '/en/read/manifest.json',
 ];
 
 var uploadURL;
@@ -114,6 +116,7 @@ self.addEventListener('install', function(event) {
 // TODO is this even required given that we have a list of the files we want
 // cached above and we cache those...
 */
+
 self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request)
@@ -153,28 +156,18 @@ Retry syncs also wait for connectivity, and employ an exponential back-off.
 */
 self.addEventListener('sync', function(event) {
     if (event.tag == 'voxforgeSync') {
-       console.log('voxforgeSync: background sync request received by serviceworker');
-/*
-    event.waitUntil(
-        processSavedSubmissions(uploadURL)
-        .then(function(returnObj) {
-            sendMessage(returnObj);
-        })
-        .catch(function(returnObj) {
-            sendMessage(returnObj);
-        })
-    ); 
-*/
-    let uploadURL = new URL(location).searchParams.get('uploadURL');
-    event.waitUntil(
-        processSavedSubmissions(uploadURL)
-        .then(function(returnObj) {
-            sendMessage(returnObj);
-        })
-        .catch(function(returnObj) {
-            sendMessage(returnObj);
-        })
-    ); 
+      console.log('voxforgeSync: background sync request received by serviceworker');
+
+      let uploadURL = new URL(location).searchParams.get('uploadURL');
+      event.waitUntil(
+          processSavedSubmissions(uploadURL)
+          .then(function(returnObj) {
+              sendMessage(returnObj);
+          })
+          .catch(function(returnObj) {
+              sendMessage(returnObj);
+          })
+      ); 
 
   }
 });
@@ -201,4 +194,6 @@ function sendMessage(returnObj) {
     });
   });
 }
+
+
 
