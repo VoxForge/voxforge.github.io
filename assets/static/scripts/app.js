@@ -58,7 +58,7 @@ var uploadURL = 'https://upload.voxforge1.org'; // prod
 // /etc/hosts or on local DNS server;
 // if get 'Bad Request' error after clearing caches, make sure to prefix URL
 // with 'HTTPS://' in browser
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // !!!!!!
 
@@ -153,7 +153,8 @@ var view;  // needs to be global so can be accessible to index.html
     var prompts = new Prompts(max_numPrompts_selector,
                               num_prompts_to_trigger_upload); 
 
-    var view = new View(prompts); 
+    // needs to be global; so can be accessed by index.html
+    view = new View(prompts); 
 
     var profile = new Profile(view, 
                               appversion);
