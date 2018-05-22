@@ -4,11 +4,12 @@
 * 
 * see https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser
 */
-function visualize(view, analyser) {
+//function visualize(view, analyser) {
+function visualize(dataArray, bufferLength) {
   var canvasCtx = view.canvas.getContext("2d");
 
-  var bufferLength = analyser.frequencyBinCount;
-  var dataArray = new Uint8Array(bufferLength);
+  //var bufferLength = analyser.frequencyBinCount;
+  //var dataArray = new Uint8Array(bufferLength);
 
   WIDTH = view.canvas.width
   HEIGHT = view.canvas.height;
@@ -17,7 +18,7 @@ function visualize(view, analyser) {
 
     requestAnimationFrame(draw);
 
-    analyser.getByteTimeDomainData(dataArray);
+    //analyser.getByteTimeDomainData(dataArray);
 
     canvasCtx.fillStyle = 'rgb(200, 200, 200)';
     canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);

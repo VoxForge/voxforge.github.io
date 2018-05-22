@@ -316,7 +316,11 @@ Audio.prototype.record = function (prompt_id) {
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
 
-    visualize(this.view, this.analyser);
+    //visualize(this.view, this.analyser);
+    var dataArray = new Uint8Array(bufferLength);
+    var bufferLength = this.analyser.frequencyBinCount;
+    this.analyser.getByteTimeDomainData(dataArray);
+    visualize(dataArray, bufferLength);
 
     // clears out audio buffer 
     audioworker.postMessage({
