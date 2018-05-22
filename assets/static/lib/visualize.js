@@ -10,13 +10,14 @@ function visualize(dataArray, bufferLength) {
 
   //var bufferLength = analyser.frequencyBinCount;
   //var dataArray = new Uint8Array(bufferLength);
+  var animationId;
 
   WIDTH = view.canvas.width
   HEIGHT = view.canvas.height;
 
   function draw() {
 
-    requestAnimationFrame(draw);
+    //requestAnimationFrame(draw);
 
     //analyser.getByteTimeDomainData(dataArray);
 
@@ -49,6 +50,10 @@ function visualize(dataArray, bufferLength) {
     canvasCtx.stroke();
   }
 
-  draw();
+  //draw();
+  // Register our draw function with requestAnimationFrame. 
+  if (typeof animationId === 'undefined') {
+    animationId = requestAnimationFrame(draw);
+  }
 }
 

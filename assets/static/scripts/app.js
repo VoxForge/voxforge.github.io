@@ -95,7 +95,7 @@ var view;  // needs to be global so can be accessible to index.html
 
     var scriptProcessor_bufferSize = undefined; // let device decide appropriate buffer size
 
-    var vad_parms = {
+    var vad_parms = { // Voice Activity Detection parameters
         run: true,
         // maxsilence: 1500; //  original value
         // minvoice: 250; //  original value
@@ -103,6 +103,10 @@ var view;  // needs to be global so can be accessible to index.html
         maxsilence: 250, // works well with linux; not so well on Android 4.4.2
         minvoice: 250, 
         buffersize: 480,
+    };
+    var ssd_parms = { // simple silence detection parameters
+        duration: 1000, // duration threshhold for silence detection (in milliseconds)
+        amplitude: 0.2, // amplitude threshold for silence detection
     };
     // Note: cannot change device sample rate from browser...
     if (platform.os.family === "Android" ) {
@@ -124,6 +128,7 @@ var view;  // needs to be global so can be accessible to index.html
         // Android's higher buffer value causing problems with WebRTC VAD.  Need to 
         // manually set.
         scriptProcessor_bufferSize = 8192;
+        // amazon LEx sets their buffer size to 4096; see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
         console.warn('resetting bufferSize to ' + scriptProcessor_bufferSize + 
                      ' sample-frames, for VAD support');
 
@@ -163,7 +168,8 @@ var view;  // needs to be global so can be accessible to index.html
                           profile, 
                           prompts,
                           scriptProcessor_bufferSize, 
-                          vad_parms);
+                          vad_parms,
+                          ssd_parms);
 
     var controller = new Controller(prompts, 
                                     view, 

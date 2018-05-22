@@ -123,7 +123,8 @@ function Audio (view,
                 profile, 
                 prompts,
                 scriptProcessor_bufferSize, 
-                vad_parms) 
+                vad_parms, 
+                ssd_parms) 
 {
    // 'self' used to save current context when calling function references
     var self = this;
@@ -131,6 +132,8 @@ function Audio (view,
     this.view = view;
     this.scriptProcessor_bufferSize = scriptProcessor_bufferSize;
     this.vad_parms = vad_parms;
+    this.duration = ssd_parms.duration;
+    this.amplitude =  ssd_parms.amplitude;
 
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphoneLevel = null;
@@ -306,12 +309,67 @@ function Audio (view,
 * connect nodes; tell worker to start recording audio 
 *
 //see https://github.com/higuma/wav-audio-encoder-js 
+
+
+AnalysertNode info:
+// see: https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode
+this.analyser.minDecibels = -90;
+// represnts the minimum power value in the scaling range
+// for the FFT analysis data, for conversion to unsigned byte/float values 
+// The minDecibels property's default value is -100
+
+this.analyser.maxDecibels = -10;
+// When getting data from getByteFrequencyData(), any frequencies with an
+// amplitude of maxDecibels or higher will be returned as 255.
+// The default value is -30 dB.
+
+this.analyser.smoothingTimeConstant = 0.85;
+// It's basically an average between the current buffer and the last buffer
+// the AnalyserNode processed, and results in a much smoother set of value
+// changes over time.  Defaults to 0.8; 
+// If 0 is set, there is no averaging done, whereas a value of 1 means 
+// "overlap the previous and current buffer quite a lot while computing the 
+// value"
+
+this.analyser.fftSize = 2048;
+// represents the window size in samples that is used when performing a Fast 
+// Fourier Transform (FFT) to get frequency domain data.
+// A higher value will result in more details in the frequency domain but 
+// fewer details in the time domain.
+// Must be a power of 2 between 25 and 215, so one of: 32, 64, 128, 256,
+// 512, 1024, 2048, 4096, 8192, 16384, and 32768. Defaults to 2048.
+
 */
 Audio.prototype.record = function (prompt_id) {
-    /**
-    * function used as a parameter to audioworker captures audio buffer data 
-    * from processor worker
-    */
+    var self = this; // save context when calling inner functions
+    var starttime = Date.now();
+
+    function onSilence(elapsedTime) {    
+      console.log("*****silence detected:" + elapsedTime);
+
+    }
+
+    // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
+    // this is only useful in quiet environments... not a VAD
+    // only looks at first element of the smoothed buffer (see 
+    // smoothingTimeConstant setting below)
+    function startSimpleSilenceDetection(dataArray, bufferLength) {
+        var curr_value_time = (dataArray[0] / 128) - 1.0;
+   
+        if (curr_value_time >       self.amplitude   || 
+            curr_value_time < (-1 * self.amplitude)) 
+        {
+          starttime = Date.now();
+        }
+        var newtime = Date.now();
+        var elapsedTime = newtime - starttime;
+        if (elapsedTime > self.duration) {
+          onSilence(elapsedTime);
+          starttime = Date.now();
+        } 
+    };
+
+
     this.microphoneLevel.connect(this.analyser);
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
@@ -319,8 +377,13 @@ Audio.prototype.record = function (prompt_id) {
     //visualize(this.view, this.analyser);
     var dataArray = new Uint8Array(bufferLength);
     var bufferLength = this.analyser.frequencyBinCount;
-    this.analyser.getByteTimeDomainData(dataArray);
-    visualize(dataArray, bufferLength);
+
+    this.analyser.minDecibels = -90;
+    this.analyser.maxDecibels = -10; 
+    this.analyser.smoothingTimeConstant = 0.85;
+    this.analyser.fftSize = 2048;
+
+    var self = this;
 
     // clears out audio buffer 
     audioworker.postMessage({
@@ -333,6 +396,12 @@ Audio.prototype.record = function (prompt_id) {
     // start recording
     // only record left channel (mono)
     this.processor.onaudioprocess = function(event) {
+      var bufferLength = self.analyser.fftSize;
+      var dataArray = new Uint8Array(bufferLength);
+      self.analyser.getByteTimeDomainData(dataArray);
+      visualize(dataArray, bufferLength);
+      startSimpleSilenceDetection(dataArray, bufferLength);
+
       audioworker.postMessage({ 
         command: 'record', 
         event_buffer: event.inputBuffer.getChannelData(0),
