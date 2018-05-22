@@ -381,7 +381,7 @@ Prompts.prototype.toJsonString = function () {
 /**
 *
 */
-Prompts.prototype.setAaudioCharacteristics = function (obj) {
+Prompts.prototype.setAudioCharacteristics = function (obj) {
   this.audio_characteristics[obj.prompt_id] = {
       no_trailing_silence : obj.no_trailing_silence,
       no_speech : obj.no_speech,

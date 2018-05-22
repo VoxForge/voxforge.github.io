@@ -293,7 +293,7 @@ function Audio (view,
           */
           case 'finished':
             view.waveformdisplay(obj); 
-            prompts.setAaudioCharacteristics(obj);
+            prompts.setAudioCharacteristics(obj);
           break;
 
           default:
