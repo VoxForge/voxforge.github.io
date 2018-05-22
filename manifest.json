@@ -1,6 +1,6 @@
 {
   "short_name": "VoxForge",
-  "name": "Voxforge speech submission app",
+  "name": "Voxforge Speech Submission app",
   "description": "app to record and upload speech to VoxForge.org.",
   "dir": "rtl",
   "lang": "en",

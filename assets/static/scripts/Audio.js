@@ -168,8 +168,8 @@ function Audio (view,
         // an error to keep a consistent interface
         if (!getUserMedia) {
           console.error('getUserMedia not supported on your browser!');
-          document.querySelector('.info-display').innerText = 
-            'Your device does not support the HTML5 API needed to record audio';  
+          //document.querySelector('.info-display').innerText = page_alert_message.notHtml5_error;
+          windows.alert( page_alert_message.notHtml5_error );
           document.querySelector('.prompt_id').innerText = "";
           return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
         }

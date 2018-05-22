@@ -257,6 +257,8 @@ alert_message:
   getUserMedia_error: >
     Impossible d'obtenir une entrée audio... assurez-vous que votre microphone 
     est connecté à votre ordinateur.  <br> Votre navigateur donne ce message d'erreur:
+ notHtml5_error: >
+    Votre appareil ne supporte pas l'API HTML5 nécessaire à l'enregistrement d'audio
 
 # script below gets loaded in {{ content }} section of layout page
 ---

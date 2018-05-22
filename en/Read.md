@@ -296,6 +296,8 @@ alert_message:
   getUserMedia_error: >
     Could not get audio input... make sure your microphone is connected to your 
     computer.  Your browser is giving this error message:
+  notHtml5_error: >
+    Your device does not support the HTML5 API needed to record audio
 
 # script below gets loaded in {{ content }} section of layout page
 # these are used by Javascript, therefore need special handling for them to 
