@@ -137,7 +137,6 @@ function Audio (view,
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphoneLevel = null;
     this.processor = undefined;  
-    this.analyser = null;
     this.mediaStreamOutput = null;
     
     // private variables
@@ -212,7 +211,6 @@ function Audio (view,
       // context...
       microphone = self.audioCtx.createMediaStreamSource(stream);
       self.microphoneLevel = self.audioCtx.createGain();
-      self.analyser = self.audioCtx.createAnalyser();
 
       // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
 /*    The buffer size in units of sample-frames. If specified, the bufferSize 
@@ -310,51 +308,11 @@ function Audio (view,
 *
 //see https://github.com/higuma/wav-audio-encoder-js 
 
-
-AnalysertNode info:
-// see: https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode
-this.analyser.minDecibels = -90;
-// represnts the minimum power value in the scaling range
-// for the FFT analysis data, for conversion to unsigned byte/float values 
-// The minDecibels property's default value is -100
-
-this.analyser.maxDecibels = -10;
-// When getting data from getByteFrequencyData(), any frequencies with an
-// amplitude of maxDecibels or higher will be returned as 255.
-// The default value is -30 dB.
-
-this.analyser.smoothingTimeConstant = 0.85;
-// It's basically an average between the current buffer and the last buffer
-// the AnalyserNode processed, and results in a much smoother set of value
-// changes over time.  Defaults to 0.8; 
-// If 0 is set, there is no averaging done, whereas a value of 1 means 
-// "overlap the previous and current buffer quite a lot while computing the 
-// value"
-
-this.analyser.fftSize = 2048;
-// represents the window size in samples that is used when performing a Fast 
-// Fourier Transform (FFT) to get frequency domain data.
-// A higher value will result in more details in the frequency domain but 
-// fewer details in the time domain.
-// Must be a power of 2 between 25 and 215, so one of: 32, 64, 128, 256,
-// 512, 1024, 2048, 4096, 8192, 16384, and 32768. Defaults to 2048.
-
 */
 Audio.prototype.record = function (prompt_id) {
     var self = this; // save context when calling inner functions
-
-    this.microphoneLevel.connect(this.analyser);
     this.microphoneLevel.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
-
-    //visualize(this.view, this.analyser);
-    var dataArray = new Uint8Array(bufferLength);
-    var bufferLength = this.analyser.frequencyBinCount;
-
-    this.analyser.minDecibels = -90;
-    this.analyser.maxDecibels = -10; 
-    this.analyser.smoothingTimeConstant = 0.85;
-    this.analyser.fftSize = 2048;
 
     // clears out audio buffer 
     audioworker.postMessage({
@@ -366,27 +324,16 @@ Audio.prototype.record = function (prompt_id) {
     });
 
     // start recording
-    // only record left channel (mono)
     this.processor.onaudioprocess = function(event) {
-      var buffer_length = self.analyser.fftSize;
-      var byteArray_time_domain = new Uint8Array(buffer_length);
-      var byteArray_freq_domain = new Uint8Array(buffer_length);
-      self.analyser.getByteTimeDomainData(byteArray_time_domain);
-      self.analyser.getByteFrequencyData(byteArray_freq_domain);
-
-      visualize(byteArray_time_domain, bufferLength);
-
-      // TODO might be able to also use: getFloatTimeDomainData() off of analyser node...
-      // see https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getFloatTimeDomainData
+      // only record left channel (mono)
       var floatArray_time_domain = event.inputBuffer.getChannelData(0);
+
+      visualize(floatArray_time_domain, floatArray_time_domain.length);
 
       audioworker.postMessage({ 
         command: 'record', 
         event_buffer: floatArray_time_domain,
-        byteArray_time_domain: byteArray_time_domain,
-        byteArray_freq_domain: byteArray_freq_domain,
      });
-
     };
 }
 

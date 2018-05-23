@@ -53,7 +53,7 @@ self.onmessage = function(event) {
 
     case 'record':
       buffers.push(data.event_buffer); // array of buffer arrays
-      startSimpleSilenceDetection(buffers.length - 1, data.byteArray_time_domain, data.byteArray_freq_domain);
+      startSimpleSilenceDetection(buffers.length - 1, data.event_buffer);
 
       if ( run ) {
          vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
@@ -120,21 +120,19 @@ function onSilence(index, elapsedTime, curr_value_time) {
 
 }
 
-
 // using frequency domain data and minDecibels to detect silence
 // https://stackoverflow.com/questions/46543341/how-can-i-extract-the-preceding-audio-from-microphone-as-a-buffer-when-silence?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 // zero crossings:
 // https://dsp.stackexchange.com/questions/1178/using-short-time-energy-and-zero-crossing-rate?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 // https://github.com/cwilso/web-audio-samples/blob/master/samples/audio/zero-crossings.html
 
-
-
 // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
 // this is only useful in quiet environments... not a VAD
 // only looks at first element of the smoothed buffer (see 
 // smoothingTimeConstant setting below)
-function startSimpleSilenceDetection(index, byteArray_time_domain, byteArray_freq_domain) {
-    var curr_value_time = (byteArray_time_domain[0] / 128) - 1.0;
+function startSimpleSilenceDetection(index, floatArray_time_domain) {
+    //var curr_value_time = (byteArray_time_domain[0] / 128) - 1.0; // values go from 0 to 255, with 128 being 0
+    var curr_value_time = floatArray_time_domain[0];
 
     if (curr_value_time >       ssd_parms.amplitude   || 
         curr_value_time < (-1 * ssd_parms.amplitude)) 
