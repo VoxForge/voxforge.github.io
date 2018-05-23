@@ -135,12 +135,9 @@ function Audio (view,
     this.ssd_parms = ssd_parms;
 
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
-    this.microphoneLevel = null;
+    this.microphone = null;
     this.processor = undefined;  
     this.mediaStreamOutput = null;
-    
-    // private variables
-    var microphone = null;
 
     /**
     * Older browsers might not implement mediaDevices at all, so we set an empty 
@@ -209,8 +206,7 @@ function Audio (view,
       // using 'self' because setupAudioNodes is being called as a parameter to 
       // getUserMedia, which means it is a reference, and therefore loses 'this'
       // context...
-      microphone = self.audioCtx.createMediaStreamSource(stream);
-      self.microphoneLevel = self.audioCtx.createGain();
+      self.microphone = self.audioCtx.createMediaStreamSource(stream);
 
       // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
 /*    The buffer size in units of sample-frames. If specified, the bufferSize 
@@ -231,12 +227,8 @@ function Audio (view,
 
       self.mediaStreamOutput = self.audioCtx.destination;
 
-      microphone.channelCount = 1;
-      self.microphoneLevel.channelCount = 1;
-      self.microphoneLevel.gain.setTargetAtTime(1.0, self.audioCtx.currentTime, 0.7);
+      self.microphone.channelCount = 1;
       self.mediaStreamOutput.channelCount = 1;
-
-      microphone.connect(self.microphoneLevel); 
 
       updateProfileAudioProperties();
     }
@@ -264,7 +256,6 @@ function Audio (view,
         'sample_rate' : self.audioCtx.sampleRate,
         'sample_rate_format' : "16 bit",
         'channels' : self.mediaStreamOutput.channelCount,
-        'gain_value' : self.microphoneLevel.gain.value,
         'echoCancellation' : c.echoCancellation || false,
         'autoGainSupported' : c.autoGainSupported || false,
         'noiseSuppression' : c.noiseSuppression || false,
@@ -311,7 +302,7 @@ function Audio (view,
 */
 Audio.prototype.record = function (prompt_id) {
     var self = this; // save context when calling inner functions
-    this.microphoneLevel.connect(this.processor); 
+    this.microphone.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
 
     // clears out audio buffer 
@@ -345,7 +336,7 @@ Audio.prototype.endRecording = function () {
     // of previous recording
     this.processor.onaudioprocess=null;
 
-    this.microphoneLevel.disconnect();
+    this.microphone.disconnect();
     this.processor.disconnect();
 
     audioworker.postMessage({ 

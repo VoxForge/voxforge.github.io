@@ -112,11 +112,12 @@ self.onmessage = function(event) {
   }
 };
 
-var tempArray = [];
-var i = 0;
 
+/**
+*
+*/
 function onSilence(index, elapsedTime, curr_value_time) {    
-  console.log("*** [" + index + "] ***silence detected - value " + curr_value_time + "\n" + tempArray);
+  console.log("*** [" + index + "] ***silence detected - value " + curr_value_time );
 
 }
 
@@ -145,5 +146,4 @@ function startSimpleSilenceDetection(index, floatArray_time_domain) {
       onSilence(index, elapsedTime, curr_value_time);
       starttime = Date.now();
     } 
-    tempArray[i++] = curr_value_time;
 }
