@@ -132,8 +132,7 @@ function Audio (view,
     this.view = view;
     this.scriptProcessor_bufferSize = scriptProcessor_bufferSize;
     this.vad_parms = vad_parms;
-    this.duration = ssd_parms.duration;
-    this.amplitude =  ssd_parms.amplitude;
+    this.ssd_parms = ssd_parms;
 
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphoneLevel = null;
@@ -274,6 +273,7 @@ function Audio (view,
 
         'scriptProcessor_bufferSize' : self.scriptProcessor_bufferSize || 'undefined',
         'vad_parms' : self.vad_parms,
+        'ssd_parms' : self.ssd_parms,
       });
 
       console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
@@ -342,33 +342,6 @@ this.analyser.fftSize = 2048;
 */
 Audio.prototype.record = function (prompt_id) {
     var self = this; // save context when calling inner functions
-    var starttime = Date.now();
-
-    function onSilence(elapsedTime) {    
-      console.log("*****silence detected:" + elapsedTime);
-
-    }
-
-    // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
-    // this is only useful in quiet environments... not a VAD
-    // only looks at first element of the smoothed buffer (see 
-    // smoothingTimeConstant setting below)
-    function startSimpleSilenceDetection(dataArray, bufferLength) {
-        var curr_value_time = (dataArray[0] / 128) - 1.0;
-   
-        if (curr_value_time >       self.amplitude   || 
-            curr_value_time < (-1 * self.amplitude)) 
-        {
-          starttime = Date.now();
-        }
-        var newtime = Date.now();
-        var elapsedTime = newtime - starttime;
-        if (elapsedTime > self.duration) {
-          onSilence(elapsedTime);
-          starttime = Date.now();
-        } 
-    };
-
 
     this.microphoneLevel.connect(this.analyser);
     this.microphoneLevel.connect(this.processor); 
@@ -383,28 +356,35 @@ Audio.prototype.record = function (prompt_id) {
     this.analyser.smoothingTimeConstant = 0.85;
     this.analyser.fftSize = 2048;
 
-    var self = this;
-
     // clears out audio buffer 
     audioworker.postMessage({
       command: 'start',
       prompt_id: prompt_id,
       vad_parms: this.vad_parms,
+      ssd_parms : self.ssd_parms,
       sampleRate: this.audioCtx.sampleRate,
     });
 
     // start recording
     // only record left channel (mono)
     this.processor.onaudioprocess = function(event) {
-      var bufferLength = self.analyser.fftSize;
-      var dataArray = new Uint8Array(bufferLength);
-      self.analyser.getByteTimeDomainData(dataArray);
-      visualize(dataArray, bufferLength);
-      startSimpleSilenceDetection(dataArray, bufferLength);
+      var buffer_length = self.analyser.fftSize;
+      var byteArray_time_domain = new Uint8Array(buffer_length);
+      var byteArray_freq_domain = new Uint8Array(buffer_length);
+      self.analyser.getByteTimeDomainData(byteArray_time_domain);
+      self.analyser.getByteFrequencyData(byteArray_freq_domain);
+
+      visualize(byteArray_time_domain, bufferLength);
+
+      // TODO might be able to also use: getFloatTimeDomainData() off of analyser node...
+      // see https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getFloatTimeDomainData
+      var floatArray_time_domain = event.inputBuffer.getChannelData(0);
 
       audioworker.postMessage({ 
         command: 'record', 
-        event_buffer: event.inputBuffer.getChannelData(0),
+        event_buffer: floatArray_time_domain,
+        byteArray_time_domain: byteArray_time_domain,
+        byteArray_freq_domain: byteArray_freq_domain,
      });
 
     };

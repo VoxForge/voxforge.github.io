@@ -106,7 +106,7 @@ var view;  // needs to be global so can be accessible to index.html
     };
     var ssd_parms = { // simple silence detection parameters
         duration: 1000, // duration threshhold for silence detection (in milliseconds)
-        amplitude: 0.2, // amplitude threshold for silence detection
+        amplitude: 0.02, // amplitude threshold for silence detection
     };
     // Note: cannot change device sample rate from browser...
     if (platform.os.family === "Android" ) {
