@@ -115,7 +115,6 @@ var view;  // needs to be global so can be accessible to index.html
 
     // buffer size is in units of sample-frames. If specified, the bufferSize 
     // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
-
     var audioNodebufferSize = undefined; // let device decide appropriate buffer size
 
     var displayWaveform = true;
@@ -134,28 +133,31 @@ var view;  // needs to be global so can be accessible to index.html
 
     // ### ANDROID #############################################################
 
+    // TODO troubleshooting sound recording issues on Android... seems like 
+    // scriptnode causes random audio crackles and dropouts on recordings on 
+    // low end Android v442 and v5 devices.  Will have to monitor and turn
+    // off visualization for lower end devices for now...
     if (platform.os.family === "Android" ) {
       // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
       audioNodebufferSize = 4096;
       displayWaveform = false;
       displayVisualizer = false;
 
-      //vad_parms.maxsilence = 1000; // detect longer silence period on Android
-      //vad_parms.minvoice = 125; // use shorter min voice on Android
-
       console.warn('resetting bufferSize to ' + audioNodebufferSize + 
                    ' sample-frames, for VAD support');
       if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
-          max_numPrompts_selector = 10;
-          vad_parms.run = false;
+        max_numPrompts_selector = 10;
+        vad_parms.run = false;
 
-          // Firefox on Android 4.4.2 audio recording quality sucks
-          if (platform.name === "FireFox")
-          {
-              window.alert( page_browser_support.no_FireFoxAndroid_message );         
-          }
+        // Firefox on Android 4.4.2 audio recording quality sucks
+        if (platform.name === "FireFox")
+        {
+            window.alert( page_browser_support.no_FireFoxAndroid_message );         
+        }
       } else { // Android 5 and above
-         max_numPrompts_selector = 20;
+        max_numPrompts_selector = 20;
+        vad_parms.maxsilence = 1000; // detect longer silence period on Android
+        vad_parms.minvoice = 125; // use shorter min voice on Android
       }
     }
 
