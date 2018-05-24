@@ -4,22 +4,24 @@
 * 
 * see https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getFloatTimeDomainData
 */
-//function visualize(view, analyser) {
-function visualize(dataArray, bufferLength) {
+
+function visualize(view, analyser) {
   var canvasCtx = view.canvas.getContext("2d");
 
-  //var bufferLength = analyser.frequencyBinCount;
-  //var dataArray = new Uint8Array(bufferLength);
-  var animationId;
+  var bufferLength = analyser.frequencyBinCount;
+  var dataArray = new Uint8Array(bufferLength);
 
   WIDTH = view.canvas.width
   HEIGHT = view.canvas.height;
-
+  // TODO do we need to limit the number of time visualize refreshes per second
+  // so that it can run on Android processors without causing audio to drop?
   function draw() {
 
-    //requestAnimationFrame(draw);
+    // this is more efficient than calling with processor.onaudioprocess
+    // and sending floatarray with each call...
+    requestAnimationFrame(draw);
 
-    //analyser.getByteTimeDomainData(dataArray);
+    analyser.getByteTimeDomainData(dataArray);
 
     canvasCtx.fillStyle = 'rgb(200, 200, 200)';
     canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -34,11 +36,9 @@ function visualize(dataArray, bufferLength) {
 
     for(var i = 0; i < bufferLength; i++) {
  
-      //var v = dataArray[i] / 128.0; // uint8
-      //var y = v * HEIGHT/2; // uint8
+      var v = dataArray[i] / 128.0; // uint8
+      var y = v * HEIGHT/2; // uint8
 
-      var v = dataArray[i] * 200.0; // 32bitfloat
-      var y = HEIGHT/2 + v; // 32bitfloat
       if(i === 0) {
         canvasCtx.moveTo(x, y);
       } else {
@@ -52,10 +52,6 @@ function visualize(dataArray, bufferLength) {
     canvasCtx.stroke();
   }
 
-  //draw();
-  // Register our draw function with requestAnimationFrame. 
-  if (typeof animationId === 'undefined') {
-    animationId = requestAnimationFrame(draw);
-  }
+  draw();
 }
 

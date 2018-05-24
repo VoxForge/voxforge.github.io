@@ -138,6 +138,7 @@ function Audio (view,
     this.microphone = null;
     this.processor = undefined;  
     this.mediaStreamOutput = null;
+    this.analyser = null;
 
     /**
     * Older browsers might not implement mediaDevices at all, so we set an empty 
@@ -224,7 +225,7 @@ function Audio (view,
 */
       // TODO changing buffersize does not seem toa actually work
       self.processor = self.audioCtx.createScriptProcessor(self.audioNodebufferSize , 1, 1);
-
+      self.analyser = self.audioCtx.createAnalyser();
       self.mediaStreamOutput = self.audioCtx.destination;
 
       self.microphone.channelCount = 1;
@@ -283,7 +284,7 @@ function Audio (view,
           * worker sends back the recorded data as an audio blob
           */
           case 'finished':
-            view.displayAudioPlayer(obj); 
+            self.view.displayAudioPlayer(obj); 
             prompts.setAudioCharacteristics(obj);
           break;
 
@@ -302,8 +303,19 @@ function Audio (view,
 Audio.prototype.record = function (prompt_id) {
     var self = this; // save context when calling inner functions
 
+    // script processor node introduces a large amount of audio 
+    // latency, at least 2048 samples in your example (because he 
+    // used:  audioCtx.createScriptProcessor(2048, 1, 1);_+ script execution time
+    // but this is only relevant if you are trying to display realtime wavform
+    // in a vuew meter or something lie that.
+    // see: https://stackoverflow.com/questions/47380352/webaudio-analyser-not-returning-any-data
     this.microphone.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
+    this.microphone.connect(this.analyser); 
+
+    if (this.view.displayVisualizer) {
+      visualize(this.view, this.analyser);
+    }
 
     // clears out audio buffer 
     audioworker.postMessage({
@@ -319,9 +331,6 @@ Audio.prototype.record = function (prompt_id) {
       // only record left channel (mono)
       var floatArray_time_domain = event.inputBuffer.getChannelData(0);
 
-      if (self.view.displayVisualizer) {
-        visualize(floatArray_time_domain, floatArray_time_domain.length);
-      }
       audioworker.postMessage({ 
         command: 'record', 
         event_buffer: floatArray_time_domain,
@@ -336,9 +345,9 @@ Audio.prototype.endRecording = function () {
     // trying to clear buffer because second recording sometimes includes end 
     // of previous recording
     this.processor.onaudioprocess=null;
+    this.processor.disconnect();
 
     this.microphone.disconnect();
-    this.processor.disconnect();
 
     audioworker.postMessage({ 
       command: 'finish' 

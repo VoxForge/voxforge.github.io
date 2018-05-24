@@ -63,8 +63,31 @@ var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 // !!!!!!
 
 var view;  // needs to be global so can be accessible to index.html
+
 // #############################################################################
 
+/**
+
+// Note: cannot change device sample rate from browser...
+
+// in order for the VAD to work reasonably well (without cutting off speech)
+// we need a smaller buffer size, but too small a buffer size taxes
+// processing power of phone, so disable waveform disaply on older phones.
+// The danger of lower buffer size is CPU cannot keep up with sending and
+// processing of many buffer events, and aritifacts (e.g. audio crackles,
+// scratches and pops) being inserted into the recording
+// see: https://help.ableton.com/hc/en-us/articles/209070329-How-to-avoid-crackles-and-audio-dropouts
+
+
+
+// Android 4.4.2 has default buffer size of: 16384
+// Android 4.4.2 trailing silence removal cuts of end of recording, 
+// need longer delay on Android 4.4.2
+// prompts with unvoiced words at end of prompt trip up VAD on Android 4.4.2
+// large number of prompts affect audio recording quality on Android 4.4.2
+// Android 4.4.2: there was definite degredation of recording quality when too many prompts were recorded
+
+*/
 (function () { // function context
 
     // see: http://diveintohtml5.info/everything.html
@@ -99,9 +122,7 @@ var view;  // needs to be global so can be accessible to index.html
     var displayVisualizer = true;
     var vad_parms = { // Voice Activity Detection parameters
         run: true,
-        // maxsilence: 1500; //  original value
-        // minvoice: 250; //  original value
-        // buffersize: 480, //  original value
+        // maxsilence: 1500, minvoice: 250, buffersize: 480,//  original values
         maxsilence: 250, // works well with linux; not so well on Android 4.4.2
         minvoice: 250, 
         buffersize: 480,
@@ -110,31 +131,23 @@ var view;  // needs to be global so can be accessible to index.html
         duration: 1000, // duration threshhold for silence detection (in milliseconds)
         amplitude: 0.02, // amplitude threshold for silence detection
     };
-    // Note: cannot change device sample rate from browser...
+
+    // ### ANDROID #############################################################
+
     if (platform.os.family === "Android" ) {
-      // in order for the VAD to work reasonably well (without cutting off speech)
-      // we need a smaller buffer size, but too small a buffer size taxes
-      // processing power of phone, so disable waveform disaply on older phones.
-      // The danger of lower buffer size is CPU cannot keep up with sending and
-      // processing of many buffer events, and aritifacts (e.g. audio crackles,
-      // scratches and pops) being inserted into the recording
-      // see: https://help.ableton.com/hc/en-us/articles/209070329-How-to-avoid-crackles-and-audio-dropouts
-      //audioNodebufferSize = 8192;
-      displayWaveform = true;
+      // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
+      audioNodebufferSize = 4096;
+      displayWaveform = false;
       displayVisualizer = false;
-      vad_parms.maxsilence = 1000; // detect longer silence period on Android
-      vad_parms.minvoice = 125; // use shorter min voice on Android
+
+      //vad_parms.maxsilence = 1000; // detect longer silence period on Android
+      //vad_parms.minvoice = 125; // use shorter min voice on Android
 
       console.warn('resetting bufferSize to ' + audioNodebufferSize + 
                    ' sample-frames, for VAD support');
       if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
-          // Android 4.4.2 has default buffer size of: 16384
-          // Android 4.4.2 trailing silence removal cuts of end of recording, 
-          // need longer delay on Android 4.4.2
-          // prompts with unvoiced words at end of prompt trip up VAD on Android 4.4.2
-          // large number of prompts affect audio recording quality on Android 4.4.2
-          // Android 4.4.2: there was definite degredation of recording quality when too many prompts were recorded
-          max_numPrompts_selector = 20;
+          max_numPrompts_selector = 10;
+          vad_parms.run = false;
 
           // Firefox on Android 4.4.2 audio recording quality sucks
           if (platform.name === "FireFox")
@@ -142,7 +155,7 @@ var view;  // needs to be global so can be accessible to index.html
               window.alert( page_browser_support.no_FireFoxAndroid_message );         
           }
       } else { // Android 5 and above
-         max_numPrompts_selector = 30;
+         max_numPrompts_selector = 20;
       }
     }
 
@@ -166,8 +179,8 @@ var view;  // needs to be global so can be accessible to index.html
                               num_prompts_to_trigger_upload); 
 
     // needs to be global; so can be accessed by index.html
-    view = new View(displayWaveform,
-                    displayVisualizer,
+    view = new View(displayVisualizer,
+                    displayWaveform,
                     prompts); 
 
     var profile = new Profile(view, 

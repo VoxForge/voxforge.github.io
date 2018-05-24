@@ -17,13 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-function View (displayWaveform,
-               displayVisualizer,
+function View (displayVisualizer,
+               displayWaveform,
                prompts)
 {
     var self = this; // save context
-    this.displayWaveform = displayWaveform;
+
     this.displayVisualizer = displayVisualizer;
+    this.displayWaveform = displayWaveform;
+
     this.prompts = prompts;
     this.profile = null;
 
@@ -470,6 +472,7 @@ View.prototype.displayAudioPlayer = function (obj)
 
     this.soundClips.insertBefore(clipContainer, this.soundClips.children[0]);
 
+    // might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
     // add waveform to waveformElement
     // see http://wavesurfer-js.org/docs/
     if (this.displayWaveform) {
