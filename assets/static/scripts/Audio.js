@@ -301,6 +301,7 @@ function Audio (view,
 */
 Audio.prototype.record = function (prompt_id) {
     var self = this; // save context when calling inner functions
+
     this.microphone.connect(this.processor); 
     this.processor.connect(this.audioCtx.destination);
 
@@ -318,8 +319,9 @@ Audio.prototype.record = function (prompt_id) {
       // only record left channel (mono)
       var floatArray_time_domain = event.inputBuffer.getChannelData(0);
 
-      visualize(floatArray_time_domain, floatArray_time_domain.length);
-
+      if (self.view.displayVisualizer) {
+        visualize(floatArray_time_domain, floatArray_time_domain.length);
+      }
       audioworker.postMessage({ 
         command: 'record', 
         event_buffer: floatArray_time_domain,

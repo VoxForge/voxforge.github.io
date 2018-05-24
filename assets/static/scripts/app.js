@@ -96,6 +96,7 @@ var view;  // needs to be global so can be accessible to index.html
     var audioNodebufferSize = undefined; // let device decide appropriate buffer size
 
     var displayWaveform = true;
+    var displayVisualizer = true;
     var vad_parms = { // Voice Activity Detection parameters
         run: true,
         // maxsilence: 1500; //  original value
@@ -119,7 +120,8 @@ var view;  // needs to be global so can be accessible to index.html
       // scratches and pops) being inserted into the recording
       // see: https://help.ableton.com/hc/en-us/articles/209070329-How-to-avoid-crackles-and-audio-dropouts
       //audioNodebufferSize = 8192;
-      displayWaveform = false;
+      displayWaveform = true;
+      displayVisualizer = false;
       vad_parms.maxsilence = 1000; // detect longer silence period on Android
       vad_parms.minvoice = 125; // use shorter min voice on Android
 
@@ -165,6 +167,7 @@ var view;  // needs to be global so can be accessible to index.html
 
     // needs to be global; so can be accessed by index.html
     view = new View(displayWaveform,
+                    displayVisualizer,
                     prompts); 
 
     var profile = new Profile(view, 
