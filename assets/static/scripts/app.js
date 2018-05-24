@@ -139,12 +139,11 @@ var view;  // needs to be global so can be accessible to index.html
     // off visualization for lower end devices for now...
     if (platform.os.family === "Android" ) {
       // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
-      audioNodebufferSize = 4096;
       displayWaveform = false;
       displayVisualizer = false;
-
       console.warn('resetting bufferSize to ' + audioNodebufferSize + 
                    ' sample-frames, for VAD support');
+
       if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
         max_numPrompts_selector = 10;
         vad_parms.run = false;
@@ -156,8 +155,10 @@ var view;  // needs to be global so can be accessible to index.html
         }
       } else { // Android 5 and above
         max_numPrompts_selector = 20;
+
         vad_parms.maxsilence = 1000; // detect longer silence period on Android
         vad_parms.minvoice = 125; // use shorter min voice on Android
+        audioNodebufferSize = 4096; // needs to be lower for VAD to work
       }
     }
 
