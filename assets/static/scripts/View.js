@@ -17,9 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-function View (prompts) 
+function View (displayWaveform, prompts) 
 {
     var self = this; // save context
+    this.displayWaveform = displayWaveform;
     this.prompts = prompts;
     this.profile = null;
 
@@ -333,7 +334,7 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 * then review and if needed delete an erroneous recording, which can then be
 * re-recorded
 */
-View.prototype.waveformdisplay = function (obj) 
+View.prototype.displayAudioPlayer = function (obj) 
 {
     var prompt_id = obj.prompt_id; // TODO not used yet...
     var blob = obj.blob;
@@ -459,21 +460,24 @@ View.prototype.waveformdisplay = function (obj)
 
     clipContainer.appendChild(createClipLabel());
     clipContainer.appendChild(createDeleteButton());
-    clipContainer.appendChild(createWaveformElement());
+    if (this.displayWaveform) {
+      clipContainer.appendChild(createWaveformElement());
+    }
     clipContainer.appendChild(createAudioPlayer());
 
     this.soundClips.insertBefore(clipContainer, this.soundClips.children[0]);
 
     // add waveform to waveformElement
     // see http://wavesurfer-js.org/docs/
-    wavesurfer[this.clip_id] = WaveSurfer.create({
-      container: '#' + waveformdisplay_id,
-      scrollParent: true,
-      waveColor : 'OliveDrab',
-      minPxPerSec: 200,
-    });
-    wavesurfer[this.clip_id].load(audioURL);
-
+    if (this.displayWaveform) {
+      wavesurfer[this.clip_id] = WaveSurfer.create({
+        container: '#' + waveformdisplay_id,
+        scrollParent: true,
+        waveColor : 'OliveDrab',
+        minPxPerSec: 200,
+      });
+      wavesurfer[this.clip_id].load(audioURL);
+    }
     this.clip_id++;
 }
 

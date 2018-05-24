@@ -89,6 +89,7 @@ http://darkroommastering.com/blog/dithering-explained
     var offset = 0;
 
     for (var i = 0; i < len; ++i) {
+        // TODO use mozilla min/max approach to calculating 16bit sample - mre efficient than ternary conditional
         var x = buffer[i] * 0x7fff; // 0x7fff = 32767
         // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
         // trying to see if no min max causingn scratichin and pops...

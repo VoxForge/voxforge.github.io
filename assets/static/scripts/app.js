@@ -93,8 +93,9 @@ var view;  // needs to be global so can be accessible to index.html
     // buffer size is in units of sample-frames. If specified, the bufferSize 
     // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
 
-    var scriptProcessor_bufferSize = undefined; // let device decide appropriate buffer size
+    var audioNodebufferSize = undefined; // let device decide appropriate buffer size
 
+    var displayWaveform = true;
     var vad_parms = { // Voice Activity Detection parameters
         run: true,
         // maxsilence: 1500; //  original value
@@ -110,32 +111,36 @@ var view;  // needs to be global so can be accessible to index.html
     };
     // Note: cannot change device sample rate from browser...
     if (platform.os.family === "Android" ) {
-      if (platform.os.version && parseFloat(platform.os.version) < 5) {
-        // Android 4.4.2 has default buffer size of: 16384
-        // Firefox on Android 4.4.2 audio recording quality sucks
-        // Android 4.4.2 trailing silence removal custs of end of recording, 
-        // need longer delay on Android 4.4.2
-        // prompts with unvoiced words at end of prompt trip up VAD on Android 4.4.2
-        // large number of prompts affect audio recording quality on Andoir 4.4.2
-        vad_parms.run = false;
-        console.warn("low powered device - disabling automatic silence detection (VAD)");
+      // in order for the VAD to work reasonably well (without cutting off speech)
+      // we need a smaller buffer size, but too small a buffer size taxes
+      // processing power of phone, so disable waveform disaply on older phones.
+      // The danger of lower buffer size is CPU cannot keep up with sending and
+      // processing of many buffer events, and aritifacts (e.g. audio crackles,
+      // scratches and pops) being inserted into the recording
+      // see: https://help.ableton.com/hc/en-us/articles/209070329-How-to-avoid-crackles-and-audio-dropouts
+      //audioNodebufferSize = 8192;
+      displayWaveform = false;
+      vad_parms.maxsilence = 1000; // detect longer silence period on Android
+      vad_parms.minvoice = 125; // use shorter min voice on Android
 
-        // TODO more testing required to confirm that this should be max number of prompts for android 4.4.2
-        // there was definite degredation of recording quality when too many prompts were recorded
-        max_numPrompts_selector = 10;
-      } else {
+      console.warn('resetting bufferSize to ' + audioNodebufferSize + 
+                   ' sample-frames, for VAD support');
+      if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
+          // Android 4.4.2 has default buffer size of: 16384
+          // Android 4.4.2 trailing silence removal cuts of end of recording, 
+          // need longer delay on Android 4.4.2
+          // prompts with unvoiced words at end of prompt trip up VAD on Android 4.4.2
+          // large number of prompts affect audio recording quality on Android 4.4.2
+          // Android 4.4.2: there was definite degredation of recording quality when too many prompts were recorded
+          max_numPrompts_selector = 20;
 
-        // Android's higher buffer value causing problems with WebRTC VAD.  Need to 
-        // manually set.
-        scriptProcessor_bufferSize = 8192;
-        // amazon LEx sets their buffer size to 4096; see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
-        console.warn('resetting bufferSize to ' + scriptProcessor_bufferSize + 
-                     ' sample-frames, for VAD support');
-
-        vad_parms.maxsilence = 1000; // use more aggressive silence detection on Android
-        vad_parms.minvoice = 125; // use shorter min voice on Android
-
-        max_numPrompts_selector = 25;
+          // Firefox on Android 4.4.2 audio recording quality sucks
+          if (platform.name === "FireFox")
+          {
+              window.alert( page_browser_support.no_FireFoxAndroid_message );         
+          }
+      } else { // Android 5 and above
+         max_numPrompts_selector = 30;
       }
     }
 
@@ -147,7 +152,7 @@ var view;  // needs to be global so can be accessible to index.html
 
     // upload uses shadow DOM entries as database of audio... if browser does not have
     // enough time to process the last prompt, it will not be included in upload...
-    // need to at least wait for RECORDING_STOP_DELAY to complete before displaying
+    // need to at least wait for recording_stop_delay to complete before displaying
     // upload message, because upload() reads from DOM and if not finished 
     // recording, it will miss last recording.
     const process_last_recording_delay = recording_stop_delay + 400; 
@@ -159,7 +164,8 @@ var view;  // needs to be global so can be accessible to index.html
                               num_prompts_to_trigger_upload); 
 
     // needs to be global; so can be accessed by index.html
-    view = new View(prompts); 
+    view = new View(displayWaveform,
+                    prompts); 
 
     var profile = new Profile(view, 
                               appversion);
@@ -167,7 +173,7 @@ var view;  // needs to be global so can be accessible to index.html
     var audio = new Audio(view, 
                           profile, 
                           prompts,
-                          scriptProcessor_bufferSize, 
+                          audioNodebufferSize, 
                           vad_parms,
                           ssd_parms);
 

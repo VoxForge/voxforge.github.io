@@ -122,7 +122,7 @@ var wavesurfer = [];
 function Audio (view, 
                 profile, 
                 prompts,
-                scriptProcessor_bufferSize, 
+                audioNodebufferSize, 
                 vad_parms, 
                 ssd_parms) 
 {
@@ -130,7 +130,7 @@ function Audio (view,
     var self = this;
 
     this.view = view;
-    this.scriptProcessor_bufferSize = scriptProcessor_bufferSize;
+    this.audioNodebufferSize = audioNodebufferSize;
     this.vad_parms = vad_parms;
     this.ssd_parms = ssd_parms;
 
@@ -223,7 +223,7 @@ function Audio (view,
       TODO test with with other versions of Android
 */
       // TODO changing buffersize does not seem toa actually work
-      self.processor = self.audioCtx.createScriptProcessor(self.scriptProcessor_bufferSize , 1, 1);
+      self.processor = self.audioCtx.createScriptProcessor(self.audioNodebufferSize , 1, 1);
 
       self.mediaStreamOutput = self.audioCtx.destination;
 
@@ -259,8 +259,7 @@ function Audio (view,
         'echoCancellation' : c.echoCancellation || false,
         'autoGainSupported' : c.autoGainSupported || false,
         'noiseSuppression' : c.noiseSuppression || false,
-
-        'scriptProcessor_bufferSize' : self.scriptProcessor_bufferSize || 'undefined',
+        'audioNodebufferSize' : self.audioNodebufferSize || 'undefined',
         'vad_parms' : self.vad_parms,
         'ssd_parms' : self.ssd_parms,
       });
@@ -284,7 +283,7 @@ function Audio (view,
           * worker sends back the recorded data as an audio blob
           */
           case 'finished':
-            view.waveformdisplay(obj); 
+            view.displayAudioPlayer(obj); 
             prompts.setAudioCharacteristics(obj);
           break;
 

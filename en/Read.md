@@ -270,6 +270,10 @@ browser_support:
     "Microsoft browsers not supported... please install 
     a current version of a Free and Open Source browser such as Chrome or 
     FireFox"
+  no_FireFoxAndroid_message: >
+    Unfortunately, using the VoxForge app with the Firefox browser on Android
+    results in audio artifacts (scratches and pops) being included in wav file, 
+    please use Chrome.
 
 alert_message:
   serviceworker: serviceworker

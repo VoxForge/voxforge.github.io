@@ -58,6 +58,8 @@ self.onmessage = function(event) {
       if ( run ) {
          vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
       }
+
+      // TODO do this in Audio class... simplify things
       // only way to get default event_buffer size is to look at what audio node 
       // sends you...therefore look at first event.buffer and save its length
       // TODO Amazon sets their buffer to 2048: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
@@ -113,13 +115,6 @@ self.onmessage = function(event) {
 };
 
 
-/**
-*
-*/
-function onSilence(index, elapsedTime, curr_value_time) {    
-  console.log("*** [" + index + "] ***silence detected - value " + curr_value_time );
-
-}
 
 // using frequency domain data and minDecibels to detect silence
 // https://stackoverflow.com/questions/46543341/how-can-i-extract-the-preceding-audio-from-microphone-as-a-buffer-when-silence?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
@@ -132,8 +127,15 @@ function onSilence(index, elapsedTime, curr_value_time) {
 // only looks at first element of the smoothed buffer (see 
 // smoothingTimeConstant setting below)
 function startSimpleSilenceDetection(index, floatArray_time_domain) {
+    /**
+    *
+    */
+    function onSilence(index, elapsedTime, curr_value_time) {    
+      console.log("*** [" + index + "] ***silence detected - value " + curr_value_time );
+    }
+
     //var curr_value_time = (byteArray_time_domain[0] / 128) - 1.0; // values go from 0 to 255, with 128 being 0
-    var curr_value_time = floatArray_time_domain[0];
+    var curr_value_time = floatArray_time_domain[0] * 200.0;
 
     if (curr_value_time >       ssd_parms.amplitude   || 
         curr_value_time < (-1 * ssd_parms.amplitude)) 
@@ -146,4 +148,7 @@ function startSimpleSilenceDetection(index, floatArray_time_domain) {
       onSilence(index, elapsedTime, curr_value_time);
       starttime = Date.now();
     } 
+    //else {
+    //  console.log("curr_value_time:" + curr_value_time );
+    //}
 }
