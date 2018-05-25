@@ -68,10 +68,10 @@ http://darkroommastering.com/blog/dithering-explained
   // a more efficient way to copy 32-bit float is: AudioBuffer.copyFromChannel()
   // see: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/copyFromChannel
 
-  Encoder.prototype.encode = function(buffer, bitDepth) {
+  Encoder.prototype.encode = function(buffer) {
     var len = buffer.length;
 
-    if (bitDepth == 16) {
+    if (this.bitDepth == 16) {
       // array of twos-complement 16-bit signed integers in the platform byte order.
       // If control over byte order is needed, use DataView instead.
       var view = new DataView(new ArrayBuffer(len * 2));
@@ -81,7 +81,7 @@ http://darkroommastering.com/blog/dithering-explained
           // TODO use mozilla min/max approach to calculating 16bit sample - mre efficient than ternary conditional
           var x = buffer[i] * 0x7fff; // 0x7fff = 32767
           // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
-          // trying to see if no min max causingn scratichin and pops...
+          // trying to see if no min max causing scratichin and pops...
           var sample16bit =  x < 0 ? max(x, -0x8000) : min(x, 0x7fff);
           view.setInt16(offset, sample16bit, true);
           offset += 2;
@@ -101,9 +101,9 @@ see: https://github.com/rochars/wavefile
 // see https://stackoverflow.com/questions/15576798/create-32bit-float-wav-file-in-python
 
   */
-  Encoder.prototype.finish = function(mimeType, bitDepth) {
+  Encoder.prototype.finish = function(mimeType) {
     //var dataSize = this.numChannels * this.numSamples * 2,
-    if (bitDepth == 16) {
+    if (this.bitDepth == 16) {
       var dataSize = this.numSamples * 2; // 16 bit
     } else { 
       var dataSize = this.numSamples * 4; // 32-bit float
@@ -120,7 +120,7 @@ see: https://github.com/rochars/wavefile
     /* format chunk length */
     view.setUint32(16, 16, true);
     /* sample format (raw) */
-    if (bitDepth == 16) {
+    if (this.bitDepth == 16) {
       view.setUint16(20, 1, true); // 0x0001	WAVE_FORMAT_PCM	PCM
     } else {
       view.setUint16(20, 3, true);  // 0x0003	WAVE_FORMAT_IEEE_FLOAT	IEEE float
@@ -132,7 +132,7 @@ see: https://github.com/rochars/wavefile
     view.setUint32(24, this.sampleRate, true);
     /* byte rate (sample rate * block align) */
     view.setUint32(28, this.sampleRate * 4, true);
-    if (bitDepth == 16) {
+    if (this.bitDepth == 16) {
       /* block align (channel count * bytes per sample) */
       //view.setUint16(32, this.numChannels * 2, true);
       view.setUint16(32, 2, true);// 16 bits per sample
