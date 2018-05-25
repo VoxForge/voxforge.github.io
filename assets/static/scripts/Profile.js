@@ -384,7 +384,7 @@ Profile.prototype.getLicenseUserName = function () {
 */
 Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
     this.sample_rate = obj.sample_rate;
-    this.sample_rate_format = obj.sample_rate_format;
+    this.bit_depth = obj.bit_depth;
     this.channels = obj.channels;
     this.gain_value = obj.gain_value;
     this.echoCancellation = obj.echoCancellation;

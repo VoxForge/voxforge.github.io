@@ -39,6 +39,7 @@ self.onmessage = function(event) {
       prompt_id = data.prompt_id;
       buffers = [];
 
+      // TODO this should be done in Audio and not everytime record is pressed...
       var bitDepth = data.bitDepth;
       if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
         console.warn("invalid bit depth: " + data.bitDepth + "; setting to 16 bit");
