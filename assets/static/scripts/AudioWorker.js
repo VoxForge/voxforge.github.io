@@ -42,10 +42,9 @@ self.onmessage = function(event) {
       var bitDepth = data.bitDepth;
       if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
         console.warn("invalid bit depth: " + data.bitDepth + "; setting to 16 bit");
-        bitDepth = 16;
-      } else {
-        bitDepth = "32bit-float"; // default
-      }
+        bitDepth = "32bit-float";
+      } 
+      console.log('bitDepth:' + bitDepth);
       encoder = new WavAudioEncoder(data.sampleRate, bitDepth);
 
       run = data.vad_parms.run;

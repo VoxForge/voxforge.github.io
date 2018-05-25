@@ -262,7 +262,6 @@ function Audio (parms,
       });
 
       console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
-      console.log('bitDepth: ' + self.parms.bitDepth);
     }
 
     var event_buffer_size_updated = false;
