@@ -184,7 +184,7 @@ Profile.prototype.toHash = function () {
 
     // see https://www.pmtonline.co.uk/blog/2004/11/04/what-does-the-bit-depth-and-sample-rate-refer-to/
     profile_hash["sample_rate"] = this.sample_rate;
-    profile_hash["sample_rate_format"] = this.sample_rate_format;
+    profile_hash["bit_depth"] = this.sample_rate_format;
     profile_hash["channels"] = this.channels;
 
     profile_hash["echoCancellation"] = this.echoCancellation;
@@ -293,7 +293,7 @@ Profile.prototype.toTextArray = function () {
 
     // see https://www.pmtonline.co.uk/blog/2004/11/04/what-does-the-bit-depth-and-sample-rate-refer-to/
     profile_array[i++] = 'Sample Rate: ' + this.sample_rate + '\n';
-    profile_array[i++] = 'Sample Rate Format (bit depth): ' + this.sample_rate_format + '\n';
+    profile_array[i++] = 'Sample Rate Format (bit depth): ' + this.bit_depth + '\n';
     profile_array[i++] = 'Number of channels: ' + this.channels + '\n';
 
     return profile_array;

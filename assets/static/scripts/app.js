@@ -58,7 +58,7 @@ var uploadURL = 'https://upload.voxforge1.org'; // prod
 // /etc/hosts or on local DNS server;
 // if get 'Bad Request' error after clearing caches, make sure to prefix URL
 // with 'HTTPS://' in browser
-//var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
 //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 // !!!!!!
 
@@ -115,21 +115,25 @@ var view;  // needs to be global so can be accessible to index.html
 
     // buffer size is in units of sample-frames. If specified, the bufferSize 
     // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
-    var audioNodebufferSize = undefined; // let device decide appropriate buffer size
-
-    var displayWaveform = true;
-    var displayVisualizer = true;
-    var vad_parms = { // Voice Activity Detection parameters
-        run: true,
-        // maxsilence: 1500, minvoice: 250, buffersize: 480,//  original values
-        maxsilence: 250, // works well with linux; not so well on Android 4.4.2
-        minvoice: 250, 
-        buffersize: 480,
-    };
-    var ssd_parms = { // simple silence detection parameters
-        duration: 1000, // duration threshhold for silence detection (in milliseconds)
-        amplitude: 0.02, // amplitude threshold for silence detection
-    };
+    var audio_parms = {
+      audioNodebufferSize: undefined, // let device decide appropriate buffer size
+      bitDepth:  '32bit-float', // 16 or 32bit-float
+      vad: { // Voice Activity Detection parameters
+              run: true,
+              // maxsilence: 1500, minvoice: 250, buffersize: 480,//  original values
+              maxsilence: 250, // works well with linux; not so well on Android 4.4.2
+              minvoice: 250, 
+              buffersize: 480,
+      },
+      ssd: { // simple silence detection parameters
+              duration: 1000, // duration threshhold for silence detection (in milliseconds)
+              amplitude: 0.02, // amplitude threshold for silence detection
+      }
+    }
+    var view_parms = {
+      displayWaveform: true,
+      displayVisualizer: true,
+    }
 
     // ### ANDROID #############################################################
 
@@ -139,14 +143,13 @@ var view;  // needs to be global so can be accessible to index.html
     // off visualization for lower end devices for now...
     if (platform.os.family === "Android" ) {
       // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
-      displayWaveform = false;
-      displayVisualizer = false;
-      console.warn('resetting bufferSize to ' + audioNodebufferSize + 
-                   ' sample-frames, for VAD support');
+        audio_parms.vad.maxsilence = 1000; // detect longer silence period on Android
+        audio_parms.vad.minvoice = 125; // use shorter min voice on Android
+        audio_parms.audioNodebufferSize = 4096; // needs to be lower for VAD to work
 
+        audio_parms.bitDepth = "32bit-float"; // default; offload downsampling from device to server...
       if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
         max_numPrompts_selector = 10;
-        vad_parms.run = false;
 
         // Firefox on Android 4.4.2 audio recording quality sucks
         if (platform.name === "FireFox")
@@ -156,9 +159,6 @@ var view;  // needs to be global so can be accessible to index.html
       } else { // Android 5 and above
         max_numPrompts_selector = 20;
 
-        vad_parms.maxsilence = 1000; // detect longer silence period on Android
-        vad_parms.minvoice = 125; // use shorter min voice on Android
-        audioNodebufferSize = 4096; // needs to be lower for VAD to work
       }
     }
 
@@ -182,19 +182,16 @@ var view;  // needs to be global so can be accessible to index.html
                               num_prompts_to_trigger_upload); 
 
     // needs to be global; so can be accessed by index.html
-    view = new View(displayVisualizer,
-                    displayWaveform,
+    view = new View(view_parms,
                     prompts); 
 
     var profile = new Profile(view, 
                               appversion);
 
-    var audio = new Audio(view, 
+    var audio = new Audio(audio_parms,
+                          view, 
                           profile, 
-                          prompts,
-                          audioNodebufferSize, 
-                          vad_parms,
-                          ssd_parms);
+                          prompts);
 
     var controller = new Controller(prompts, 
                                     view, 

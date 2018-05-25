@@ -25,8 +25,6 @@ var encoder = undefined;
 var vad = undefined;
 var run = undefined;
 var prompt_id = undefined;
-var event_buffer_size = undefined;
-var got_buffer_size = false;
 var vad_parms = undefined;
 var ssd_parms = undefined;
 var starttime = 0;
@@ -40,9 +38,19 @@ self.onmessage = function(event) {
 
       prompt_id = data.prompt_id;
       buffers = [];
-      encoder = new WavAudioEncoder(data.sampleRate);
+
+      var bitDepth = data.bitDepth;
+      if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
+        console.warn("invalid bit depth: " + data.bitDepth + "; setting to 16 bit");
+        bitDepth = 16;
+      } else {
+        bitDepth = "32bit-float"; // default
+      }
+      encoder = new WavAudioEncoder(data.sampleRate, bitDepth);
+
       run = data.vad_parms.run;
       ssd_parms = data.ssd_parms;
+
       if ( run ) {
           vad = new Vad(data.sampleRate, data.vad_parms);
           vad_parms = data.vad_parms;
@@ -58,20 +66,6 @@ self.onmessage = function(event) {
       if ( run ) {
          vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
       }
-
-      // TODO do this in Audio class... simplify things
-      // only way to get default event_buffer size is to look at what audio node 
-      // sends you...therefore look at first event.buffer and save its length
-      // TODO Amazon sets their buffer to 2048: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
-      if ( ! got_buffer_size ) { 
-        self.postMessage({
-            status: 'event_buffer_size',
-            obj : { 
-              event_buffer_size: data.event_buffer.length,
-            }
-        });
-        got_buffer_size = true;
-      }
       break;
 
     case 'finish':
@@ -85,7 +79,7 @@ self.onmessage = function(event) {
         [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
             vad.getSpeech(buffers);
         while (speech_array.length > 0) {
-          encoder.encode(speech_array.shift());
+          encoder.encode(speech_array.shift(), );
         }
       } else {
         while (buffers.length > 0) {
@@ -97,7 +91,7 @@ self.onmessage = function(event) {
           status: 'finished',
           obj : { 
             prompt_id: prompt_id,
-            blob: encoder.finish(), // convert audio from float to int16
+            blob: encoder.finish(), // convert audio from float to int16 or 32-bit float
             no_trailing_silence: no_trailing_silence,
             no_speech: no_speech,
             clipping: clipping,

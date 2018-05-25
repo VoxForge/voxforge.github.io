@@ -17,14 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-function View (displayVisualizer,
-               displayWaveform,
+function View (parms,
                prompts)
 {
     var self = this; // save context
 
-    this.displayVisualizer = displayVisualizer;
-    this.displayWaveform = displayWaveform;
+    this.displayVisualizer = parms.displayVisualizer;
+    this.displayWaveform = parms.displayWaveform;
 
     this.prompts = prompts;
     this.profile = null;

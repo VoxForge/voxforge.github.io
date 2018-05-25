@@ -119,21 +119,17 @@ var wavesurfer = [];
 /**
 * Class definition
 */
-function Audio (view, 
+function Audio (parms,
+                view, 
                 profile, 
-                prompts,
-                audioNodebufferSize, 
-                vad_parms, 
-                ssd_parms) 
+                prompts) 
 {
-   // 'self' used to save current context when calling function references
+    // 'self' used to save current context when calling function references
     var self = this;
 
+    this.parms = parms;
     this.view = view;
-    this.audioNodebufferSize = audioNodebufferSize;
-    this.vad_parms = vad_parms;
-    this.ssd_parms = ssd_parms;
-
+    this.profile = profile;
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphone = null;
     this.processor = undefined;  
@@ -224,7 +220,7 @@ function Audio (view,
       TODO test with with other versions of Android
 */
       // TODO changing buffersize does not seem toa actually work
-      self.processor = self.audioCtx.createScriptProcessor(self.audioNodebufferSize , 1, 1);
+      self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize , 1, 1);
       self.analyser = self.audioCtx.createAnalyser();
       self.mediaStreamOutput = self.audioCtx.destination;
 
@@ -253,16 +249,16 @@ function Audio (view,
     */
     function updateProfileAudioProperties() {
       var c = navigator.mediaDevices.getSupportedConstraints();
-      profile.setAudioPropertiesAndContraints({
+      self.profile.setAudioPropertiesAndContraints({
         'sample_rate' : self.audioCtx.sampleRate,
-        'sample_rate_format' : "16 bit",
+        'bit_depth' : self.parms.bitDepth,
         'channels' : self.mediaStreamOutput.channelCount,
         'echoCancellation' : c.echoCancellation || false,
         'autoGainSupported' : c.autoGainSupported || false,
         'noiseSuppression' : c.noiseSuppression || false,
-        'audioNodebufferSize' : self.audioNodebufferSize || 'undefined',
-        'vad_parms' : self.vad_parms,
-        'ssd_parms' : self.ssd_parms,
+        'audioNodebufferSize' : self.parms.audioNodebufferSize || 'undefined',
+        'vad_parms' : self.parms.vad,
+        'ssd_parms' : self.parms.ssd,
       });
 
       console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
@@ -272,13 +268,6 @@ function Audio (view,
     audioworker.onmessage = function(returnObj) { 
       var obj = returnObj.data.obj;
       switch (returnObj.data.status) {
-          case 'event_buffer_size':
-            if ( ! event_buffer_size_updated ) {
-              profile.updateEventBufferSize(obj.event_buffer_size);
-              event_buffer_size_updated = true;
-            }
-          break;
-
           /**
           * after this process sends a request to the worker to 'finish' recording,
           * worker sends back the recorded data as an audio blob
@@ -303,6 +292,9 @@ function Audio (view,
 Audio.prototype.record = function (prompt_id) {
     var self = this; // save context when calling inner functions
 
+    var got_buffer_size = false;
+    var event_buffer_size = undefined;
+
     // script processor node introduces a large amount of audio 
     // latency, at least 2048 samples in your example (because he 
     // used:  audioCtx.createScriptProcessor(2048, 1, 1);_+ script execution time
@@ -321,15 +313,24 @@ Audio.prototype.record = function (prompt_id) {
     audioworker.postMessage({
       command: 'start',
       prompt_id: prompt_id,
-      vad_parms: this.vad_parms,
-      ssd_parms : self.ssd_parms,
+      vad_parms: this.parms.vad,
+      ssd_parms : self.parms.ssd,
       sampleRate: this.audioCtx.sampleRate,
+      bitDepth: this.parms.bitDepth,
     });
 
     // start recording
     this.processor.onaudioprocess = function(event) {
+      // debugging - see if this helps with drops outs and scratches on low powered Android
+      // var floatArray_time_domain = event.inputBuffer.getChannelData(0).slice();
+
       // only record left channel (mono)
       var floatArray_time_domain = event.inputBuffer.getChannelData(0);
+
+      if ( ! got_buffer_size ) {
+        self.profile.updateEventBufferSize( floatArray_time_domain.length);
+        got_buffer_size = true;
+      }
 
       audioworker.postMessage({ 
         command: 'record', 

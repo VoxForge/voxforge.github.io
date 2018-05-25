@@ -48,12 +48,11 @@ http://darkroommastering.com/blog/dithering-explained
       view.setUint8(offset + i, str.charCodeAt(i));
   };
 
-  //var Encoder = function(sampleRate, numChannels) {
-  var Encoder = function(sampleRate) {
+  var Encoder = function(sampleRate, bitDepth) {
     this.sampleRate = sampleRate;
-//    this.numChannels = numChannels;
     this.numSamples = 0;
     this.dataViews = [];
+    this.bitDepth = bitDepth;
   };
 
   // why convert to 16-bit... because takes up less space...
@@ -69,45 +68,46 @@ http://darkroommastering.com/blog/dithering-explained
   // a more efficient way to copy 32-bit float is: AudioBuffer.copyFromChannel()
   // see: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/copyFromChannel
 
-  Encoder.prototype.encode = function(buffer) {
-    //var len = buffer[0].length,
-    //    nCh = this.numChannels,
-    //    view = new DataView(new ArrayBuffer(len * nCh * 2)),
-    //    offset = 0;
-    //for (var i = 0; i < len; ++i)
-    // for (var ch = 0; ch < nCh; ++ch) {
-    //    var x = buffer[ch][i] * 0x7fff; // 0x7fff = 32767
-    //    view.setInt16(offset, x < 0 ? max(x, -0x8000) : min(x, 0x7fff), true);
-    //    offset += 2;
-    //  }
+  Encoder.prototype.encode = function(buffer, bitDepth) {
     var len = buffer.length;
-    // array of twos-complement 16-bit signed integers in the platform byte order.
-    //var buffer_pcm = new Int16Array(len); // webrtc_vad
-    // If control over byte order is needed, use DataView instead.
-    var view = new DataView(new ArrayBuffer(len * 2));
 
-    var offset = 0;
+    if (bitDepth == 16) {
+      // array of twos-complement 16-bit signed integers in the platform byte order.
+      // If control over byte order is needed, use DataView instead.
+      var view = new DataView(new ArrayBuffer(len * 2));
 
-    for (var i = 0; i < len; ++i) {
-        // TODO use mozilla min/max approach to calculating 16bit sample - mre efficient than ternary conditional
-        var x = buffer[i] * 0x7fff; // 0x7fff = 32767
-        // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
-        // trying to see if no min max causingn scratichin and pops...
-        //view.setInt16(offset, x , true);
-        var sample16bit =  x < 0 ? max(x, -0x8000) : min(x, 0x7fff);
-        //buffer_pcm[i] = sample16bit;  // webrtc_vad
-        view.setInt16(offset, sample16bit, true);
-        offset += 2;
+      var offset = 0;
+      for (var i = 0; i < len; ++i) {
+          // TODO use mozilla min/max approach to calculating 16bit sample - mre efficient than ternary conditional
+          var x = buffer[i] * 0x7fff; // 0x7fff = 32767
+          // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
+          // trying to see if no min max causingn scratichin and pops...
+          var sample16bit =  x < 0 ? max(x, -0x8000) : min(x, 0x7fff);
+          view.setInt16(offset, sample16bit, true);
+          offset += 2;
+      }
+      this.dataViews.push(view);
+    } else { // 32-bit float
+      this.dataViews.push(buffer);
     }
-    this.dataViews.push(view);
-    this.numSamples += len;
 
-    //return buffer_pcm; // !!!!!! for webrtc_vad
+    this.numSamples += len;
   };
 
-  Encoder.prototype.finish = function(mimeType) {
+  /**
+  * see: http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
+
+see: https://github.com/rochars/wavefile
+// see https://stackoverflow.com/questions/15576798/create-32bit-float-wav-file-in-python
+
+  */
+  Encoder.prototype.finish = function(mimeType, bitDepth) {
     //var dataSize = this.numChannels * this.numSamples * 2,
-    var dataSize = this.numSamples * 2;
+    if (bitDepth == 16) {
+      var dataSize = this.numSamples * 2; // 16 bit
+    } else { 
+      var dataSize = this.numSamples * 4; // 32-bit float
+    }
     view = new DataView(new ArrayBuffer(44));
     /* RIFF identifier */
     setString(view, 0, 'RIFF');
@@ -120,7 +120,11 @@ http://darkroommastering.com/blog/dithering-explained
     /* format chunk length */
     view.setUint32(16, 16, true);
     /* sample format (raw) */
-    view.setUint16(20, 1, true);
+    if (bitDepth == 16) {
+      view.setUint16(20, 1, true); // 0x0001	WAVE_FORMAT_PCM	PCM
+    } else {
+      view.setUint16(20, 3, true);  // 0x0003	WAVE_FORMAT_IEEE_FLOAT	IEEE float
+    }
     /* channel count */
     //view.setUint16(22, this.numChannels, true);
     view.setUint16(22, 1, true);
@@ -128,12 +132,19 @@ http://darkroommastering.com/blog/dithering-explained
     view.setUint32(24, this.sampleRate, true);
     /* byte rate (sample rate * block align) */
     view.setUint32(28, this.sampleRate * 4, true);
-    /* block align (channel count * bytes per sample) */
-    //view.setUint16(32, this.numChannels * 2, true);
-    view.setUint16(32, 2, true);
-    /* bits per sample */
-    view.setUint16(34, 16, true);
-    /* data chunk identifier */
+    if (bitDepth == 16) {
+      /* block align (channel count * bytes per sample) */
+      //view.setUint16(32, this.numChannels * 2, true);
+      view.setUint16(32, 2, true);// 16 bits per sample
+      /* bits per sample */
+      view.setUint16(34, 16, true); // 16 bits per sample
+    } else {
+      /* block align (channel count * bytes per sample) */
+      view.setUint16(32, 4, true);// 32 bits per sample
+      /* bits per sample */
+      view.setUint16(34, 32, true); // 32 bits per sample
+    }
+  /* data chunk identifier */
     setString(view, 36, 'data');
     /* data chunk length */
     view.setUint32(40, dataSize, true);
