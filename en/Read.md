@@ -257,20 +257,20 @@ browser_support:
   no_worker_message: >
     "Your browser does not support service or web workers, please
     upgrade to a current version of a Free and Open Source browser such as 
-    Chrome or FireFox."
+    Chrome or Firefox."
   no_indexedDB_message: >
     "Your browser does not support indexedDB for offline storage of 
     submissions, please upgrade to a current version of a Free and Open 
-    Source browser such as Chrome or FireFox."
+    Source browser such as Chrome or Firefox."
   no_formDataSupport_message: >
     "Browser does not support FormData... please install 
     a current version of a Free and Open Source browser such as Chrome or 
-    FireFox"
+    Firefox"
   no_edgeSupport_message: >
     "Microsoft browsers not supported... please install 
     a current version of a Free and Open Source browser such as Chrome or 
-    FireFox"
-  no_FireFoxAndroid_message: >
+    Firefox"
+  no_FirefoxAndroid_message: >
     Unfortunately, using the VoxForge app with the Firefox browser on Android
     results in audio artifacts (scratches and pops) being included in wav file, 
     please use Chrome.

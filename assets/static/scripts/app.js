@@ -135,6 +135,10 @@ var view;  // needs to be global so can be accessible to index.html
       displayVisualizer: true,
     }
 
+    if (platform.name === "Firefox") { // FF can record 32-bit float, but cannot play back 32-bit float
+      audio_parms.bitDepth = 16;
+    }
+
     // ### ANDROID #############################################################
 
     // TODO troubleshooting sound recording issues on Android... seems like 
@@ -152,9 +156,9 @@ var view;  // needs to be global so can be accessible to index.html
         max_numPrompts_selector = 10;
 
         // Firefox on Android 4.4.2 audio recording quality sucks
-        if (platform.name === "FireFox")
+        if (platform.name === "Firefox")
         {
-            window.alert( page_browser_support.no_FireFoxAndroid_message );         
+            window.alert( page_browser_support.no_FirefoxAndroid_message );         
         }
       } else { // Android 5 and above
         max_numPrompts_selector = 20;

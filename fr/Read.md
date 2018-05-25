@@ -217,21 +217,21 @@ browser_support:
     "Votre navigateur ne supporte pas les 'travailleurs de service' ou 
     'travailleurs de web', s'il vous plaît metté à jour votre navigateur
     (ou installer une version courrante d'un navigateur Libre et 'Open Source' 
-    tel que Chrome ou FireFox)"
+    tel que Chrome ou Firefox)"
   no_indexedDB_message: >
     "Votre navigateur ne supporte pas indexedDB pour le sauvegardage hors ligne de
     soumissions, s'il vous plaît s'il vous plaît metté à jour votre navigateur
     (ou installer une version courrante d'un navigateur Libre et 'Open Source' 
-    tel que Chrome ou FireFox)"
+    tel que Chrome ou Firefox)"
   no_formDataSupport_message: >
     "Browser does not support FormData... please install 
     a current version of a Free and Open Source browser such as Chrome or 
-    FireFox"
+    Firefox"
   no_edgeSupport_message: >
     "Les navigateurs de Microsoft ne sont pas supportés ... veuillez installer
     une version courrante d'un navigateur Libre et 'Open Source' tel que Chrome ou
-    FireFox"
-  no_FireFoxAndroid_message: >
+    Firefox"
+  no_FirefoxAndroid_message: >
     Malheureusement, utilisant le logiciel VoxForge avec le navigateur Firefox 
     sur Android résulte en rayures et éclats étant inclus dans le fichier wav,
     s.v.p. veuillez utiliser Chrome.
