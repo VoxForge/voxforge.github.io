@@ -62,9 +62,6 @@ function Profile (view, appversion) {
   this.sample_rate = null;
   this.sample_rate_format = null;
   this.channels = null;
-  this.echoCancellation = null;
-  this.autoGainSupported = null;
-  this.noiseSuppression = null;
 
   this.debug = {};
 
@@ -186,10 +183,6 @@ Profile.prototype.toHash = function () {
     profile_hash["sample_rate"] = this.sample_rate;
     profile_hash["bit_depth"] = this.sample_rate_format;
     profile_hash["channels"] = this.channels;
-
-    profile_hash["echoCancellation"] = this.echoCancellation;
-    profile_hash["autoGainSupported"] = this.autoGainSupported;
-    profile_hash["noiseSuppression"] = this.noiseSuppression;
 
     profile_hash["debug"] = this.debug;
 
@@ -383,22 +376,19 @@ Profile.prototype.getLicenseUserName = function () {
 * 
 */
 Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
-    //this.sample_rate = obj.sample_rate;
-    //this.bit_depth = obj.bit_depth;
-    //this.channels = obj.channels;
-    //this.gain_value = obj.gain_value;
-    //this.echoCancellation = obj.echoCancellation;
-    //this.autoGainSupported = obj.autoGainSupported;
-    //this.noiseSuppression = obj.noiseSuppression;
     for (const prop in obj) {
       if (obj.hasOwnProperty(prop)) {
         this[prop] = obj[prop];
       }
     } 
-    this.debug["vad_maxsilence"] = obj.vad_parms.maxsilence;
-    this.debug["vad_minvoice"] = obj.vad_parms.minvoice;
-    this.debug["vad_bufferSize"] = obj.vad_parms.buffersize;
-    this.debug["scriptProcessor_bufferSize"] = obj.scriptProcessor_bufferSize;
+}
+
+Profile.prototype.setDebugValues = function (obj) {
+    for (const prop in obj) {
+      if (obj.hasOwnProperty(prop)) {
+        this.debug[prop] = obj[prop];
+      }
+    } 
 }
 
 /**

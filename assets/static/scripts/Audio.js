@@ -152,13 +152,16 @@ function Audio (parms,
     //    AudioContext _cannot_ be changed.
     // see: https://stackoverflow.com/questions/37326846/disabling-auto-gain-conctrol-with-webrtc-app
     // turning these off does not seem to work in Firefox android 442.
+
+    //var constraints = { audio: true };
     var constraints = { 
           audio: {
             echoCancellation: false,
             noiseSuppression: false,
             autoGainControl: false
           }
-        };
+    };
+
     if (navigator.mediaDevices.getUserMedia === undefined) {
       navigator.mediaDevices.getUserMedia = function(constraints) {
 
@@ -256,23 +259,38 @@ function Audio (parms,
       https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
     */
     function updateProfileAudioProperties() {
-      var c = navigator.mediaDevices.getSupportedConstraints();
+      var m = navigator.mediaDevices;
+      var c = m.getSupportedConstraints();
+
       self.profile.setAudioPropertiesAndContraints({
         'sample_rate' : self.audioCtx.sampleRate,
         'bit_depth' : self.parms.bitDepth,
         'channels' : self.mediaStreamOutput.channelCount,
-        'echoCancellation' : c.echoCancellation || false,
-        'autoGainSupported' : c.autoGainSupported || false,
-        'noiseSuppression' : c.noiseSuppression || false,
-        'audioNodebufferSize' : self.parms.audioNodebufferSize || 'undefined',
-        'vad_parms' : self.parms.vad,
-        'ssd_parms' : self.parms.ssd,
+      });
+
+      self.profile.setDebugValues({
+        'browser_supports_echoCancellation' : c.echoCancellation || false,
+        'browser_supports_noiseSuppression' : c.noiseSuppression || false,
+        'browser_supports_autoGain' : c.autoGainSupported || false,
+
+        // TODO not sure how to get these properties
+        //https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings
+        //'echoCancellation' : m.echoCancellation || false,
+        //'autoGainControl' : m.autoGainControl || false,
+        //'noiseSuppression' : m.noiseSuppression || false,
+        //'channelCount' :  m.channelCount,
+        //'latency' :  m.latency,
+        //'volume' :  m.volume,
+
+        'vad_maxsilence' :  self.parms.vad.maxsilence,
+        'vad_minvoice' : self.parms.vad.minvoice,
+        'vad_bufferSize' : self.parms.vad.buffersize,
+        'audioNode_bufferSize' : self.parms.audioNodebufferSize || 'undefined',
       });
 
       console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
     }
 
-    var event_buffer_size_updated = false;
     audioworker.onmessage = function(returnObj) { 
       var obj = returnObj.data.obj;
       switch (returnObj.data.status) {
@@ -301,7 +319,6 @@ Audio.prototype.record = function (prompt_id) {
     var self = this; // save context when calling inner functions
 
     var got_buffer_size = false;
-    var event_buffer_size = undefined;
 
     // script processor node introduces a large amount of audio 
     // latency, at least 2048 samples in your example (because he 
@@ -336,8 +353,9 @@ Audio.prototype.record = function (prompt_id) {
       var floatArray_time_domain = event.inputBuffer.getChannelData(0);
 
       if ( ! got_buffer_size ) {
-        self.profile.updateEventBufferSize( floatArray_time_domain.length);
-        got_buffer_size = true;
+        self.profile.setDebugValues ( {
+          'device_event_buffer_size' : floatArray_time_domain.length,
+        } );
       }
 
       audioworker.postMessage({ 
