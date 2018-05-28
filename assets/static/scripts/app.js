@@ -51,16 +51,17 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 // ### GLOBALS #################################################################
 
 //debugging service workers: chrome://serviceworker-internals
-
-var uploadURL = 'https://upload.voxforge1.org'; // prod
-// !!!!!!
-// Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
-// /etc/hosts or on local DNS server;
-// if get 'Bad Request' error after clearing caches, make sure to prefix URL
-// with 'HTTPS://' in browser
-var uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
-//var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
-// !!!!!!
+var uploadURL;
+if (window.location.origin === 'https://voxforge.github.io') { // prod
+    uploadURL = 'https://upload.voxforge1.org'; // prod
+} else { // testing
+  // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
+  // /etc/hosts or on local DNS server;
+  // if get 'Bad Request' error after clearing caches, make sure to prefix URL
+  // with 'HTTPS://' in browser
+  uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+  //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
+}
 
 var view;  // needs to be global so can be accessible to index.html
 
@@ -137,6 +138,8 @@ var view;  // needs to be global so can be accessible to index.html
 
     if (platform.name === "Firefox") { // FF can record 32-bit float, but cannot play back 32-bit float
       audio_parms.bitDepth = 16;
+    } else {
+      audio_parms.bitDepth = '32bit-float';
     }
 
     // ### ANDROID #############################################################
@@ -146,24 +149,22 @@ var view;  // needs to be global so can be accessible to index.html
     // low end Android v442 and v5 devices.  Will have to monitor and turn
     // off visualization for lower end devices for now...
     if (platform.os.family === "Android" ) {
-      // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
+        if (platform.name === "Firefox")
+        { // Firefox on Android 4.4.2 audio recording quality sucks
+            window.alert( page_browser_support.no_FirefoxAndroid_message );         
+        }
+
+        // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
         audio_parms.vad.maxsilence = 1000; // detect longer silence period on Android
         audio_parms.vad.minvoice = 125; // use shorter min voice on Android
         audio_parms.audioNodebufferSize = 4096; // needs to be lower for VAD to work
 
-        audio_parms.bitDepth = "32bit-float"; // default; offload downsampling from device to server...
-      if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
-        max_numPrompts_selector = 10;
+        if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
+          max_numPrompts_selector = 10;
+        } else { // Android 5 and above
+          max_numPrompts_selector = 20;
 
-        // Firefox on Android 4.4.2 audio recording quality sucks
-        if (platform.name === "Firefox")
-        {
-            window.alert( page_browser_support.no_FirefoxAndroid_message );         
         }
-      } else { // Android 5 and above
-        max_numPrompts_selector = 20;
-
-      }
     }
 
     // #############################################################################
