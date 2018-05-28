@@ -150,7 +150,15 @@ function Audio (parms,
     //    Returns a float representing the sample rate (in samples per second) 
     //    used by all nodes in this context. The sample-rate of an
     //    AudioContext _cannot_ be changed.
-    var constraints = { audio: true };
+    // see: https://stackoverflow.com/questions/37326846/disabling-auto-gain-conctrol-with-webrtc-app
+    // turning these off does not seem to work in Firefox android 442.
+    var constraints = { 
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false
+          }
+        };
     if (navigator.mediaDevices.getUserMedia === undefined) {
       navigator.mediaDevices.getUserMedia = function(constraints) {
 

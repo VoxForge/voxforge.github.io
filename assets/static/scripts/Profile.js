@@ -383,14 +383,18 @@ Profile.prototype.getLicenseUserName = function () {
 * 
 */
 Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
-    this.sample_rate = obj.sample_rate;
-    this.bit_depth = obj.bit_depth;
-    this.channels = obj.channels;
-    this.gain_value = obj.gain_value;
-    this.echoCancellation = obj.echoCancellation;
-    this.autoGainSupported = obj.autoGainSupported;
-    this.noiseSuppression = obj.noiseSuppression;
-
+    //this.sample_rate = obj.sample_rate;
+    //this.bit_depth = obj.bit_depth;
+    //this.channels = obj.channels;
+    //this.gain_value = obj.gain_value;
+    //this.echoCancellation = obj.echoCancellation;
+    //this.autoGainSupported = obj.autoGainSupported;
+    //this.noiseSuppression = obj.noiseSuppression;
+    for (const prop in obj) {
+      if (obj.hasOwnProperty(prop)) {
+        this[prop] = obj[prop];
+      }
+    } 
     this.debug["vad_maxsilence"] = obj.vad_parms.maxsilence;
     this.debug["vad_minvoice"] = obj.vad_parms.minvoice;
     this.debug["vad_bufferSize"] = obj.vad_parms.buffersize;
