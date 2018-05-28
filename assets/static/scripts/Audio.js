@@ -238,16 +238,10 @@ function Audio (parms,
       self.microphone.channelCount = 1;
       self.mediaStreamOutput.channelCount = 1;
 
-      updateProfileAudioProperties();
+      var track = stream.getAudioTracks()[0];
+      updateProfileAudioProperties(track);
     }
 
-    // see: https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
-    // TODO firefox supports;
-    //    var set = track.getSettings();
-    //    set.echoCancellation;
-    //    set.noiseSuppression;
-    //    Set.autoGainControl;
-    // Chrome does not...
     /*
       see: https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints#Applying_constraints
       constraints vs settings: Constraints are a way to specify 
@@ -258,29 +252,30 @@ function Audio (parms,
       https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
       https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
     */
-    function updateProfileAudioProperties() {
-      var m = navigator.mediaDevices;
-      var c = m.getSupportedConstraints();
-
+    function updateProfileAudioProperties(track) {
       self.profile.setAudioPropertiesAndContraints({
         'sample_rate' : self.audioCtx.sampleRate,
         'bit_depth' : self.parms.bitDepth,
         'channels' : self.mediaStreamOutput.channelCount,
       });
 
+      //https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getSupportedConstraints
+      var c = navigator.mediaDevices.getSupportedConstraints();
+      //https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
+      let s = track.getSettings();
+
       self.profile.setDebugValues({
         'browser_supports_echoCancellation' : c.echoCancellation || false,
         'browser_supports_noiseSuppression' : c.noiseSuppression || false,
         'browser_supports_autoGain' : c.autoGainSupported || false,
 
-        // TODO not sure how to get these properties
-        //https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings
-        //'echoCancellation' : m.echoCancellation || false,
-        //'autoGainControl' : m.autoGainControl || false,
-        //'noiseSuppression' : m.noiseSuppression || false,
-        //'channelCount' :  m.channelCount,
-        //'latency' :  m.latency,
-        //'volume' :  m.volume,
+        'autoGainControl' : s.autoGainControl || false,
+        'echoCancellation' : s.echoCancellation || false,
+        'noiseSuppression' : s.noiseSuppression || false,
+
+        'channelCount' :  s.channelCount || false,
+        'latency' :  s.latency || false,
+        'volume' :  s.volume || false,
 
         'vad_maxsilence' :  self.parms.vad.maxsilence,
         'vad_minvoice' : self.parms.vad.minvoice,
