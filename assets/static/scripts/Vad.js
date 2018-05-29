@@ -155,28 +155,6 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     }
     
     /**
-    * calls webrtc VAD code
-    */
-    // start: original Mozilla code segment to call webrtc_vad
-    function isSilence(buffer_pcm){
-      // Get data byte size, allocate memory on Emscripten heap, and get pointer
-      let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
-      let dataPtr = _malloc(nDataBytes);
-
-      // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
-      let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
-      dataHeap.set(new Uint8Array(buffer_pcm.buffer));
-
-      //         int process_data(int16_t  data[], int n_samples, int samplerate, int val0, int val100, int val2000){
-      let result = process_data(dataHeap.byteOffset, buffer_pcm.length, VAD_SAMPLE_RATE, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
-
-      // Free memory
-      _free(dataHeap.byteOffset);
-      return result;
-    }
-    // end: original Mozilla code segment to call webrtc_vad
-
-    /**
     * called when non-silence detected (any sound, not just speech)
     */
     function speaking() {
@@ -202,6 +180,76 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
       self.voice_stopped = true;
     }
 
+    /**
+    * original Mozilla code segment to call webrtc_vad, encapsulated in funtion
+    */
+    function callWebrtcVad(buffer_pcm) {
+        /**
+        * calls webrtc VAD code
+        */
+        function isSilence(buffer_pcm){
+          // Get data byte size, allocate memory on Emscripten heap, and get pointer
+          let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
+          let dataPtr = _malloc(nDataBytes);
+
+          // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
+          let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
+          dataHeap.set(new Uint8Array(buffer_pcm.buffer));
+
+          //         int process_data(int16_t  data[], int n_samples, int samplerate, int val0, int val100, int val2000){
+          let result = process_data(dataHeap.byteOffset, buffer_pcm.length, VAD_SAMPLE_RATE, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
+
+          // Free memory
+          _free(dataHeap.byteOffset);
+          return result;
+        }
+
+        for (let i = 0; i < Math.ceil(buffer_pcm.length/self.sizeBufferVad); i++) {
+          let start = i * self.sizeBufferVad;
+          let end = start+self.sizeBufferVad;
+          if ((start + self.sizeBufferVad) > buffer_pcm.length) {
+            // store to the next
+            self.buffer_vad.set(buffer_pcm.slice(start));
+            self.leftovers =  buffer_pcm.length - start;
+          } else {
+            if (self.leftovers > 0) {
+              // we have leftovers from previous array
+              end = end - self.leftovers;
+              self.buffer_vad.set((buffer_pcm.slice(start, end)), self.leftovers);
+              self.leftovers =  0;
+            } else {
+              // send for vad
+              self.buffer_vad.set(buffer_pcm.slice(start, end));
+            }
+
+            // whole vad algorithm comes here
+            let vad = isSilence(self.buffer_vad);
+            self.buffer_vad = new Int16Array(self.sizeBufferVad);
+            let dtdepois = Date.now();
+            if (vad == 0) {
+              if (self.touchedvoice) {
+                self.samplessilence += dtdepois - self.dtantesmili;
+                if (self.samplessilence >  self.maxsilence) {
+                  self.touchedsilence = true;
+                  nospeech();
+                }
+              }
+            }
+            else {
+              self.samplesvoice  += dtdepois - self.dtantesmili;
+              if (self.samplesvoice >  self.minvoice) {
+                self.touchedvoice = true;
+                speaking();
+              }
+            }
+            self.dtantesmili = dtdepois;
+
+            if (self.touchedvoice && self.touchedsilence)
+              self.finishedvoice = true;
+          }
+        }
+    }
+
     // ### main ################################################################
 
     if (this.first_buffer) {
@@ -210,6 +258,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     }
 
     var [buffer_pcm, energy] = floatTo16BitPCM(buffer);
+
     if (energy > this.max_energy) {
       this.max_energy = energy;
     } else if (energy < this.min_energy) {
@@ -218,52 +267,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
       this.min_energy = energy;
     }
 
-    // start: original Mozilla code segment to call webrtc_vad
-    for (let i = 0; i < Math.ceil(buffer_pcm.length/this.sizeBufferVad); i++) {
-      let start = i * this.sizeBufferVad;
-      let end = start+this.sizeBufferVad;
-      if ((start + this.sizeBufferVad) > buffer_pcm.length) {
-        // store to the next
-        this.buffer_vad.set(buffer_pcm.slice(start));
-        this.leftovers =  buffer_pcm.length - start;
-      } else {
-        if (this.leftovers > 0) {
-          // we have leftovers from previous array
-          end = end - this.leftovers;
-          this.buffer_vad.set((buffer_pcm.slice(start, end)), this.leftovers);
-          this.leftovers =  0;
-        } else {
-          // send for vad
-          this.buffer_vad.set(buffer_pcm.slice(start, end));
-        }
-
-        // whole vad algorithm comes here
-        let vad = isSilence(this.buffer_vad);
-        this.buffer_vad = new Int16Array(this.sizeBufferVad);
-        let dtdepois = Date.now();
-        if (vad == 0) {
-          if (this.touchedvoice) {
-            this.samplessilence += dtdepois - this.dtantesmili;
-            if (this.samplessilence >  this.maxsilence) {
-              this.touchedsilence = true;
-              nospeech();
-            }
-          }
-        }
-        else {
-          this.samplesvoice  += dtdepois - this.dtantesmili;
-          if (this.samplesvoice >  this.minvoice) {
-            this.touchedvoice = true;
-            speaking();
-          }
-        }
-        this.dtantesmili = dtdepois;
-
-        if (this.touchedvoice && this.touchedsilence)
-          this.finishedvoice = true;
-      }
-    }
-    // end: original Mozilla code segment to call webrtc_vad
+    callWebrtcVad(buffer_pcm);
 }
 
 /**
@@ -274,7 +278,7 @@ Vad.prototype.getSpeech = function(buffers) {
     var self = this;
 
     /**
-    * using calculated speechstart and speechsopt indexes, extract audio segment
+    * using calculated speechstart and speechstop indexes, extract audio segment
     * that includes speech (i.e. remove leading and trailing silence from 
     * recording)
     */
@@ -322,7 +326,7 @@ Vad.prototype.getSpeech = function(buffers) {
           console.warn( 'no speech recorded');
         // TODO this assumes the VAD is working correctly; on Android 4.4.2
         // voice_stopped never gets set even though user stopped talking
-        // and long trailing silence gest added to recording
+        // and long trailing silence gets added to recording
         } else { // user cut recording off too early
           self.speechend_index = buffers.length;
           no_trailing_silence = true;

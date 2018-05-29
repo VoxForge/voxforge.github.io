@@ -23,9 +23,9 @@ importScripts('../scripts/Vad.js');
 var buffers = undefined;
 var encoder = undefined;
 var vad = undefined;
-var run = undefined;
-var prompt_id = undefined;
+var vad_run = undefined;
 var vad_parms = undefined;
+var prompt_id = undefined;
 var ssd_parms = undefined;
 var starttime = 0;
 
@@ -48,10 +48,10 @@ self.onmessage = function(event) {
       console.log('bitDepth:' + bitDepth);
       encoder = new WavAudioEncoder(data.sampleRate, bitDepth);
 
-      run = data.vad_parms.run;
+      vad_run = data.vad_parms.run;
       ssd_parms = data.ssd_parms;
 
-      if ( run ) {
+      if ( vad_run ) {
           vad = new Vad(data.sampleRate, data.vad_parms);
           vad_parms = data.vad_parms;
       } else {
@@ -61,9 +61,9 @@ self.onmessage = function(event) {
 
     case 'record':
       buffers.push(data.event_buffer); // array of buffer arrays
-      startSimpleSilenceDetection(buffers.length - 1, data.event_buffer);
+      //startSimpleSilenceDetection(buffers.length - 1, data.event_buffer);
 
-      if ( run ) {
+      if ( vad_run ) {
          vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
       }
       break;
@@ -74,7 +74,7 @@ self.onmessage = function(event) {
       var no_trailing_silence = false; 
       var clipping = false;
       var too_soft = false;
-      if ( run ) {
+      if ( vad_run ) {
         // need test for trailing and leading noise detection...
         [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
             vad.getSpeech(buffers);

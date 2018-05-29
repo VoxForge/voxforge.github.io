@@ -220,9 +220,12 @@ function Audio (parms,
 /*    The buffer size in units of sample-frames. If specified, the bufferSize 
       must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384. 
       This value controls how frequently the audioprocess event is dispatched
-      and how many sample-frames need to be processed each call. Lower values
-      for bufferSize will result in a lower (better) latency. Higher values
-      will be necessary to avoid audio breakup and glitches. It is recommended 
+      and how many sample-frames need to be processed each call. 
+
+      *** Lower values for bufferSize will result in a lower (better) latency. 
+      Higher values will be necessary to avoid audio breakup and glitches. ***
+
+      It is recommended 
       for authors to not specify this buffer size and allow the implementation 
       to pick a good buffer size to balance between latency and audio quality.
             -but-
@@ -230,12 +233,14 @@ function Audio (parms,
       16384, so set Android 4.4.2 to 8192
       TODO test with with other versions of Android
 */
-      // TODO changing buffersize does not seem toa actually work
+      // TODO changing buffersize does not seem to actually work
       self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize , 1, 1);
       self.analyser = self.audioCtx.createAnalyser();
       self.mediaStreamOutput = self.audioCtx.destination;
 
+      self.processor.channelCount = 1;
       self.microphone.channelCount = 1;
+      self.analyser.channelCount = 1;
       self.mediaStreamOutput.channelCount = 1;
 
       var track = stream.getAudioTracks()[0];

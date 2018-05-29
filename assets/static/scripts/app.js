@@ -53,7 +53,7 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 //debugging service workers: chrome://serviceworker-internals
 var uploadURL;
 if (window.location.origin === 'https://voxforge.github.io') { // prod
-    uploadURL = 'https://upload.voxforge1.org'; // prod
+    uploadURL = 'https://upload.voxforge1.org'; 
 } else { // testing
   // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
   // /etc/hosts or on local DNS server;
@@ -118,17 +118,19 @@ var view;  // needs to be global so can be accessible to index.html
     // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
     var audio_parms = {
       audioNodebufferSize: undefined, // let device decide appropriate buffer size
+     // audioNodebufferSize: 16384, // debug
+
       bitDepth:  '32bit-float', // 16 or 32bit-float
       vad: { // Voice Activity Detection parameters
-              run: true,
-              // maxsilence: 1500, minvoice: 250, buffersize: 480,//  original values
-              maxsilence: 250, // works well with linux; not so well on Android 4.4.2
-              minvoice: 250, 
-              buffersize: 480,
+        run: true,
+        // maxsilence: 1500, minvoice: 250, buffersize: 480,//  original values
+        maxsilence: 250, // works well with linux; not so well on Android 4.4.2
+        minvoice: 250, 
+        buffersize: 480,
       },
       ssd: { // simple silence detection parameters
-              duration: 1000, // duration threshhold for silence detection (in milliseconds)
-              amplitude: 0.02, // amplitude threshold for silence detection
+        duration: 1000, // duration threshhold for silence detection (in milliseconds)
+        amplitude: 0.02, // amplitude threshold for silence detection
       }
     }
     var view_parms = {
@@ -136,11 +138,11 @@ var view;  // needs to be global so can be accessible to index.html
       displayVisualizer: true,
     }
 
-    if (platform.name === "Firefox") { // FF can record 32-bit float, but cannot play back 32-bit float
+    // FF on (all platforms) can record 32-bit float, but cannot play back 32-bit 
+    // float; therefore only us 16bit bitdepth on all version of Firefox
+    if ( platform.name.includes("Firefox") ) { 
       audio_parms.bitDepth = 16;
-    } else {
-      audio_parms.bitDepth = '32bit-float';
-    }
+    } 
 
     // ### ANDROID #############################################################
 
@@ -148,22 +150,21 @@ var view;  // needs to be global so can be accessible to index.html
     // scriptnode causes random audio crackles and dropouts on recordings on 
     // low end Android v442 and v5 devices.  Will have to monitor and turn
     // off visualization for lower end devices for now...
-    if (platform.os.family === "Android" ) {
-        if (platform.name === "Firefox")
-        { // Firefox on Android 4.4.2 audio recording quality sucks
-            window.alert( page_browser_support.no_FirefoxAndroid_message );         
-        }
-
-        // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
-        audio_parms.vad.maxsilence = 1000; // detect longer silence period on Android
-        audio_parms.vad.minvoice = 125; // use shorter min voice on Android
-        audio_parms.audioNodebufferSize = 4096; // needs to be lower for VAD to work
-
+    // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
+    if ( platform.os.family.includes("Android") ) {
         if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
-          max_numPrompts_selector = 10;
-        } else { // Android 5 and above
           max_numPrompts_selector = 20;
+          // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
+          // need higher buffersize to avoid audio breakup and glitches
+          // but VAD needs lower buffersize for accuracy; therefore disable VAD
+          audio_parms.vad.run = false; 
+        } else { // Android 5 and above
+          // TODO need to confirm that smaller buffer size not causing audio breakup/glitches
+          max_numPrompts_selector = 30;
 
+          audio_parms.vad.maxsilence = 1000; // detect longer silence period on Android
+          audio_parms.vad.minvoice = 125; // use shorter min voice on Android
+          audio_parms.audioNodebufferSize = 4096; // needs to be lower for VAD to work
         }
     }
 
