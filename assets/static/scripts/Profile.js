@@ -34,6 +34,8 @@ function Profile (view, appversion) {
       return retrievedObject && JSON.parse(retrievedObject);
   }
 
+  this.debug = {}; // must be before getProfileFromLocalStorage; otherwise will overwrite debug info
+
   /**
   * refresh displayed user information with info stored in offline storage.
   * Note: not using cookies... no need to pass this info back to the server
@@ -42,6 +44,11 @@ function Profile (view, appversion) {
   var parsedLocalStorageObject;
   if ( parsedLocalStorageObject = getProfileFromLocalStorage() ) {
       view.update(parsedLocalStorageObject);
+
+      this.sample_rate = parsedLocalStorageObject.sample_rate;
+      this.bit_depth = parsedLocalStorageObject.bit_depth;
+      this.channels = parsedLocalStorageObject.channels;
+      this.debug = parsedLocalStorageObject.debug;
   }
 
   /**
