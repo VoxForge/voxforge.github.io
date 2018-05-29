@@ -59,12 +59,6 @@ function Profile (view, appversion) {
     return text;
   }
 
-  this.sample_rate = null;
-  this.sample_rate_format = null;
-  this.channels = null;
-
-  this.debug = {};
-
   this.suffix = makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
   this.randomDigits = makeRandString (10,'1234567890');
 }
@@ -181,7 +175,7 @@ Profile.prototype.toHash = function () {
 
     // see https://www.pmtonline.co.uk/blog/2004/11/04/what-does-the-bit-depth-and-sample-rate-refer-to/
     profile_hash["sample_rate"] = this.sample_rate;
-    profile_hash["bit_depth"] = this.sample_rate_format;
+    profile_hash["bit_depth"] = this.bit_depth;
     profile_hash["channels"] = this.channels;
 
     profile_hash["debug"] = this.debug;
