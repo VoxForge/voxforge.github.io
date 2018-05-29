@@ -34,7 +34,7 @@ function Profile (view, appversion) {
       return retrievedObject && JSON.parse(retrievedObject);
   }
 
-  this.debug = {}; // must be before getProfileFromLocalStorage; otherwise will overwrite debug info
+  this.debug = {}; // must be before getProfileFromLocalStorage; otherwise will overwrite saved debug info
 
   /**
   * refresh displayed user information with info stored in offline storage.
@@ -374,7 +374,10 @@ Profile.prototype.getLicenseUserName = function () {
 }
 
 /**
-* 
+* updates:
+      this.sample_rate 
+      this.bit_depth 
+      this.channels
 */
 Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
     for (const prop in obj) {
@@ -384,6 +387,10 @@ Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
     } 
 }
 
+/**
+* updates:
+      this.debug 
+*/
 Profile.prototype.setDebugValues = function (obj) {
     for (const prop in obj) {
       if (obj.hasOwnProperty(prop)) {

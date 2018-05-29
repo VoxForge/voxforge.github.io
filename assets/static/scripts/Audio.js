@@ -270,17 +270,17 @@ function Audio (parms,
       let s = track.getSettings();
 
       self.profile.setDebugValues({
-        'browser_supports_echoCancellation' : c.echoCancellation || false,
-        'browser_supports_noiseSuppression' : c.noiseSuppression || false,
-        'browser_supports_autoGain' : c.autoGainSupported || false,
+        'browser_supports_echoCancellation' : (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation,
+        'browser_supports_noiseSuppression' : (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression,
+        'browser_supports_autoGain' : (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported,
 
-        'autoGainControl' : s.autoGainControl || false,
-        'echoCancellation' : s.echoCancellation || false,
-        'noiseSuppression' : s.noiseSuppression || false,
+        'autoGainControl' : (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl,
+        'echoCancellation' : (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation,
+        'noiseSuppression' : (typeof s.noiseSuppression == 'undefined') ? 'undefined' : s.noiseSuppression,
 
-        'channelCount' :  s.channelCount || false,
-        'latency' :  s.latency || false,
-        'volume' :  s.volume || false,
+        'channelCount' : (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount,
+        'latency' : (typeof s.latency == 'undefined') ? 'undefined' : s.latency,
+        'volume' : (typeof s.volume == 'undefined') ? 'undefined' : s.volume,
 
         'vad_maxsilence' :  self.parms.vad.maxsilence,
         'vad_minvoice' : self.parms.vad.minvoice,
