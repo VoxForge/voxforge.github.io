@@ -181,7 +181,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     }
 
     /**
-    * original Mozilla code segment to call webrtc_vad, encapsulated in funtion
+    * original Mozilla code segment to call webrtc_vad
     */
     function callWebrtcVad(buffer_pcm) {
         /**
@@ -203,6 +203,8 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
           _free(dataHeap.byteOffset);
           return result;
         }
+
+        // ###
 
         for (let i = 0; i < Math.ceil(buffer_pcm.length/self.sizeBufferVad); i++) {
           let start = i * self.sizeBufferVad;
@@ -259,6 +261,8 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
 
     var [buffer_pcm, energy] = floatTo16BitPCM(buffer);
 
+    callWebrtcVad(buffer_pcm);
+
     if (energy > this.max_energy) {
       this.max_energy = energy;
     } else if (energy < this.min_energy) {
@@ -266,8 +270,6 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
       // speech has been extracted...
       this.min_energy = energy;
     }
-
-    callWebrtcVad(buffer_pcm);
 }
 
 /**
