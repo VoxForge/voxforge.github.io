@@ -25,8 +25,10 @@ importScripts('../lib/webrtc_vad.js');
 var MAX_ENERGY_THRESHOLD = 0.50;
 var MIN_ENERGY_THRESHOLD = 0.02;
 
-var LEADING_SILENCE_SEC = 0.5; // secs
-var TRAILING_SILENCE_SEC = 0.3; // little less because of lag in VAD detecting end of speech
+// These values are a function of event buffer size... the larger the buffer
+// the smaller these values can be; and vice versa..
+var LEADING_SILENCE_SEC = 0.2; // secs
+var TRAILING_SILENCE_SEC = 0.2; // little less because of lag in VAD detecting end of speech
 
 // since chrome/FF default sample rate on Linux is 44100, but VAD does 
 // not support 44100... hardcode 48000 - works OK
@@ -76,6 +78,9 @@ function Vad(sampleRate, parms) {
     this.max_energy = 0;
     this.min_energy = 1.0;
 
+    this.vadbuffer_start = 0;
+    this.vadbuffer_end = 0;
+
     // setup webrtc VAD
     var main = cwrap('main');
     var setmode = cwrap('setmode', 'number', ['number']);
@@ -94,7 +99,7 @@ function Vad(sampleRate, parms) {
 /**
 *
 */
-Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
+Vad.prototype.calculateSilenceBoundaries = function(buffer, buffers_index, chunk_index) {
     // save reference to current context for use in inner functions
     var self = this;
 
@@ -157,27 +162,43 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
     /**
     * called when non-silence detected (any sound, not just speech)
     */
-    function speaking() {
+    function speaking(start, end) {
+      self.speaking_vadbuffer_start = start;
+      self.speaking_vadbuffer_end = end;
+
       self.voice_started = true;
       self.voice_stopped = false;
       if ( self.first_speak ) {
         // really only recognizing non-silence (i.e. any sound that is not silence")
-        console.log("webrtc: voice_started=" + index);
-        self.speechstart_index = index;
+        console.log("webrtc: voice_started=" + buffers_index + 
+                    " vadbuffer_start: " + start + 
+                    " vadbuffer_end: " + end + 
+                    " chunk_index: " + chunk_index);
+        self.speechstart_index = buffers_index;
         self.first_speak = false;
+
+
       }
     }
 
     /**
     * called when silence detected
     */
-    function nospeech() {
+    function nospeech(start, end) {
+      self.nospeech_vadbuffer_start = start;
+      self.nospeech_vadbuffer_end = end;
+
       // only want first stop after speech ends
       if ( ! self.voice_stopped ) {
-        console.log("webrtc: voice_stopped=" + index);
-        self.speechend_index = index;
+        console.log("webrtc: voice_stopped=" + buffers_index + 
+                    " vadbuffer_start: " + start + 
+                     " vadbuffer_end: " + end + 
+                    " chunk_index: " + chunk_index);
+        self.speechend_index = buffers_index;
       }
       self.voice_stopped = true;
+
+
     }
 
     /**
@@ -233,7 +254,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
                 self.samplessilence += dtdepois - self.dtantesmili;
                 if (self.samplessilence >  self.maxsilence) {
                   self.touchedsilence = true;
-                  nospeech();
+                  nospeech(start, end);
                 }
               }
             }
@@ -241,7 +262,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
               self.samplesvoice  += dtdepois - self.dtantesmili;
               if (self.samplesvoice >  self.minvoice) {
                 self.touchedvoice = true;
-                speaking();
+                speaking(start, end);
               }
             }
             self.dtantesmili = dtdepois;
@@ -278,25 +299,6 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, index) {
 Vad.prototype.getSpeech = function(buffers) {
     // save context for inner functions
     var self = this;
-
-    /**
-    * using calculated speechstart and speechstop indexes, extract audio segment
-    * that includes speech (i.e. remove leading and trailing silence from 
-    * recording)
-    */
-    function extractSpeechFromRecording() {
-      var start_index = Math.max(self.speechstart_index - self.leading_silence_buffer, 0);
-      var end_index = Math.min(self.speechend_index + self.trailing_silence_buffer, buffers.length);
-      console.log("start_index=" + start_index + 
-                  "; end_index=" + end_index +
-                  "; buffer length=" + buffers.length);
-
-      var speech_array =  buffers.slice(start_index, end_index);
-
-      console.log("speech_array length=" + speech_array.length);
-
-      return speech_array;
-    }
 
     /**
     * determine if energy level threshholds have been passed
@@ -348,6 +350,25 @@ Vad.prototype.getSpeech = function(buffers) {
       }
 
       return [no_speech, no_trailing_silence, clipping, too_soft];
+    }
+
+    /**
+    * using calculated speechstart and speechstop indexes, extract audio segment
+    * that includes speech (i.e. remove leading and trailing silence from 
+    * recording)
+    */
+    function extractSpeechFromRecording() {
+      var start_index = Math.max(self.speechstart_index - self.leading_silence_buffer, 0);
+      var end_index = Math.min(self.speechend_index + self.trailing_silence_buffer, buffers.length);
+      console.log("start_index=" + start_index + 
+                  "; end_index=" + end_index +
+                  "; buffer length=" + buffers.length);
+
+      var speech_array =  buffers.slice(start_index, end_index);
+
+      console.log("speech_array length=" + speech_array.length);
+
+      return speech_array;
     }
 
     // ### main ##################################################################

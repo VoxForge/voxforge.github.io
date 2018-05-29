@@ -117,8 +117,8 @@ var view;  // needs to be global so can be accessible to index.html
     // buffer size is in units of sample-frames. If specified, the bufferSize 
     // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
     var audio_parms = {
-      audioNodebufferSize: undefined, // let device decide appropriate buffer size
-     // audioNodebufferSize: 16384, // debug
+      //audioNodebufferSize: undefined, // let device decide appropriate buffer size
+      audioNodebufferSize: 16384, // debug
 
       bitDepth:  '32bit-float', // 16 or 32bit-float
       vad: { // Voice Activity Detection parameters
@@ -151,6 +151,7 @@ var view;  // needs to be global so can be accessible to index.html
     // low end Android v442 and v5 devices.  Will have to monitor and turn
     // off visualization for lower end devices for now...
     // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
+/*
     if ( platform.os.family.includes("Android") ) {
         if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
           max_numPrompts_selector = 20;
@@ -167,7 +168,7 @@ var view;  // needs to be global so can be accessible to index.html
           audio_parms.audioNodebufferSize = 4096; // needs to be lower for VAD to work
         }
     }
-
+*/
     // #############################################################################
 
     const appversion = "0.2";

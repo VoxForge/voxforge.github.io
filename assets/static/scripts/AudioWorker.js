@@ -45,7 +45,7 @@ self.onmessage = function(event) {
         console.warn("invalid bit depth: " + data.bitDepth + "; setting to 16 bit");
         bitDepth = "32bit-float";
       } 
-      console.log('bitDepth:' + bitDepth);
+      console.log('bitDepth: ' + bitDepth);
       encoder = new WavAudioEncoder(data.sampleRate, bitDepth);
 
       vad_run = data.vad_parms.run;
@@ -64,7 +64,19 @@ self.onmessage = function(event) {
       //startSimpleSilenceDetection(buffers.length - 1, data.event_buffer);
 
       if ( vad_run ) {
-         vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
+          //vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
+          // split buffer up into smaller chunks that VAD can digest
+          let num_chunks = 4;
+          let cutoff = Math.round(data.event_buffer.length / num_chunks);
+          let buffers_index = buffers.length - 1;
+          for (let i = 0; i < num_chunks; i++) {
+            let chunk_index = i;
+            let start = i * cutoff;
+            let end = (i * cutoff) + cutoff
+            // slice extracts up to but not including end.
+            let chunk = data.event_buffer.slice(start, end);
+            vad.calculateSilenceBoundaries(chunk, buffers_index, chunk_index);
+          }
       }
       break;
 
