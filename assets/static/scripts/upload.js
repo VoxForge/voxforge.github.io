@@ -78,15 +78,17 @@ $( window ).unload(function() {
 function upload( prompts, 
                  profile, 
                  speechSubmissionAppVersion, 
-                 allClips,
-                 when_audio_processing_completed ) {
+                 allClips) {
 
     var clipIndex = 0;
     var audioArray = [];
 
-    processAudio()
-    .then(callWorker2createZipFile)
-    .then(uploadZippedSubmission);
+    return new Promise(function (resolve, reject) {
+      processAudio()
+      .then(callWorker2createZipFile)
+      .then(uploadZippedSubmission)
+      .then(resolve("OK"));
+    });
 
     // ### inner functions #################################################
 
@@ -190,7 +192,7 @@ function upload( prompts,
         };
 
         // wait until zip_worker postMesasge completed before resetting everything
-        when_audio_processing_completed(); 
+        //when_audio_processing_completed(); 
 
       }); // Promise
     } // callWorker2createZipFile
@@ -243,6 +245,8 @@ function upload( prompts,
     * storage)
     */
     function uploadZippedSubmission() {
+      return new Promise(function (resolve, reject) {
+
         if (typeof navigator.serviceWorker !== 'undefined') { 
             navigator.serviceWorker.ready
             .then(function(swRegistration) { // service workers supported
@@ -260,7 +264,9 @@ function upload( prompts,
               asyncMainThreadUpload();
           }
         }
+        resolve("OK");
 
+      }); // Promise
         // ### inner functions #################################################
         /** 
         * upload submission from main thread, asynchronously...

@@ -187,9 +187,8 @@ function Controller(prompts,
           upload( prompts, 
                   profile, 
                   appversion, 
-                  allClips,
-                  when_audio_processing_completed,
-          );
+                  allClips)
+          .then(when_audio_processing_completed);
         },
       }
     });
