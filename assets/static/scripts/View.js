@@ -311,7 +311,21 @@ View.prototype.setRSUButtonDisplay = function (record, stop, upload) {
 }
 
 /**
-* hid prompt display
+* hide all delete buttons
+*/
+View.prototype.disableDeleteButtons = function () {
+    $('.delete').prop('disabled', true);
+}
+
+/**
+* show all delete buttons
+*/
+View.prototype.enableDeleteButtons = function () {
+    $('.delete').prop('disabled', false);
+}
+
+/**
+* hide prompt display
 */
 View.prototype.hidePromptDisplay = function () {
     $('.info-display').hide();
@@ -373,6 +387,8 @@ View.prototype.displayAudioPlayer = function (obj)
       var deleteButton = document.createElement('button');
       deleteButton.textContent = 'Delete';
       deleteButton.className = 'delete';
+
+      deleteButton.disabled = 'true';
 
       /**
       * delete a recorded prompt; which is then saved in prompt_stack so user

@@ -320,11 +320,21 @@ Prompts.prototype.getNextPrompt = function () {
 
 /**
 * add deleted prompt to stack and decrement prompt count 
+*
+* gets called in view class and called as soon as prompt delete is clicked
+* but before Controller even registers the transition
 */
 Prompts.prototype.movePrompt2Stack = function (promptLine) {
     this.prompt_stack.push(promptLine);
 
     this.prompt_count = this.prompt_count - 1;
+}
+
+/**
+* get prompt id portion of current prompt line as determined by index.
+*/
+Prompts.prototype.getCurrentPromptLine = function () {
+   return this.current_promptLine;
 }
 
 /**
@@ -391,12 +401,48 @@ Prompts.prototype.setAudioCharacteristics = function (obj) {
 }
 /**
 * true when max number of prompts user wants to record is reached
-* 0 indexed therefore last prompt is (max_num_prompts -1)
 */
-Prompts.prototype.last = function () {
-    return this.prompt_count >= this.max_num_prompts - 1;
+Prompts.prototype.lastone = function () {
+    //return this.prompt_count >= this.max_num_prompts - 1;
+    return this.prompt_count >= this.max_num_prompts;
 }
 
+/**
+*
+*/
+Prompts.prototype.oneleft = function () {
+    return this.prompt_count == 1;
+}
+
+/**
+*
+*/
+Prompts.prototype.maxnumpromptsincreased = function () {
+    return this.max_num_prompts >= this.previous_max_num_prompts;
+}
+
+/**
+*
+* e.g. user set max prompt to 30, records 25, then changes max prompts to 20
+*/
+Prompts.prototype.recordedmorethancurrentmaxprompts = function () {
+    return this.prompt_count >= this.max_num_prompts;
+}
+
+
+/**
+*
+*/
+Prompts.prototype.oneleft = function () {
+    return this.prompt_count == 1;
+}
+
+/**
+*
+*/
+Prompts.prototype.atmid = function () {
+    return (this.prompt_count > 0 && this.prompt_count < this.max_num_prompts);
+}
 
 /**
 * Returns string that displays the number of prompts read and the total

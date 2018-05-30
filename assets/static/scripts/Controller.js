@@ -37,7 +37,8 @@ function Controller(prompts,
     function recordAudio() {
         view.hideProfileInfo();
 
-        var prompt = prompts.getNextPrompt();
+        //var prompt = prompts.getNextPrompt(); // increments prompt_count here
+        var prompt = prompts.getCurrentPromptLine();
         view.updateProgress();
 
         // only display prompt when user presses record so that they delay the 
@@ -59,7 +60,7 @@ function Controller(prompts,
     * basically a blocking wait until audio files get converted into
     * blobs for later processing by zipupload web worker.
     */
-    function when_audio_processing_completed () {
+    function saveProfileAndReset () {
       profile.addProfile2LocalStorage();
       prompts.resetIndices();
       view.reset();
@@ -80,68 +81,108 @@ function Controller(prompts,
 
       //  name: TRANSITION              from: STATE                  to: STATE                                        
       transitions: [
-        { name: 'recordclickedltn',     from: 'nopromptsrecorded',   to: 'recordingltn' },
-        { name: 'recordclickedltn',     from: 'promptsrecorded',     to: 'recordingltn' },
-        { name: 'recordclickedeqn',     from: 'promptsrecorded',     to: 'recordinglastprompt' },
-        { name: 'stopclicked',          from: 'recordingltn',        to: 'promptsrecorded'  },
-        { name: 'recordingtimeout',     from: 'recordingltn',        to: 'promptsrecorded' },  
-        { name: 'stopclicked',          from: 'recordinglastprompt', to: 'displaymessage'  },
-        { name: 'recordingtimeout',     from: 'recordinglastprompt', to: 'displaymessage'  },
+        { name: 'recordclickedltn',     from: 'nopromptsrecorded',   to: 'recordingfirst' },
+        { name: 'stopclicked',          from: 'recordingfirst',      to: 'firstpromptrecorded'  },
+        { name: 'recordingtimeout',     from: 'recordingfirst',      to: 'firstpromptrecorded' }, 
+
+        { name: 'recordclickedltn',     from: 'firstpromptrecorded', to: 'recordingmid' },
+        { name: 'stopclicked',          from: 'recordingmid',        to: 'midpromptsrecorded'  },
+        { name: 'recordingtimeout',     from: 'recordingmid',        to: 'midpromptsrecorded' }, 
+        { name: 'recordclickedltn',     from: 'midpromptsrecorded',  to: 'recordingmid' },
+
+        { name: 'recordclickedlast',    from: 'midpromptsrecorded',  to: 'recordinglast' },
+        { name: 'stopclicked',          from: 'recordinglast',       to: 'displaymessage'  },
+        { name: 'recordingtimeout',     from: 'recordinglast',       to: 'displaymessage'  },
+
         { name: 'yesuploadmessage',     from: 'displaymessage',      to: 'uploading' },
         { name: 'canceluploadmessage',  from: 'displaymessage',      to: 'maxpromptsrecorded' },
         { name: 'uploadclicked',        from: 'maxpromptsrecorded',  to: 'uploading' },
-        { name: 'deleteclickedgt1',     from: 'maxpromptsrecorded',  to: 'promptsrecorded'  },
-        { name: 'deleteclickedgt1',     from: 'promptsrecorded',     to: 'promptsrecorded'  },
-        { name: 'deleteclickedlast',    from: 'promptsrecorded',     to: 'nopromptsrecorded'  },
-        { name: 'maxnumpromptsincreased', from: 'maxpromptsrecorded',to: 'promptsrecorded' },
-        { name: 'maxnumpromptsincreased', from: 'promptsrecorded',   to: 'promptsrecorded' },
-        { name: 'maxnumpromptsincreased', from: 'nopromptsrecorded', to: 'nopromptsrecorded' },
+
+        { name: 'deleteclicked',        from: 'firstpromptrecorded', to: 'nopromptsrecorded'  },
+        { name: 'deleteclicked',        from: 'midpromptsrecorded',  to: 'midpromptsrecorded'  },
+        { name: 'deleteclickedoneleft', from: 'midpromptsrecorded',  to: 'firstpromptrecorded'  },
+        { name: 'deleteclicked',        from: 'maxpromptsrecorded',  to: 'midpromptsrecorded'  },
+        { name: 'deleteclicked',        from: 'promptsrecorded',     to: 'nopromptsrecorded'  },
+
+        { name: 'maxnumpromptsincreased', from: 'nopromptsrecorded',   to: 'nopromptsrecorded' },
+        { name: 'maxnumpromptsincreased', from: 'firstpromptrecorded', to: 'firstpromptrecorded' },
+        { name: 'maxnumpromptsincreased', from: 'midpromptsrecorded',  to: 'midpromptsrecorded' },
+        { name: 'maxnumpromptsincreased', from: 'maxpromptsrecorded',  to: 'promptsrecorded' },
+
         { name: 'recordedmorethancurrentmaxprompts', from: 'maxpromptsrecorded', to: 'displaymessage' },
-        { name: 'recordedmorethancurrentmaxprompts', from: 'promptsrecorded', to: 'displaymessage' },
-        { name: 'uploadclicked',        from: 'promptsrecorded',     to: 'uploading' },
+        { name: 'recordedmorethancurrentmaxprompts', from: 'midpromptsrecorded', to: 'displaymessage' },
+
+        { name: 'uploadclicked',        from: 'midpromptsrecorded',     to: 'uploading' },
         { name: 'donesubmission',       from: 'uploading',           to: 'nopromptsrecorded' },
       ],
 
       // javascript-state-machine does not like underscores in method or state names...
       methods: {
         // #####################################################################
-        // Transition Actions: user initiated
+        // Transitions: user initiated
         onStopclicked: function() { 
           audio.endRecording();
         },
 
-        onDeleteclickedgt1: function() { 
+        onDeleteclickedoneleft: function() { 
           view.updateProgress();
         },
 
-        onDeleteclickedlast: function() { 
+        onDeleteclicked: function() { 
           view.updateProgress();
         },
 
         // Transition Actions: system initiated
         onRecordingtimeout: function() { 
           audio.endRecording();
-          //console.log("recorder stopped on timeout of " + recording_timeout + " seconds.");
         },
 
         // #####################################################################
-        // States (Actions to take on entry into given state)
-        onPromptsrecorded: function() { 
-          view.setRSButtonDisplay(true, false);   
-          //console.log('   *** onWaveformdisplay state: ' + this.state + " trans: " + this.transitions() );
+        // Static States
+        onNopromptsrecorded: function() { 
+          view.setRSUButtonDisplay(true, false, false);
+          console.log('   *** onNopromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
-        // recording less than total number of prompts to record (less than n)
-        // (ltn = less then n, where n = total number of prompts)
-        onRecordingltn: function() { 
+        onFirstpromptrecorded: function() { 
+          view.enableDeleteButtons();
+          view.setRSButtonDisplay(true, false);   
+          console.log('   *** onFirstpromptrecorded state: ' + this.state + " trans: " + this.transitions() );
+        },
+
+        onMidpromptsrecorded: function() { 
+          view.enableDeleteButtons();
+          view.setRSButtonDisplay(true, false);   
+          console.log('   *** onMidpromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
+        },
+
+        // at maximum selected prompts, cannot record anymore, must upload to 
+        // continue, or delete then upload
+        onMaxpromptsrecorded: function() { 
+          view.enableDeleteButtons();
+          view.setRSUButtonDisplay(false, false, true);
+          console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
+        },
+
+        // #####################################################################
+        // Action States
+        onRecordingfirst: function() { 
           view.setRSButtonDisplay(false, true);  
           //console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
           recordAudio();
         },
 
-        onRecordinglastprompt: function() {
+        onRecordingmid: function() { 
+          view.disableDeleteButtons();
           view.setRSButtonDisplay(false, true);  
-          //console.log('   *** onRecordinglastprompt state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
+          recordAudio();
+        },
+
+        onRecordinglast: function() {
+          view.disableDeleteButtons();
+          view.setRSButtonDisplay(false, true);  
+          //console.log('   *** onRecordinglast state: ' + this.state + " trans: " + this.transitions() );
           recordAudio();
         },
 
@@ -155,7 +196,7 @@ function Controller(prompts,
           }
 
           //console.log('   *** onDisplaymessage state: ' + this.state + " trans: " + this.transitions() );
-
+          view.disableDeleteButtons(); 
           view.setRSUButtonDisplay(false, false, false);
           // to give browser enough time to process the last audio recording
           // TODO this should be blocking until last prompt is displayed in DOM
@@ -164,87 +205,70 @@ function Controller(prompts,
           }, process_last_recording_delay); 
         },
 
-        // at maximum selected prompts, cannot record anymore, must upload to 
-        // continue, or delete then upload
-        onMaxpromptsrecorded: function() { 
-          view.setRSUButtonDisplay(false, false, true);
-          //console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
-        },
-
-        // hide upload button when no prompts have been recorded
-        onNopromptsrecorded: function() { 
-          view.setRSUButtonDisplay(true, false, false);
-          //console.log('   *** onNopromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
-        },
-
         onUploading: function() { 
+          view.disableDeleteButtons();
           view.setRSUButtonDisplay(false, false, false);
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
-          // TODO convert passing in of anonymous function to promise...
-          // uploadZippedSubmission needs to be converted to promise
           var allClips = document.querySelectorAll('.clip');
-          upload( prompts, 
-                  profile, 
-                  appversion, 
-                  allClips)
-          .then(when_audio_processing_completed);
+          upload(prompts, profile, appversion, allClips)
+          .then(saveProfileAndReset);
         },
       }
     });
 
     view.record.onclick = function() { 
-      if ( prompts.last() ) {
-        fsm.recordclickedeqn(); // eqn = equal n; where n = maxprompts
+      prompts.getNextPrompt();  // sets current_promptLine and increment prompt_count; discarding return value
+
+      if ( prompts.lastone() ) {
+        fsm.recordclickedlast(); // record last prompt
       } else {
-        fsm.recordclickedltn(); // ltn = less than n; where n = maxprompts
+        fsm.recordclickedltn(); // ltn = less than n; where n < maxprompts
       }
     }
 
-    view.stop.onclick = function() { 
+    view.stop.onclick = function() {
       clearTimeout(rec_timeout_obj);
       var start =  Date.now();
       console.log("stop clicked" );
       view.hidePromptDisplay();
+
       // actual stopping of recording is delayed because some users hit it
       // early and cut off the end of their recording.
       setTimeout( function () {
-        var elasped = Date.now() - start;
         fsm.stopclicked(); 
       }, recording_stop_delay);
     }
 
-    view.upload.onclick = function() { 
+    view.upload.onclick = function() {
       fsm.uploadclicked();
     }
 
-    view.maxnumpromptschanged.onclick = function() { 
-      var p = prompts;
-
-      if (p.max_num_prompts >= p.previous_max_num_prompts) {
+    view.maxnumpromptschanged.onclick = function() {
+      if ( prompts.maxnumpromptsincreased() ) {
         fsm.maxnumpromptsincreased();
-      } else { // p.max_num_prompts < p.previous_max_num_prompts
-        if (p.prompt_count >= p.max_num_prompts) {
+      } else { 
+        if ( prompts.recordedmorethancurrentmaxprompts() ) {
           fsm.recordedmorethancurrentmaxprompts();
         }
       } 
     }
 
     /** 
-     * using a dummy 'delete' div that is triggered by clicking any one
-     * delete buttons of a recorded prompt
+     * using a dummy 'delete' div that is triggered by clicking 
+     * delete button of any one recorded prompt
     */
     view.delete_clicked.onclick = function() { 
-      if (prompts.prompt_count > 0) {
-         //console.log('deleteclickedgt1: ');
-         fsm.deleteclickedgt1();
+      // prompt_count has already been gets decremented in view call to prompts.movePrompt2Stack
+      if ( prompts.oneleft() ) {
+         fsm.deleteclickedoneleft(); // at first prompt which means only one prompt left to delete
       } else {
-         //console.log('deleteclickedlast: ');
-         fsm.deleteclickedlast();
-      }
+         fsm.deleteclicked();
+      } 
     }
+
+    // ###
 
     return fsm;
 }
-
 
