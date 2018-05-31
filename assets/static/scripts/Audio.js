@@ -298,7 +298,7 @@ function Audio (parms,
 //see https://github.com/higuma/wav-audio-encoder-js 
 
 */
-Audio.prototype.record = function (prompt_id, last_prompt ) {
+Audio.prototype.record = function (prompt_id, last_one) {
     var self = this; // save context when calling inner functions
 
     var got_buffer_size = false;
@@ -347,33 +347,39 @@ Audio.prototype.record = function (prompt_id, last_prompt ) {
      });
     };
 
-    // reply from audio worker
-    // creates new function everytime record is pressed
-    audioworker.onmessage = function(returnObj) { 
-        var obj = returnObj.data.obj;
-        switch (returnObj.data.status) {
-            /**
-            * after this process sends a request to the worker to 'finish' recording,
-            * worker sends back the recorded data as an audio blob
-            */
-            case 'finished':
-              self.view.displayAudioPlayer(obj)
-              .then(function () {
-                if ( self.prompts.lastone() ) {
-                    // need to do this after the last prompt waveform gets 
-                    // displayed on screen
+    return new Promise(function (resolve, reject) {
+      // reply from audio worker
+      // creates new function everytime record is pressed
+      audioworker.onmessage = function(returnObj) { 
+          var obj = returnObj.data.obj;
+          switch (returnObj.data.status) {
+              /**
+              * after this process sends a request to the worker to 'finish' recording,
+              * worker sends back the recorded data as an audio blob
+              */
+              case 'finished':
+                self.view.displayAudioPlayer(obj)
+                .then(function () {
+                  // need to disable delete after the last prompt waveform gets 
+                  // displayed on screen because of timing issues with display
+                  // message to upload and time it takes for waveform to display
+                  if ( last_one ) {
                     self.view.disableDeleteButtons();
-                }
-              });
+                  }
+                });
 
-              self.prompts.setAudioCharacteristics(obj);
-            break;
+                //self.prompts.setAudioCharacteristics(obj);
+                resolve(obj);
+              break;
 
-            default:
-              let m = 'message from audio worker: audio error: ' + returnObj.status;
-              console.error(m);
-        }
-    }; 
+              default:
+                let m = 'message from audio worker: audio error: ' + returnObj.status;
+                console.error(m);
+                reject(m);
+          }
+      }; 
+
+    }); // promise
 }
 
 /**

@@ -44,9 +44,12 @@ function Controller(prompts,
         // only display prompt when user presses record so that they delay the 
         // start of reading the prompt and give the recording a bit of a leading
         // silence...
-        view.displayPrompt(prompts.getPromptId(),prompts.getPromptSentence());
+        view.displayPrompt(prompts.getPromptId(), prompts.getPromptSentence());
 
-        audio.record( prompts.getPromptId() );
+        audio.record( prompts.getPromptId(), prompts.lastone() )
+        .then(function(obj) {
+          prompts.setAudioCharacteristics(obj);
+        });
 
         rec_timeout_obj = setTimeout(function(){
           fsm.recordingtimeout();
