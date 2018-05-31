@@ -400,6 +400,11 @@ Profile.prototype.setDebugValues = function (obj) {
 }
 
 /**
+*/
+Profile.prototype.addDebugValue = function (key, value) {
+   this.debug[key] = value;
+}
+/**
 *
 */
 Profile.prototype.updateEventBufferSize = function (event_buffer_size) {

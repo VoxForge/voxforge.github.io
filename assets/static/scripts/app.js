@@ -195,8 +195,7 @@ var view;  // needs to be global so can be accessible to index.html
     var profile = new Profile(view, 
                               appversion);
 
-    var audio = new Audio(audio_parms,
-                          profile);
+    var audio = new Audio(audio_parms);
 
     var controller = new Controller(prompts, 
                                     view, 

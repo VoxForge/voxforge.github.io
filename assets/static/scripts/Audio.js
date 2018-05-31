@@ -119,14 +119,12 @@ var wavesurfer = [];
 /**
 * Class definition
 */
-function Audio (parms,
-                profile) 
+function Audio (parms) 
 {
     // 'self' used to save current context when calling function references
     var self = this;
 
     this.parms = parms;
-    this.profile = profile;
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphone = null;
     this.processor = undefined;  
@@ -240,8 +238,7 @@ function Audio (parms,
       self.analyser.channelCount = 1;
       self.mediaStreamOutput.channelCount = 1;
 
-      var track = stream.getAudioTracks()[0];
-      updateProfileAudioProperties(track);
+      setProfileAudioProperties(stream.getAudioTracks()[0]);
     }
 
     /*
@@ -254,19 +251,19 @@ function Audio (parms,
       https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
       https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
     */
-    function updateProfileAudioProperties(track) {
-      self.profile.setAudioPropertiesAndContraints({
+    function setProfileAudioProperties(track) {
+      self.audioPropertiesAndContraints = {
         'sample_rate' : self.audioCtx.sampleRate,
         'bit_depth' : self.parms.bitDepth,
         'channels' : self.mediaStreamOutput.channelCount,
-      });
+      };
 
       //https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getSupportedConstraints
       var c = navigator.mediaDevices.getSupportedConstraints();
       //https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
       let s = track.getSettings();
 
-      self.profile.setDebugValues({
+      self.debugValues = {
         'browser_supports_echoCancellation' : (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation,
         'browser_supports_noiseSuppression' : (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression,
         'browser_supports_autoGain' : (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported,
@@ -283,11 +280,27 @@ function Audio (parms,
         'vad_minvoice' : self.parms.vad.minvoice,
         'vad_bufferSize' : self.parms.vad.buffersize,
         'audioNode_bufferSize' : self.parms.audioNodebufferSize || 'undefined',
-      });
+        'device_event_buffer_size' : self.device_event_buffer_size || 'undefined',
+      };
 
       console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
     }
 }
+
+/**
+*
+*/
+Audio.prototype.getAudioPropertiesAndContraints = function () {
+    return this.audioPropertiesAndContraints;
+}
+
+/**
+*
+*/
+Audio.prototype.getDebugValues = function () {
+    return this.debugValues;
+}
+
 /**
 * connect nodes; tell worker to start recording audio 
 *
@@ -328,9 +341,7 @@ Audio.prototype.record = function (prompt_id, last_one) {
       var floatArray_time_domain = event.inputBuffer.getChannelData(0);
 
       if ( ! got_buffer_size ) {
-        self.profile.setDebugValues ( {
-          'device_event_buffer_size' : floatArray_time_domain.length,
-        } );
+        self.debugValues.device_event_buffer_size = floatArray_time_domain.length;
       }
 
       audioworker.postMessage({ 

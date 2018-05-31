@@ -26,6 +26,9 @@ function Controller(prompts,
                     process_last_recording_delay,
                     appversion,)
 {
+
+    var updatedDeviceEventBufferSize = false;
+
     //  recording timeout object
     var rec_timeout_obj;
 
@@ -118,9 +121,8 @@ function Controller(prompts,
         { name: 'deleteclickedoneleft', from: 'midpromptsrecorded',  to: 'firstpromptrecorded'  },
         { name: 'deleteclicked',        from: 'maxpromptsrecorded',  to: 'midpromptsrecorded'  },
 
-        // if user clicks delete before message for upload displays... 
-        // TODO need to hide delete button on last submission, but because 
-        // using workers, geting timing issues...
+        // if user clicks delete before message for upload displays... but 
+        // delete button on last submission now gets hidden (see recordAudio function above)
         { name: 'deleteclicked',        from: 'displaymessage',      to: 'displaymessage'  },
 
         { name: 'maxnumpromptsincreased', from: 'nopromptsrecorded',   to: 'nopromptsrecorded' },
@@ -163,9 +165,19 @@ function Controller(prompts,
           //console.log('   *** onNopromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
-        onFirstpromptrecorded: function() { 
+        onFirstpromptrecorded: function() {
           view.enableDeleteButtons();
-          view.setRSButtonDisplay(true, false);   
+          view.setRSButtonDisplay(true, false);
+
+          // deviceEventBufferSize only available after first recording
+          if ( ! updatedDeviceEventBufferSize ) {
+            profile.setAudioPropertiesAndContraints( 
+                audio.getAudioPropertiesAndContraints()
+            );
+            profile.setDebugValues( audio.getDebugValues() );
+            updatedDeviceEventBufferSize = true;
+          }
+
           //console.log('   *** onFirstpromptrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
