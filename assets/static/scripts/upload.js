@@ -87,7 +87,9 @@ function upload( prompts,
       processAudio()
       .then(callWorker2createZipFile)
       .then(uploadZippedSubmission)
-      .then(resolve("OK"));
+      .then(function (resolve, reject) {
+        resolve("OK");
+      });
     });
 
     // ### inner functions #################################################
