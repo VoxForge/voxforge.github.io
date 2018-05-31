@@ -129,6 +129,7 @@ function Audio (parms,
 
     this.parms = parms;
     this.view = view;
+    this.prompts = prompts;
     this.profile = profile;
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphone = null;
@@ -290,23 +291,6 @@ function Audio (parms,
 
       console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
     }
-
-    audioworker.onmessage = function(returnObj) { 
-      var obj = returnObj.data.obj;
-      switch (returnObj.data.status) {
-          /**
-          * after this process sends a request to the worker to 'finish' recording,
-          * worker sends back the recorded data as an audio blob
-          */
-          case 'finished':
-            self.view.displayAudioPlayer(obj); 
-            prompts.setAudioCharacteristics(obj);
-          break;
-
-          default:
-            console.error('message from audio worker: audio error: ' + returnObj.status);
-      }
-    }; 
 }
 /**
 * connect nodes; tell worker to start recording audio 
@@ -314,7 +298,7 @@ function Audio (parms,
 //see https://github.com/higuma/wav-audio-encoder-js 
 
 */
-Audio.prototype.record = function (prompt_id) {
+Audio.prototype.record = function (prompt_id, last_prompt ) {
     var self = this; // save context when calling inner functions
 
     var got_buffer_size = false;
@@ -362,6 +346,34 @@ Audio.prototype.record = function (prompt_id) {
         event_buffer: floatArray_time_domain,
      });
     };
+
+    // reply from audio worker
+    // creates new function everytime record is pressed
+    audioworker.onmessage = function(returnObj) { 
+        var obj = returnObj.data.obj;
+        switch (returnObj.data.status) {
+            /**
+            * after this process sends a request to the worker to 'finish' recording,
+            * worker sends back the recorded data as an audio blob
+            */
+            case 'finished':
+              self.view.displayAudioPlayer(obj)
+              .then(function () {
+                if ( self.prompts.lastone() ) {
+                    // need to do this after the last prompt waveform gets 
+                    // displayed on screen
+                    self.view.disableDeleteButtons();
+                }
+              });
+
+              self.prompts.setAudioCharacteristics(obj);
+            break;
+
+            default:
+              let m = 'message from audio worker: audio error: ' + returnObj.status;
+              console.error(m);
+        }
+    }; 
 }
 
 /**

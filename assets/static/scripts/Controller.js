@@ -102,7 +102,11 @@ function Controller(prompts,
         { name: 'deleteclicked',        from: 'midpromptsrecorded',  to: 'midpromptsrecorded'  },
         { name: 'deleteclickedoneleft', from: 'midpromptsrecorded',  to: 'firstpromptrecorded'  },
         { name: 'deleteclicked',        from: 'maxpromptsrecorded',  to: 'midpromptsrecorded'  },
-        { name: 'deleteclicked',        from: 'promptsrecorded',     to: 'nopromptsrecorded'  },
+
+        // if user clicks delete before message for upload displays... 
+        // TODO need to hide delete button on last submission, but because 
+        // using workers, geting timing issues...
+        { name: 'deleteclicked',        from: 'displaymessage',      to: 'displaymessage'  },
 
         { name: 'maxnumpromptsincreased', from: 'nopromptsrecorded',   to: 'nopromptsrecorded' },
         { name: 'maxnumpromptsincreased', from: 'firstpromptrecorded', to: 'firstpromptrecorded' },
@@ -141,19 +145,19 @@ function Controller(prompts,
         // Static States
         onNopromptsrecorded: function() { 
           view.setRSUButtonDisplay(true, false, false);
-          console.log('   *** onNopromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onNopromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onFirstpromptrecorded: function() { 
           view.enableDeleteButtons();
           view.setRSButtonDisplay(true, false);   
-          console.log('   *** onFirstpromptrecorded state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onFirstpromptrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onMidpromptsrecorded: function() { 
           view.enableDeleteButtons();
           view.setRSButtonDisplay(true, false);   
-          console.log('   *** onMidpromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onMidpromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
         // at maximum selected prompts, cannot record anymore, must upload to 
@@ -161,7 +165,7 @@ function Controller(prompts,
         onMaxpromptsrecorded: function() { 
           view.enableDeleteButtons();
           view.setRSUButtonDisplay(false, false, true);
-          console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
         },
 
         // #####################################################################
@@ -230,7 +234,7 @@ function Controller(prompts,
     view.stop.onclick = function() {
       clearTimeout(rec_timeout_obj);
       var start =  Date.now();
-      console.log("stop clicked" );
+      //console.log("stop clicked" );
       view.hidePromptDisplay();
 
       // actual stopping of recording is delayed because some users hit it

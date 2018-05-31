@@ -388,7 +388,7 @@ View.prototype.displayAudioPlayer = function (obj)
       deleteButton.textContent = 'Delete';
       deleteButton.className = 'delete';
 
-      deleteButton.disabled = 'true';
+      //deleteButton.disabled = 'true';
 
       /**
       * delete a recorded prompt; which is then saved in prompt_stack so user
@@ -477,29 +477,33 @@ View.prototype.displayAudioPlayer = function (obj)
     }
 
     // #########################################################################
+    return new Promise(function (resolve, reject) {
 
-    clipContainer.appendChild(createClipLabel());
-    clipContainer.appendChild(createDeleteButton());
-    if (this.displayWaveform) {
-      clipContainer.appendChild(createWaveformElement());
-    }
-    clipContainer.appendChild(createAudioPlayer());
+      clipContainer.appendChild(createClipLabel());
+      clipContainer.appendChild(createDeleteButton());
+      if (self.displayWaveform) {
+        clipContainer.appendChild(createWaveformElement());
+      }
+      clipContainer.appendChild(createAudioPlayer());
 
-    this.soundClips.insertBefore(clipContainer, this.soundClips.children[0]);
+      self.soundClips.insertBefore(clipContainer, self.soundClips.children[0]);
 
-    // might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
-    // add waveform to waveformElement
-    // see http://wavesurfer-js.org/docs/
-    if (this.displayWaveform) {
-      wavesurfer[this.clip_id] = WaveSurfer.create({
-        container: '#' + waveformdisplay_id,
-        scrollParent: true,
-        waveColor : 'OliveDrab',
-        minPxPerSec: 200,
-      });
-      wavesurfer[this.clip_id].load(audioURL);
-    }
-    this.clip_id++;
+      // might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
+      // add waveform to waveformElement
+      // see http://wavesurfer-js.org/docs/
+      if (self.displayWaveform) {
+        wavesurfer[self.clip_id] = WaveSurfer.create({
+          container: '#' + waveformdisplay_id,
+          scrollParent: true,
+          waveColor : 'OliveDrab',
+          minPxPerSec: 200,
+        });
+        wavesurfer[self.clip_id].load(audioURL);
+      }
+      self.clip_id++;
+
+      resolve("OK");
+    });//promise
 }
 
 /**
