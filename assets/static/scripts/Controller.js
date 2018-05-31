@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 function Controller(prompts, 
+                    profile,
                     view, 
-                    profile, 
                     audio,
                     recording_timeout,
                     recording_stop_delay,
@@ -133,8 +133,8 @@ function Controller(prompts,
         { name: 'recordedmorethancurrentmaxprompts', from: 'maxpromptsrecorded', to: 'displaymessage' },
         { name: 'recordedmorethancurrentmaxprompts', from: 'midpromptsrecorded', to: 'displaymessage' },
 
-        { name: 'uploadclicked',        from: 'midpromptsrecorded',     to: 'uploading' },
-        { name: 'donesubmission',       from: 'uploading',           to: 'nopromptsrecorded' },
+        { name: 'uploadclicked',        from: 'midpromptsrecorded',    to: 'uploading' },
+        { name: 'donesubmission',       from: 'uploading',             to: 'nopromptsrecorded' },
       ],
 
       // javascript-state-machine does not like underscores in method or state names...
@@ -290,7 +290,7 @@ function Controller(prompts,
      * delete button of any one recorded prompt
     */
     view.delete_clicked.onclick = function() { 
-      // prompt_count has already been gets decremented in view call to prompts.movePrompt2Stack
+      // prompt_count has already been decremented in view call to prompts.movePrompt2Stack
       if ( prompts.oneleft() ) {
          fsm.deleteclickedoneleft(); // at first prompt which means only one prompt left to delete
       } else {

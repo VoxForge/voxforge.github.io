@@ -44,6 +44,10 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 
 
 // need Google Chrome version > 58 for wavesurfer to work correctly
+
+// CPU throttling: enable: chrome://flags/#enable-experimental-web-platform-features
+got to performance tab and select 4x or 6x slowdown
+
 */
 
 'use strict';
@@ -145,30 +149,30 @@ var view;  // needs to be global so can be accessible to index.html
     } 
 
     // ### ANDROID #############################################################
-
-    // TODO troubleshooting sound recording issues on Android... seems like 
-    // scriptnode causes random audio crackles and dropouts on recordings on 
-    // low end Android v442 and v5 devices.  Will have to monitor and turn
-    // off visualization for lower end devices for now...
+    // research:
     // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
-/*
-    if ( platform.os.family.includes("Android") ) {
-        if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
-          max_numPrompts_selector = 20;
-          // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
-          // need higher buffersize to avoid audio breakup and glitches
-          // but VAD needs lower buffersize for accuracy; therefore disable VAD
-          audio_parms.vad.run = false; 
-        } else { // Android 5 and above
-          // TODO need to confirm that smaller buffer size not causing audio breakup/glitches
-          max_numPrompts_selector = 30;
 
-          audio_parms.vad.maxsilence = 1000; // detect longer silence period on Android
-          audio_parms.vad.minvoice = 125; // use shorter min voice on Android
-          audio_parms.audioNodebufferSize = 4096; // needs to be lower for VAD to work
+    // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
+    // need higher buffersize to avoid audio breakup and glitches, but
+    // VAD needs lower buffersize for accuracy; 
+    // 1. one option was to disable VAD, but then lose slience detection, etc.
+    // 2. chose another approach where we select largest audioNodebufferSize size,
+    // and use this accross all devices, and then split the buffer into smaller
+    // chunks that the VAD can digest... seeems to work much better.
+    if ( platform.os.family.includes("Android") ) {
+        // this was used before we just set audioNodebufferSize to largest size 
+        // possible, since latency is not a issue for this app...
+        //audio_parms.vad.maxsilence = 1000; // detect longer silence period on Android
+        //audio_parms.vad.minvoice = 125; // use shorter min voice on Android
+
+        if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
+          // the more prompts to display the more it cpu is uses on mobile devices.
+          max_numPrompts_selector = 10;
+        } else { // Android 5 and above
+          max_numPrompts_selector = 20;
         }
     }
-*/
+
     // #############################################################################
 
     const appversion = "0.2";
@@ -198,8 +202,8 @@ var view;  // needs to be global so can be accessible to index.html
     var audio = new Audio(audio_parms);
 
     var controller = new Controller(prompts, 
-                                    view, 
                                     profile, 
+                                    view, 
                                     audio,
                                     recording_timeout,
                                     recording_stop_delay,
