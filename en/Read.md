@@ -22,7 +22,7 @@ prompt_list_files:
   - id: "002"
     start: 594
     file_location: /en/prompts/002.html
-    number_of_prompts: 300
+    number_of_prompts: 299
     contains_promptid: false
     prefix: en
   - id: "003"
