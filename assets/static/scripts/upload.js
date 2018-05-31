@@ -88,7 +88,7 @@ function upload( prompts,
       .then(callWorker2createZipFile)
       .then(uploadZippedSubmission)
       .then(function (resolve, reject) {
-        resolve("OK");
+        resolve("OK"); // to resolve the returned promise
       });
     });
 
