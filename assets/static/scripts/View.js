@@ -18,7 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 function View (parms,
-               prompts)
+               prompts,
+               profile)
 {
     var self = this; // save context
 
@@ -26,7 +27,6 @@ function View (parms,
     this.displayWaveform = parms.displayWaveform;
 
     this.prompts = prompts;
-    this.profile = null;
 
     // buttons
     this.record = document.querySelector('.record');
@@ -165,7 +165,77 @@ function View (parms,
       prompts.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
       self.updateProgress();
     });
+
+    // ########################################################################
+
+    var p = profile.getProfileFromBrowserStorage();
+    if (p) {
+      View.update(p);    
+    }
 }
+
+/**
+* update user display from passed json object
+*/
+View.update = function (json_object) {
+    //Speaker Characteristics
+    $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
+    if (json_object.username) {
+      $('#anonymous_instructions_display').hide();
+    }
+    $('#gender').val( json_object.gender );
+    $('#age').val( json_object.age );
+
+    // TODO implied by the page the user is on... 
+    // $('#page_language').val( json_object.page_language );
+
+    $('#native_speaker').val( json_object.native_speaker );
+    if ( $('#native_speaker').val() === page_localized_yes )
+    {
+      $("#sub_dialect_display").show();
+    } else {
+      $("#first_language_display").show();
+    }
+    $('#first_language').val( json_object.first_language );
+    $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
+    $('#dialect').val( json_object.dialect );
+    $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
+    if ( $('#dialect').val() === page_localized_other )
+    {
+      $("#dialect_other_display").show();
+    }
+    $('#sub_dialect').val( json_object.dialect_other );
+    //Recording Information:
+    $('#microphone').val( json_object.microphone );
+    $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
+    if ( $('#microphone').val() === page_localized_other )
+    {
+      $("#microphone_other_display").show();
+    }
+
+    $('#recording_location').val( json_object.recording_location );
+    $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
+    if ( $('#recording_location').val() === page_localized_other )
+    {
+      $("#recording_location_other_display").show();
+    }
+    $('#background_noise').val( json_object.background_noise );
+    if ( $('#background_noise').val() === page_localized_yes )
+    {
+      $("#background_noise_display").show();
+    }
+    $('#noise_volume').val( json_object.noise_volume );
+    $('#noise_type').val( json_object.noise_type );
+    $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
+    if ( $('#noise_type').val() === page_localized_other )
+    {
+      $("#noise_type_other_display").show();
+    }
+    $('#license').val( json_object.license );
+    $('#ua_string').val( json_object.ua_string );
+}
+
+// ### METHODS #################################################################
 
 /** 
 * display upload to VoxForge server status to user
@@ -226,66 +296,7 @@ View.prototype.hideProfileInfo = function () {
     document.querySelector('.prompt_id').innerText = "";
 }
 
-/**
-* update user display from passed json object
-*/
-View.prototype.update = function (json_object) {
-    //Speaker Characteristics
-    $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
-    if (json_object.username) {
-      $('#anonymous_instructions_display').hide();
-    }
-    $('#gender').val( json_object.gender );
-    $('#age').val( json_object.age );
 
-    // TODO implied by the page the user is on... 
-    // $('#page_language').val( json_object.page_language );
-
-    $('#native_speaker').val( json_object.native_speaker );
-    if ( $('#native_speaker').val() === page_localized_yes )
-    {
-      $("#sub_dialect_display").show();
-    } else {
-      $("#first_language_display").show();
-    }
-    $('#first_language').val( json_object.first_language );
-    $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
-    $('#dialect').val( json_object.dialect );
-    $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
-    if ( $('#dialect').val() === page_localized_other )
-    {
-      $("#dialect_other_display").show();
-    }
-    $('#sub_dialect').val( json_object.dialect_other );
-    //Recording Information:
-    $('#microphone').val( json_object.microphone );
-    $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
-    if ( $('#microphone').val() === page_localized_other )
-    {
-      $("#microphone_other_display").show();
-    }
-
-    $('#recording_location').val( json_object.recording_location );
-    $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
-    if ( $('#recording_location').val() === page_localized_other )
-    {
-      $("#recording_location_other_display").show();
-    }
-    $('#background_noise').val( json_object.background_noise );
-    if ( $('#background_noise').val() === page_localized_yes )
-    {
-      $("#background_noise_display").show();
-    }
-    $('#noise_volume').val( json_object.noise_volume );
-    $('#noise_type').val( json_object.noise_type );
-    $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
-    if ( $('#noise_type').val() === page_localized_other )
-    {
-      $("#noise_type_other_display").show();
-    }
-    $('#license').val( json_object.license );
-    $('#ua_string').val( json_object.ua_string );
-}
 
 /**
 * set record, stop button display

@@ -23,33 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function Profile (view, appversion) {
   this.appversion = appversion;
 
-  /**
-  * get profile information from local storage and if it exists, return parsed
-  * JSON object, otherwise return null.
-  */
-  var getProfileFromLocalStorage = function () {
-      var retrievedObject = localStorage.getItem(page_language);
-      // boolean expression. Second part is evaluated only if left one is true. 
-      // therefore if retrievedObject is null, that gets returned
-      return retrievedObject && JSON.parse(retrievedObject);
-  }
-
   this.debug = {}; // must be before getProfileFromLocalStorage; otherwise will overwrite saved debug info
-
-  /**
-  * refresh displayed user information with info stored in offline storage.
-  * Note: not using cookies... no need to pass this info back to the server
-  * with each call (which is what cookies do...)
-  */
-  var parsedLocalStorageObject;
-  if ( parsedLocalStorageObject = getProfileFromLocalStorage() ) {
-      view.update(parsedLocalStorageObject);
-
-      this.sample_rate = parsedLocalStorageObject.sample_rate;
-      this.bit_depth = parsedLocalStorageObject.bit_depth;
-      this.channels = parsedLocalStorageObject.channels;
-      this.debug = parsedLocalStorageObject.debug;
-  }
 
   /**
   * make random string of length strlen, can override default characters to use
@@ -91,6 +65,40 @@ Profile.cleanUserInput = function (user_input) {
 /**
 * ### METHODS ##############################################
 */
+
+/**
+* Read HTML Form Data to convert profile data to hash (associative array)
+*/
+Profile.prototype.getProfileFromBrowserStorage = function () {
+  /**
+  * get profile information from local storage and if it exists, return parsed
+  * JSON object, otherwise return null.
+  */
+  function retrieve() {
+      var retrievedObject = localStorage.getItem(page_language);
+      // boolean expression. Second part is evaluated only if left one is true. 
+      // therefore if retrievedObject is null, that gets returned
+      return retrievedObject && JSON.parse(retrievedObject);
+  }
+
+  /**
+  * refresh displayed user information with info stored in offline storage.
+  * Note: not using cookies... no need to pass this info back to the server
+  * with each call (which is what cookies do...)
+  */
+  var parsedLocalStorageObject = retrieve();
+  if ( parsedLocalStorageObject ) {
+      this.sample_rate = parsedLocalStorageObject.sample_rate;
+      this.bit_depth = parsedLocalStorageObject.bit_depth;
+      this.channels = parsedLocalStorageObject.channels;
+      this.debug = parsedLocalStorageObject.debug;
+
+      return parsedLocalStorageObject;
+  } else {
+    return null;
+  }
+
+}
 
 /**
 * Read HTML Form Data to convert profile data to hash (associative array)

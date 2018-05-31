@@ -188,12 +188,12 @@ var view;  // needs to be global so can be accessible to index.html
     var prompts = new Prompts(max_numPrompts_selector,
                               num_prompts_to_trigger_upload); 
 
-    // needs to be global; so can be accessed by index.html
-    view = new View(view_parms,
-                    prompts); 
+    var profile = new Profile(appversion);
 
-    var profile = new Profile(view, 
-                              appversion);
+    // 'view' needs to be global so can be accessed by index.html
+    view = new View(view_parms,
+                    prompts,
+                    profile); 
 
     var audio = new Audio(audio_parms);
 
