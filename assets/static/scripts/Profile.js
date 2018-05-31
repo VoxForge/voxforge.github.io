@@ -420,8 +420,8 @@ Profile.prototype.CC0toTextArray = function () {
     var d = new Date();
     var year = d.getFullYear().toString();
     
-    // assuming that it makes not sense to mention FSF in a CC0 license since 
-    // there is no copyright...
+    license_array[i++] = 'CC0 - Creative Commons Public Domain Dedication\n\n';
+
     license_array[i++] = year + ' - VoxForge Speech Recording by: ' + this.getUserName() + '\n';
  
     license_array[i++] = '\nTo the extent possible under law, the person who associated CC0 with\n';
@@ -443,6 +443,8 @@ Profile.prototype.CC_BYtoTextArray = function () {
     var d = new Date();
     var year = d.getFullYear().toString();
 
+    license_array[i++] = 'CC BY - Creative Commons Attribution license\n\n';
+
     license_array[i++] = 'VoxForge Speech Recording (c) ' + year + ' by: ' + this.getUserName() + '\n';
 
     license_array[i++] = '\nThis Speech Recordingis licensed under a\n';
@@ -463,6 +465,8 @@ Profile.prototype.CC_BY_SAtoTextArray = function () {
     var d = new Date();
     var year = d.getFullYear().toString();
 
+    license_array[i++] = 'CC BY-SA - Creative Commons Attribution-ShareAlike license\n\n';
+
     license_array[i++] = 'VoxForge Speech Recording (c) ' + year + ' by: ' + this.getUserName() + '\n';
 
     license_array[i++] = '\nThis Speech Recording is licensed under a\n';
@@ -482,6 +486,8 @@ Profile.prototype.GPL_V3toTextArray = function () {
     var i=0;
     var d = new Date();
     var year = d.getFullYear().toString();
+
+    license_array[i++] = 'GPLv3 - GNU General Public License\n\n';
 
     license_array[i++] = 'VoxForge Speech Recording Copyright (C) ' + year + ' by: ' + this.getUserName() + '\n';
 
