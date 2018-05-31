@@ -46,9 +46,21 @@ function Controller(prompts,
         // silence...
         view.displayPrompt(prompts.getPromptId(), prompts.getPromptSentence());
 
-        audio.record( prompts.getPromptId(), prompts.lastone() )
+        if (view.displayVisualizer) {
+          visualize(view, audio.analyser);
+        }
+
+        audio.record( prompts.getPromptId() )
         .then(function(obj) {
+            // need call inside function so view context is available to displayAudioPlayer function
+            return view.displayAudioPlayer(obj);
+        })
+        .then(function(obj) {
+          // need call inside function so prompts context is available to setAudioCharacteristics function
           prompts.setAudioCharacteristics(obj);
+          if ( prompts.lastone() ) {
+            self.view.disableDeleteButtons();
+          }
         });
 
         rec_timeout_obj = setTimeout(function(){

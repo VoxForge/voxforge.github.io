@@ -120,16 +120,12 @@ var wavesurfer = [];
 * Class definition
 */
 function Audio (parms,
-                view, 
-                profile, 
-                prompts) 
+                profile) 
 {
     // 'self' used to save current context when calling function references
     var self = this;
 
     this.parms = parms;
-    this.view = view;
-    this.prompts = prompts;
     this.profile = profile;
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphone = null;
@@ -313,10 +309,6 @@ Audio.prototype.record = function (prompt_id, last_one) {
     this.processor.connect(this.audioCtx.destination);
     this.microphone.connect(this.analyser); 
 
-    if (this.view.displayVisualizer) {
-      visualize(this.view, this.analyser);
-    }
-
     // clears out audio buffer 
     audioworker.postMessage({
       command: 'start',
@@ -358,17 +350,6 @@ Audio.prototype.record = function (prompt_id, last_one) {
               * worker sends back the recorded data as an audio blob
               */
               case 'finished':
-                self.view.displayAudioPlayer(obj)
-                .then(function () {
-                  // need to disable delete after the last prompt waveform gets 
-                  // displayed on screen because of timing issues with display
-                  // message to upload and time it takes for waveform to display
-                  if ( last_one ) {
-                    self.view.disableDeleteButtons();
-                  }
-                });
-
-                //self.prompts.setAudioCharacteristics(obj);
                 resolve(obj);
               break;
 

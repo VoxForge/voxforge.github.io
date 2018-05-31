@@ -502,7 +502,7 @@ View.prototype.displayAudioPlayer = function (obj)
       }
       self.clip_id++;
 
-      resolve("OK");
+      resolve(obj); // return value on completion
     });//promise
 }
 
