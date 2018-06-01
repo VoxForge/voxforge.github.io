@@ -511,10 +511,13 @@ View.prototype.displayAudioPlayer = function (obj)
           minPxPerSec: 200,
         });
         wavesurfer[self.clip_id].load(audioURL);
+
+        wavesurfer[self.clip_id].on('ready', function () {
+          resolve(obj); // return value on completion
+        });
       }
       self.clip_id++;
-
-      resolve(obj); // return value on completion
+      
     });//promise
 }
 

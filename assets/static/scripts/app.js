@@ -129,7 +129,7 @@ var view;  // needs to be global so can be accessible to index.html
         run: true,
         // maxsilence: 1500, minvoice: 250, buffersize: 480,//  original values
         maxsilence: 250, // works well with linux; not so well on Android 4.4.2
-        minvoice: 250, 
+        minvoice: 350, 
         buffersize: 480,
       },
       ssd: { // simple silence detection parameters
@@ -178,7 +178,7 @@ var view;  // needs to be global so can be accessible to index.html
     const appversion = "0.2";
 
     const recording_timeout = 20000; // 20 seconds - silence detection should remove leading and trailing silence
-    const recording_stop_delay = 1000; // time between when stop button is clicks and app actually stops recording
+    const recording_stop_delay = 500; // time between when stop button is clicks and app actually stops recording
 
     // upload uses shadow DOM entries as database of audio... if browser does not have
     // enough time to process the last prompt, it will not be included in upload...

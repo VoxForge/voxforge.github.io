@@ -392,12 +392,17 @@ Prompts.prototype.toJsonString = function () {
 *
 */
 Prompts.prototype.setAudioCharacteristics = function (obj) {
-  this.audio_characteristics[obj.prompt_id] = {
-      no_trailing_silence : obj.no_trailing_silence,
-      no_speech : obj.no_speech,
-      clipping : obj.clipping,
-      too_soft : obj.too_soft,
-  };
+  var self = this;
+
+  return new Promise(function (resolve, reject) {
+    self.audio_characteristics[obj.prompt_id] = {
+        no_trailing_silence : obj.no_trailing_silence,
+        no_speech : obj.no_speech,
+        clipping : obj.clipping,
+        too_soft : obj.too_soft,
+    };
+    resolve(obj);
+  });//promise
 }
 /**
 * true when max number of prompts user wants to record is reached

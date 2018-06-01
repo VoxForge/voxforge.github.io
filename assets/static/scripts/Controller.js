@@ -31,6 +31,8 @@ function Controller(prompts,
 
     //  recording timeout object
     var rec_timeout_obj;
+    var promise_list = [];
+    var promise_index = 0;
 
     /**
     * 
@@ -38,7 +40,6 @@ function Controller(prompts,
     function recordAudio() {
         view.hideProfileInfo();
 
-        var prompt = prompts.getCurrentPromptLine();
         view.updateProgress();
 
         // only display prompt when user presses record so that they delay the 
@@ -50,25 +51,14 @@ function Controller(prompts,
           visualize(view, audio.analyser);
         }
 
-        audio.record( prompts.getPromptId() ) // records until stop clicks
-        .then(function(obj) {
-            // need call inside function so view context is available to 
-            // displayAudioPlayer function
-            return view.displayAudioPlayer(obj);
-        })
-        .then(function(obj) {
-          // need call inside function so prompts context is available to 
-          // setAudioCharacteristics function
-          prompts.setAudioCharacteristics(obj);
-          if ( prompts.lastone() ) {
-            self.view.disableDeleteButtons();
-            // fsm.lastrecordfinished();
-          }
-        });
-
         rec_timeout_obj = setTimeout(function(){
           fsm.recordingtimeout();
         }, recording_timeout);
+
+        promise_list[promise_index++] = 
+              audio.record( prompts.getPromptId() )
+              .then( view.displayAudioPlayer.bind(view) )
+              .then( prompts.setAudioCharacteristics.bind(prompts) );
     }
 
     /**
@@ -82,9 +72,12 @@ function Controller(prompts,
       profile.addProfile2LocalStorage();
       prompts.resetIndices();
       view.reset();
-      fsm.donesubmission();
+      promise_index=0;
+
       // reset random 3 digit characters for submission name
       profile = new Profile(view, appversion);
+
+      fsm.donesubmission();
     }
 
     view.setRSUButtonDisplay(true, false, false); 
@@ -93,6 +86,13 @@ function Controller(prompts,
     * ### Finite State Machine #####################################################
     *
     * see: https://github.com/jakesgordon/javascript-state-machine
+
+     on<TRANSITION> - convenience shorthand for onAfter<TRANSITION>
+     onAfter<TRANSITION> - fired after a specific TRANSITION completes
+
+     on<STATE> - convenience shorthand for onEnter<STATE>
+     onEnter<STATE> - fired when entering a specific STATE
+
     */
     var fsm = new StateMachine({
       init: 'nopromptsrecorded',
@@ -109,13 +109,8 @@ function Controller(prompts,
         { name: 'recordclickedltn',     from: 'midpromptsrecorded',  to: 'recordingmid' },
 
         { name: 'recordclickedlast',    from: 'midpromptsrecorded',  to: 'recordinglast' },
-        { name: 'stopclicked',          from: 'recordinglast',       to: 'waitingforlasttofinish'  },
-        { name: 'recordingtimeout',     from: 'recordinglast',       to: 'waitingforlasttofinish'  },
-
-        { name: 'lastrecordfinished',   from: 'waitingforlasttofinish',  to: 'displaymessage' },
-
-        { name: 'yesuploadmessage',     from: 'displaymessage',      to: 'uploading' },
-        { name: 'canceluploadmessage',  from: 'displaymessage',      to: 'maxpromptsrecorded' },
+        { name: 'stopclicked',          from: 'recordinglast',       to: 'maxpromptsrecorded'  },
+        { name: 'recordingtimeout',     from: 'recordinglast',       to: 'maxpromptsrecorded'  },
         { name: 'uploadclicked',        from: 'maxpromptsrecorded',  to: 'uploading' },
 
         { name: 'deleteclicked',        from: 'firstpromptrecorded', to: 'nopromptsrecorded'  },
@@ -123,17 +118,13 @@ function Controller(prompts,
         { name: 'deleteclickedoneleft', from: 'midpromptsrecorded',  to: 'firstpromptrecorded'  },
         { name: 'deleteclicked',        from: 'maxpromptsrecorded',  to: 'midpromptsrecorded'  },
 
-        // if user clicks delete before message for upload displays... but 
-        // delete button on last submission now gets hidden (see recordAudio function above)
-        { name: 'deleteclicked',        from: 'displaymessage',      to: 'displaymessage'  },
-
         { name: 'maxnumpromptsincreased', from: 'nopromptsrecorded',   to: 'nopromptsrecorded' },
         { name: 'maxnumpromptsincreased', from: 'firstpromptrecorded', to: 'firstpromptrecorded' },
         { name: 'maxnumpromptsincreased', from: 'midpromptsrecorded',  to: 'midpromptsrecorded' },
-        { name: 'maxnumpromptsincreased', from: 'maxpromptsrecorded',  to: 'promptsrecorded' },
+        { name: 'maxnumpromptsincreased', from: 'maxpromptsrecorded',  to: 'midpromptsrecorded' },
 
-        { name: 'recordedmorethancurrentmaxprompts', from: 'maxpromptsrecorded', to: 'displaymessage' },
-        { name: 'recordedmorethancurrentmaxprompts', from: 'midpromptsrecorded', to: 'displaymessage' },
+        { name: 'recordedmorethancurrentmaxprompts', from: 'maxpromptsrecorded', to: 'maxpromptsrecorded' },
+        { name: 'recordedmorethancurrentmaxprompts', from: 'midpromptsrecorded', to: 'midpromptsrecorded' },
 
         { name: 'uploadclicked',        from: 'midpromptsrecorded',    to: 'uploading' },
         { name: 'donesubmission',       from: 'uploading',             to: 'nopromptsrecorded' },
@@ -209,39 +200,14 @@ function Controller(prompts,
           view.disableDeleteButtons();
           view.setRSButtonDisplay(false, true);  
           //console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
-          recordAudio();
+          recordAudio(); 
         },
 
-        onRecordinglast: function() {
+        onRecordinglast: async function() {
           view.disableDeleteButtons();
           view.setRSButtonDisplay(false, true);  
+          recordAudio(); // should be blocking
           console.log('   *** onRecordinglast state: ' + this.state + " trans: " + this.transitions() );
-          recordAudio();
-        },
-
-        onWaitingforlasttofinish: function() { 
-          view.disableDeleteButtons(); 
-          view.setRSUButtonDisplay(false, false, false);
-          console.log('   *** onWaitforlasttofinish state: ' + this.state + " trans: " + this.transitions() );
-        },
-
-        onDisplaymessage: function() {
-          function messageToUpload () {
-              if (confirm(page_upload_message)) {
-                fsm.yesuploadmessage();
-              } else {
-                fsm.canceluploadmessage();
-              }
-          }
-
-          //console.log('   *** onDisplaymessage state: ' + this.state + " trans: " + this.transitions() );
-          view.disableDeleteButtons(); 
-          view.setRSUButtonDisplay(false, false, false);
-          // to give browser enough time to process the last audio recording
-          // TODO this should be blocking until last prompt is displayed in DOM
-          //setTimeout( function () {
-            messageToUpload();
-          //}, process_last_recording_delay); // TODO arbitrary delay does not work well with lower end devices, use a semaphore to indicate when audio processing is done
         },
 
         onUploading: function() { 
@@ -249,9 +215,14 @@ function Controller(prompts,
           view.setRSUButtonDisplay(false, false, false);
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
-          var allClips = document.querySelectorAll('.clip');
-          upload(prompts, profile, appversion, allClips)
-          .then(saveProfileAndReset);
+          // make sure all promises complete before trying to gather audio
+          // from shadow DOM before upload, otherwise will miss some stragglers...
+          Promise.all(promise_list)
+          .then(function() {
+            var allClips = document.querySelectorAll('.clip');
+            upload(prompts, profile, appversion, allClips)
+            .then(saveProfileAndReset);
+          });
         },
       }
     });
@@ -274,9 +245,9 @@ function Controller(prompts,
 
       // actual stopping of recording is delayed because some users hit it
       // early and cut off the end of their recording.
-      // !!!!!! setTimeout( function () {
+      setTimeout( function () {
         fsm.stopclicked(); 
-      // !!!!!! }, recording_stop_delay);
+      }, recording_stop_delay);
     }
 
     view.upload.onclick = function() {
