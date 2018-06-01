@@ -23,7 +23,7 @@ function Controller(prompts,
                     audio,
                     recording_timeout,
                     recording_stop_delay,
-                    process_last_recording_delay,
+//                   process_last_recording_delay,
                     appversion,)
 {
 
@@ -33,14 +33,11 @@ function Controller(prompts,
     var rec_timeout_obj;
 
     /**
-    * record audio - used in two states:
-    *    1. where less than total number of prompts to record (less than n), or 
-    *    2. last prompt
+    * 
     */
     function recordAudio() {
         view.hideProfileInfo();
 
-        //var prompt = prompts.getNextPrompt(); // increments prompt_count here
         var prompt = prompts.getCurrentPromptLine();
         view.updateProgress();
 
@@ -53,16 +50,19 @@ function Controller(prompts,
           visualize(view, audio.analyser);
         }
 
-        audio.record( prompts.getPromptId() )
+        audio.record( prompts.getPromptId() ) // records until stop clicks
         .then(function(obj) {
-            // need call inside function so view context is available to displayAudioPlayer function
+            // need call inside function so view context is available to 
+            // displayAudioPlayer function
             return view.displayAudioPlayer(obj);
         })
         .then(function(obj) {
-          // need call inside function so prompts context is available to setAudioCharacteristics function
+          // need call inside function so prompts context is available to 
+          // setAudioCharacteristics function
           prompts.setAudioCharacteristics(obj);
           if ( prompts.lastone() ) {
             self.view.disableDeleteButtons();
+            // fsm.lastrecordfinished();
           }
         });
 
@@ -109,8 +109,10 @@ function Controller(prompts,
         { name: 'recordclickedltn',     from: 'midpromptsrecorded',  to: 'recordingmid' },
 
         { name: 'recordclickedlast',    from: 'midpromptsrecorded',  to: 'recordinglast' },
-        { name: 'stopclicked',          from: 'recordinglast',       to: 'displaymessage'  },
-        { name: 'recordingtimeout',     from: 'recordinglast',       to: 'displaymessage'  },
+        { name: 'stopclicked',          from: 'recordinglast',       to: 'waitingforlasttofinish'  },
+        { name: 'recordingtimeout',     from: 'recordinglast',       to: 'waitingforlasttofinish'  },
+
+        { name: 'lastrecordfinished',   from: 'waitingforlasttofinish',  to: 'displaymessage' },
 
         { name: 'yesuploadmessage',     from: 'displaymessage',      to: 'uploading' },
         { name: 'canceluploadmessage',  from: 'displaymessage',      to: 'maxpromptsrecorded' },
@@ -213,8 +215,14 @@ function Controller(prompts,
         onRecordinglast: function() {
           view.disableDeleteButtons();
           view.setRSButtonDisplay(false, true);  
-          //console.log('   *** onRecordinglast state: ' + this.state + " trans: " + this.transitions() );
+          console.log('   *** onRecordinglast state: ' + this.state + " trans: " + this.transitions() );
           recordAudio();
+        },
+
+        onWaitingforlasttofinish: function() { 
+          view.disableDeleteButtons(); 
+          view.setRSUButtonDisplay(false, false, false);
+          console.log('   *** onWaitforlasttofinish state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onDisplaymessage: function() {
@@ -231,9 +239,9 @@ function Controller(prompts,
           view.setRSUButtonDisplay(false, false, false);
           // to give browser enough time to process the last audio recording
           // TODO this should be blocking until last prompt is displayed in DOM
-          setTimeout( function () {
+          //setTimeout( function () {
             messageToUpload();
-          }, process_last_recording_delay); 
+          //}, process_last_recording_delay); // TODO arbitrary delay does not work well with lower end devices, use a semaphore to indicate when audio processing is done
         },
 
         onUploading: function() { 
@@ -266,9 +274,9 @@ function Controller(prompts,
 
       // actual stopping of recording is delayed because some users hit it
       // early and cut off the end of their recording.
-      setTimeout( function () {
+      // !!!!!! setTimeout( function () {
         fsm.stopclicked(); 
-      }, recording_stop_delay);
+      // !!!!!! }, recording_stop_delay);
     }
 
     view.upload.onclick = function() {
@@ -289,6 +297,7 @@ function Controller(prompts,
      * using a dummy 'delete' div that is triggered by clicking 
      * delete button of any one recorded prompt
     */
+    // TODO should we be using an event trigger explicitly rather than a click event?
     view.delete_clicked.onclick = function() { 
       // prompt_count has already been decremented in view call to prompts.movePrompt2Stack
       if ( prompts.oneleft() ) {

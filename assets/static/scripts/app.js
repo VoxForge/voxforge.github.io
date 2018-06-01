@@ -178,7 +178,8 @@ var view;  // needs to be global so can be accessible to index.html
     const appversion = "0.2";
 
     const recording_timeout = 20000; // 20 seconds - silence detection should remove leading and trailing silence
-    const recording_stop_delay = 1000; 
+    const recording_stop_delay = 1000; // time between when stop button is clicks and app actually stops recording
+
     // upload uses shadow DOM entries as database of audio... if browser does not have
     // enough time to process the last prompt, it will not be included in upload...
     // need to at least wait for recording_stop_delay to complete before displaying
@@ -207,7 +208,7 @@ var view;  // needs to be global so can be accessible to index.html
                                     audio,
                                     recording_timeout,
                                     recording_stop_delay,
-                                    process_last_recording_delay,
+//                                    process_last_recording_delay,
                                     appversion);
 
 })(); // function context
