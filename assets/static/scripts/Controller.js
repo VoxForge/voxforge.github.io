@@ -100,15 +100,18 @@ function Controller(prompts,
         { name: 'recordclickedltn',     from: 'nopromptsrecorded',   to: 'recordingfirst' },
         { name: 'stopclicked',          from: 'recordingfirst',      to: 'firstpromptrecorded'  },
         { name: 'recordingtimeout',     from: 'recordingfirst',      to: 'firstpromptrecorded' }, 
+        { name: 'uploadclicked',        from: 'recordingfirst',      to: 'recordingfirst' }, // nothing happens if user click upload when recording
 
         { name: 'recordclickedltn',     from: 'firstpromptrecorded', to: 'recordingmid' },
         { name: 'stopclicked',          from: 'recordingmid',        to: 'midpromptsrecorded'  },
         { name: 'recordingtimeout',     from: 'recordingmid',        to: 'midpromptsrecorded' }, 
+        { name: 'uploadclicked',        from: 'recordingmid',        to: 'recordingmid' }, // nothing happens if user click upload when recording
         { name: 'recordclickedltn',     from: 'midpromptsrecorded',  to: 'recordingmid' },
 
         { name: 'recordclickedlast',    from: 'midpromptsrecorded',  to: 'recordinglast' },
         { name: 'stopclicked',          from: 'recordinglast',       to: 'maxpromptsrecorded'  },
         { name: 'recordingtimeout',     from: 'recordinglast',       to: 'maxpromptsrecorded'  },
+        { name: 'uploadclicked',        from: 'recordinglast',       to: 'recordinglast' }, // nothing happens if user click upload when recording
         { name: 'uploadclicked',        from: 'maxpromptsrecorded',  to: 'uploading' },
 
         { name: 'deleteclicked',        from: 'firstpromptrecorded', to: 'nopromptsrecorded'  },
