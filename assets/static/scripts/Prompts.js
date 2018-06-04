@@ -20,12 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * ### Contructor ##############################################
 */
-function Prompts(max_numPrompts_selector, num_prompts_to_trigger_upload) {
+function Prompts(parms) {
     // this value triggers the display of the upload button and upload 
     // windows.alert
-    this.max_num_prompts = num_prompts_to_trigger_upload;
+    this.max_num_prompts = parms.num_prompts_to_trigger_upload;
     // this is used by View class
-    this.max_numPrompts_selector = max_numPrompts_selector;
+    this.max_numPrompts_selector = parms.max_numPrompts_selector;
     // list of prompts to be recorded by user; iniitlaized in convertPromptDataToArray
     this.list = [];
 

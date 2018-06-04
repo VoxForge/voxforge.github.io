@@ -21,8 +21,7 @@ function Controller(prompts,
                     profile,
                     view, 
                     audio,
-                    recording_timeout,
-                    recording_stop_delay,
+                    parms,
                     appversion,)
 {
 
@@ -52,7 +51,7 @@ function Controller(prompts,
 
         rec_timeout_obj = setTimeout(function(){
           fsm.recordingtimeout();
-        }, recording_timeout);
+        }, parms.recording_timeout);
 
         promise_list[promise_index++] = 
               audio.record( prompts.getPromptId() )
@@ -262,7 +261,7 @@ function Controller(prompts,
       // early and cut off the end of their recording.
       setTimeout( function () {
         fsm.stopclicked(); 
-      }, recording_stop_delay);
+      }, parms.recording_stop_delay);
     }
 
     view.upload.onclick = function() {

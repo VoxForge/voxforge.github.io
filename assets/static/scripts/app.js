@@ -112,25 +112,28 @@ var view;  // needs to be global so can be accessible to index.html
       window.alert( page_browser_support.no_edgeSupport_message );         
     }
 
-    // corresponds to the maximum number of prompts that a user can select from the 
-    // drop-down menu selector;  Changes based on type of device being used.
-    var max_numPrompts_selector = 50;
-    //var num_prompts_to_trigger_upload = 10; // user can upload anytime after recording 10 prompts
-    var num_prompts_to_trigger_upload = 3; // debug
+    // ### PARMS ###############################################################
+  
+    var prompt_parms = {
+      // corresponds to the maximum number of prompts that a user can select from the 
+      // drop-down menu selector;  Changes based on type of device being used.
+      max_numPrompts_selector: 50,
+      //var num_prompts_to_trigger_upload = 10; // user can upload anytime after recording 10 prompts
+      num_prompts_to_trigger_upload: 3, // debug
+    }
 
-    // buffer size is in units of sample-frames. If specified, the bufferSize 
-    // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
     var audio_parms = {
       //audioNodebufferSize: undefined, // let device decide appropriate buffer size
       audioNodebufferSize: 16384, // debug
-
       bitDepth:  '32bit-float', // 16 or 32bit-float
       vad: { // Voice Activity Detection parameters
         run: true,
         // maxsilence: 1500, minvoice: 250, buffersize: 480,//  original values
-        maxsilence: 250, // works well with linux; not so well on Android 4.4.2
-        minvoice: 350, 
-        buffersize: 480,
+        maxsilence: 350, 
+        minvoice: 250, 
+        // buffer size is in units of sample-frames. If specified, the bufferSize 
+        // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
+        buffersize: 480, // don't change; current 'chunking' of of sending audio to VAD assumes this buffeersize
       },
       ssd: { // simple silence detection parameters
         duration: 1000, // duration threshhold for silence detection (in milliseconds)
@@ -138,9 +141,15 @@ var view;  // needs to be global so can be accessible to index.html
       },
       blockDisplayOfRecordButton: false,
     }
+
     var view_parms = {
       displayWaveform: true,
       displayVisualizer: true,
+    }
+
+    var controller_parms = {
+      recording_timeout: 20000, // 20 seconds - silence detection should remove leading and trailing silence
+      recording_stop_delay: 500, // time between when stop button is clicks and app actually stops recording
     }
 
     // FF on (all platforms) can record 32-bit float, but cannot play back 32-bit 
@@ -163,16 +172,16 @@ var view;  // needs to be global so can be accessible to index.html
     if ( platform.os.family.includes("Android") ) {
         // this was used before we just set audioNodebufferSize to largest size 
         // possible, since latency is not a issue for this app...
-        //audio_parms.vad.maxsilence = 1000; // detect longer silence period on Android
-        //audio_parms.vad.minvoice = 125; // use shorter min voice on Android
-
+        audio_parms.vad.maxsilence = 500; // detect longer silence period on Android
+        audio_parms.vad.minvoice = 125; // use shorter min voice on Android
         audio_parms.blockDisplayOfRecordButton = true;
+        controller_parms.recording_stop_delay = 750;
 
         if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
           // the more prompts to display the more it cpu is uses on mobile devices.
-          //max_numPrompts_selector = 10;
+          //prompts.max_numPrompts_selector = 10;
         } else { // Android 5 and above
-          //max_numPrompts_selector = 20;
+          //prompts.max_numPrompts_selector = 20;
         }
     }
 
@@ -180,21 +189,10 @@ var view;  // needs to be global so can be accessible to index.html
 
     const appversion = "0.2";
 
-    const recording_timeout = 20000; // 20 seconds - silence detection should remove leading and trailing silence
-    const recording_stop_delay = 500; // time between when stop button is clicks and app actually stops recording
-
-    // upload uses shadow DOM entries as database of audio... if browser does not have
-    // enough time to process the last prompt, it will not be included in upload...
-    // need to at least wait for recording_stop_delay to complete before displaying
-    // upload message, because upload() reads from DOM and if not finished 
-    // recording, it will miss last recording.
-    const process_last_recording_delay = recording_stop_delay + 400; 
-
     /**
     * Instantiate classes
     */
-    var prompts = new Prompts(max_numPrompts_selector,
-                              num_prompts_to_trigger_upload); 
+    var prompts = new Prompts(prompt_parms); 
 
     var profile = new Profile(appversion);
 
@@ -209,8 +207,7 @@ var view;  // needs to be global so can be accessible to index.html
                                     profile, 
                                     view, 
                                     audio,
-                                    recording_timeout,
-                                    recording_stop_delay,
+                                    controller_parms,
                                     appversion);
 
 })(); // function context
