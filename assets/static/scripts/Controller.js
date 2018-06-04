@@ -159,14 +159,15 @@ function Controller(prompts,
 
         onFirstpromptrecorded: function() {
           view.enableDeleteButtons();
-
-        //how to get it so that record button stays off until after recording is done
-        //put setRSButtonDisplay in promise chain above...
-          //promise_list[promise_index++]
-          //.then(function() {
-              view.setRSButtonDisplay(true, false);
-          //});
-
+          if (audio.parms.blockDisplayOfRecordButton) {
+              //block display of record button stays off until after recording is done
+              Promise.all(promise_list)
+              .then(function() {
+                 view.setRSButtonDisplay(true, false);
+              });
+          } else { // allows recording even though waveform display not completed
+              view.setRSButtonDisplay(true, false); 
+          }
           // deviceEventBufferSize only available after first recording
           if ( ! updatedDeviceEventBufferSize ) {
             profile.setAudioPropertiesAndContraints( 
@@ -181,7 +182,15 @@ function Controller(prompts,
 
         onMidpromptsrecorded: function() { 
           view.enableDeleteButtons();
-          view.setRSButtonDisplay(true, false);   
+          if (audio.parms.blockDisplayOfRecordButton) {
+              //block display of record button stays off until after recording is done
+              Promise.all(promise_list)
+              .then(function() {
+                 view.setRSButtonDisplay(true, false);   
+              });
+          } else { // allows recording even though waveform display not completed
+             view.setRSButtonDisplay(true, false); 
+          }
           //console.log('   *** onMidpromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
@@ -221,7 +230,8 @@ function Controller(prompts,
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
           // make sure all promises complete before trying to gather audio
-          // from shadow DOM before upload, otherwise will miss some stragglers...
+          // from shadow DOM before upload, otherwise will miss some audio 
+          // recordings...
           Promise.all(promise_list)
           .then(function() {
             var allClips = document.querySelectorAll('.clip');

@@ -135,7 +135,8 @@ var view;  // needs to be global so can be accessible to index.html
       ssd: { // simple silence detection parameters
         duration: 1000, // duration threshhold for silence detection (in milliseconds)
         amplitude: 0.02, // amplitude threshold for silence detection
-      }
+      },
+      blockDisplayOfRecordButton: false,
     }
     var view_parms = {
       displayWaveform: true,
@@ -164,6 +165,8 @@ var view;  // needs to be global so can be accessible to index.html
         // possible, since latency is not a issue for this app...
         //audio_parms.vad.maxsilence = 1000; // detect longer silence period on Android
         //audio_parms.vad.minvoice = 125; // use shorter min voice on Android
+
+        audio_parms.blockDisplayOfRecordButton = true;
 
         if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
           // the more prompts to display the more it cpu is uses on mobile devices.
@@ -208,7 +211,6 @@ var view;  // needs to be global so can be accessible to index.html
                                     audio,
                                     recording_timeout,
                                     recording_stop_delay,
-//                                    process_last_recording_delay,
                                     appversion);
 
 })(); // function context
