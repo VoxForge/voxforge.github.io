@@ -323,21 +323,40 @@ View.prototype.setRSUButtonDisplay = function (record, stop, upload) {
 }
 
 /**
-* hide all delete buttons
+* hide all dynamically created delete buttons
 */
 View.prototype.disableDeleteButtons = function () {
     $('.delete').prop('disabled', true);
 }
 
 /**
-* show all delete buttons
+* show all  dynamically created delete buttons
 */
 View.prototype.enableDeleteButtons = function () {
     $('.delete').prop('disabled', false);
 }
 
 /**
+* hide all  dynamically created play buttons
+* disable does not seem to work with WaveSurfer
+*/
+View.prototype.hidePlayButtons = function () {
+    console.log("disablePlayButtons");
+    $('.play').hide();;
+}
+
+/**
+* show all  dynamically created play buttons
+* TODO disable does not seem to work with WaveSurfer
+*/
+View.prototype.showPlayButtons = function () {
+    console.log("enablePlayButtons");
+    $('.play').show();
+}
+
+/**
 * hide prompt display
+* TODO enable does not seem to work with WaveSurfer
 */
 View.prototype.hidePromptDisplay = function () {
     $('.info-display').hide();
@@ -454,7 +473,7 @@ View.prototype.displayAudioPlayer = function (obj)
       // playbutton inside wavesurfer display
       var button_display_id = "button_" + prompt_id;
       var button = document.createElement(button_display_id);
-      button.className = "btn btn-primary";
+      button.className = "play btn btn-primary";
       button.textContent = 'Play'; 
       button.setAttribute("onclick", "wavesurfer[" + self.clip_id + "].playPause()");
       var i = document.createElement('i');

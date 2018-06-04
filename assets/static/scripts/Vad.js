@@ -176,8 +176,6 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, buffers_index, chunk
                     " chunk_index: " + chunk_index);
         self.speechstart_index = buffers_index;
         self.first_speak = false;
-
-
       }
     }
 

@@ -160,6 +160,7 @@ function Controller(prompts,
 
         onFirstpromptrecorded: function() {
           view.enableDeleteButtons();
+          view.showPlayButtons();
           if (audio.parms.blockDisplayOfRecordButton) {
               //block display of record button stays off until after recording is done
               Promise.all(promise_list)
@@ -183,6 +184,7 @@ function Controller(prompts,
 
         onMidpromptsrecorded: function() { 
           view.enableDeleteButtons();
+          view.showPlayButtons();
           if (audio.parms.blockDisplayOfRecordButton) {
               //block display of record button stays off until after recording is done
               Promise.all(promise_list)
@@ -199,6 +201,7 @@ function Controller(prompts,
         // continue, or delete then upload
         onMaxpromptsrecorded: function() { 
           view.enableDeleteButtons();
+          view.showPlayButtons();
           view.setRSUButtonDisplay(false, false, true);
           //console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
         },
@@ -213,6 +216,7 @@ function Controller(prompts,
 
         onRecordingmid: function() { 
           view.disableDeleteButtons();
+          view.hidePlayButtons();
           view.setRSButtonDisplay(false, true);  
           //console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
           recordAudio(); 
@@ -220,6 +224,7 @@ function Controller(prompts,
 
         onRecordinglast: async function() {
           view.disableDeleteButtons();
+          view.hidePlayButtons();
           view.setRSButtonDisplay(false, true);  
           recordAudio(); // should be blocking
           console.log('   *** onRecordinglast state: ' + this.state + " trans: " + this.transitions() );
@@ -227,6 +232,7 @@ function Controller(prompts,
 
         onUploading: function() { 
           view.disableDeleteButtons();
+          view.hidePlayButtons();
           view.setRSUButtonDisplay(false, false, false);
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
