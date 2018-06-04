@@ -167,9 +167,9 @@ var view;  // needs to be global so can be accessible to index.html
 
         if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
           // the more prompts to display the more it cpu is uses on mobile devices.
-          max_numPrompts_selector = 10;
+          //max_numPrompts_selector = 10;
         } else { // Android 5 and above
-          max_numPrompts_selector = 20;
+          //max_numPrompts_selector = 20;
         }
     }
 

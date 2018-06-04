@@ -408,18 +408,6 @@ Profile.prototype.setDebugValues = function (obj) {
 }
 
 /**
-*/
-Profile.prototype.addDebugValue = function (key, value) {
-   this.debug[key] = value;
-}
-/**
-*
-*/
-Profile.prototype.updateEventBufferSize = function (event_buffer_size) {
-    this.debug["event_buffer_size"] = event_buffer_size; // actual buffer size set by device
-}
-
-/**
 * CC0 1.0 license to array
 */
 Profile.prototype.CC0toTextArray = function () {

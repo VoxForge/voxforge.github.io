@@ -23,7 +23,6 @@ function Controller(prompts,
                     audio,
                     recording_timeout,
                     recording_stop_delay,
-//                   process_last_recording_delay,
                     appversion,)
 {
 
@@ -153,14 +152,20 @@ function Controller(prompts,
 
         // #####################################################################
         // Static States
-        onNopromptsrecorded: function() { 
+        onNopromptsrecorded: function() {
           view.setRSUButtonDisplay(true, false, false);
           //console.log('   *** onNopromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onFirstpromptrecorded: function() {
           view.enableDeleteButtons();
-          view.setRSButtonDisplay(true, false);
+
+        //how to get it so that record button stays off until after recording is done
+        //put setRSButtonDisplay in promise chain above...
+          //promise_list[promise_index++]
+          //.then(function() {
+              view.setRSButtonDisplay(true, false);
+          //});
 
           // deviceEventBufferSize only available after first recording
           if ( ! updatedDeviceEventBufferSize ) {

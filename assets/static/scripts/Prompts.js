@@ -34,7 +34,7 @@ function Prompts(max_numPrompts_selector, num_prompts_to_trigger_upload) {
     this.index = 0; // pointer to position in prompt list array
     this.prompt_count = 0; // number of prompts user read
     this.prompts_recorded = []; // list of prompts that have been recorded
-    this.audio_characteristics = {}; // hash of audio characteritics of recroded audio; indexed by promptID
+    this.audio_characteristics = {}; // hash of audio characteritics of recorded audio; indexed by promptID
     this.prompt_stack = []; // stack; makes it easier to add deleted elements for re-record
     this.current_promptLine = null; // need to keep track of current prompt since no longer tracking index
 
