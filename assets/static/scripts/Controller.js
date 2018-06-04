@@ -72,8 +72,7 @@ function Controller(prompts,
       view.reset();
       promise_index=0;
 
-      // reset random 3 digit characters for submission name
-      profile = new Profile(view, appversion);
+      profile.updateRandomStrings();
 
       fsm.donesubmission();
     }

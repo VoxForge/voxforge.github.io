@@ -20,28 +20,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Class declaration
 */
-function Profile (view, appversion) {
+function Profile (appversion) {
   this.appversion = appversion;
+ 
+  this.debug = {};
 
-  this.debug = {}; // must be before getProfileFromLocalStorage; otherwise will overwrite saved debug info
+  this.suffix = Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
+  this.randomDigits = Profile.makeRandString (10,'1234567890');
+}
 
-  /**
-  * make random string of length strlen, can override default characters to use
-  * in random string
-  *
-  * see: https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
-  */
-  function makeRandString(strlen, possible) {
+
+/**
+* make random string of length strlen, can override default characters to use
+* in random string
+*
+* see: https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+*/
+Profile.makeRandString = function (strlen, possible)  {
     var text = "";
 
     for (var i = 0; i < strlen; i++)
       text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
-  }
-
-  this.suffix = makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
-  this.randomDigits = makeRandString (10,'1234567890');
 }
 
 /**
@@ -65,6 +66,14 @@ Profile.cleanUserInput = function (user_input) {
 /**
 * ### METHODS ##############################################
 */
+
+/**
+*
+*/
+Profile.prototype.updateRandomStrings = function () {
+  this.suffix = Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
+  this.randomDigits = Profile.makeRandString (10,'1234567890');
+}
 
 /**
 * Read HTML Form Data to convert profile data to hash (associative array)
