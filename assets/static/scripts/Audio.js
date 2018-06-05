@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 var audioworker = new Worker('/assets/static/scripts/AudioWorker.js');
 
 /**
-* if page reloaded kill background worker threads before page reload
+* if page reloaded kill background worker threads oldgain page reload
 * to prevent zombie worker threads in FireFox
 */
 $( window ).unload(function() {
@@ -134,6 +134,8 @@ function Audio (parms)
     this.processor = undefined;  
     this.mediaStreamOutput = null;
     this.analyser = null;
+    this.gain_minValue = -3.4; // most-negative-single-float	Approximately -3.4028235e38
+    this.gain_maxValue = 3.4; // 	most-positive-single-float	Approximately 3.4028235e38
 
     /**
     * Older browsers might not implement mediaDevices at all, so we set an empty 
@@ -229,12 +231,17 @@ function Audio (parms)
       to pick a good buffer size to balance between latency and audio quality.
             -but-
       But VAD does not work well enough with Android 4.4.2 default buffer size of
-      16384, so chunk up audio before sending to VAD
+      16384, so chunk up audio oldgain sending to VAD
+
+      auto gain adjust:
+      see: https://robwu.nl/s/mediasource-change-volume.html
 */
+      self.gainNode = self.audioCtx.createGain();
       self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize , 1, 1);
       self.analyser = self.audioCtx.createAnalyser();
       self.mediaStreamOutput = self.audioCtx.destination;
 
+      self.gainNode.channelCount = 1;
       self.processor.channelCount = 1;
       self.microphone.channelCount = 1;
       self.analyser.channelCount = 1;
@@ -320,9 +327,10 @@ Audio.prototype.record = function (prompt_id, last_one) {
     // but this is only relevant if you are trying to display realtime wavform
     // in a vuew meter or something lie that.
     // see: https://stackoverflow.com/questions/47380352/webaudio-analyser-not-returning-any-data
-    this.microphone.connect(this.processor); 
+    this.microphone.connect(this.gainNode); 
+    this.gainNode.connect(this.processor); 
+    this.gainNode.connect(this.analyser); 
     this.processor.connect(this.audioCtx.destination);
-    this.microphone.connect(this.analyser); 
 
     // clears out audio buffer 
     audioworker.postMessage({
@@ -364,6 +372,39 @@ Audio.prototype.record = function (prompt_id, last_one) {
               * worker sends back the recorded data as an audio blob
               */
               case 'finished':
+                // TODO save gain level for future recordings
+                // TODO update Prompts.json with gain level for each submission, 
+                // since adjustments are made dynamically
+
+                // chainging gain also increases noise in what were silence portions
+                // and this messes up VAD
+
+                // tells user that audio is too loud or soft, adjusts
+                // gain (volume) up or down, then tells them to delete the 
+                // prompt and re-record at new gain level
+                var oldgain = self.gainNode.gain.value;
+                var newgain;
+                if (obj.clipping) {
+                   // reduce volume
+                  newgain = Math.max(self.gainNode.gain.value * 
+                      self.parms.gain_decrement_factor, self.gain_minValue);
+                  self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+                } else if (obj.too_soft) {
+                  // increase volume
+                   newgain = Math.min(self.gainNode.gain.value * 
+                      self.parms.gain_increment_factor, self.gain_maxValue);
+                  self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+                } else if (obj.no_speech) {
+                  // increase max volume
+                  newgain = Math.min(self.gainNode.gain.value * 
+                      self.parms.gain_max_increment_factor, self.gain_maxValue);
+                  self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+                }
+                if (obj.clipping || obj.too_soft || obj.no_speech) {
+                  console.log ("gain changed from: " + oldgain + " to: " + newgain);
+                  self.debugValues.gainNode_gain_value = newgain;
+                }
+
                 resolve(obj);
               break;
 

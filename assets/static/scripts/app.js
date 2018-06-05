@@ -131,15 +131,16 @@ var view;  // needs to be global so can be accessible to index.html
         // maxsilence: 1500, minvoice: 250, buffersize: 480,//  original values
         maxsilence: 350, 
         minvoice: 250, 
-        // buffer size is in units of sample-frames. If specified, the bufferSize 
-        // must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
         buffersize: 480, // don't change; current 'chunking' of of sending audio to VAD assumes this buffeersize
       },
       ssd: { // simple silence detection parameters
         duration: 1000, // duration threshhold for silence detection (in milliseconds)
         amplitude: 0.02, // amplitude threshold for silence detection
       },
-      blockDisplayOfRecordButton: false,
+      blockDisplayOfRecordButton: false, // on slower devices, allowing user to record while display is still working can cause dropout/scratches
+      gain_increment_factor: 1.25, // speech detected, but volume too low, use this factor to increase volume
+      gain_max_increment_factor: 2.0, // no speech detected, assume volume set really low, double volume
+      gain_decrement_factor: 0.75, // if clipping, reduce volume
     }
 
     var view_parms = {
@@ -172,8 +173,8 @@ var view;  // needs to be global so can be accessible to index.html
     if ( platform.os.family.includes("Android") ) {
         // this was used before we just set audioNodebufferSize to largest size 
         // possible, since latency is not a issue for this app...
-        audio_parms.vad.maxsilence = 500; // detect longer silence period on Android
-        audio_parms.vad.minvoice = 75; // use shorter min voice on Android
+        audio_parms.vad.maxsilence = 650; // detect longer silence period on Android
+        audio_parms.vad.minvoice = 75; // use shorter min voice threshold period on Android
         audio_parms.blockDisplayOfRecordButton = true;
         controller_parms.recording_stop_delay = 750;
 

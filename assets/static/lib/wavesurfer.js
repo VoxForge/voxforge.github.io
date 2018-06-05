@@ -1119,8 +1119,14 @@ WaveSurfer.WebAudio = {
         //adjust for old browsers.
         this.source.start = this.source.start || this.source.noteGrainOn;
         this.source.stop = this.source.stop || this.source.noteOff;
-
-        this.source.playbackRate.value = this.playbackRate;
+        // !!!!!!
+        //this.source.playbackRate.value = this.playbackRate;
+        // see: https://github.com/katspaugh/wavesurfer.js/pull/1303/commits/638f028d69e0c062cacacf7c10a0472a9dcac7a1
+        this.source.playbackRate.setValueAtTime(
+            this.playbackRate,
+            this.ac.currentTime
+        );
+        // !!!!!!
         this.source.buffer = this.buffer;
         this.source.connect(this.analyser);
     },
