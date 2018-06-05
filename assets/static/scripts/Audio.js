@@ -86,6 +86,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * and:  http://wiki.audacityteam.org/wiki/Dither
 * or it could simply be that my low end smartphone does not have neough 
 * processing power and the result is scratches and pops...
+
+
+* volume slider demo
+* view-source:https://robwu.nl/s/mediasource-change-volume.html
 */
 
 /**
@@ -225,10 +229,8 @@ function Audio (parms)
       to pick a good buffer size to balance between latency and audio quality.
             -but-
       But VAD does not work well enough with Android 4.4.2 default buffer size of
-      16384, so set Android 4.4.2 to 8192
-      TODO test with with other versions of Android
+      16384, so chunk up audio before sending to VAD
 */
-      // TODO changing buffersize does not seem to actually work
       self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize , 1, 1);
       self.analyser = self.audioCtx.createAnalyser();
       self.mediaStreamOutput = self.audioCtx.destination;
@@ -352,7 +354,8 @@ Audio.prototype.record = function (prompt_id, last_one) {
 
     return new Promise(function (resolve, reject) {
       // reply from audio worker
-      // creates new function everytime record is pressed
+      // creates new function every time record is pressed
+      // why? needed a promise to resolve so could create promise chain in call to audio record
       audioworker.onmessage = function(returnObj) { 
           var obj = returnObj.data.obj;
           switch (returnObj.data.status) {

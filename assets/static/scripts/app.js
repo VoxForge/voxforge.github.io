@@ -173,7 +173,7 @@ var view;  // needs to be global so can be accessible to index.html
         // this was used before we just set audioNodebufferSize to largest size 
         // possible, since latency is not a issue for this app...
         audio_parms.vad.maxsilence = 500; // detect longer silence period on Android
-        audio_parms.vad.minvoice = 125; // use shorter min voice on Android
+        audio_parms.vad.minvoice = 75; // use shorter min voice on Android
         audio_parms.blockDisplayOfRecordButton = true;
         controller_parms.recording_stop_delay = 750;
 

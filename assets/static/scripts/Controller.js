@@ -262,7 +262,6 @@ function Controller(prompts,
     view.stop.onclick = function() {
       clearTimeout(rec_timeout_obj);
       var start =  Date.now();
-      //console.log("stop clicked" );
       view.hidePromptDisplay();
 
       // actual stopping of recording is delayed because some users hit it

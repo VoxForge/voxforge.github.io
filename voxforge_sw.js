@@ -54,9 +54,10 @@ var urlsToCache = [
   PATH + 'lib/wavesurfer.js',
   PATH + 'lib/webrtc_vad.js',
 
+  PATH + 'scripts/app.js',
   PATH + 'scripts/Audio.js',
-  PATH + 'scripts/Controller.js',
   PATH + 'scripts/AudioWorker.js',
+  PATH + 'scripts/Controller.js',
   PATH + 'scripts/processSavedSubmissions.js',
   PATH + 'scripts/Profile.js',
   PATH + 'scripts/Prompts.js',
@@ -65,8 +66,6 @@ var urlsToCache = [
   PATH + 'scripts/Vad.js',
   PATH + 'scripts/View.js',
   PATH + 'scripts/ZipWorker.js',
-
-  PATH + 'scripts/app.js',
 
   PATH + 'styles/app.css',
   PATH + 'styles/jquery.mobile-1.4.5.css',
