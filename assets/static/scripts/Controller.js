@@ -275,7 +275,8 @@ function Controller(prompts,
       fsm.uploadclicked();
     }
 
-    view.maxnumpromptschanged.onclick = function() {
+    //view.maxnumpromptschanged.onclick = function() {
+    view.maxnumpromptschanged.onChange = function() {
       if ( prompts.maxnumpromptsincreased() ) {
         fsm.maxnumpromptsincreased();
       } else { 

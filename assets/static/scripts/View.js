@@ -162,7 +162,8 @@ function View (parms,
     * updates the current number of prompts that the user selected from dropdown
 
     */
-    $('#max_num_prompts').click(function () { 
+    //$('#max_num_prompts').click(function () { 
+    $('#max_num_prompts').change(function () { 
       prompts.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
       self.updateProgress();
     });
