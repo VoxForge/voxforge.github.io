@@ -73,7 +73,7 @@ http://darkroommastering.com/blog/dithering-explained
 
     if (this.bitDepth == 16) {
       // array of twos-complement 16-bit signed integers in the platform byte order.
-      // If control over byte order is needed, use DataView instead.
+      // If control over byte order is needed, use DataView...
       var view = new DataView(new ArrayBuffer(len * 2));
 
       var offset = 0;
