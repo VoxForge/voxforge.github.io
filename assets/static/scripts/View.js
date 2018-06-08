@@ -341,8 +341,6 @@ View.prototype.enableDeleteButtons = function () {
 * hide all  dynamically created play buttons
 * disable does not seem to work with WaveSurfer
 */
-View.prototype.hidePlayButtons = function () {
-    console.log("disablePlayButtons");
     $('.play').hide();;
 }
 
@@ -351,7 +349,6 @@ View.prototype.hidePlayButtons = function () {
 * TODO disable does not seem to work with WaveSurfer
 */
 View.prototype.showPlayButtons = function () {
-    console.log("enablePlayButtons");
     $('.play').show();
 }
 
