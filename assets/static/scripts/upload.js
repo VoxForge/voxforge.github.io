@@ -364,7 +364,10 @@ function processWorkerEventMessage(workertype, returnObj) {
                 page_alert_message.uploaded_message  + "\n    " +
                 filesUploaded.join("\n    ");
         console.info(workertype + ": " + m);
-        window.alert(m);
+        Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
+        .then(function() {
+          window.alert(m);
+        });
         break;
 
       case 'noneUploaded': // files saved to browser storage
@@ -381,7 +384,10 @@ function processWorkerEventMessage(workertype, returnObj) {
         }
 
         console.info(workertype + ": " + m);
-        window.alert(m);
+        Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
+        .then(function() {
+          window.alert(m);
+        });
         break;
 
       // if there is an error with one prompt (usually server side check - e.g.
@@ -409,9 +415,12 @@ function processWorkerEventMessage(workertype, returnObj) {
             m = m + "\n========================\n";
             m = m + "\n\nserver error message: " + returnObj.err;
         }
-
         console.info(workertype + ": " + m);
-        window.alert(m);
+
+        Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
+        .then(function() {
+          window.alert(m);
+        });
         break;
 
       default:

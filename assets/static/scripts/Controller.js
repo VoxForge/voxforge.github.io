@@ -17,6 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+// needs to be global so that upload event process can check if user is 
+// currently recording; used in upload funtion
+var promise_list = [];
+
 function Controller(prompts, 
                     profile,
                     view, 
@@ -29,7 +33,7 @@ function Controller(prompts,
 
     //  recording timeout object
     var rec_timeout_obj;
-    var promise_list = [];
+    //var promise_list = [];
     var promise_index = 0;
 
     /**

@@ -217,7 +217,7 @@ var view;  // needs to be global so can be accessible to index.html
 // !!!!!! testing manifest file creation
 // see: https://developers.google.com/web/fundamentals/app-install-banners/#criteria
 window.addEventListener('appinstalled', (evt) => {
-  app.logEvent('a2hs', 'installed');
+  console.log('a2hs installed');
 });
 
 if (window.matchMedia('(display-mode: standalone)').matches) {
