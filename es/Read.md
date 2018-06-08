@@ -263,10 +263,20 @@ alert_message:
   uploaded_message: >
     uploaded to VoxForge Server
   audio_too_loud: >
-    Your recording is too loud, please reduce your volume and re-record
+    Your recording is too loud!<br>
+    Please reduce your microphone volume<br>
+    delete this recording and re-record the prompt
   audio_too_soft: >
-    Your recording is too soft!  </br>Please increase your volume, delete this 
-    recording and re-record
+    Your recording levels are too low!  <br>Please increase your microphone volume, 
+    then delete this prompt recording and re-record it.
+  audio_too_loud_autogain: >
+    Your recording is too loud!<br>
+    automatically decreasing volume<br>
+    delete this recording and re-record the prompt
+  audio_too_soft_autogain: >
+    Your recording levels are too low!<br>
+    automatically increasing volume<br>
+    delete this recording and re-record the prompt
   no_trailing_silence: >
     No trailing silence.  You cut your recording off (clicked 'stop' too early) </br>Please delete and 
     re-record this prompt.

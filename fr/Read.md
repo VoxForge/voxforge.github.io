@@ -248,11 +248,20 @@ alert_message:
   uploaded_message: >
     téléchargé sur serveur Web VoxForge
   audio_too_loud: >
-    Votre enregistrement est trop fort.  <br>Veuillez réduire votre volume et
-    réenregistrer.
+    Votre enregistrement est trop fort.<br>
+    Veuillez réduire votre volume et réenregistrer.
   audio_too_soft: >
-    Votre enregistrement est trop doux.  <br>Veuillez augmenter votre volume et
-    réenregistrer.
+    Votre enregistrement est trop doux.<br>
+    le system a augmente le volume automatiquement<br>
+    Veuillez réenregistrer.
+  audio_too_loud_autogain: >
+    Votre enregistrement est trop fort.<br>
+    le system a reduit le volume automatiquement<br>
+    Veuillez effacer votre enregistrement et ré-enregistrer.
+  audio_too_soft_autogain: >
+    Votre enregistrement est trop doux.<br>
+    le system a reduit le volume automatiquement<br>
+    Veuillez effacer votre enregistrement et ré-enregistrer.
   no_trailing_silence: >
     Vous avez couper votre enregistrement (vous avez cliqué trop tôt) <br> 
     Veuillez ré-enregistrer.

@@ -360,6 +360,46 @@ Audio.prototype.record = function (prompt_id, last_one) {
      });
     };
 
+    /**
+    * app auto gain
+
+        // TODO save gain level for future recordings
+        // TODO update Prompts.json with gain level for each submission, 
+        // since adjustments are made dynamically
+
+        // chainging gain also increases noise in what were silence portions
+        // and this messes up VAD
+
+        // tells user that audio is too loud or soft, adjusts
+        // gain (volume) up or down, then tells them to delete the 
+        // prompt and re-record at new gain level
+
+    */
+    function adjustVolume(obj) {
+        var oldgain = self.gainNode.gain.value;
+        var newgain;
+        if (obj.clipping) {
+           // reduce volume
+          newgain = Math.max(self.gainNode.gain.value * 
+              self.parms.gain_decrement_factor, self.gain_minValue);
+          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+        } else if (obj.too_soft) {
+          // increase volume
+           newgain = Math.min(self.gainNode.gain.value * 
+              self.parms.gain_increment_factor, self.gain_maxValue);
+          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+        } else if (obj.no_speech) {
+          // increase max volume
+          newgain = Math.min(self.gainNode.gain.value * 
+              self.parms.gain_max_increment_factor, self.gain_maxValue);
+          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+        }
+        if (obj.clipping || obj.too_soft || obj.no_speech) {
+          console.log ("gain changed from: " + oldgain + " to: " + newgain);
+          self.debugValues.gainNode_gain_value = newgain;
+        }
+    }
+
     return new Promise(function (resolve, reject) {
       // reply from audio worker
       // creates new function every time record is pressed
@@ -372,39 +412,18 @@ Audio.prototype.record = function (prompt_id, last_one) {
               * worker sends back the recorded data as an audio blob
               */
               case 'finished':
-                // TODO save gain level for future recordings
-                // TODO update Prompts.json with gain level for each submission, 
-                // since adjustments are made dynamically
+                obj.no_trailing_silence_message = page_alert_message.no_trailing_silence;
+                if (self.parms.app_auto_gain) {
+                  adjustVolume(obj);
 
-                // chainging gain also increases noise in what were silence portions
-                // and this messes up VAD
-
-                // tells user that audio is too loud or soft, adjusts
-                // gain (volume) up or down, then tells them to delete the 
-                // prompt and re-record at new gain level
-                var oldgain = self.gainNode.gain.value;
-                var newgain;
-                if (obj.clipping) {
-                   // reduce volume
-                  newgain = Math.max(self.gainNode.gain.value * 
-                      self.parms.gain_decrement_factor, self.gain_minValue);
-                  self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-                } else if (obj.too_soft) {
-                  // increase volume
-                   newgain = Math.min(self.gainNode.gain.value * 
-                      self.parms.gain_increment_factor, self.gain_maxValue);
-                  self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-                } else if (obj.no_speech) {
-                  // increase max volume
-                  newgain = Math.min(self.gainNode.gain.value * 
-                      self.parms.gain_max_increment_factor, self.gain_maxValue);
-                  self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+                  obj.audio_too_loud_message = page_alert_message.audio_too_loud_autogain;
+                  obj.audio_too_soft_message = page_alert_message.audio_too_soft_autogain;
+                  obj.no_speech_message = page_alert_message.no_speech_autogain;
+                } else {
+                  obj.audio_too_loud_message = page_alert_message.audio_too_loud;
+                  obj.audio_too_soft_message = page_alert_message.audio_too_soft;
+                  obj.no_speech_message = page_alert_message.no_speech;
                 }
-                if (obj.clipping || obj.too_soft || obj.no_speech) {
-                  console.log ("gain changed from: " + oldgain + " to: " + newgain);
-                  self.debugValues.gainNode_gain_value = newgain;
-                }
-
                 resolve(obj);
               break;
 

@@ -287,16 +287,35 @@ alert_message:
   uploaded_message: >
     uploaded to VoxForge Server:
   audio_too_loud: >
-    Your recording is too loud!  <br>Please reduce your microphone volume, delete this 
-    recording and re-record the prompt
+    Your recording is too loud!<br>
+    Please reduce your microphone volume<br>
+    delete this recording and re-record the prompt
   audio_too_soft: >
-    Your recording levels are too low!  <br>Please increase your microphone volume, 
+    Your recording levels are too low!<br>
+    Please increase your microphone volume, 
     then delete this prompt recording and re-record it.
-  no_trailing_silence: >
-    No trailing silence!  You cut the end of your recording off (you clicked 'stop' too early) <br>Please delete and 
-    re-record this prompt.
   no_speech: >
-    No Speech or recording volume too low<br>Please delete and re-record this prompt.
+    No Speech or recording volume too low<br>
+    Please increase your microphone volume,
+    then delete and re-record this prompt.
+  audio_too_loud_autogain: >
+    Your recording is too loud!<br>
+    Automatically decreasing volume.<br>
+    Please delete this recording and re-record the prompt.
+  audio_too_soft_autogain: >
+    Your recording levels are too low!<br>
+    Automatically increasing volume.<br>
+    Please delete this recording and re-record the prompt.
+  no_speech_soft_autogain: >
+    No Speech or recording volume too low.<br>
+    Automatically increasing volume.<br>
+    Please delete this recording and re-record the prompt.
+  no_trailing_silence: >
+    Not enough trailing silence - you clicked 'stop' too early! <br>
+    You did not leave enough silence at the end of your recording, or you
+    cut-off the end of your recording<br>
+    Please delete and re-record this prompt.
+
   getUserMedia_error: >
     Could not get audio input... make sure your microphone is connected to your 
     computer.  Your browser is giving this error message:

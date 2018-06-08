@@ -311,28 +311,30 @@ Vad.prototype.getSpeech = function(buffers) {
       var clipping = false;
       var too_soft = false;
 
+      function checkEnergy() {
+          if (self.max_energy > MAX_ENERGY_THRESHOLD) {
+            clipping = true;
+            console.warn( 'audio clipping');
+          } else {
+            if (self.max_energy < MIN_ENERGY_THRESHOLD) {
+              too_soft = true;
+              console.warn( 'audio volume too too low');
+            }
+          } 
+      }
+
       if ( self.voice_stopped ) { // user stopped talking then clicked stop button.
-        if (self.max_energy > MAX_ENERGY_THRESHOLD) {
-          clipping = true;
-          console.warn( 'audio clipping');
-        } else {
-          if (self.max_energy < MIN_ENERGY_THRESHOLD) {
-            too_soft = true;
-            console.warn( 'audio volume too too low');
-          }
-        } 
+        checkEnergy();
       } else { 
         if ( ! self.voice_started  ) { // VAD never started
           self.speechend_index = buffers.length;
           no_speech = true;
           console.warn( 'no speech recorded');
-        // TODO this assumes the VAD is working correctly; on Android 4.4.2
-        // voice_stopped never gets set even though user stopped talking
-        // and long trailing silence gets added to recording
-        } else { // user cut recording off too early
+        } else { // user cut end of recording off too early
           self.speechend_index = buffers.length;
           no_trailing_silence = true;
           console.warn( 'no trailing silence');
+          checkEnergy(); // even though user may have hit stop too early, still need to check energy levels
         }
       }
       console.log( 'max_energy=' + self.max_energy.toFixed(2) + ' MIN_ENERGY_THRESHOLD=' + MIN_ENERGY_THRESHOLD + ', MAX_ENERGY_THRESHOLD=' + MAX_ENERGY_THRESHOLD);

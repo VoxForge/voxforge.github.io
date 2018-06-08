@@ -138,6 +138,7 @@ var view;  // needs to be global so can be accessible to index.html
         amplitude: 0.02, // amplitude threshold for silence detection
       },
       blockDisplayOfRecordButton: false, // on slower devices, allowing user to record while display is still working can cause dropout/scratches
+      app_auto_gain: false, // only needed for smartphones where you cannot adjust volume
       gain_increment_factor: 1.25, // speech detected, but volume too low, use this factor to increase volume
       gain_max_increment_factor: 2.0, // no speech detected, assume volume set really low, double volume
       gain_decrement_factor: 0.75, // if clipping, reduce volume
@@ -176,6 +177,7 @@ var view;  // needs to be global so can be accessible to index.html
         audio_parms.vad.maxsilence = 650; // detect longer silence period on Android
         audio_parms.vad.minvoice = 75; // use shorter min voice threshold period on Android
         audio_parms.blockDisplayOfRecordButton = true;
+        audio_parms.app_auto_gain = true;
         controller_parms.recording_stop_delay = 750;
 
         if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
@@ -214,7 +216,6 @@ var view;  // needs to be global so can be accessible to index.html
 })(); // function context
 
 
-// !!!!!! testing manifest file creation
 // see: https://developers.google.com/web/fundamentals/app-install-banners/#criteria
 window.addEventListener('appinstalled', (evt) => {
   console.log('a2hs installed');

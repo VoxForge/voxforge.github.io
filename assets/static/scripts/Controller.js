@@ -18,7 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 // needs to be global so that upload event process can check if user is 
-// currently recording; used in upload funtion
+// currently recording, and wait for stop in recording before displaying
+// submission upload message; used in upload function
 var promise_list = [];
 
 function Controller(prompts, 

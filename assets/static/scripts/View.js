@@ -388,10 +388,6 @@ View.prototype.displayAudioPlayer = function (obj)
 {
     var prompt_id = obj.prompt_id; // TODO not used yet...
     var blob = obj.blob;
-    var no_speech = obj.no_speech;
-    var no_trailing_silence = obj.no_trailing_silence;
-    var clipping = obj.clipping;
-    var too_soft = obj.too_soft;
 
     // 'self' used to save the current context when calling function
     var self = this;
@@ -484,23 +480,23 @@ View.prototype.displayAudioPlayer = function (obj)
       style.appendChild(button);
       waveformElement.appendChild(style);
 
-      if (no_speech) {
+      if (obj.no_speech) {
         waveformElement.setAttribute("style", "background: #ff4500");
-        waveformElement.innerHTML = "<h4>" + page_alert_message.no_speech + "</h4>";
-      } else if (no_trailing_silence) {
+        waveformElement.innerHTML = "<h4>" + obj.no_speech_message + "</h4>";
+      } else if (obj.no_trailing_silence) {
         waveformElement.setAttribute("style", "background: #ffA500");
-        waveformElement.innerHTML = "<h4>" + page_alert_message.no_trailing_silence + "</h4>";
+        waveformElement.innerHTML = "<h4>" + obj.no_trailing_silence_message + "</h4>";
       //TODO need confidence level for clipping
-      } else if (clipping) {
+      } else if (obj.clipping) {
         // TODO should not be able to upload if too loud
         waveformElement.setAttribute("style", "background: #ff4500");
-        waveformElement.innerHTML = "<h4>" + page_alert_message.audio_too_loud + "</h4>";
+        waveformElement.innerHTML = "<h4>" + obj.audio_too_loud_message + "</h4>";
       //TODO need confidence level for soft speaker
-      } else if (too_soft) {
+      } else if (obj.too_soft) {
         // TODO if too low, increase volume of recording and automatically
         //      increase it for subsequent recordings...
         waveformElement.setAttribute("style", "background: #ff4500");
-        waveformElement.innerHTML = "<h4>" + page_alert_message.audio_too_soft + "</h4>";
+        waveformElement.innerHTML = "<h4>" + obj.audio_too_soft_message + "</h4>";
       }
 
       console.log("clip_id: " + self.clip_id);
