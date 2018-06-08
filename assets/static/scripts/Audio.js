@@ -361,7 +361,7 @@ Audio.prototype.record = function (prompt_id, last_one) {
     };
 
     /**
-    * app auto gain
+    * app auto gain - changes gain for *next* recording
 
         // TODO save gain level for future recordings
         // TODO update Prompts.json with gain level for each submission, 
@@ -376,27 +376,29 @@ Audio.prototype.record = function (prompt_id, last_one) {
 
     */
     function adjustVolume(obj) {
-        var oldgain = self.gainNode.gain.value;
-        var newgain;
-        if (obj.clipping) {
-           // reduce volume
-          newgain = Math.max(self.gainNode.gain.value * 
-              self.parms.gain_decrement_factor, self.gain_minValue);
-          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-        } else if (obj.too_soft) {
-          // increase volume
-           newgain = Math.min(self.gainNode.gain.value * 
-              self.parms.gain_increment_factor, self.gain_maxValue);
-          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-        } else if (obj.no_speech) {
-          // increase max volume
-          newgain = Math.min(self.gainNode.gain.value * 
-              self.parms.gain_max_increment_factor, self.gain_maxValue);
-          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-        }
-        if (obj.clipping || obj.too_soft || obj.no_speech) {
-          console.log ("gain changed from: " + oldgain + " to: " + newgain);
-          self.debugValues.gainNode_gain_value = newgain;
+        if (Math.abs(obj.gain) < 3.4 ) {
+            var newgain;
+            if (obj.clipping) {
+              // reduce volume
+              newgain = Math.max(self.gainNode.gain.value * 
+                  self.parms.gain_decrement_factor, self.gain_minValue);
+              self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+            } else if (obj.too_soft) {
+              // increase volume
+              newgain = Math.min(self.gainNode.gain.value * 
+                  self.parms.gain_increment_factor, self.gain_maxValue);
+              self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+            } else if (obj.no_speech) {
+              // increase max volume
+              newgain = Math.min(self.gainNode.gain.value * 
+                  self.parms.gain_max_increment_factor, self.gain_maxValue);
+              self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+            }
+
+            if (obj.clipping || obj.too_soft || obj.no_speech) {
+              console.log ("gain changed from: " + obj.gain + " to: " + newgain);
+              self.debugValues.gainNode_gain_value = newgain;
+            }
         }
     }
 
@@ -412,9 +414,10 @@ Audio.prototype.record = function (prompt_id, last_one) {
               * worker sends back the recorded data as an audio blob
               */
               case 'finished':
+                obj.gain = self.gainNode.gain.value;
                 obj.no_trailing_silence_message = page_alert_message.no_trailing_silence;
                 if (self.parms.app_auto_gain) {
-                  adjustVolume(obj);
+                  adjustVolume(obj); 
 
                   obj.audio_too_loud_message = page_alert_message.audio_too_loud_autogain;
                   obj.audio_too_soft_message = page_alert_message.audio_too_soft_autogain;

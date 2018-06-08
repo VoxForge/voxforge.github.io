@@ -118,7 +118,7 @@ var view;  // needs to be global so can be accessible to index.html
       // corresponds to the maximum number of prompts that a user can select from the 
       // drop-down menu selector;  Changes based on type of device being used.
       max_numPrompts_selector: 50,
-      //var num_prompts_to_trigger_upload = 10; // user can upload anytime after recording 10 prompts
+      //num_prompts_to_trigger_upload: 10, // user can upload anytime after recording 10 prompts
       num_prompts_to_trigger_upload: 3, // debug
     }
 
@@ -181,7 +181,8 @@ var view;  // needs to be global so can be accessible to index.html
         controller_parms.recording_stop_delay = 750;
 
         if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
-          // the more prompts to display the more it cpu is uses on mobile devices.
+          // the more prompts to display the more it cpu is uses on mobile 
+          // devices causing problems with drop outs crackles in recorded audio
           prompt_parms.max_numPrompts_selector = 10;
         } else { // Android 5 and above
           prompt_parms.max_numPrompts_selector = 20;

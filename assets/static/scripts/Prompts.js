@@ -400,6 +400,7 @@ Prompts.prototype.setAudioCharacteristics = function (obj) {
         no_speech : obj.no_speech,
         clipping : obj.clipping,
         too_soft : obj.too_soft,
+        gain : obj.gain,
     };
     resolve(obj);
   });//promise
