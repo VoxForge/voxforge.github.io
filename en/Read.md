@@ -306,7 +306,7 @@ alert_message:
     Your recording levels are too low!<br>
     Automatically increasing volume.<br>
     Please delete this recording and re-record the prompt.
-  no_speech_soft_autogain: >
+  no_speech_autogain: >
     No Speech or recording volume too low.<br>
     Automatically increasing volume.<br>
     Please delete this recording and re-record the prompt.
