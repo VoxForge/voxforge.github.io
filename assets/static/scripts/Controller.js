@@ -232,7 +232,7 @@ function Controller(prompts,
           view.hidePlayButtons();
           view.setRSButtonDisplay(false, true);  
           recordAudio(); // should be blocking
-          console.log('   *** onRecordinglast state: ' + this.state + " trans: " + this.transitions() );
+          //console.log('   *** onRecordinglast state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onUploading: function() { 

@@ -391,7 +391,7 @@ function processWorkerEventMessage(workertype, returnObj) {
         break;
 
       // if there is an error with one prompt (usually server side check - e.g.
-      // too big for server settings, then other submissions will upload, but
+      // too big for server settings), then other submissions will upload, but
       // erroneous one will stat in browser storage.
       // TODO need a way for user to save these locally and upload them to VoxForge 
       // server some other way.

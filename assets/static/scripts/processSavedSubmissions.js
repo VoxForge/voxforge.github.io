@@ -202,9 +202,19 @@ function processSavedSubmissions(uploadURL) {
                  };
                  reject(returnObj);
               } else if ( noUploadList.length > 0 ) {  // noUploads
+                 // fi get here then processing loop on savedSubmissionArray was
+                 // only partially iterated over, so will never get an accurate
+                 // list of saved submissions, therefore, get all submissions
+                 // listed in innoDB
+                 var short_name_array = [];
+                 for (var i = 0; i < savedSubmissionArray.length; i++) {
+                    short_name_array[i] = savedSubmissionArray[i].replace(/\[.*\]/gi, '');
+                 }
+
                  var returnObj = {
                    status: 'noneUploaded',
-                   filesNotUploaded: noUploadList,
+                   //filesNotUploaded: noUploadList,
+                   filesNotUploaded: short_name_array,
                    err: err,
                  }
                  reject(returnObj);
