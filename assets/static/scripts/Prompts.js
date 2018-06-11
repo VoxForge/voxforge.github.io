@@ -38,11 +38,37 @@ function Prompts(parms) {
     this.prompt_stack = []; // stack; makes it easier to add deleted elements for re-record
     this.current_promptLine = null; // need to keep track of current prompt since no longer tracking index
 
-    // TODO duplicate definition in service worker file: processSavedSubmission.js
-    var local_prompt_file_name = page_language + '_' + 'prompt_file';
     this.promptCache = localforage.createInstance({
         name: "promptCache"
     });
+
+
+}
+
+/**
+* ### Static METHODS ##############################################
+*/
+
+/**
+* helper function to return prompt id and prompt sentence in an array
+*/
+Prompts.splitPromptLine = function(promptLine) {
+    var promptArray = promptLine.split(/(\s+)/); // create array
+    var promptId = promptArray.shift(); // extract prompt id
+    var promptSentence =  promptArray.join(""); // make string;
+
+    return [promptId, promptSentence];
+}
+
+/**
+* ### METHODS ##############################################
+*/
+/**
+* initialize prompt stack with number of prompts chosen by user
+*/
+Prompts.prototype.init = function () {
+    // TODO duplicate definition in service worker file: processSavedSubmission.js
+    var local_prompt_file_name = page_language + '_' + 'prompt_file';
 
     // lexical closure of 'this' value so that when function 'processPromptsFile' 
     // gets passed as parameter to $.get (thus being called as a reference), it
@@ -260,24 +286,6 @@ function Prompts(parms) {
    });
 }
 
-/**
-* ### Static METHODS ##############################################
-*/
-
-/**
-* helper function to return prompt id and prompt sentence in an array
-*/
-Prompts.splitPromptLine = function(promptLine) {
-    var promptArray = promptLine.split(/(\s+)/); // create array
-    var promptId = promptArray.shift(); // extract prompt id
-    var promptSentence =  promptArray.join(""); // make string;
-
-    return [promptId, promptSentence];
-}
-
-/**
-* ### METHODS ##############################################
-*/
 /**
 * initialize prompt stack with number of prompts chosen by user
 */

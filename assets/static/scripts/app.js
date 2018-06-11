@@ -197,6 +197,7 @@ var view;  // needs to be global so can be accessible to index.html
     * Instantiate classes
     */
     var prompts = new Prompts(prompt_parms); 
+    prompts.init();
 
     var profile = new Profile(appversion);
 
