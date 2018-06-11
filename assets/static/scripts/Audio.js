@@ -137,6 +137,130 @@ function Audio (parms)
     this.gain_minValue = -3.4; // most-negative-single-float	Approximately -3.4028235e38
     this.gain_maxValue = 3.4; // 	most-positive-single-float	Approximately 3.4028235e38
 
+    //var constraints = { audio: true };
+    this.constraints = { 
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false
+          }
+    };
+}
+
+// ### Methods #################################################################
+
+/**
+*
+    // Note: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext
+    // BaseAudioContext.sampleRate Read only
+    //    Returns a float representing the sample rate (in samples per second) 
+    //    used by all nodes in this context. The sample-rate of an
+    //    AudioContext _cannot_ be changed.
+    // see: https://stackoverflow.com/questions/37326846/disabling-auto-gain-conctrol-with-webrtc-app
+    // turning these off does not seem to work in Firefox android 442.
+*/
+Audio.prototype.init = function () {
+    var self = this;
+
+    /**
+    * set up audio nodes that are connected together in a graph so that the 
+    * source microphone input can be captured, and volume node can be created 
+    * (currently not used), an analyzer to create visually display the amplitude
+    * of the captured audio, a processor to capture the raw audio, and 
+    * a destination audiocontext to capture audio
+    *
+
+      // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
+      The buffer size in units of sample-frames. If specified, the bufferSize 
+      must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384. 
+      This value controls how frequently the audioprocess event is dispatched
+      and how many sample-frames need to be processed each call. 
+
+      *** Lower values for bufferSize will result in a lower (better) latency. 
+      Higher values will be necessary to avoid audio breakup and glitches. ***
+
+      It is recommended 
+      for authors to not specify this buffer size and allow the implementation 
+      to pick a good buffer size to balance between latency and audio quality.
+            -but-
+      But VAD does not work well enough with Android 4.4.2 default buffer size of
+      16384, so chunk up audio oldgain sending to VAD
+
+      auto gain adjust:
+      see: https://robwu.nl/s/mediasource-change-volume.html
+
+    */
+    function setupAudioNodes(stream) {
+      return new Promise(function (resolve, reject) {
+
+        // using 'self' because setupAudioNodes is being called as a parameter to 
+        // getUserMedia, which means it is a reference, and therefore loses 'this'
+        // context...
+        self.microphone = self.audioCtx.createMediaStreamSource(stream);
+
+
+        self.gainNode = self.audioCtx.createGain();
+        self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize , 1, 1);
+        self.analyser = self.audioCtx.createAnalyser();
+        self.mediaStreamOutput = self.audioCtx.destination;
+
+        self.gainNode.channelCount = 1;
+        self.processor.channelCount = 1;
+        self.microphone.channelCount = 1;
+        self.analyser.channelCount = 1;
+        self.mediaStreamOutput.channelCount = 1;
+
+        resolve(stream);
+      }); // promise
+    }
+
+    /**
+      see: https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints#Applying_constraints
+      constraints vs settings: Constraints are a way to specify 
+      what values you need, want, and are willing to accept for the various 
+      constrainable properties (as described in the documentation for 
+      MediaTrackConstraints), while settings are the actual values of each 
+      constrainable property at the current time.
+      https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
+      https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
+    */
+    function setProfileAudioProperties(track) {
+          self.audioPropertiesAndContraints = {
+            'sample_rate' : self.audioCtx.sampleRate,
+            'bit_depth' : self.parms.bitDepth,
+            'channels' : self.mediaStreamOutput.channelCount,
+          };
+
+          //https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getSupportedConstraints
+          var c = navigator.mediaDevices.getSupportedConstraints();
+          //https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
+          let s = track.getSettings();
+
+          self.debugValues = {
+            'browser_supports_echoCancellation' : (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation,
+            'browser_supports_noiseSuppression' : (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression,
+            'browser_supports_autoGain' : (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported,
+
+            'autoGainControl' : (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl,
+            'echoCancellation' : (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation,
+            'noiseSuppression' : (typeof s.noiseSuppression == 'undefined') ? 'undefined' : s.noiseSuppression,
+
+            'channelCount' : (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount,
+            'latency' : (typeof s.latency == 'undefined') ? 'undefined' : s.latency,
+            'volume' : (typeof s.volume == 'undefined') ? 'undefined' : s.volume,
+
+            'vad_maxsilence' :  self.parms.vad.maxsilence,
+            'vad_minvoice' : self.parms.vad.minvoice,
+            'vad_bufferSize' : self.parms.vad.buffersize,
+            'audioNode_bufferSize' : self.parms.audioNodebufferSize || 'undefined',
+            'device_event_buffer_size' : self.device_event_buffer_size || 'undefined',
+          };
+
+          console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
+    }
+
+    // #########################################################################
+
     /**
     * Older browsers might not implement mediaDevices at all, so we set an empty 
     * object first
@@ -145,23 +269,6 @@ function Audio (parms)
     if (navigator.mediaDevices === undefined) {
       navigator.mediaDevices = {};
     }
-
-    // Note: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext
-    // BaseAudioContext.sampleRate Read only
-    //    Returns a float representing the sample rate (in samples per second) 
-    //    used by all nodes in this context. The sample-rate of an
-    //    AudioContext _cannot_ be changed.
-    // see: https://stackoverflow.com/questions/37326846/disabling-auto-gain-conctrol-with-webrtc-app
-    // turning these off does not seem to work in Firefox android 442.
-
-    //var constraints = { audio: true };
-    var constraints = { 
-          audio: {
-            echoCancellation: false,
-            noiseSuppression: false,
-            autoGainControl: false
-          }
-    };
 
     if (navigator.mediaDevices.getUserMedia === undefined) {
       navigator.mediaDevices.getUserMedia = function(constraints) {
@@ -187,113 +294,27 @@ function Audio (parms)
         });
       }
     }
+    
+    return new Promise(function (resolve, reject) {
+        /**
+        * asks the user for permission to use a media input which produces a 
+        * MediaStream with tracks containing the requested types of media - i.e. audio track
+        *
+        * see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+        */
+        navigator.mediaDevices.getUserMedia(self.constraints)
+        .then(setupAudioNodes)
+        .then(function(stream) {
+          setProfileAudioProperties(stream.getAudioTracks()[0]);
+          resolve("OK");
+        })
+        .catch(function(err) {
+          window.alert( page_alert_message.getUserMedia_error + " " + err);
+          console.error(page_alert_message.getUserMedia_error + " " + err);
+          reject("Not ok");
+        });
 
-    /**
-    * asks the user for permission to use a media input which produces a 
-    * MediaStream with tracks containing the requested types of media - i.e. audio track
-    *
-    * see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    */
-    navigator.mediaDevices.getUserMedia(constraints)
-    .then(function(stream) {
-      setupAudioNodes(stream);
-    })
-    .catch(function(err) {
-      window.alert( page_alert_message.getUserMedia_error + " " + err);
-      console.error(page_alert_message.getUserMedia_error + " " + err);
-    });
-
-    /**
-    * set up audio nodes that are connected together in a graph so that the 
-    * source microphone input can be captured, and volume node can be created 
-    * (currently not used), an analyzer to create visually display the amplitude
-    * of the captured audio, a processor to capture the raw audio, and 
-    * a destination audiocontext to capture audio
-    *
-    */
-    function setupAudioNodes(stream) {
-      // using 'self' because setupAudioNodes is being called as a parameter to 
-      // getUserMedia, which means it is a reference, and therefore loses 'this'
-      // context...
-      self.microphone = self.audioCtx.createMediaStreamSource(stream);
-
-      // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
-/*    The buffer size in units of sample-frames. If specified, the bufferSize 
-      must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384. 
-      This value controls how frequently the audioprocess event is dispatched
-      and how many sample-frames need to be processed each call. 
-
-      *** Lower values for bufferSize will result in a lower (better) latency. 
-      Higher values will be necessary to avoid audio breakup and glitches. ***
-
-      It is recommended 
-      for authors to not specify this buffer size and allow the implementation 
-      to pick a good buffer size to balance between latency and audio quality.
-            -but-
-      But VAD does not work well enough with Android 4.4.2 default buffer size of
-      16384, so chunk up audio oldgain sending to VAD
-
-      auto gain adjust:
-      see: https://robwu.nl/s/mediasource-change-volume.html
-*/
-      self.gainNode = self.audioCtx.createGain();
-      self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize , 1, 1);
-      self.analyser = self.audioCtx.createAnalyser();
-      self.mediaStreamOutput = self.audioCtx.destination;
-
-      self.gainNode.channelCount = 1;
-      self.processor.channelCount = 1;
-      self.microphone.channelCount = 1;
-      self.analyser.channelCount = 1;
-      self.mediaStreamOutput.channelCount = 1;
-
-      setProfileAudioProperties(stream.getAudioTracks()[0]);
-    }
-
-    /*
-      see: https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints#Applying_constraints
-      constraints vs settings: Constraints are a way to specify 
-      what values you need, want, and are willing to accept for the various 
-      constrainable properties (as described in the documentation for 
-      MediaTrackConstraints), while settings are the actual values of each 
-      constrainable property at the current time.
-      https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
-      https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
-    */
-    function setProfileAudioProperties(track) {
-      self.audioPropertiesAndContraints = {
-        'sample_rate' : self.audioCtx.sampleRate,
-        'bit_depth' : self.parms.bitDepth,
-        'channels' : self.mediaStreamOutput.channelCount,
-      };
-
-      //https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getSupportedConstraints
-      var c = navigator.mediaDevices.getSupportedConstraints();
-      //https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
-      let s = track.getSettings();
-
-      self.debugValues = {
-        'browser_supports_echoCancellation' : (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation,
-        'browser_supports_noiseSuppression' : (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression,
-        'browser_supports_autoGain' : (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported,
-
-        'autoGainControl' : (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl,
-        'echoCancellation' : (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation,
-        'noiseSuppression' : (typeof s.noiseSuppression == 'undefined') ? 'undefined' : s.noiseSuppression,
-
-        'channelCount' : (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount,
-        'latency' : (typeof s.latency == 'undefined') ? 'undefined' : s.latency,
-        'volume' : (typeof s.volume == 'undefined') ? 'undefined' : s.volume,
-
-        'vad_maxsilence' :  self.parms.vad.maxsilence,
-        'vad_minvoice' : self.parms.vad.minvoice,
-        'vad_bufferSize' : self.parms.vad.buffersize,
-        'audioNode_bufferSize' : self.parms.audioNodebufferSize || 'undefined',
-        'device_event_buffer_size' : self.device_event_buffer_size || 'undefined',
-      };
-
-      console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
-    }
+    }); // promise
 }
 
 /**

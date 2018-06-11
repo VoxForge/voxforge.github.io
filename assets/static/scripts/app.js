@@ -197,23 +197,25 @@ var view;  // needs to be global so can be accessible to index.html
     * Instantiate classes
     */
     var prompts = new Prompts(prompt_parms); 
-    prompts.init();
-
     var profile = new Profile(appversion);
-
     // 'view' needs to be global so can be accessed by index.html
     view = new View(view_parms,
                     prompts,
                     profile); 
-
     var audio = new Audio(audio_parms);
+    var controller =  new Controller(prompts, 
+                                     profile, 
+                                     view, 
+                                     audio,
+                                     controller_parms,
+                                     appversion);
 
-    var controller = new Controller(prompts, 
-                                    profile, 
-                                    view, 
-                                    audio,
-                                    controller_parms,
-                                    appversion);
+    prompts.init()
+    .then(view.init.bind(view))
+    .then(audio.init.bind(audio))
+    .then(function() {
+        controller.init();
+    });
 
 })(); // function context
 

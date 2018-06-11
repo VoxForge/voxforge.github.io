@@ -21,12 +21,13 @@ function View (parms,
                prompts,
                profile)
 {
-    var self = this; // save context
+    this.parms = parms;
+    this.prompts = prompts;
+    this.profile = profile;
 
     this.displayVisualizer = parms.displayVisualizer;
     this.displayWaveform = parms.displayWaveform;
 
-    this.prompts = prompts;
 
     // buttons
     this.record = document.querySelector('.record');
@@ -42,6 +43,77 @@ function View (parms,
 
     // unique id for wavesurfer objects in DOM
     this.clip_id = 0;
+}
+
+
+// ### METHODS #################################################################
+
+/** 
+* Initialize object with async operations
+*/
+View.prototype.init = function () {
+    var self = this;
+    /**
+    * update user display from passed json object
+    */
+    function updateView(json_object) {
+        //Speaker Characteristics
+        $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
+        if (json_object.username) {
+          $('#anonymous_instructions_display').hide();
+        }
+        $('#gender').val( json_object.gender );
+        $('#age').val( json_object.age );
+
+        // TODO implied by the page the user is on... 
+        // $('#page_language').val( json_object.page_language );
+
+        $('#native_speaker').val( json_object.native_speaker );
+        if ( $('#native_speaker').val() === page_localized_yes )
+        {
+          $("#sub_dialect_display").show();
+        } else {
+          $("#first_language_display").show();
+        }
+        $('#first_language').val( json_object.first_language );
+        $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
+        $('#dialect').val( json_object.dialect );
+        $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
+        if ( $('#dialect').val() === page_localized_other )
+        {
+          $("#dialect_other_display").show();
+        }
+        $('#sub_dialect').val( json_object.dialect_other );
+        //Recording Information:
+        $('#microphone').val( json_object.microphone );
+        $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
+        if ( $('#microphone').val() === page_localized_other )
+        {
+          $("#microphone_other_display").show();
+        }
+
+        $('#recording_location').val( json_object.recording_location );
+        $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
+        if ( $('#recording_location').val() === page_localized_other )
+        {
+          $("#recording_location_other_display").show();
+        }
+        $('#background_noise').val( json_object.background_noise );
+        if ( $('#background_noise').val() === page_localized_yes )
+        {
+          $("#background_noise_display").show();
+        }
+        $('#noise_volume').val( json_object.noise_volume );
+        $('#noise_type').val( json_object.noise_type );
+        $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
+        if ( $('#noise_type').val() === page_localized_other )
+        {
+          $("#noise_type_other_display").show();
+        }
+        $('#license').val( json_object.license );
+        $('#ua_string').val( json_object.ua_string );
+    }
+
     /**
     * The value of contents of the independent_div is compared to the passed in 
     * value, and if they are equal, then the dependent_div is displayed, otherwise
@@ -153,7 +225,7 @@ function View (parms,
     option = ''; // clear previous use of option var
     var startPrompt = 10; // min number of prompts no matter what device
     var incr = 5;
-    for (var i=startPrompt; i <= prompts.max_numPrompts_selector; i = i + incr){
+    for (var i=startPrompt; i <= self.prompts.max_numPrompts_selector; i = i + incr){
        option += '<option value="'+ i + '">' + i +  '</option>';
     }
     $('#max_num_prompts').append(option);
@@ -164,80 +236,20 @@ function View (parms,
     */
     //$('#max_num_prompts').click(function () { 
     $('#max_num_prompts').change(function () { 
-      prompts.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
+      self.prompts.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
       self.updateProgress();
     });
 
     // ########################################################################
 
-    var p = profile.getProfileFromBrowserStorage();
-    if (p) {
-      View.update(p);    
-    }
+    return new Promise(function (resolve, reject) {
+        var json_object = self.profile.getProfileFromBrowserStorage();
+        if (json_object) {
+          updateView(json_object);  
+        }
+        resolve("OK");  // TODO not waiting for updateView
+    }); // promise
 }
-
-/**
-* update user display from passed json object
-*/
-View.update = function (json_object) {
-    //Speaker Characteristics
-    $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
-    if (json_object.username) {
-      $('#anonymous_instructions_display').hide();
-    }
-    $('#gender').val( json_object.gender );
-    $('#age').val( json_object.age );
-
-    // TODO implied by the page the user is on... 
-    // $('#page_language').val( json_object.page_language );
-
-    $('#native_speaker').val( json_object.native_speaker );
-    if ( $('#native_speaker').val() === page_localized_yes )
-    {
-      $("#sub_dialect_display").show();
-    } else {
-      $("#first_language_display").show();
-    }
-    $('#first_language').val( json_object.first_language );
-    $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
-    $('#dialect').val( json_object.dialect );
-    $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
-    if ( $('#dialect').val() === page_localized_other )
-    {
-      $("#dialect_other_display").show();
-    }
-    $('#sub_dialect').val( json_object.dialect_other );
-    //Recording Information:
-    $('#microphone').val( json_object.microphone );
-    $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
-    if ( $('#microphone').val() === page_localized_other )
-    {
-      $("#microphone_other_display").show();
-    }
-
-    $('#recording_location').val( json_object.recording_location );
-    $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
-    if ( $('#recording_location').val() === page_localized_other )
-    {
-      $("#recording_location_other_display").show();
-    }
-    $('#background_noise').val( json_object.background_noise );
-    if ( $('#background_noise').val() === page_localized_yes )
-    {
-      $("#background_noise_display").show();
-    }
-    $('#noise_volume').val( json_object.noise_volume );
-    $('#noise_type').val( json_object.noise_type );
-    $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
-    if ( $('#noise_type').val() === page_localized_other )
-    {
-      $("#noise_type_other_display").show();
-    }
-    $('#license').val( json_object.license );
-    $('#ua_string').val( json_object.ua_string );
-}
-
-// ### METHODS #################################################################
 
 /** 
 * display upload to VoxForge server status to user

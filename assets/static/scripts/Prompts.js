@@ -41,8 +41,6 @@ function Prompts(parms) {
     this.promptCache = localforage.createInstance({
         name: "promptCache"
     });
-
-
 }
 
 /**
@@ -64,12 +62,9 @@ Prompts.splitPromptLine = function(promptLine) {
 * ### METHODS ##############################################
 */
 /**
-* initialize prompt stack with number of prompts chosen by user
+* initialize object with async operations
 */
 Prompts.prototype.init = function () {
-    // TODO duplicate definition in service worker file: processSavedSubmission.js
-    var local_prompt_file_name = page_language + '_' + 'prompt_file';
-
     // lexical closure of 'this' value so that when function 'processPromptsFile' 
     // gets passed as parameter to $.get (thus being called as a reference), it
     // has access to correct 'this' context variable
@@ -235,6 +230,7 @@ Prompts.prototype.init = function () {
     /* get the submission object */
     function getSavedPromptList() {
       return new Promise(function (resolve, reject) {
+
           // getItem only returns jsonObject
           //localforage.getItem(local_prompt_file_name)
           self.promptCache.getItem(local_prompt_file_name)
@@ -245,45 +241,54 @@ Prompts.prototype.init = function () {
           .catch(function(err) {
             reject('getSavedPromptList err: ' + err);
           });
+
       });
     }
 
     /* ====================================================================== */
     /* Main */
+    // TODO duplicate definition in service worker file: processSavedSubmission.js
+    var local_prompt_file_name = page_language + '_' + 'prompt_file';
 
-    validate_Readmd_file();
+    var random_prompt_file;
 
-    var random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
+    return new Promise(function (resolve, reject) {
+      validate_Readmd_file();
 
-    console.log("prompt file id: " + page_prompt_list_files[random_prompt_file].id + 
-                " (prompt file array index: " + random_prompt_file + ")");
+      random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
 
-    if ( ! page_prompt_list_files[random_prompt_file].contains_promptid) {
-        console.log("starting promptId: " + page_prompt_list_files[random_prompt_file].start);
-    }
+      console.log("prompt file id: " + page_prompt_list_files[random_prompt_file].id + 
+                  " (prompt file array index: " + random_prompt_file + ")");
 
-    /** 
-    * get prompts file for given language from server; used cached version of 
-    * prompt file if not network connection...
-    *
-    * (synchronous request)
-    */
-    $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
-      function(prompt_data) {
-        processPromptsFile(prompt_data);
+      if ( ! page_prompt_list_files[random_prompt_file].contains_promptid) {
+          console.log("starting promptId: " + page_prompt_list_files[random_prompt_file].start);
       }
-    ).fail(function() {
-      var file_name = page_prompt_list_files[random_prompt_file]['file_location'];
-      console.warn("cannot find prompts file on VoxForge server: " + file_name + 
-                   "; or bad Internet connection... using locally stored prompt file: " + local_prompt_file_name);
 
-      getSavedPromptList()
-      .then( function(jsonObject) {
-          self.list = jsonObject.list;
-          initializePromptStack();
-      });
- 
-   });
+      /** 
+      * get prompts file for given language from server; used cached version of 
+      * prompt file if not network connection...
+      *
+      * (synchronous request)
+      */
+      $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
+        function(prompt_data) {
+          processPromptsFile(prompt_data);
+          resolve("downloaded prompt file from VoxForge server");
+        }
+      ).fail(function() {
+        var file_name = page_prompt_list_files[random_prompt_file]['file_location'];
+        console.warn("cannot find prompts file on VoxForge server: " + file_name + 
+                     "; or bad Internet connection... using locally stored prompt file: " + local_prompt_file_name);
+
+        getSavedPromptList()
+        .then( function(jsonObject) {
+            self.list = jsonObject.list;
+            initializePromptStack();
+            resolve("no Internet: using saved prompt file");
+        });
+     });
+
+  }); // promise
 }
 
 /**

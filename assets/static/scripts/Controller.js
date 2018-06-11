@@ -30,38 +30,52 @@ function Controller(prompts,
                     appversion,)
 {
 
-    var updatedDeviceEventBufferSize = false;
+    this.prompts  = prompts; 
+    this.profile  = profile; 
+    this.view  = view; 
+    this.audio  = audio; 
+    this.parms  = parms; 
+    this.appversion  = appversion; 
+
+    this.updatedDeviceEventBufferSize = false;
 
     //  recording timeout object
-    var rec_timeout_obj;
-    //var promise_list = [];
-    var promise_index = 0;
+    this.rec_timeout_obj;
+
+    this.promise_index = 0;
+}
+
+/**
+* initialize object with async operations
+*/
+Controller.prototype.init = function () {
+    var self = this;
 
     /**
     * 
     */
     function recordAudio() {
-        view.hideProfileInfo();
+        self.view.hideProfileInfo();
 
-        view.updateProgress();
+        self.view.updateProgress();
 
         // only display prompt when user presses record so that they delay the 
         // start of reading the prompt and give the recording a bit of a leading
         // silence...
-        view.displayPrompt(prompts.getPromptId(), prompts.getPromptSentence());
+        self.view.displayPrompt(self.prompts.getPromptId(), self.prompts.getPromptSentence());
 
-        if (view.displayVisualizer) {
-          visualize(view, audio.analyser);
+        if (self.view.displayVisualizer) {
+          visualize(view, self.audio.analyser);
         }
 
-        rec_timeout_obj = setTimeout(function(){
+        self.rec_timeout_obj = setTimeout(function(){
           fsm.recordingtimeout();
-        }, parms.recording_timeout);
+        }, self.parms.recording_timeout);
 
-        promise_list[promise_index++] = 
-              audio.record( prompts.getPromptId() )
-              .then( view.displayAudioPlayer.bind(view) )
-              .then( prompts.setAudioCharacteristics.bind(prompts) );
+        promise_list[self.promise_index++] = 
+              self.audio.record( self.prompts.getPromptId() )
+              .then( self.view.displayAudioPlayer.bind(self.view) )
+              .then( self.prompts.setAudioCharacteristics.bind(self.prompts) );
     }
 
     /**
@@ -72,17 +86,16 @@ function Controller(prompts,
     * blobs for later processing by zipupload web worker.
     */
     function saveProfileAndReset () {
-      profile.addProfile2LocalStorage();
-      prompts.resetIndices();
-      view.reset();
-      promise_index=0;
+      self.profile.addProfile2LocalStorage();
+      self.prompts.resetIndices();
+      self.view.reset();
+      self.promise_index=0;
 
-      profile.updateRandomStrings();
+      self.profile.updateRandomStrings();
 
       fsm.donesubmission();
     }
 
-    view.setRSUButtonDisplay(true, false, false); 
 
     /**
     * ### Finite State Machine #####################################################
@@ -140,64 +153,64 @@ function Controller(prompts,
         // #####################################################################
         // Transitions: user initiated
         onStopclicked: function() { 
-          audio.endRecording();
+          self.audio.endRecording();
         },
 
         onDeleteclickedoneleft: function() { 
-          view.updateProgress();
+          self.view.updateProgress();
         },
 
         onDeleteclicked: function() { 
-          view.updateProgress();
+          self.view.updateProgress();
         },
 
         // Transition Actions: system initiated
         onRecordingtimeout: function() { 
-          audio.endRecording();
+          self.audio.endRecording();
         },
 
         // #####################################################################
         // Static States
         onNopromptsrecorded: function() {
-          view.setRSUButtonDisplay(true, false, false);
+          self.view.setRSUButtonDisplay(true, false, false);
           //console.log('   *** onNopromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onFirstpromptrecorded: function() {
-          view.enableDeleteButtons();
-          view.showPlayButtons();
-          if (audio.parms.blockDisplayOfRecordButton) {
+          self.view.enableDeleteButtons();
+          self.view.showPlayButtons();
+          if (self.audio.parms.blockDisplayOfRecordButton) {
               //block display of record button stays off until after recording is done
               Promise.all(promise_list)
               .then(function() {
-                 view.setRSButtonDisplay(true, false);
+                 self.view.setRSButtonDisplay(true, false);
               });
           } else { // allows recording even though waveform display not completed
-              view.setRSButtonDisplay(true, false); 
+              self.view.setRSButtonDisplay(true, false); 
           }
           // deviceEventBufferSize only available after first recording
-          if ( ! updatedDeviceEventBufferSize ) {
-            profile.setAudioPropertiesAndContraints( 
-                audio.getAudioPropertiesAndContraints()
+          if ( ! self.updatedDeviceEventBufferSize ) {
+            self.profile.setAudioPropertiesAndContraints( 
+                self.audio.getAudioPropertiesAndContraints()
             );
-            profile.setDebugValues( audio.getDebugValues() );
-            updatedDeviceEventBufferSize = true;
+            self.profile.setDebugValues( self.audio.getDebugValues() );
+            self.updatedDeviceEventBufferSize = true;
           }
 
           //console.log('   *** onFirstpromptrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onMidpromptsrecorded: function() { 
-          view.enableDeleteButtons();
-          view.showPlayButtons();
-          if (audio.parms.blockDisplayOfRecordButton) {
+          self.view.enableDeleteButtons();
+          self.view.showPlayButtons();
+          if (self.audio.parms.blockDisplayOfRecordButton) {
               //block display of record button stays off until after recording is done
               Promise.all(promise_list)
               .then(function() {
-                 view.setRSButtonDisplay(true, false);   
+                 self.view.setRSButtonDisplay(true, false);   
               });
           } else { // allows recording even though waveform display not completed
-             view.setRSButtonDisplay(true, false); 
+             self.view.setRSButtonDisplay(true, false); 
           }
           //console.log('   *** onMidpromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
@@ -205,40 +218,40 @@ function Controller(prompts,
         // at maximum selected prompts, cannot record anymore, must upload to 
         // continue, or delete then upload
         onMaxpromptsrecorded: function() { 
-          view.enableDeleteButtons();
-          view.showPlayButtons();
-          view.setRSUButtonDisplay(false, false, true);
+          self.view.enableDeleteButtons();
+          self.view.showPlayButtons();
+          self.view.setRSUButtonDisplay(false, false, true);
           //console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
         },
 
         // #####################################################################
         // Action States
         onRecordingfirst: function() { 
-          view.setRSButtonDisplay(false, true);  
+          self.view.setRSButtonDisplay(false, true);  
           //console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
           recordAudio();
         },
 
         onRecordingmid: function() { 
-          view.disableDeleteButtons();
-          view.hidePlayButtons();
-          view.setRSButtonDisplay(false, true);  
+          self.view.disableDeleteButtons();
+          self.view.hidePlayButtons();
+          self.view.setRSButtonDisplay(false, true);  
           //console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
           recordAudio(); 
         },
 
         onRecordinglast: async function() {
-          view.disableDeleteButtons();
-          view.hidePlayButtons();
-          view.setRSButtonDisplay(false, true);  
+          self.view.disableDeleteButtons();
+          self.view.hidePlayButtons();
+          self.view.setRSButtonDisplay(false, true);  
           recordAudio(); // should be blocking
           //console.log('   *** onRecordinglast state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onUploading: function() { 
-          view.disableDeleteButtons();
-          view.hidePlayButtons();
-          view.setRSUButtonDisplay(false, false, false);
+          self.view.disableDeleteButtons();
+          self.view.hidePlayButtons();
+          self.view.setRSUButtonDisplay(false, false, false);
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
           // make sure all promises complete before trying to gather audio
@@ -247,45 +260,45 @@ function Controller(prompts,
           Promise.all(promise_list)
           .then(function() {
             var allClips = document.querySelectorAll('.clip');
-            upload(prompts, profile, appversion, allClips)
+            upload(self.prompts, self.profile, self.appversion, allClips)
             .then(saveProfileAndReset);
           });
         },
       }
     });
 
-    view.record.onclick = function() { 
-      prompts.getNextPrompt();  // sets current_promptLine and increment prompt_count; discarding return value
+    self.view.record.onclick = function() { 
+      self.prompts.getNextPrompt();  // sets current_promptLine and increment prompt_count; discarding return value
 
-      if ( prompts.lastone() ) {
+      if ( self.prompts.lastone() ) {
         fsm.recordclickedlast(); // record last prompt
       } else {
         fsm.recordclickedltn(); // ltn = less than n; where n < maxprompts
       }
     }
 
-    view.stop.onclick = function() {
-      clearTimeout(rec_timeout_obj);
+    self.view.stop.onclick = function() {
+      clearTimeout(self.rec_timeout_obj);
       var start =  Date.now();
-      view.hidePromptDisplay();
+      self.view.hidePromptDisplay();
 
       // actual stopping of recording is delayed because some users hit it
       // early and cut off the end of their recording.
       setTimeout( function () {
         fsm.stopclicked(); 
-      }, parms.recording_stop_delay);
+      }, self.parms.recording_stop_delay);
     }
 
-    view.upload.onclick = function() {
+    self.view.upload.onclick = function() {
       fsm.uploadclicked();
     }
 
-    //view.maxnumpromptschanged.onclick = function() {
-    view.maxnumpromptschanged.onChange = function() {
-      if ( prompts.maxnumpromptsincreased() ) {
+    //self.view.maxnumpromptschanged.onclick = function() {
+    self.view.maxnumpromptschanged.onChange = function() {
+      if ( self.prompts.maxnumpromptsincreased() ) {
         fsm.maxnumpromptsincreased();
       } else { 
-        if ( prompts.recordedmorethancurrentmaxprompts() ) {
+        if ( self.prompts.recordedmorethancurrentmaxprompts() ) {
           fsm.recordedmorethancurrentmaxprompts();
         }
       } 
@@ -296,9 +309,9 @@ function Controller(prompts,
      * delete button of any one recorded prompt
     */
     // TODO should we be using an event trigger explicitly rather than a click event?
-    view.delete_clicked.onclick = function() { 
+    self.view.delete_clicked.onclick = function() { 
       // prompt_count has already been decremented in view call to prompts.movePrompt2Stack
-      if ( prompts.oneleft() ) {
+      if ( self.prompts.oneleft() ) {
          fsm.deleteclickedoneleft(); // at first prompt which means only one prompt left to delete
       } else {
          fsm.deleteclicked();
@@ -307,6 +320,7 @@ function Controller(prompts,
 
     // ###
 
-    return fsm;
+    self.view.setRSUButtonDisplay(true, false, false); 
+    //return fsm;
 }
 
