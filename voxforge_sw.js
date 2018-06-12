@@ -74,9 +74,9 @@ var urlsToCache = [
   '/manifest.json',
 
   '/en/read/',
-  '/en/prompts/001.html',
-  '/en/prompts/002.html',
-  '/en/prompts/003.html',
+//  '/en/prompts/001.html',
+//  '/en/prompts/002.html',
+//  '/en/prompts/003.html',
 ];
 
 //var uploadURL;
@@ -157,9 +157,9 @@ self.addEventListener('sync', function(event) {
     if (event.tag == 'voxforgeSync') {
       console.log('voxforgeSync: background sync request received by serviceworker');
 
+      let uploadURL = new URL(location).searchParams.get('uploadURL');
       // TODO passing parameters this way to service worker may be causing problems when
       // when app installed and called as a standalone app...
-      let uploadURL = new URL(location).searchParams.get('uploadURL');
       //var uploadURL;
       //if (self.location.origin === 'https://voxforge.github.io') { // prod
       //    uploadURL = 'https://upload.voxforge1.org'; 

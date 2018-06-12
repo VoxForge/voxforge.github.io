@@ -245,26 +245,6 @@ Prompts.prototype.init = function () {
       });
     }
 
-    /* */
-    function offline() {
-        var file_name = page_prompt_list_files[random_prompt_file]['file_location'];
-        console.warn("cannot find prompts file on VoxForge server: " + file_name + 
-                     "; or bad Internet connection... using locally stored prompt file: " + local_prompt_file_name);
-
-        getSavedPromptList()
-        .then( function(jsonObject) {
-            self.list = jsonObject.list;
-            initializePromptStack();
-        });
-    }
-
-    /**
-    * have internet connectivity but cannot find or connect to server
-    */
-    function serverDown() {
-        offline();
-    }
-
     /* ====================================================================== */
     /* Main */
     // TODO duplicate definition in service worker file: processSavedSubmission.js
@@ -289,16 +269,26 @@ Prompts.prototype.init = function () {
       * prompt file if not network connection...
       *
       * (synchronous request)
-      */
-      //if (navigator.onLine) { // even with WIFI turned off, will still show as connected even without a cell data plan... useless
       // caching of all prompt files is done in service worker
+
+      //if (navigator.onLine) { // even with WIFI turned off, will still show as connected even without a cell data plan... useless
+
+      */
       $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
         function(prompt_data) {
           processPromptsFile(prompt_data);
           resolve("downloaded prompt file from VoxForge server");
         }
       ).fail(function() {
-          serverDown(); // or router down
+          var file_name = page_prompt_list_files[random_prompt_file]['file_location'];
+          console.warn("cannot find prompts file on VoxForge server: " + file_name + 
+                       "; or bad Internet connection... using locally stored prompt file: " + local_prompt_file_name);
+
+          getSavedPromptList()
+          .then( function(jsonObject) {
+              self.list = jsonObject.list;
+              initializePromptStack();
+          });
           resolve("Internet up, VoxForge server down");
       });
 
