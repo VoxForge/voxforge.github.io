@@ -18,7 +18,7 @@
       <section class="top-display">
       <header>
         <!-- <h1>VoxForge - {{ site.supportedLanguages[page.language_id] }} </h1> -->
-        <h1>VoxForge Speech Submission v2</h1>
+        <h1>VoxForge_v2 Speech Submission</h1>
       </header>
 
       <div id="upload_status_display" border-style: solid;>
@@ -43,8 +43,8 @@
       <button style="background: #cedfe8;" onclick="view.speakerCharacteristics()">{{ page.speaker_characteristics }}</button>
 	    <div style="display: none;" id="speaker_characteristics_display">
           <label for="gender">{{ page.gender.label }}</label>
-          <select selected name="gender" id="gender">
-            <option value="Unknown">{{ page.please_select }}</option>
+          <select name="gender" id="gender">
+            <option selected value="Unknown">{{ page.please_select }}</option>
             {% for item in page.gender.selection %}
               <option value="{{ item }}">{{ item }}</option>    
             {% endfor %}

@@ -218,16 +218,19 @@ var view;  // needs to be global so can be accessible to index.html
     // in standalone mode; therefore wait for prompts object to initialize 
     // before initializing view object
     // (note: async init of prompts and view objects seems to work OK from browser.)
-    var view_async = prompts.init() 
-                     .then(view.init.bind(view));
+    var prompts_async = prompts.init() 
+    // Note: need to make sure this is not delayed in execution, otherwise,
+    // the app page will display, then the selects will be set in DOM properties
+    // but will be too late for it to display to user correctly...
+    var view_async = view.init();
     var audio_async = audio.init();
 
-    // same syncronizatin issues in controller object, so wait for view/prompts 
+    // same synchronization issues in controller object, so wait for view/prompts 
     // and audio objects to initialize before calling controller object
-    Promise.all([view_async, audio_async])
-    .then(function() {
+    //Promise.all([prompts_async, view_async, audio_async])
+    //.then(function() {
         controller.start();
-    });
+    //});
 
 })(); // function context
 

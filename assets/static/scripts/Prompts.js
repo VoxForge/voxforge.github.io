@@ -326,9 +326,6 @@ Prompts.prototype.init = function () {
 
                     resolve("got prompts from local storage");
                 });
-
-
-
           }
       
       });

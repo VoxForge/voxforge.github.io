@@ -46,73 +46,75 @@ function View (parms,
 }
 
 
-// ### METHODS #################################################################
+// ### static methods ##########################################################
 
-/** 
-* Initialize object with async operations
+/**
+* update user display from passed json object
+
+Note: need to make sure this is not delayed in execution, otherwise,
+the app page will display, and the selects will be set in DOM properties,
+but will be too late for it to display to the user correctly... so user will
+see "Please Select" after a page refresh, even though the select will have
+properties showing that a certain element was selected...
 */
-View.prototype.init = function () {
-    var self = this;
-    /**
-    * update user display from passed json object
-    */
-    function updateView(json_object) {
-        //Speaker Characteristics
-        $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
-        if (json_object.username) {
-          $('#anonymous_instructions_display').hide();
-        }
-        $('#gender').val( json_object.gender );
-        $('#age').val( json_object.age );
-
-        // TODO implied by the page the user is on... 
-        // $('#page_language').val( json_object.page_language );
-
-        $('#native_speaker').val( json_object.native_speaker );
-        if ( $('#native_speaker').val() === page_localized_yes )
-        {
-          $("#sub_dialect_display").show();
-        } else {
-          $("#first_language_display").show();
-        }
-        $('#first_language').val( json_object.first_language );
-        $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
-        $('#dialect').val( json_object.dialect );
-        $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
-        if ( $('#dialect').val() === page_localized_other )
-        {
-          $("#dialect_other_display").show();
-        }
-        $('#sub_dialect').val( json_object.dialect_other );
-        //Recording Information:
-        $('#microphone').val( json_object.microphone );
-        $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
-        if ( $('#microphone').val() === page_localized_other )
-        {
-          $("#microphone_other_display").show();
-        }
-
-        $('#recording_location').val( json_object.recording_location );
-        $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
-        if ( $('#recording_location').val() === page_localized_other )
-        {
-          $("#recording_location_other_display").show();
-        }
-        $('#background_noise').val( json_object.background_noise );
-        if ( $('#background_noise').val() === page_localized_yes )
-        {
-          $("#background_noise_display").show();
-        }
-        $('#noise_volume').val( json_object.noise_volume );
-        $('#noise_type').val( json_object.noise_type );
-        $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
-        if ( $('#noise_type').val() === page_localized_other )
-        {
-          $("#noise_type_other_display").show();
-        }
-        $('#license').val( json_object.license );
-        $('#ua_string').val( json_object.ua_string );
+View.updateView = function(json_object) {
+    //Speaker Characteristics
+    $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
+    if (json_object.username) {
+      $('#anonymous_instructions_display').hide();
     }
+    $('#gender').val( json_object.gender );
+    $("#gender option[text=" + json_object.gender + "]").attr("selected","selected"); 
+
+    $('#age').val( json_object.age );
+
+    // TODO implied by the page the user is on... 
+    // $('#page_language').val( json_object.page_language );
+
+    $('#native_speaker').val( json_object.native_speaker );
+    if ( $('#native_speaker').val() === page_localized_yes )
+    {
+      $("#sub_dialect_display").show();
+    } else {
+      $("#first_language_display").show();
+    }
+    $('#first_language').val( json_object.first_language );
+    $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
+    $('#dialect').val( json_object.dialect );
+    $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
+    if ( $('#dialect').val() === page_localized_other )
+    {
+      $("#dialect_other_display").show();
+    }
+    $('#sub_dialect').val( json_object.dialect_other );
+    //Recording Information:
+    $('#microphone').val( json_object.microphone );
+    $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
+    if ( $('#microphone').val() === page_localized_other )
+    {
+      $("#microphone_other_display").show();
+    }
+
+    $('#recording_location').val( json_object.recording_location );
+    $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
+    if ( $('#recording_location').val() === page_localized_other )
+    {
+      $("#recording_location_other_display").show();
+    }
+    $('#background_noise').val( json_object.background_noise );
+    if ( $('#background_noise').val() === page_localized_yes )
+    {
+      $("#background_noise_display").show();
+    }
+    $('#noise_volume').val( json_object.noise_volume );
+    $('#noise_type').val( json_object.noise_type );
+    $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
+    if ( $('#noise_type').val() === page_localized_other )
+    {
+      $("#noise_type_other_display").show();
+    }
+    $('#license').val( json_object.license );
+    $('#ua_string').val( json_object.ua_string );
 
     /**
     * The value of contents of the independent_div is compared to the passed in 
@@ -216,13 +218,21 @@ View.prototype.init = function () {
     }
     option += '<option value="' + page_localized_other + '">' + page_localized_other + '</option>'; 
     $('#first_language').append(option);
+}
 
+// ### METHODS #################################################################
+
+/** 
+* Initialize object with async operations
+*/
+View.prototype.init = function () {
+    var self = this;
     // Prompts
 
     this.maxnumpromptschanged = document.querySelector('#max_num_prompts');
 
     // set default (device dependent) max number of prompts the user can record 
-    option = ''; // clear previous use of option var
+    var option = ''; // clear previous use of option var
     var startPrompt = 10; // min number of prompts no matter what device
     var incr = 5;
     for (var i=startPrompt; i <= self.prompts.max_numPrompts_selector; i = i + incr){
@@ -245,7 +255,7 @@ View.prototype.init = function () {
     return new Promise(function (resolve, reject) {
         var json_object = self.profile.getProfileFromBrowserStorage();
         if (json_object) {
-          updateView(json_object);  
+          View.updateView(json_object);  
         }
         resolve("OK");  // TODO not waiting for updateView
     }); // promise
