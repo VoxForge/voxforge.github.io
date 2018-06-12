@@ -290,29 +290,17 @@ Prompts.prototype.init = function () {
       *
       * (synchronous request)
       */
-      //  if the browser is not able to connect to a local area network (LAN) 
-      // or a router, it is offline; all other conditions return true. So while
-      // you can assume that the browser is offline when it returns a false 
-      // value, you cannot assume that a true value necessarily means that the 
-      // browser can access the internet.
-      // see: https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/onLine
-      if (navigator.onLine) {
-
-      // TODO test for AppCache error event
-      // see: https://www.html5rocks.com/en/mobile/workingoffthegrid/
-            $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
-              function(prompt_data) {
-                processPromptsFile(prompt_data);
-                resolve("downloaded prompt file from VoxForge server");
-              }
-            ).fail(function() {
-                serverDown(); // or router down
-                resolve("Internet up, VoxForge server down");
-           });
-      } else { 
-          offline();
-          resolve("Internet down, device is offline");
-      }
+      //if (navigator.onLine) { // even with WIFI turned off, will still show as connected even without a cell data plan... useless
+      // caching of all prompt files is done in service worker
+      $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
+        function(prompt_data) {
+          processPromptsFile(prompt_data);
+          resolve("downloaded prompt file from VoxForge server");
+        }
+      ).fail(function() {
+          serverDown(); // or router down
+          resolve("Internet up, VoxForge server down");
+      });
 
   }); // promise
 }

@@ -72,7 +72,11 @@ var urlsToCache = [
 
   '/voxforge_sw.js',
   '/manifest.json',
+
   '/en/read/',
+  '/en/prompts/001.html',
+  '/en/prompts/002.html',
+  '/en/prompts/003.html',
 ];
 
 //var uploadURL;
@@ -155,13 +159,13 @@ self.addEventListener('sync', function(event) {
 
       // TODO passing parameters this way to service worker may be causing problems when
       // when app installed and called as a standalone app...
-      //let uploadURL = new URL(location).searchParams.get('uploadURL');
-      var uploadURL;
-      if (self.location.origin === 'https://voxforge.github.io') { // prod
-          uploadURL = 'https://upload.voxforge1.org'; 
-      } else { 
-          uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
-      }
+      let uploadURL = new URL(location).searchParams.get('uploadURL');
+      //var uploadURL;
+      //if (self.location.origin === 'https://voxforge.github.io') { // prod
+      //    uploadURL = 'https://upload.voxforge1.org'; 
+      //} else { 
+      //    uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
+      //}
 
       event.waitUntil(
           processSavedSubmissions(uploadURL)
