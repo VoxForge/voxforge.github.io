@@ -268,8 +268,6 @@ Prompts.prototype.init = function () {
       * get prompts file for given language from server; used cached version of 
       * prompt file if not network connection...
       *
-      // caching of all prompt files is done in service worker
-
       //if (navigator.onLine) { // even with WIFI turned off, will still show as connected even without a cell data plan... useless
 
       */
