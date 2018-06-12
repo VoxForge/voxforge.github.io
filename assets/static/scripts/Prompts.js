@@ -245,6 +245,26 @@ Prompts.prototype.init = function () {
       });
     }
 
+    /* */
+    function offline() {
+        var file_name = page_prompt_list_files[random_prompt_file]['file_location'];
+        console.warn("cannot find prompts file on VoxForge server: " + file_name + 
+                     "; or bad Internet connection... using locally stored prompt file: " + local_prompt_file_name);
+
+        getSavedPromptList()
+        .then( function(jsonObject) {
+            self.list = jsonObject.list;
+            initializePromptStack();
+        });
+    }
+
+    /**
+    * have internet connectivity but cannot find or connect to server
+    */
+    function serverDown() {
+        offline();
+    }
+
     /* ====================================================================== */
     /* Main */
     // TODO duplicate definition in service worker file: processSavedSubmission.js
@@ -270,23 +290,29 @@ Prompts.prototype.init = function () {
       *
       * (synchronous request)
       */
-      $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
-        function(prompt_data) {
-          processPromptsFile(prompt_data);
-          resolve("downloaded prompt file from VoxForge server");
-        }
-      ).fail(function() {
-        var file_name = page_prompt_list_files[random_prompt_file]['file_location'];
-        console.warn("cannot find prompts file on VoxForge server: " + file_name + 
-                     "; or bad Internet connection... using locally stored prompt file: " + local_prompt_file_name);
+      //  if the browser is not able to connect to a local area network (LAN) 
+      // or a router, it is offline; all other conditions return true. So while
+      // you can assume that the browser is offline when it returns a false 
+      // value, you cannot assume that a true value necessarily means that the 
+      // browser can access the internet.
+      // see: https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/onLine
+      if (navigator.onLine) {
 
-        getSavedPromptList()
-        .then( function(jsonObject) {
-            self.list = jsonObject.list;
-            initializePromptStack();
-            resolve("no Internet: using saved prompt file");
-        });
-     });
+      // TODO test for AppCache error event
+      // see: https://www.html5rocks.com/en/mobile/workingoffthegrid/
+            $.get(page_prompt_list_files[random_prompt_file]['file_location'], 
+              function(prompt_data) {
+                processPromptsFile(prompt_data);
+                resolve("downloaded prompt file from VoxForge server");
+              }
+            ).fail(function() {
+                serverDown(); // or router down
+                resolve("Internet up, VoxForge server down");
+           });
+      } else { 
+          offline();
+          resolve("Internet down, device is offline");
+      }
 
   }); // promise
 }

@@ -43,9 +43,12 @@ if ('serviceWorker' in navigator) {
 // https://github.com/GoogleChromeLabs/sw-precache/blob/master/demo/app/js/service-worker-registration.js#L25
 
   window.addEventListener('load', function() {
-    const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
-    //navigator.serviceWorker.register('/voxforge_sw.js')
-    navigator.serviceWorker.register(swUrl)
+    // TODO passing parameters this way to service worker may be causing problems when
+    // when app installed and called as a standalone app...
+    //const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
+    //navigator.serviceWorker.register(swUrl)
+    const swUrl = '/voxforge_sw.js';
+    navigator.serviceWorker.register('/voxforge_sw.js')
     .then(function(reg) {
       console.log('ServiceWorker registration successful with scope: ', reg.scope);
     }, function(err) {

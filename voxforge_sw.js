@@ -75,7 +75,7 @@ var urlsToCache = [
   '/en/read/',
 ];
 
-var uploadURL;
+//var uploadURL;
 self.addEventListener('install', function(event) {
   //event.waitUntil(self.skipWaiting()); // Activate worker immediately
 
@@ -87,8 +87,6 @@ self.addEventListener('install', function(event) {
         return cache.addAll(urlsToCache);
       })
   );
-
-
 });
 
 // https://stackoverflow.com/questions/38168276/navigator-serviceworker-controller-is-null-until-page-refresh?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
@@ -114,7 +112,6 @@ self.addEventListener('install', function(event) {
 // TODO is this even required given that we have a list of the files we want
 // cached above and we cache those...
 */
-
 self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request)
@@ -156,7 +153,16 @@ self.addEventListener('sync', function(event) {
     if (event.tag == 'voxforgeSync') {
       console.log('voxforgeSync: background sync request received by serviceworker');
 
-      let uploadURL = new URL(location).searchParams.get('uploadURL');
+      // TODO passing parameters this way to service worker may be causing problems when
+      // when app installed and called as a standalone app...
+      //let uploadURL = new URL(location).searchParams.get('uploadURL');
+      var uploadURL;
+      if (self.location.origin === 'https://voxforge.github.io') { // prod
+          uploadURL = 'https://upload.voxforge1.org'; 
+      } else { 
+          uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
+      }
+
       event.waitUntil(
           processSavedSubmissions(uploadURL)
           .then(function(returnObj) {

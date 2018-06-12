@@ -5,3 +5,6 @@ _site
 submissions
 .jekyll-metadata
 _site_submissions
+rootCA.crt
+php.ini
+

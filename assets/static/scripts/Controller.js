@@ -48,7 +48,7 @@ function Controller(prompts,
 /**
 * initialize object with async operations
 */
-Controller.prototype.init = function () {
+Controller.prototype.start = function () {
     var self = this;
 
     /**
@@ -95,7 +95,6 @@ Controller.prototype.init = function () {
 
       fsm.donesubmission();
     }
-
 
     /**
     * ### Finite State Machine #####################################################
@@ -267,6 +266,9 @@ Controller.prototype.init = function () {
       }
     });
 
+
+    // ### associate user button clicks with fsm transitions ###################
+
     self.view.record.onclick = function() { 
       self.prompts.getNextPrompt();  // sets current_promptLine and increment prompt_count; discarding return value
 
@@ -293,7 +295,6 @@ Controller.prototype.init = function () {
       fsm.uploadclicked();
     }
 
-    //self.view.maxnumpromptschanged.onclick = function() {
     self.view.maxnumpromptschanged.onChange = function() {
       if ( self.prompts.maxnumpromptsincreased() ) {
         fsm.maxnumpromptsincreased();
@@ -318,9 +319,8 @@ Controller.prototype.init = function () {
       } 
     }
 
-    // ###
+    // ### Main ################################################################/
 
     self.view.setRSUButtonDisplay(true, false, false); 
-    //return fsm;
 }
 

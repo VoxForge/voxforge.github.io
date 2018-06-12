@@ -214,15 +214,19 @@ var view;  // needs to be global so can be accessible to index.html
     * Initialize objects
     */
     // prompts object has side effects, which cause timing problems on low 
-    // powered devices if try to initialize prompts and view asynchronously
-    // in standalone mode; seems to work OK from browser.
+    // powered devices if try to initialize prompts and view objects asynchronously
+    // in standalone mode; therefore wait for prompts object to initialize 
+    // before initializing view object
+    // (note: async init of prompts and view objects seems to work OK from browser.)
     var view_async = prompts.init() 
                      .then(view.init.bind(view));
     var audio_async = audio.init();
 
+    // same syncronizatin issues in controller object, so wait for view/prompts 
+    // and audio objects to initialize before calling controller object
     Promise.all([view_async, audio_async])
     .then(function() {
-        controller.init();
+        controller.start();
     });
 
 })(); // function context
