@@ -74,10 +74,6 @@ var urlsToCache = [
   '/manifest.json',
 
   '/en/read/',
-  '/en/promptsFile/',   // TODO this will not cache the prompts file,... only the html page containig to=e script to get the data... need server side to do what you want...
-//  '/en/prompts/001.html',
-//  '/en/prompts/002.html',
-//  '/en/prompts/003.html',
 ];
 
 //var uploadURL;
