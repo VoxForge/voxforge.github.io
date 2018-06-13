@@ -11,7 +11,7 @@ weight: 2
 ################################################################################
 
 # TODO remove .html subffixes for prod
-# first prompt file gets cached by service worker
+# first prompt file (id: "001") gets cached by service worker
 total_number_of_prompts: 1176
 prompt_list_files:
   - id: "001"
@@ -317,7 +317,7 @@ instructions:
   lastline: >
     3. When done, click <b>Upload</b> to send your recordings to VoxForge server.
 
-# not supporting Edge yet... Edge needs to support FormData
+# TODO not supporting Edge yet... Edge needs to support FormData
 # convert to popup for Edge browsers only...
 #  edge:
 #    mouse_over_text: For Microsoft Edge browser, click here to see how to give your browser permission to use your microphone.
