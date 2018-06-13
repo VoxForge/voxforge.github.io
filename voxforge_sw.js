@@ -74,6 +74,11 @@ var urlsToCache = [
   '/manifest.json',
 
   '/en/read/',
+
+  // cache at least one prompt file for each language
+  '/en/prompts/001.html',
+  '/fr/prompts/001.html',
+  '/es/prompts/001.html',
 ];
 
 //var uploadURL;
@@ -84,7 +89,7 @@ self.addEventListener('install', function(event) {
   event.waitUntil(
       caches.open(CACHE_NAME)
       .then(function(cache) {
-        console.log('Opened cache');
+        console.log('adding files to service worker cache');
         return cache.addAll(urlsToCache);
       })
   );

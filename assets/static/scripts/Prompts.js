@@ -245,6 +245,8 @@ Prompts.prototype.init = function () {
       });
     }
 
+
+
     /* ====================================================================== */
     /* Main */
     // TODO duplicate definition in service worker file: processSavedSubmission.js
@@ -253,80 +255,105 @@ Prompts.prototype.init = function () {
     var random_prompt_file;
 
     return new Promise(function (resolve, reject) {
-      validate_Readmd_file();
+      /**
+        when offline, app hangs as it tries to communicate with server to
+        download another prompt file - takes too long: 30secs... even though it 
+        already has prompts cached in localstorage.
 
-      random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
+        But, no good way to detect if online or offline - navigator.onLine too flaky:
 
-      console.log("prompt file id: " + page_prompt_list_files[random_prompt_file].id + 
-                  " (prompt file array index: " + random_prompt_file + ")");
+          //if (navigator.onLine) { // even with WIFI turned off, will still show as connected even without a cell data plan... useless
 
-      if ( ! page_prompt_list_files[random_prompt_file].contains_promptid) {
-          console.log("starting promptId: " + page_prompt_list_files[random_prompt_file].start);
-      }
+        therefore, get first set of prompts from prompt cache, then asyncronously
+        try to get new set of prompts
 
-      /** 
-      * get prompts file for given language from server; used cached version of 
-      * prompt file if not network connection...
-      *
-      //if (navigator.onLine) { // even with WIFI turned off, will still show as connected even without a cell data plan... useless
-
-      */
-      // TODO when offline, app hangs as it tries to communicate with server to
-      // download another prompt file - takes too long: 30secs... even though it 
-      // already has prompts cached in localstorage.
-      // But, no good way to detect if online of offline - navigator.onLine too flaky
-      // therefore, get first set of prompts from prompt cache, then asyncronously
-      // try to get new set of prompts
-      // only try to get prompts right away if none in localstorage
-      // this way we can have very alrge prompt sets, but user only needs to 
-      // download a small portion
-      self.promptCache.length() // Gets the number of keys in the offline store
-      .then(function(numberOfKeys) { 
-          var prompt_file_name = page_prompt_list_files[random_prompt_file]['file_location'];
-          if (numberOfKeys == 0) { // first time set up of prompts file
-              $.get(prompt_file_name, 
-                  function(prompt_data) {
-                    processPromptsFile(prompt_data);
-                    resolve("downloaded prompt file from VoxForge server");
-                  }
-              ).fail(function() {
-                  var m = "cannot find prompts file on VoxForge server: " + file_name + 
-                          "; or bad Internet connection...\n ";
-                  console.warn(m);
-                  reject(m);
-              });
-          } else { 
-                // use stored prompts cache to start with, and then 
-                // asynchronously try to download updated one... it may be
-                // same one depending on the contents of random_prompt_file
-                // this prevents hang of app when user records offline.
-                // Note: actual prompt_file id of prompts file stored in 
-                // localstorage will likely be different from 
-                // random_prompt_file... should not be a problem.
-                getSavedPromptList()
-                .then( function(jsonObject) {
-                    self.list = jsonObject.list;
-                    initializePromptStack();
-
-                    // async get of updated prompt file from server
-                    $.get(prompt_file_name, 
-                        function(prompt_data) {
-                          convertPromptDataToArray(prompt_data);
-                          savePromptListLocally(); // don't touch prompt stack that user is currently recording
-                        }
-                    ).fail(function() {
-                        var m = "cannot get updated prompts file from VoxForge server: " + 
-                                prompt_file_name + 
-                                "; device offline or has bad Internet connection, " + 
-                                "using cached prompts file\n ";
-                        console.log(m);
-                    });
-
-                    resolve("got prompts from local storage");
+        only try to get prompts right away if none in localstorage
+        this way we can have very large prompt sets, but user only needs to 
+        download a small portion
+        */
+        function firstSetupOfPromptsFile(prompt_file_name) {
+            $.get(prompt_file_name, 
+                function(prompt_data) {
+                  processPromptsFile(prompt_data);
+                  resolve("downloaded prompt file from VoxForge server");
+                }
+            ).fail(function() { // first prompt file should be cached by service worker
+                prompt_file_name = page_prompt_list_files[0]['file_location'];
+                $.get(prompt_file_name, 
+                    function(prompt_data) {
+                      processPromptsFile(prompt_data);
+                      resolve("using service worker cached prompt file id: 001");
+                    }
+                ).fail(function() {
+                    var m = "cannot find prompts file on VoxForge server: " + prompt_file_name + 
+                            "or in service worker cache; could be bad Internet connection...\n ";
+                    console.warn(m);
+                    reject(m);
                 });
-          }
-      
-      });
+            });
+        }
+
+        /**
+          1. use localstorage prompts to start with,
+          2. then asynchronously try to download updated prompt file...
+
+          this prevents hang of app when user records offline (when using a 
+          promise chain) or timing issues with no primise chain when app starts
+          up offline and prompts file 'get' is hanging...
+
+          Note: actual prompt_file id of prompts file stored in 
+          localstorage will likely be different from 
+          random_prompt_file... should not be a problem.
+         */
+        function subsequentSetupOfPromptsFile(prompt_file_name) {
+            getSavedPromptList()
+            .then( function(jsonObject) {
+                self.list = jsonObject.list;
+                initializePromptStack();
+
+                // async: try to download an updated prompt file from server
+                $.get(prompt_file_name, 
+                    function(prompt_data) {
+                      convertPromptDataToArray(prompt_data);
+                      savePromptListLocally(); // don't touch prompt stack that user is currently recording
+                      console.log("updating saved prompts file with new one from VoxForge server");
+                    }
+                ).fail(function() {
+                    var m = "cannot get updated prompts file from VoxForge server: " + 
+                            prompt_file_name + 
+                            "; device offline or has bad Internet connection,\n" + 
+                            "using local storage prompts file\n ";
+                    console.log(m);
+                });
+
+                resolve("got prompts from local storage");
+            });
+
+        }
+
+        validate_Readmd_file();
+        random_prompt_file = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
+        console.log("prompt file id: " + page_prompt_list_files[random_prompt_file].id + 
+                    " (prompt file array index: " + random_prompt_file + ")");
+        if ( ! page_prompt_list_files[random_prompt_file].contains_promptid) {
+            console.log("starting promptId: " + page_prompt_list_files[random_prompt_file].start);
+        }
+
+        /** 
+        * get prompts file for given language from server; used cached version of 
+        * prompt file if no network connection...
+        *
+        */
+        self.promptCache.length() // Gets the number of keys in the offline store
+        .then(function(numberOfKeys) { 
+            var prompt_file_name = page_prompt_list_files[random_prompt_file]['file_location'];
+            if (numberOfKeys == 0) { // first time set up of prompts file
+                firstSetupOfPromptsFile(prompt_file_name);
+            } else { 
+                subsequentSetupOfPromptsFile(prompt_file_name);
+            }
+        
+        });
   }); // promise
 }
 

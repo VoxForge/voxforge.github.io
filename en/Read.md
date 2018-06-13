@@ -11,6 +11,7 @@ weight: 2
 ################################################################################
 
 # TODO remove .html subffixes for prod
+# first prompt file gets cached by service worker
 total_number_of_prompts: 1176
 prompt_list_files:
   - id: "001"
@@ -184,28 +185,111 @@ license:
     title: Creative Commons Licences
     link: https://creativecommons.org/licenses/
     hover_text: >
-      CC0 - Creative Commons Public Domain Dedication;
-      CC BY - Creative Commons Attribution;
-      CC BY-SA - Creative Commons Attribution-ShareAlike;
+      CC0 1.0 - Creative Commons Public Domain Dedication;
+      CC BY 4.0 - Creative Commons Attribution;
+      CC BY-SA 4.0 - Creative Commons Attribution-ShareAlike;
       GPLv3 - GNU General Public License.
     text:  > 
-      <b>CC0 - Creative Commons Public Domain Dedication</b> you dedicate this work to the
+      <b>CC0 1.0 - Creative Commons Public Domain Dedication</b> you dedicate this work to the
       public domain by waiving all of your rights to the work worldwide
       under copyright law.  If you don't know which license to choose, choose: <b>CC0</b>.<br>
-      <b>CC BY - Creative Commons Attribution</b>  This license lets others distribute, remix, 
+      <b>CC BY 4.0 - Creative Commons Attribution</b>  This license lets others distribute, remix, 
       tweak, and build upon your work, even commercially, as long as they 
       credit you for the original creation.<br>
-      <b>CC Creative Commons BY-SA - Attribution-ShareAlike </b>  This license lets others 
+      <b>CC BY-SA 4.0 - Creative Commons Attribution-ShareAlike </b>  This license lets others 
       remix, tweak, and build upon your work even for commercial purposes, 
       as long as they credit you and license their new creations under the 
       identical terms.  <br>
       <b>GPLv3 GNU General Public License</b> similar to CC BY-SA, but made for software... used by
       VoxForge 1.0 corpus.
-  selection_default: { value: 'CC0',  item: 'CC0 - Creative Commons - No rights Reserved (recommended)' }
+  selection_default: { value: 'CC0',  item: 'CC0 1.0 - Creative Commons - No rights Reserved (recommended)' }
   selection:
-    - { value: 'CC_BY',     option: 'CC BY - Creative Commons - Attribution' }
-    - { value: 'CC_BY-SA',  option: 'CC BY-SA - Creative Commons Attribution-ShareAlike' }
+    - { value: 'CC_BY',     option: 'CC BY 4.0 - Creative Commons - Attribution' }
+    - { value: 'CC_BY-SA',  option: 'CC BY-SA 4.0 - Creative Commons Attribution-ShareAlike' }
     - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License' }
+  full_license:
+    CC0:
+      title: CC0 1.0 - Creative Commons CC0 1.0 Universal Public Domain Dedication
+      link: "https://creativecommons.org/publicdomain/zero/1.0/"
+      attribution: "_year_ VoxForge Speech Recording by:"
+      text:
+        - The person who associated a work with this deed has dedicated the work 
+        - to the public domain by waiving all of his or her rights to the work
+        - worldwide under copyright law, including all related and neighboring 
+        - rights, to the extent allowed by law.
+        - ""
+        - You can copy, modify, distribute and perform the work, even for 
+        - commercial purposes, all without asking permission. 
+        - ""
+        - You should have received a copy of the CC0 legalcode along with this
+      text_last: work.  If not, see
+    CC_BY:
+      title: CC BY 4.0 - Creative Commons Attribution 4.0 International Public License
+      link: "https://creativecommons.org/licenses/by/4.0/"
+      attribution: "VoxForge Speech Recording, Copyright (C) _year_"
+      text:
+        - This Speech Recording is licensed under a Creative Commons Attribution 4.0
+        - Unported License.
+        - ""
+        - "You are free to:"
+        - ""
+        - Share — copy and redistribute the material in any medium or format
+        - Adapt — remix, transform, and build upon the material
+        - for any purpose, even commercially.
+        - ""
+        - "Under the following terms:"
+        - ""
+        - Attribution - You must give appropriate credit, provide a link to the 
+        - license, and indicate if changes were made. You may do so in any 
+        - reasonable manner, but not in any way that suggests the licensor 
+        - endorses you or your use.
+        - ""
+        - You should have received a copy of the CC BY 4.0 legalcode along with 
+      text_last: this work.  If not, see
+    CC_BY-SA:
+      title: CC BY-SA 4.0 - Creative Commons Attribution-ShareAlike 4.0 International Public License
+      link: "https://creativecommons.org/licenses/by-sa/4.0/"
+      attribution: "VoxForge Speech Recording, Copyright (C) _year_"
+      text:
+        - This Speech Recording is licensed under a Creative Commons 
+        - Attribution 4.0 Unported License.
+        - ""
+        - "You are free to:"
+        - ""
+        - Share — copy and redistribute the material in any medium or format
+        - Adapt — remix, transform, and build upon the material
+        - for any purpose, even commercially.
+        - ""
+        - "Under the following terms:"
+        - ""
+        - Attribution - You must give appropriate credit, provide a link to the 
+        - license, and indicate if changes were made. You may do so in any 
+        - reasonable manner, but not in any way that suggests the licensor 
+        - endorses you or your use.
+        - ""
+        - ShareAlike — If you remix, transform, or build upon the material, 
+        - you must distribute your contributions under the same license as 
+        - the original.
+        - ""
+        - You should have received a copy of the CC BY-SA 4.0 legalcode along 
+      text_last: with this work.  If not, see
+    GPLv3:
+      title: GPLv3 - GNU General Public License.
+      link: "https://www.gnu.org/licenses/"
+      attribution: "VoxForge Speech Recording, Copyright (C) _year_"
+      text:
+        - "This program is free software: you can redistribute it and/or modify"
+        - it under the terms of the GNU General Public License as published by
+        - the Free Software Foundation, either version 3 of the License, or
+        - (at your option) any later version.
+        - ""
+        - This program is distributed in the hope that it will be useful,
+        - but WITHOUT ANY WARRANTY; without even the implied warranty of
+        - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        - GNU General Public License for more details.
+        - ""
+        - You should have received a copy of the GNU General Public License
+      text_last: along with this program.  If not, see
 
 ua_string:
   label: User Agent String
@@ -338,6 +422,7 @@ alert_message:
   var page_upload_message = {{ page.controls.upload_message }};
   var page_alert_message = {{ page.alert_message  | jsonify}};
   var page_browser_support = {{ page.browser_support  | jsonify}};
+  var page_license = {{ page.license  | jsonify}};
 </script>
 
 

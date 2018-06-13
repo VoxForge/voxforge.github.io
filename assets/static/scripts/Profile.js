@@ -422,19 +422,24 @@ Profile.prototype.setDebugValues = function (obj) {
 Profile.prototype.CC0toTextArray = function () {
     var license_array = [];
     var i=0;
-    var d = new Date();
-    var year = d.getFullYear().toString();
-    
-    license_array[i++] = 'CC0 - Creative Commons Public Domain Dedication\n\n';
 
-    license_array[i++] = year + ' - VoxForge Speech Recording by: ' + this.getUserName() + '\n';
- 
-    license_array[i++] = '\nTo the extent possible under law, the person who associated CC0 with\n';
-    license_array[i++] = 'this Speech Recording has waived all copyright and related or neighboring rights\n';
-    license_array[i++] = 'to the Speech Recording\n';
+    if (page_license.full_license.CC0) {
+      license_array = this.getLicense("CC0");
+    } else {
+      var d = new Date();
+      var year = d.getFullYear().toString();
+      
+      license_array[i++] = 'CC0 - Creative Commons Public Domain Dedication\n\n';
 
-    license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
-    license_array[i++] = 'work.  If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.\n';
+      license_array[i++] = year + ' - VoxForge Speech Recording by: ' + this.getUserName() + '\n';
+   
+      license_array[i++] = '\nTo the extent possible under law, the person who associated CC0 with\n';
+      license_array[i++] = 'this Speech Recording has waived all copyright and related or neighboring rights\n';
+      license_array[i++] = 'to the Speech Recording\n';
+
+      license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
+      license_array[i++] = 'work.  If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.\n';
+    }
 
     return license_array;
 }
@@ -445,18 +450,22 @@ Profile.prototype.CC0toTextArray = function () {
 Profile.prototype.CC_BYtoTextArray = function () {
     var license_array = [];
     var i=0;
-    var d = new Date();
-    var year = d.getFullYear().toString();
+    if (page_license.full_license.CC_BY) {
+      license_array = this.getLicense("CC_BY");
+    } else {
+      var d = new Date();
+      var year = d.getFullYear().toString();
 
-    license_array[i++] = 'CC BY - Creative Commons Attribution license\n\n';
+      license_array[i++] = 'CC BY 4.0 - Creative Commons Attribution license\n\n';
 
-    license_array[i++] = 'VoxForge Speech Recording (c) ' + year + ' by: ' + this.getUserName() + '\n';
+      license_array[i++] = 'VoxForge Speech Recording (c) ' + year + ' by: ' + this.getUserName() + '\n';
 
-    license_array[i++] = '\nThis Speech Recordingis licensed under a\n';
-    license_array[i++] = 'Creative Commons Attribution 3.0 Unported License.\n';
+      license_array[i++] = '\nThis Speech Recordingis licensed under a\n';
+      license_array[i++] = 'Creative Commons Attribution 4.0 Unported License.\n';
 
-    license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
-    license_array[i++] = 'work.  If not, see <http://creativecommons.org/licenses/by/3.0/>.\n';
+      license_array[i++] = '\nYou should have received a copy of the CC BY 4.0 legalcode along with this\n';
+      license_array[i++] = 'work.  If not, see <https://creativecommons.org/licenses/by/4.0/>.\n';
+    }
 
     return license_array;
 }
@@ -467,71 +476,75 @@ Profile.prototype.CC_BYtoTextArray = function () {
 Profile.prototype.CC_BY_SAtoTextArray = function () {
     var license_array = [];
     var i=0;
-    var d = new Date();
-    var year = d.getFullYear().toString();
 
-    license_array[i++] = 'CC BY-SA - Creative Commons Attribution-ShareAlike license\n\n';
+    if (page_license.full_license.CC_BY_SA) {
+      license_array = this.getLicense("CC_BY_SA");
+    } else {
+      var d = new Date();
+      var year = d.getFullYear().toString();
 
-    license_array[i++] = 'VoxForge Speech Recording (c) ' + year + ' by: ' + this.getUserName() + '\n';
+      license_array[i++] = 'CC BY-SA - Creative Commons Attribution-ShareAlike license\n\n';
 
-    license_array[i++] = '\nThis Speech Recording is licensed under a\n';
-    license_array[i++] = 'Creative Commons Attribution-ShareAlike 3.0 Unported License.\n';
- 
-    license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
-    license_array[i++] = 'work.  If not, see <http://creativecommons.org/licenses/by-sa/3.0/>.\n';
+      license_array[i++] = 'VoxForge Speech Recording (c) ' + year + ' by: ' + this.getUserName() + '\n';
+
+      license_array[i++] = '\nThis Speech Recording is licensed under a\n';
+      license_array[i++] = 'Creative Commons Attribution-ShareAlike 4.0 Unported License.\n';
+   
+      license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
+      license_array[i++] = 'work.  If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.\n';
+    }
 
     return license_array;
 }
 
 /**
-* GPL v3 License to array
+* get license
 */
-Profile.prototype.GPL_V3toTextArray = function () {
+Profile.prototype.getLicense = function (license) {
+    var license_obj = page_license.full_license[license];
+
     var license_array = [];
     var i=0;
     var d = new Date();
     var year = d.getFullYear().toString();
 
-    license_array[i++] = 'GPLv3 - GNU General Public License\n\n';
+    if ( license_obj ) {
+      license_array[i++] = license_obj.title + '\n\n';
 
-    license_array[i++] = 'VoxForge Speech Recording Copyright (C) ' + year + ' by: ' + this.getUserName() + '\n';
+      license_array[i++] = license_obj.attribution.replace("_year_", year) + " " + this.getUserName() + '\n\n';
+      for (var j = 0; j < license_obj.text.length; j++) {
+        license_array[i++] = license_obj.text[j] + "\n";
+      }
+      license_array[i++] = license_obj.text_last + " " + license_obj.link;
+    } else {
+      console.warn("invalid licence ID: " + license + "; using CC0 as default");
+     
+      license_array[i++] = 'CC0 - Creative Commons Public Domain Dedication\n\n';
 
-    license_array[i++] = '\nThis program is free software: you can redistribute it and/or modify\n';
-    license_array[i++] = 'it under the terms of the GNU General Public License as published by\n';
-    license_array[i++] = 'the Free Software Foundation, either version 3 of the License, or\n';
-    license_array[i++] = '(at your option) any later version.\n';
+      license_array[i++] = year + ' - VoxForge Speech Recording by: ' + this.getUserName() + '\n';
+   
+      license_array[i++] = '\nThe person who associated a work with this deed has dedicated the work\n';
+      license_array[i++] = 'to the public domain by waiving all of his or her rights to the work\n';
+      license_array[i++] = 'worldwide under copyright law, including all related and neighboring \n';
+      license_array[i++] = 'rights, to the extent allowed by law.\n';
 
-    license_array[i++] = '\nThis program is distributed in the hope that it will be useful,\n';
-    license_array[i++] = 'but WITHOUT ANY WARRANTY; without even the implied warranty of\n';
-    license_array[i++] = 'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n';
-    license_array[i++] = 'GNU General Public License for more details.\n';
+      license_array[i++] = '\nYou can copy, modify, distribute and perform the work, even for\n';
+      license_array[i++] = 'commercial purposes, all without asking permission.\n';
 
-    license_array[i++] = '\nYou should have received a copy of the GNU General Public License\n';
-    license_array[i++] = 'along with this program.  If not, see <https://www.gnu.org/licenses/>.\n';
+      license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
+      license_array[i++] = 'work.  If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.\n';
+    }
 
     return license_array;
 }
 
 /**
-* GPL v3 License to array
+* License to array
 */
 Profile.prototype.licensetoArray = function () {
     var licenseID = $("#license").val();
-    var result;
 
-    if (licenseID == 'CC0') {
-        result = this.CC0toTextArray();
-    } else if (licenseID == 'CC_BY') {
-        result =  this.CC_BYtoTextArray();
-    } else if (licenseID == 'CC_BY-SA') {
-        result =  this.CC_BY_SAtoTextArray();
-    } else if (licenseID == 'GPLv3') {
-        result =  this.GPL_V3toTextArray();
-    } else {
-        console.error('invalid licence ID: ' + licenseID);
-    }
-
-    return result;
+    return  this.getLicense(licenseID);
 }
 
 
