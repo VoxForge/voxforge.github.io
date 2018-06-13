@@ -253,8 +253,8 @@ Prompts.prototype.init = function () {
     * localstorage with a new random one from VoxForge server
     */
     function asyncAttemptToDownloadPrompts(prompt_file_name) {
-        console.log("attempting async update of saved prompts file with new " + 
-                    "one from VoxForge server");
+        console.log("attempting async update of saved prompts file to replace " + 
+                    "with new one from VoxForge server");
         $.get(prompt_file_name, 
             function(prompt_data) {
               convertPromptDataToArray(prompt_data);

@@ -33,6 +33,7 @@ function View (parms,
     this.record = document.querySelector('.record');
     this.stop = document.querySelector('.stop');
     this.upload = document.querySelector('.upload');
+
     // TODO this might work with delete if used class syntax (whcih shuold pick up many elements) instead of id synstax (which only pick up one element)
     this.delete_clicked = document.querySelector('#delete_clicked'); // only picks up first instance of in=delete in DOM
 
@@ -360,11 +361,42 @@ View.prototype.enableDeleteButtons = function () {
 }
 
 /**
-* hide all  dynamically created play buttons
-* disable does not seem to work with WaveSurfer
+* O
+
+the following do not work:
+$('.audio_player').hide(); 
+document.querySelector('.audio_player').hide();
+$('.audio_player').prop('hidden', true);
+
+*/
+View.prototype.hideAudioPlayer = function () {
+    //only hides the first instance of audio_player, even though it is a class
+    //document.querySelector('.audio_player').controls = false;
+    var object_arr = $('.audio_player');
+    for (var i = 0; i < object_arr.length; i++) {
+        object_arr[i].controls = false;
+    }
+}
+
+/**
+*
+*/
+View.prototype.showAudioPlayer = function () {
+    //document.querySelector('.audio_player').controls = true;
+    var object_arr = $('.audio_player');
+    for (var i = 0; i < object_arr.length; i++) {
+        object_arr[i].controls = true;
+    }
+}
+
+/**
+
+*
+* can't just disable the play button on the lower audio player, need to hide
+* whole thing...
 */
 View.prototype.hidePlayButtons = function () {
-    $('.play').hide();;
+    $('.play').hide();
 }
 
 /**
@@ -463,6 +495,7 @@ View.prototype.displayAudioPlayer = function (obj)
     */
     function createAudioPlayer() {
       var audioPlayer = document.createElement('audio');
+      audioPlayer.classList.add('audio_player');
       audioPlayer.setAttribute('controls', '');
       audioPlayer.controls = true;
       audioPlayer.src = audioURL;

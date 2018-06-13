@@ -201,6 +201,7 @@ Controller.prototype.start = function () {
 
         onMidpromptsrecorded: function() { 
           self.view.enableDeleteButtons();
+          self.view.showAudioPlayer();
           self.view.showPlayButtons();
           if (self.audio.parms.blockDisplayOfRecordButton) {
               //block display of record button stays off until after recording is done
@@ -218,6 +219,7 @@ Controller.prototype.start = function () {
         // continue, or delete then upload
         onMaxpromptsrecorded: function() { 
           self.view.enableDeleteButtons();
+          self.view.showAudioPlayer();
           self.view.showPlayButtons();
           self.view.setRSUButtonDisplay(false, false, true);
           //console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
@@ -233,6 +235,7 @@ Controller.prototype.start = function () {
 
         onRecordingmid: function() { 
           self.view.disableDeleteButtons();
+          self.view.hideAudioPlayer();
           self.view.hidePlayButtons();
           self.view.setRSButtonDisplay(false, true);  
           //console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
@@ -241,6 +244,7 @@ Controller.prototype.start = function () {
 
         onRecordinglast: async function() {
           self.view.disableDeleteButtons();
+          self.view.hideAudioPlayer();
           self.view.hidePlayButtons();
           self.view.setRSButtonDisplay(false, true);  
           recordAudio(); // should be blocking
@@ -249,6 +253,7 @@ Controller.prototype.start = function () {
 
         onUploading: function() { 
           self.view.disableDeleteButtons();
+          self.view.hideAudioPlayer();
           self.view.hidePlayButtons();
           self.view.setRSUButtonDisplay(false, false, false);
           //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
