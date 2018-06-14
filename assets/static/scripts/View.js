@@ -116,6 +116,15 @@ View.updateView = function(json_object) {
     }
     $('#license').val( json_object.license );
     $('#ua_string').val( json_object.ua_string );
+}
+
+// ### METHODS #################################################################
+
+/** 
+* Initialize object with async operations
+*/
+View.prototype.init = function () {
+    var self = this;
 
     /**
     * The value of contents of the independent_div is compared to the passed in 
@@ -219,15 +228,7 @@ View.updateView = function(json_object) {
     }
     option += '<option value="' + page_localized_other + '">' + page_localized_other + '</option>'; 
     $('#first_language').append(option);
-}
 
-// ### METHODS #################################################################
-
-/** 
-* Initialize object with async operations
-*/
-View.prototype.init = function () {
-    var self = this;
     // Prompts
 
     this.maxnumpromptschanged = document.querySelector('#max_num_prompts');
