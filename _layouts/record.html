@@ -31,7 +31,7 @@
 
         <!-- https://learn.jquery.com/using-jquery-core/selecting-elements/ -->
 	    <div id="profile-display">
-	      <div class="readme">
+	      <div class="profile">
 
           <label for="username">{{ page.username_label }}</label>
           <input id="username" 
@@ -253,7 +253,7 @@
 
 <!-- !!!!!! -->
 	       </div> <!-- recording_information_display -->
-	     </div><!-- readme -->
+	     </div><!-- profile -->
 	   </div> <!-- profile-display -->
 
         <br>
@@ -279,7 +279,7 @@
               id="directions-button-display" 
               style="background: #cedfe8;" 
               onclick="view.directionsInfo()">{{ page.instructions.label }}</button>
-      <div id="directions-display">
+      <div id="instructions-display">
         {% for line in page.instructions.lines %}
             {{ line }} <br>
         {% endfor %}
@@ -322,7 +322,7 @@
 
       </section>
 
-    </div>
+    </div><!-- wrapper -->
     <div id="read-page-variables">
       {{ content }}
     </div>

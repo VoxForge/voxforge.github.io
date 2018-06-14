@@ -304,7 +304,7 @@ View.prototype.recordingInformation = function () {
 * toggle to display directions
 */
 View.prototype.directionsInfo = function () {
-    $("#directions-display").toggle(); 
+    $("#instructions-display").toggle(); 
 }
 
 /**
@@ -314,15 +314,13 @@ View.prototype.directionsInfo = function () {
 View.prototype.hideProfileInfo = function () {
     $("#profile-display").hide();
     $("#profile-button-display").show();
-    $("#directions-display").hide();
-    $("#directions-button-display").show();
+    $("#instructions-display").hide();
+    $("#instructions-button-display").show();
     $('.info-display').show();
 
     document.querySelector('.info-display').innerText = "";
     document.querySelector('.prompt_id').innerText = "";
 }
-
-
 
 /**
 * set record, stop button display

@@ -19,6 +19,17 @@ body {
   flex-direction: column;
 }
 
+/* wrapper adjustments for wider screens */
+@media all and (min-width: 500px) {
+  /* Don't take all the space as readability is lost when line length
+     goes past a certain size */
+  .wrapper {
+    width: 90%;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+}
+
 h1, h2 {
   font-size: 2rem;
   text-align: center;
@@ -36,10 +47,11 @@ h1, h2 {
   padding: 3.0rem 0.5rem 2.0rem 0.5rem;
 }
 
-#directions-display {
+#instructions-display {
   font-size: 1.0rem;
 }
 
+/*
 .welcome-display {
   font-size: 1rem;
   text-align: center;
@@ -52,6 +64,7 @@ h1, h2 {
   padding: 0.5rem 0.5rem 0.5rem 0.5rem;
   font-family: Arial;
 }
+*/
 
 canvas {
   width: 100%;
@@ -60,12 +73,15 @@ canvas {
   margin-bottom: 0.5rem;
 }
 
+/* makes room for other form input; and by doing so make the selection narrower
+so as to be able to fit the input field*/
 .other {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
 }
 
+/* Play, Stop, Upload buttons*/
 #buttons {
   display: flex;
   flex-direction: row;
@@ -102,6 +118,7 @@ button:disabled {
   background: #888888;
 }
 
+/*
 .continue-link {
   width:33%;
   margin-left: 33%;
@@ -110,6 +127,7 @@ button:disabled {
 #buttons .continue {
   width: 100%;
 }
+*/
 
 /* Make the clips use as much space as possible, and
  * also show a scrollbar when there are too many clips to show
@@ -149,6 +167,11 @@ button.delete {
   font-size: 0.8rem;
 }
 
+/* Cursor when clip name is clicked over */
+.clip p {
+  cursor: pointer;
+}
+
 /* Checkbox hack to control information box display */
 /* !!!!!!!
 label {
@@ -164,32 +187,17 @@ input[type=checkbox] {
    position: absolute;
    top: -100px;
 }
+
+// Toggled State of information box //
+input[type=checkbox]:checked ~ aside {
+  transform: translateX(0);
+}
 !!!!!! */
 
 
 
-/* Toggled State of information box */
-input[type=checkbox]:checked ~ aside {
-  transform: translateX(0);
-}
 
-/* Cursor when clip name is clicked over */
-
-.clip p {
-  cursor: pointer;
-}
-
-/* Adjustments for wider screens */
-@media all and (min-width: 500px) {
-  /* Don't take all the space as readability is lost when line length
-     goes past a certain size */
-  .wrapper {
-    width: 90%;
-    max-width: 700px;
-    margin: 0 auto;
-  }
-}
-
+/*
 footer {
     font-family: Arial;
     color: #222;
@@ -203,13 +211,14 @@ footer {
 footer a {
   margin-left: 20px;
 }
+*/
 
 .info-display {
   border-style: solid;
 }
 
 
-.readme {
+.profile {
   font-size: 1.0rem;
 }
 
@@ -223,12 +232,13 @@ footer a {
     float: left;
 }
 
-/*!
+/*
  * see: Bootstrap v4.0.0-alpha.2 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 
+/* WaveSurfer Play button */
 .btn-primary {
   color: #fff;
   background-color: #0275d8;
