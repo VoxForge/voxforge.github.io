@@ -51,21 +51,6 @@ h1, h2 {
   font-size: 1.0rem;
 }
 
-/*
-.welcome-display {
-  font-size: 1rem;
-  text-align: center;
-  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
-}
-
-.legal {
-  font-size: 1.0rem;
-  text-align: left;
-  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
-  font-family: Arial;
-}
-*/
-
 canvas {
   width: 100%;
   height: 60px;
@@ -73,8 +58,8 @@ canvas {
   margin-bottom: 0.5rem;
 }
 
-/* makes room for other form input; and by doing so make the selection narrower
-so as to be able to fit the input field*/
+/* makes room for 'other' form input; and by doing so make the selection button
+width narrower so as to be able to fit the input field*/
 .other {
   display: flex;
   flex-direction: row;
@@ -117,17 +102,6 @@ button:active:enabled {
 button:disabled {
   background: #888888;
 }
-
-/*
-.continue-link {
-  width:33%;
-  margin-left: 33%;
-}
-
-#buttons .continue {
-  width: 100%;
-}
-*/
 
 /* Make the clips use as much space as possible, and
  * also show a scrollbar when there are too many clips to show
@@ -172,47 +146,6 @@ button.delete {
   cursor: pointer;
 }
 
-/* Checkbox hack to control information box display */
-/* !!!!!!!
-label {
-  font-size: 3rem;
-  position: absolute;
-  top: 2px;
-  right: 3px;
-  z-index: 5;
-  cursor: pointer;
-}
-
-input[type=checkbox] {
-   position: absolute;
-   top: -100px;
-}
-
-// Toggled State of information box //
-input[type=checkbox]:checked ~ aside {
-  transform: translateX(0);
-}
-!!!!!! */
-
-
-
-
-/*
-footer {
-    font-family: Arial;
-    color: #222;
-    background-color: rgb(242, 242, 242);
-    width: 100%;
-    bottom: 0;
-    position: fixed;
-    padding-left: 30px;
-}
-
-footer a {
-  margin-left: 20px;
-}
-*/
-
 .info-display {
   border-style: solid;
 }
@@ -238,7 +171,7 @@ footer a {
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 
-/* WaveSurfer Play button */
+/* WaveSurfer play button */
 .btn-primary {
   color: #fff;
   background-color: #0275d8;
