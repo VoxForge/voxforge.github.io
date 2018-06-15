@@ -112,6 +112,9 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
 /**
 * Read HTML Form Data to convert profile data to hash (associative array)
 */
+//TODO should move this to View class, which should be the sole interaction point
+// with HTML... create the HASH in view and just do a straight copy in Profile for
+// anything that is in Display
 Profile.prototype.toHash = function () {
     var profile_hash = {};
 
@@ -218,6 +221,7 @@ Profile.prototype.toJsonString = function () {
 /**
 * Read HTML Form Data to convert profile data to array
 */
+// TODO all interactions with JQuery should be made in View class
 Profile.prototype.toTextArray = function () {
     var profile_array = [];
     var i=0;

@@ -24,7 +24,7 @@ body {
   /* Don't take all the space as readability is lost when line length
      goes past a certain size */
   .wrapper {
-    width: 90%;
+    width: 60%;
     max-width: 700px;
     margin: 0 auto;
   }
