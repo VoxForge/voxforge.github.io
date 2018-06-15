@@ -380,10 +380,10 @@ function processWorkerEventMessage(workertype, returnObj) {
               filesNotUploaded.length + " " + 
               submissionText + ":\n    " + 
               filesNotUploaded.join("\n    "); 
-        if (returnObj.err) {
-            m = m + "\n========================\n";
-            m = m + "\n\nserver error message: " + returnObj.err;
-        }
+        //if (returnObj.err) {
+        //    m = m + "\n========================\n";
+        //    m = m + "\n\nserver error message: " + returnObj.err;
+        //}
 
         console.info(workertype + ": " + m);
         Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
@@ -395,8 +395,8 @@ function processWorkerEventMessage(workertype, returnObj) {
       // if there is an error with one prompt (usually server side check - e.g.
       // too big for server settings), then other submissions will upload, but
       // erroneous one will stat in browser storage.
-      // TODO need a way for user to save these locally and upload them to VoxForge 
-      // server some other way.
+      // TODO need a way for user to save these their o/s filesystem and upload
+      // them to VoxForge server some other way.
       case 'partialUpload':
         var filesNotUploaded = returnObj.filesNotUploaded;
         var filesUploaded = returnObj.filesUploaded;

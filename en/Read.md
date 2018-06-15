@@ -365,7 +365,9 @@ alert_message:
   submission_singular: submission
   submission_plural: submissions
   localstorage_message: >
-    Submission saved to browser storage.
+    Cannot connect to server.  Your submission has been saved to your
+    browser's internal storage.  It will be uploaded with next submission you 
+    make when the VoxForge server is accessible.
   browsercontains_message: >
     Your browser storage contains
   uploaded_message: >

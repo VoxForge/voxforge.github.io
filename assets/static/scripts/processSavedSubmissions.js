@@ -115,7 +115,6 @@ function processSavedSubmissions(uploadURL) {
         })
         .catch(function (err) {
           noUploadList[noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
-          // reject message does not show up anywhere???
           var m = 'Upload request failed for: ' + saved_submission_name.replace(/\[.*\]/gi, '') + '\n\n' +
                    '...will try again on next upload attempt.  error: ' + err;
           console.error(m);
