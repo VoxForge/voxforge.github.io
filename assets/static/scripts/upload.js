@@ -337,14 +337,14 @@ function upload( prompts,
 }
 
 /** 
-* Listen for return messages from service worker
+* Handler for messages coming from the service worker
 *
 // http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
 // https://github.com/jbmoelker/serviceworker-introduction/issues/1
 // https://miguelmota.com/blog/getting-started-with-service-workers/
 // when debugging, need to wait for service worker to trigger - 1-2 minutes
 // create breakpoints in voxforge_sw.js to know when this occurs...
-// Handler for messages coming from the service worker
+// 
 */
 navigator.serviceWorker.addEventListener('message', function(event){
   var returnObj = event.data;
@@ -357,44 +357,45 @@ navigator.serviceWorker.addEventListener('message', function(event){
 * process messages from service worker or web worker
 */
 function processWorkerEventMessage(workertype, returnObj) {
-    switch (returnObj.status) {
-      case 'AllUploaded':
-        var filesUploaded = returnObj.filesUploaded;
-        var submissionText = (filesUploaded.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
-        var m = filesUploaded.length + " " + 
-                submissionText + " " +
-                page_alert_message.uploaded_message  + "\n    " +
-                filesUploaded.join("\n    ");
+    function processMessage(m) {
         console.info(workertype + ": " + m);
         Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
         .then(function() {
           window.alert(m);
         });
+    }
+
+    switch (returnObj.status) {
+      case 'AllUploaded':
+        var filesUploaded = returnObj.filesUploaded;
+        var submissionText = (filesUploaded.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
+        processMessage( filesUploaded.length + " " + 
+                        submissionText + " " +
+                        page_alert_message.uploaded_message  + "\n    " +
+                        filesUploaded.join("\n    ")
+        );
+
         break;
 
       case 'noneUploaded': // files saved to browser storage
         var filesNotUploaded =  returnObj.filesNotUploaded;
         var submissionText = (filesNotUploaded.length > 1 ? page_alert_message.submission_plural : page_alert_message.submission_singular);
-        var m = page_alert_message.localstorage_message + "\n" +
-              page_alert_message.browsercontains_message.trim() + " " + // remove newline
-              filesNotUploaded.length + " " + 
-              submissionText + ":\n    " + 
-              filesNotUploaded.join("\n    "); 
+        processMessage(  page_alert_message.localstorage_message + "\n" +
+                         page_alert_message.browsercontains_message.trim() + " " + // remove newline
+                         filesNotUploaded.length + " " + 
+                         submissionText + ":\n    " + 
+                         filesNotUploaded.join("\n    ")
+        );
+        // debug
         //if (returnObj.err) {
         //    m = m + "\n========================\n";
         //    m = m + "\n\nserver error message: " + returnObj.err;
         //}
-
-        console.info(workertype + ": " + m);
-        Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
-        .then(function() {
-          window.alert(m);
-        });
         break;
 
       // if there is an error with one prompt (usually server side check - e.g.
       // too big for server settings), then other submissions will upload, but
-      // erroneous one will stat in browser storage.
+      // erroneous one will stay in browser storage.
       // TODO need a way for user to save these their o/s filesystem and upload
       // them to VoxForge server some other way.
       case 'partialUpload':
@@ -417,12 +418,7 @@ function processWorkerEventMessage(workertype, returnObj) {
             m = m + "\n========================\n";
             m = m + "\n\nserver error message: " + returnObj.err;
         }
-        console.info(workertype + ": " + m);
-
-        Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
-        .then(function() {
-          window.alert(m);
-        });
+        processMessage(m);
         break;
 
       default:
