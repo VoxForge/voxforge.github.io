@@ -116,87 +116,12 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
 // with HTML... create the HASH in view and just do a straight copy in Profile for
 // anything that is in Display
 Profile.prototype.toHash = function () {
-    var profile_hash = {};
-
-    // note, this leaves the contents of Form unchanged, only when user 
-    // comes back does content of Other form field get removed
-    if ( $('#username').val() ) {
-      profile_hash["username"] = Profile.cleanUserInputRemoveSpaces( $("#username").val() );
-    } else {
-      profile_hash["username"] = "Anonymous";
-    }
-    profile_hash["gender"] = $("#gender").val();
-    profile_hash["age"] = $("#age").val();
+    var profile_hash = View.getUserProfileInfo();
 
     profile_hash["language"] = page_language;
-    profile_hash["native_speaker"] = $("#native_speaker").val();
-
-    profile_hash["first_language"] = $('#first_language').val();
-    if ($('#first_language').val() !== page_localized_other) {
-        profile_hash["first_language_other"] = "";
-    } else {
-        profile_hash["first_language_other"] = Profile.cleanUserInput( $("#first_language_other").val() );
-    }
-
-    profile_hash["dialect"] = $("#dialect").val();
-    if ($('#dialect').val() !== page_localized_other) {
-        profile_hash["dialect_other"] = "";
-    } else {
-        profile_hash["dialect_other"] = Profile.cleanUserInput( $("#dialect_other").val() );
-    }
-
-    profile_hash["sub_dialect"] = $("#sub_dialect").val();
-
-    profile_hash["microphone"] = $("#microphone").val() ;
-    if ($('#microphone').val() !== page_localized_other) {
-        profile_hash["microphone_other"] = "";
-    } else {
-        profile_hash["microphone_other"] = Profile.cleanUserInput( $("#microphone_other").val() );
-    }
-
-    profile_hash["recording_location"] = $("#recording_location").val() ;
-    if ($('#recording_location').val() !== page_localized_other) {
-        profile_hash["recording_location_other"] = "";
-    } else {
-        profile_hash["recording_location_other"] = Profile.cleanUserInput( $("#recording_location_other").val() );
-    }
-
-    profile_hash["background_noise"] = $("#background_noise").val() ;
-    profile_hash["noise_volume"] = $("#noise_volume").val() ;
-
-    profile_hash["noise_type"] = $("#noise_type").val();
-    if ($('#noise_type').val() !== page_localized_other) {
-        profile_hash["noise_type_other"] = "";
-    } else {
-        profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
-    }
 
     profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
     profile_hash["app_version"] = this.appversion;
-
-    profile_hash["ua_string"] = $("#ua_string").val();
-    // see http://www.whatsmyua.info/
-    // https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
-    if ($('#ua_string').val() === page_localized_yes) {
-      profile_hash["user_agent_string"] = platform.ua;
-      // attempts to parse the ua string
-      profile_hash["os_family"] = platform.os.family;
-      profile_hash["os_version"] = platform.os.version;
-      profile_hash["browser_name"] = platform.name;
-      profile_hash["browser_version"] = platform.version;
-      profile_hash["product"] = platform.product || "";
-      profile_hash["manufacturer"] = platform.manufacturer || "";
-    } else {
-      profile_hash["user_agent_string"] = '';
-      profile_hash["os_family"] = '';
-      profile_hash["os_version"] = '';
-      profile_hash["browser_name"] = '';
-      profile_hash["browser_version"] = '';
-      profile_hash["product"] = '';
-      profile_hash["manufacturer"] = '';
-    }
-
-    profile_hash["license"] = $("#license").val();
 
     profile_hash["file_type"] = "wav";
 
@@ -223,69 +148,65 @@ Profile.prototype.toJsonString = function () {
 */
 // TODO all interactions with JQuery should be made in View class
 Profile.prototype.toTextArray = function () {
+    var profile_hash = View.getUserProfileInfo();
+
     var profile_array = [];
     var i=0;
 
-    if ( $('#username').val() ) {
-      profile_array[i++] = 'User Name: ' + Profile.cleanUserInputRemoveSpaces( $('#username').val() ) + '\n';
-    } else {
-      profile_array[i++] = 'User Name: Anonymous\n';
-    }
+    profile_array[i++] = 'User Name: ' + profile_hash["username"] + '\n';
 
     profile_array[i++] = '\nSpeaker Characteristics: \n\n';
 
-    profile_array[i++] = 'Gender: ' +  $('#gender').val() + '\n';
+    profile_array[i++] = 'Gender: ' +  profile_hash["gender"] + '\n';
 
-    var $old_value = $('#age').find(':selected').attr('old_value');
-    if ($old_value) {
-      profile_array[i++] = 'Age Range: ' +  $old_value + '\n';
+    if (profile_hash["age_old_value"]) {
+      profile_array[i++] = 'Age Range: ' + profile_hash["age_old_value"] + '\n';
     } else {
-      profile_array[i++] = 'Age Range: ' +  $('#age').val() + '\n';
+      profile_array[i++] = 'Age Range: ' +  profile_hash["age"] + '\n';
     }
 
     profile_array[i++] = 'Language: ' +  page_language + '\n';
 
-    profile_array[i++] = 'Native Speaker: ' +  $('#native_speaker').val() + '\n';
-    if ($('#native_speaker').val() !== "No") {
-      if ($('#dialect').val() !== page_localized_other) {
-        profile_array[i++] = 'Pronunciation dialect: ' + $('#dialect').val() + '\n';
-        if ( $('#sub_dialect').val() ) {
-          profile_array[i++] = '  sub-dialect: ' + $('#sub_dialect').val() + '\n';
+    profile_array[i++] = 'Native Speaker: ' + profile_hash["native_speaker"] + '\n';
+    if (profile_hash["native_speaker"] !== "No") {  // is a native speaker - default
+      if (profile_hash["dialect"] !== page_localized_other) {
+        profile_array[i++] = 'Pronunciation dialect: ' + profile_hash["dialect"] + '\n';
+        if ( profile_hash["sub_dialect"] ) {
+          profile_array[i++] = '  sub-dialect: ' + profile_hash["sub_dialect"] + '\n';
         }
       } else {
-        profile_array[i++] =  'Pronunciation dialect: Other - ' + Profile.cleanUserInput( $('#dialect_other').val() ) + '\n';
+        profile_array[i++] =  'Pronunciation dialect: Other - ' + profile_hash["dialect_other"] + '\n';
       }
-    } else {
-      if ( $('#first_language').val() !== page_localized_other) 
+    } else { // Not a native speaker
+      if ( profile_hash["first_language"] !== page_localized_other) 
       {
-        var langId = $('#first_language').val();
+        var langId = profile_hash["first_language"];
         profile_array[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
       } else {
-        profile_array[i++] = '  first language: ' + Profile.cleanUserInput( $('#first_language_other').val() );
+        profile_array[i++] = '  first language: ' + profile_hash["first_language_other"];
       }
     }
 
     profile_array[i++] = '\nRecording Information: \n\n';
-    if ($('#microphone').val() !== page_localized_other) {
-      profile_array[i++] = 'Microphone Type: ' + $('#microphone').val() + '\n';
+    if (profile_hash["microphone"] !== page_localized_other) {
+      profile_array[i++] = 'Microphone Type: ' + profile_hash["microphone"] + '\n';
     } else {
-      profile_array[i++] = 'Microphone Type: Other - ' + Profile.cleanUserInput( $('#microphone_other').val() ) + '\n';
+      profile_array[i++] = 'Microphone Type: Other - ' + profile_hash["microphone_other"]  + '\n';
     }
 
-    if ($('#recording_location').val() !== page_localized_other) {
-      profile_array[i++] = 'Recording Location: ' + $('#recording_location').val() + '\n';
+    if ( profile_hash["recording_location"] !== page_localized_other) {
+      profile_array[i++] = 'Recording Location: ' +  profile_hash["recording_location"] + '\n';
     } else {
-      profile_array[i++] = 'Recording Location: Other - ' + Profile.cleanUserInput( $('#recording_location_other').val() ) + '\n';
+      profile_array[i++] = 'Recording Location: Other - ' + profile_hash["recording_location_other"] + '\n';
     }
 
-    profile_array[i++] = 'Background Noise: ' + $('#background_noise').val() + '\n';
-
-    if ($('#background_noise').val() === "Yes") {
-      profile_array[i++] = 'Noise Volume: ' + $('#noise_volume').val() + '\n';
-      if ($('#noise_type').val() !== page_localized_other) {
-        profile_array[i++] = 'Noise Type: ' + $('#noise_type').val() + '\n';
+    profile_array[i++] = 'Background Noise: ' + profile_hash["background_noise"] + '\n';
+    if (profile_hash["background_noise"] === "Yes") {
+      profile_array[i++] = 'Noise Volume: ' + profile_hash["noise_volume"] + '\n';
+      if (profile_hash["noise_type"] !== page_localized_other) {
+        profile_array[i++] = 'Noise Type: ' + profile_hash["noise_type"]  + '\n';
       } else {
-        profile_array[i++] = 'Noise Type: Other - ' + Profile.cleanUserInput( $('#noise_type_other').val() ) + '\n';
+        profile_array[i++] = 'Noise Type: Other - ' + profile_hash["noise_type_other"] + '\n';
       }
     }
 
@@ -300,7 +221,7 @@ Profile.prototype.toTextArray = function () {
       profile_array[i++] = 'Manufacturer: ' + platform.manufacturer + '\n';
     }
 
-    profile_array[i++] = '\nLicense: ' +  $('#license').val() + '\n';
+    profile_array[i++] = '\nLicense: ' + profile_hash["license"]  + '\n';
 
     profile_array[i++] = '\nFile Info: \n\n';
 
@@ -334,7 +255,7 @@ Profile.prototype.addProfile2LocalStorage = function () {
 * return cleaned username user entered into input field
 */
 Profile.prototype.getUserName = function () {
-    return Profile.cleanUserInputRemoveSpaces( $('#username').val() ) || page_anonymous || "anonymous";
+    return Profile.cleanUserInputRemoveSpaces( View.getUserName() ) || page_anonymous || "anonymous";
 }
 
 /**
@@ -546,7 +467,7 @@ Profile.prototype.getLicense = function (license) {
 * License to array
 */
 Profile.prototype.licensetoArray = function () {
-    var licenseID = $("#license").val();
+    var licenseID = View.getLicenseID();
 
     return  this.getLicense(licenseID);
 }
