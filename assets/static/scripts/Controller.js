@@ -271,7 +271,6 @@ Controller.prototype.start = function () {
       }
     });
 
-
     // ### associate user button clicks with fsm transitions ###################
 
     self.view.record.onclick = function() { 

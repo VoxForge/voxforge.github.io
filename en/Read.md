@@ -299,11 +299,11 @@ ua_string:
     hover_text: >
       Include User Agent string with submission
     text:  > 
-      When your web browser makes a request to a website, it sends a set of 
-      characters called a User Agent string.  This string contains information 
-      about your browser name, operating system, device type, etc.<br>
-      The VoxForge app can collect this information to help troubleshoot and
-      determine which devices work best with this app.
+      When your web browser makes a request to a website, it also sends a User 
+      Agent string.  This string contains information about your browser name, 
+      operating system, device type, etc.<br>
+      The VoxForge app collects this information to help troubleshoot and
+      determine which devices work best with this app.<br>
   selection_default: { value: 'Yes',  item: 'Yes' }
   selection:
     - { value: 'No',  option: 'No' }
