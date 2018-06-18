@@ -6,43 +6,54 @@
 # 'jekyll serve'. If you change this file, please restart the server process.
 
 exclude: [fix_md_script]
+
 # Site settings
 title:
   en: VoxForge - Free Speech... Recognition
   es: VoxForge - libertad de expresión
   fr: VoxForge - Voix Libre
+
 # word 'language' in local language
 languagesLocal:
   en: Languages
   fr: Langues
   es: Idiomas
+
 # localized language name
 languageName:
   en: English
   fr: Français
   es: Español
+# hover language name translated to English
 languageEnglish:
   en: English
   fr: French
   es: Spanish
-# TODO temporary until I figure out how to set up multiple languages in javascript app...
-supportedLanguages:
-  EN: English
-  FR: French
-  ES: Spanish
+
 email: contact@voxforge.org
 index:
   en: home
   fr: accueil
   es: boenosdias
 baseurl: "" # the subpath of your site, e.g. /blog
-#url: "https://voxforge.github.io" # the base hostname & protocol for your site
+
+# url: "https://voxforge.github.io" # the base hostname & protocol for your site
 url: "https://jekyll_voxforge.org" # the base hostname & protocol for your site
+
+# Note: In Jekyll 2, any URL constructed from the permalink: field had a 
+# trailing slash (/) added to it automatically. Jekyll 3 no longer adds a
+# trailing slash automatically to permalink: URLs
+# see: https://jekyllrb.com/docs/upgrading/2-to-3/
+# add trailing slash to permalinks:
+permalink: /:lang/:ref/
+
 collections:
   faqfolder:
     output: true
     title: FAQs
     permalink: /faq/:path/ # this is for faq item path
-plugins_dir:
+
+# see: https://help.github.com/articles/redirects-on-github-pages/
+plugins:
   - jekyll-redirect-from
 

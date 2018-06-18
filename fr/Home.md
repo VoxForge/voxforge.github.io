@@ -1,10 +1,9 @@
 ---
 layout: default
-menu: Maison
-title: Home
+menu: Accueil
+title: Page D’accueil
 ref: home
 lang: fr
-permalink: fr/maison/
 weight: 1
 ---
 

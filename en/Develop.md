@@ -5,7 +5,6 @@ menu: Dev
 weight: 8
 ref: develop
 lang: en
-permalink: /en/dev
 redirect_from: "/home/dev"
 ---
 ### Acoustic Model Creation Tutorials:

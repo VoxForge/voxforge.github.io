@@ -4,7 +4,6 @@ title: Develop
 menu: Dev
 ref: develop
 lang: fr
-permalink: fr/dev
 weight: 8
 ---
 ## Développement - Français

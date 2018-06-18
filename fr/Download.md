@@ -1,10 +1,9 @@
 ---
 layout: page
-title: Downloads
-menu: Downloads
+title: Télécharger
+menu: Télécharger
 ref: downloads
 lang: fr
-permalink: fr/downloads
 weight: 9
 ---
 

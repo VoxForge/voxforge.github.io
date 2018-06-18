@@ -5,7 +5,6 @@ menu: Downloads
 weight: 8
 ref: downloads
 lang: en
-permalink: en/downloads
 redirect_from: /home/downloads
 ---
 *   **English**

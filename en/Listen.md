@@ -5,7 +5,6 @@ menu: Listen
 weight: 4
 ref: listen
 lang: en
-permalink: /en/listen
 redirect_from: /home/listen
 ---
 The Audio listing below below comes from the [VoxForge repository website](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/)<br>
