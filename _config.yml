@@ -37,8 +37,8 @@ index:
   es: boenosdias
 baseurl: "" # the subpath of your site, e.g. /blog
 
-# url: "https://voxforge.github.io" # the base hostname & protocol for your site
-url: "https://jekyll_voxforge.org" # the base hostname & protocol for your site
+url: "https://voxforge.github.io" # the base hostname & protocol for your site
+#url: "https://jekyll_voxforge.org" # the base hostname & protocol for your site
 
 # Note: In Jekyll 2, any URL constructed from the permalink: field had a 
 # trailing slash (/) added to it automatically. Jekyll 3 no longer adds a
