@@ -274,9 +274,11 @@
         <option value="50">50</option>
       </select>
  -->
-      <label for="max_num_prompts">{{ page.num_prompts.label }}</label>
-      <select type="text" id="max_num_prompts">
-      </select>
+      <div id="max_num_prompts-display">
+          <label for="max_num_prompts">{{ page.num_prompts.label }}</label>
+          <select type="text" id="max_num_prompts">
+          </select>
+      </div>
       <button style="display: none;" 
               id="directions-button-display" 
               style="background: #cedfe8;" 

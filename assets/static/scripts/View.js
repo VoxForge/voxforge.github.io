@@ -335,13 +335,17 @@ View.prototype.init = function () {
 
     // set default (device dependent) max number of prompts the user can record 
     var option = ''; // clear previous use of option var
-    var startPrompt = 10; // min number of prompts no matter what device
-    var incr = 5;
-    for (var i=startPrompt; i <= self.prompts.max_numPrompts_selector; i = i + incr){
-       option += '<option value="'+ i + '">' + i +  '</option>';
+    if (self.prompts.max_numPrompts_selector > 10) {
+        var startPrompt = 10; // min number of prompts no matter what device
+        var incr = 5;
+        for (var i=startPrompt; i <= self.prompts.max_numPrompts_selector; i = i + incr){
+           option += '<option value="'+ i + '">' + i +  '</option>';
+        }
+        $('#max_num_prompts').append(option);
+        $('#max_num_prompts-display').show();
+    } else {
+        $('#max_num_prompts-display').hide();
     }
-    $('#max_num_prompts').append(option);
-
     /**
     * updates the current number of prompts that the user selected from dropdown
 

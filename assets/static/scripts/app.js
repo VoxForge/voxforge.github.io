@@ -190,7 +190,6 @@ var view;  // needs to be global so can be accessible to index.html
     }
 
     // #############################################################################
-
     const appversion = "0.2";
 
     /**
