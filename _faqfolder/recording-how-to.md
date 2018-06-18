@@ -4,7 +4,8 @@ title: Recording How-to
 date: 2010-01-01
 categories: faq
 lang: en
-redirect_from: /home/read/recording-how-to
+# /home/read/recording-how-to causing problems with redirect from /home/read to /en/read
+#redirect_from: /home/read/recording-how-to
 ---
 
 ### Quiet Environment
