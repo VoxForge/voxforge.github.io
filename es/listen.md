@@ -4,7 +4,6 @@ menu: Listen
 title: Listen
 ref: listen
 lang: es
-permalink: es/listen
 weight: 3
 ---
 

@@ -4,7 +4,6 @@ menu: Downloads
 title: Downloads
 ref: downloads
 lang: es
-permalink: es/downloads
 weight: 7
 ---
 

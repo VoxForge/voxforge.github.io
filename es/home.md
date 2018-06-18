@@ -4,7 +4,6 @@ menu: Home
 title: Home
 ref: home
 lang: es
-permalink: es/home
 weight: 1
 ---
 

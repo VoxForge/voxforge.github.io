@@ -4,7 +4,6 @@ menu: Dev
 title: Dev
 ref: dev
 lang: es
-permalink: es/dev
 weight: 6
 ---
 

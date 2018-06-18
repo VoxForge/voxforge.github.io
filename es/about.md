@@ -4,7 +4,6 @@ menu: About
 title: About
 ref: about
 lang: es
-permalink: es/about
 weight: 8
 ---
 

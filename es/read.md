@@ -4,8 +4,6 @@ title: Read
 menu: Read
 ref: read
 lang: es
-# set permalink in _config.yml
-#permalink: /es/read/
 weight: 2
 
 ################################################################################
