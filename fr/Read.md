@@ -4,6 +4,7 @@ title: Read
 menu: Read
 ref: read
 lang: fr
+# see /en/Read.md for trailing slash issues
 permalink: /fr/read
 weight: 2
 

@@ -4,7 +4,15 @@ title: Read
 menu: Read
 ref: read
 lang: en
-permalink: /en/read/
+# jekyll local server
+#   no trailing slash and 
+#      /en/read -> page not found
+#      /en/read.html -> works
+#   with trailing slash, page is /en/read/ or /en/read/index.html
+# github pages
+#   no trailing slash and github page is /en/read or /en/read.html
+#   with trailing slash, page is /en/read/ or /en/read/index.html
+permalink: /en/read
 redirect_from: /home/read
 weight: 2
 

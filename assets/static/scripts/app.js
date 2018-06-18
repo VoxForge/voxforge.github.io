@@ -118,8 +118,8 @@ var view;  // needs to be global so can be accessible to index.html
       // corresponds to the maximum number of prompts that a user can select from the 
       // drop-down menu selector;  Changes based on type of device being used.
       max_numPrompts_selector: 50,
-      //num_prompts_to_trigger_upload: 10, // user can upload anytime after recording 10 prompts
-      num_prompts_to_trigger_upload: 3, // debug
+      num_prompts_to_trigger_upload: 10, // user can upload anytime after recording 10 prompts
+      //num_prompts_to_trigger_upload: 3, // debug
     }
 
     var audio_parms = {

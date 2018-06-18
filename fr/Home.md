@@ -4,7 +4,7 @@ menu: Maison
 title: Home
 ref: home
 lang: fr
-permalink: fr/maison
+permalink: fr/maison/
 weight: 1
 ---
 

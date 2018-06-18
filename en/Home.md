@@ -8,13 +8,6 @@ lang: en
 permalink: /
 redirect_from: "/home/"
 ---
-
----
-
-**<font color="red">Notice: We are in process of transferring VoxForge website to github... This site is not complete, please use: </font> [VoxForge.org](http://voxforge.org).**
-
----
-
 VoxForge was set up to collect transcribed speech for use with [Free] and 
 [Open Source], [Speech Recognition Engines].
 
@@ -26,7 +19,7 @@ The audio collected is meant to provide an wide and varied sample of different u
 recording environments - from line noise from their audio cards, poor quality 
 microphones, and background noise of many different types.  This is not intended 
 to be a fully 'clean speech' corpus, but will contain examples of clean and 
-noisy speech, tagged as such so that acoustic model developers can extract
+noisy speech, tagged as such, so that acoustic model developers can extract
 the audio best suited to their needs.
 
 ## How Can You Help?
