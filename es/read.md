@@ -384,6 +384,7 @@ alert_message:
   var page_upload_message = {{ page.controls.upload_message }};
   var page_alert_message = {{ page.alert_message  | jsonify}};
   var page_browser_support = {{ page.browser_support  | jsonify}};
+  var page_license = {{ page.license  | jsonify}};
 </script>
 
 

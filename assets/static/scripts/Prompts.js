@@ -35,7 +35,7 @@ function Prompts(parms) {
     this.current_promptLine = null; // need to keep track of current prompt since no longer tracking index
 
     this.promptCache = localforage.createInstance({
-        name: "promptCache"
+        name: page_language + "_promptCache"
     });
 }
 
