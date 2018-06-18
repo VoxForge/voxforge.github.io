@@ -16,7 +16,7 @@ The Audio listing below below comes from the [VoxForge repository website](http:
   <body>
 
 <br>
-        <iframe sandbox src="http://www.repository.voxforge1.org/display/en/Trunk/Audio/Original/48kHz_16bit" width="500" height="800">
+        <iframe sandbox src="http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/48kHz_16bit/" width="500" height="800">
             Click here [VoxForge repository website](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/) to listen to audio
         </iframe>
    </body>
