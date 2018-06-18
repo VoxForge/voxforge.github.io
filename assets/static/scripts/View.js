@@ -460,7 +460,7 @@ View.prototype.enableDeleteButtons = function () {
 }
 
 /**
-* O
+* 
 
 the following do not work:
 $('.audio_player').hide(); 
@@ -645,8 +645,6 @@ View.prototype.displayAudioPlayer = function (obj)
         waveformElement.innerHTML = "<h4>" + obj.audio_too_loud_message + "</h4>";
       //TODO need confidence level for soft speaker
       } else if (obj.too_soft) {
-        // TODO if too low, increase volume of recording and automatically
-        //      increase it for subsequent recordings...
         waveformElement.setAttribute("style", "background: #ff4500");
         waveformElement.innerHTML = "<h4>" + obj.audio_too_soft_message + "</h4>";
       }

@@ -295,13 +295,15 @@ ua_string:
   label: User Agent String
   popup:
     title: Collect User Agent String Information
-    link: https://www.whatismybrowser.com/detect/what-is-my-user-agent
+    link: http://www.useragentstring.com
     hover_text: >
       Include User Agent string with submission
     text:  > 
-      Your browser's user agent string indicates something about your system.<br>
-      The VoxForge app can collect your browser's user agent string
-      to help troubleshoot and determine which devices work best with this app.
+      When your web browser makes a request to a website, it sends a set of 
+      characters called a User Agent string.  This string contains information 
+      about your browser name, operating system, device type, etc.<br>
+      The VoxForge app can collect this information to help troubleshoot and
+      determine which devices work best with this app.
   selection_default: { value: 'Yes',  item: 'Yes' }
   selection:
     - { value: 'No',  option: 'No' }
