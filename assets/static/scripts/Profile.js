@@ -112,9 +112,6 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
 /**
 * Read HTML Form Data to convert profile data to hash (associative array)
 */
-//TODO should move this to View class, which should be the sole interaction point
-// with HTML... create the HASH in view and just do a straight copy in Profile for
-// anything that is in Display
 Profile.prototype.toHash = function () {
     var profile_hash = View.getUserProfileInfo();
 
@@ -125,7 +122,6 @@ Profile.prototype.toHash = function () {
 
     profile_hash["file_type"] = "wav";
 
-    // see https://www.pmtonline.co.uk/blog/2004/11/04/what-does-the-bit-depth-and-sample-rate-refer-to/
     profile_hash["sample_rate"] = this.sample_rate;
     profile_hash["bit_depth"] = this.bit_depth;
     profile_hash["channels"] = this.channels;
@@ -259,16 +255,14 @@ Profile.prototype.getUserName = function () {
 }
 
 /**
-* submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
-* see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+*
 */
 Profile.prototype.getTempSubmissionName = function () {
   return this.getShortSubmissionName() + '[' + this.randomDigits + ']';
 }
 
 /**
-* submission_filename = language + '-' + username + '-' + date + '-' + random_chars[:3] + '[' + random_chars + '].zip';
-* see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+*
 */
 Profile.prototype.getShortSubmissionName = function () {
   var d = new Date();
@@ -284,16 +278,6 @@ Profile.prototype.getShortSubmissionName = function () {
 
 /**
 * remove unwanted characters from user input
-*
-* see: https://stackoverflow.com/questions/20864893/javascript-replace-all-non-alpha-numeric-characters-new-lines-and-multiple-whi
-* \W is the negation of shorthand \w for [A-Za-z0-9_] word characters (including the underscore)
-* 
-* $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
-* 
-* first replace convert one or more spaces to underscore
-* second replace removes all non-alphanumeric characters
-* third remove consecutive underscores and replace them with single underscore
-* lastly, trim string to max of length 40 characters
 */
 Profile.cleanUserInputRemoveSpaces = function (user_input) {
     var user_input = user_input.replace(/\s+/, '_').replace(/[^a-z0-9_\-]/gi,'').replace(/_+/g, '_');
@@ -342,88 +326,9 @@ Profile.prototype.setDebugValues = function (obj) {
 }
 
 /**
-* CC0 1.0 license to array
-*/
-Profile.prototype.CC0toTextArray = function () {
-    var license_array = [];
-    var i=0;
-
-    if (page_license.full_license.CC0) {
-      license_array = this.getLicense("CC0");
-    } else {
-      var d = new Date();
-      var year = d.getFullYear().toString();
-      
-      license_array[i++] = 'CC0 - Creative Commons Public Domain Dedication\n\n';
-
-      license_array[i++] = year + ' - VoxForge Speech Recording by: ' + this.getUserName() + '\n';
-   
-      license_array[i++] = '\nTo the extent possible under law, the person who associated CC0 with\n';
-      license_array[i++] = 'this Speech Recording has waived all copyright and related or neighboring rights\n';
-      license_array[i++] = 'to the Speech Recording\n';
-
-      license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
-      license_array[i++] = 'work.  If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.\n';
-    }
-
-    return license_array;
-}
-
-/**
-* CC BY Attribution 3.0 Unported License to array
-*/
-Profile.prototype.CC_BYtoTextArray = function () {
-    var license_array = [];
-    var i=0;
-    if (page_license.full_license.CC_BY) {
-      license_array = this.getLicense("CC_BY");
-    } else {
-      var d = new Date();
-      var year = d.getFullYear().toString();
-
-      license_array[i++] = 'CC BY 4.0 - Creative Commons Attribution license\n\n';
-
-      license_array[i++] = 'VoxForge Speech Recording (c) ' + year + ' by: ' + this.getUserName() + '\n';
-
-      license_array[i++] = '\nThis Speech Recordingis licensed under a\n';
-      license_array[i++] = 'Creative Commons Attribution 4.0 Unported License.\n';
-
-      license_array[i++] = '\nYou should have received a copy of the CC BY 4.0 legalcode along with this\n';
-      license_array[i++] = 'work.  If not, see <https://creativecommons.org/licenses/by/4.0/>.\n';
-    }
-
-    return license_array;
-}
-
-/**
-* CC BY-SA Attribution-ShareAlike 3.0 Unported Licenseto array
-*/
-Profile.prototype.CC_BY_SAtoTextArray = function () {
-    var license_array = [];
-    var i=0;
-
-    if (page_license.full_license.CC_BY_SA) {
-      license_array = this.getLicense("CC_BY_SA");
-    } else {
-      var d = new Date();
-      var year = d.getFullYear().toString();
-
-      license_array[i++] = 'CC BY-SA - Creative Commons Attribution-ShareAlike license\n\n';
-
-      license_array[i++] = 'VoxForge Speech Recording (c) ' + year + ' by: ' + this.getUserName() + '\n';
-
-      license_array[i++] = '\nThis Speech Recording is licensed under a\n';
-      license_array[i++] = 'Creative Commons Attribution-ShareAlike 4.0 Unported License.\n';
-   
-      license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
-      license_array[i++] = 'work.  If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.\n';
-    }
-
-    return license_array;
-}
-
-/**
-* get license
+* get translated license text from Read.md file
+*
+* if none present, then set CC0 as default.
 */
 Profile.prototype.getLicense = function (license) {
     var license_obj = page_license.full_license[license];

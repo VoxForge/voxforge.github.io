@@ -21,7 +21,7 @@ importScripts('../lib/webrtc_vad.js');
 
 // arbitrary trial and error values to determine when audio sample is too
 // loud or soft...
-// convert to DB?
+// TODO convert to DB?
 var MAX_ENERGY_THRESHOLD = 0.50;
 var MIN_ENERGY_THRESHOLD = 0.02;
 
@@ -37,9 +37,7 @@ var VAD_SAMPLE_RATE = 48000;
 // emscripten required variables
 var Module = {};
 Module.noInitialRun = true;
-// onRuntimeInitialized does not work in webworker???
-// therefor call from object constructor
-//Module['onRuntimeInitialized'] = function() { setupwebrtc(); }; 
+
 var process_data;
 
 /**
@@ -122,20 +120,8 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, buffers_index, chunk
     }
 
     /**
-    * 1. Convert buffer samples from 32-bit float to 16bit PCM, and
-    * 2. Calculate root-mean-square to get an 'energy' measure of loudness of 
-    * audio samples in buffer
-
-    * http://www.statisticshowto.com/quadratic-mean/
-    * The quadratic mean (also called the root mean square*) is a type of 
-    * average. This type of mean gives a greater weight to larger items in the 
-    * set and is always equal to or greater than the arithmetic mean. ... 
-    * https://en.wikipedia.org/wiki/Root_mean_square#In_frequency_domain
-    * RMS of a signal in the time domain is directly proportional to the RMS of 
-    * the signal in the frequency domain
+    *
     */
-    // see: https://github.com/cwilso/volume-meter/blob/master/volume-meter.js
-    // https://www.gaussianwaves.com/2015/07/significance-of-rms-root-mean-square-value/
     // TODO use the output from WAVAudioEncoder
     function floatTo16BitPCM(buffer) {
       var buffer_pcm = new Int16Array(buffer.length);
@@ -372,6 +358,7 @@ Vad.prototype.getSpeech = function(buffers) {
     }
 
     // ### main ##################################################################
+
     var [no_speech, no_trailing_silence, clipping, too_soft] = 
         validateSpeech();
 

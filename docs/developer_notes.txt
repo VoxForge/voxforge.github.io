@@ -1,0 +1,612 @@
+1. app.js
+
+debugging service workers: chrome://serviceworker-internals
+local website testing:  
+  http://127.0.0.1:4000/
+works best for replicating how pages/navigation will behave on github
+
+local speechsubmission testing:
+  need a certificate to replicate voxforge.github.io environment (with 
+  coxforge.github.io as front end url and upload.voxforge1.org as server
+  back end), therefore  set up self signed certificate (see /etc/ssl) and 
+  apache2 must be configured to use it.
+  using https://jekyll_voxforge.org for testing speech recording and uploading
+  note that web pages do not work correctly with Apache2 defaults, and require
+  that you add .html to speechsubmission page
+
+VAD notes:
+**
+
+// Note: cannot change device sample rate from browser...
+
+// in order for the VAD to work reasonably well (without cutting off speech)
+// we need a smaller buffer size, but too small a buffer size taxes
+// processing power of phone, so disable waveform disaply on older phones.
+// The danger of lower buffer size is CPU cannot keep up with sending and
+// processing of many buffer events, and aritifacts (e.g. audio crackles,
+// scratches and pops) being inserted into the recording
+// see: https://help.ableton.com/hc/en-us/articles/209070329-How-to-avoid-crackles-and-audio-dropouts
+
+// Android 4.4.2 has default buffer size of: 16384
+// Android 4.4.2 trailing silence removal cuts of end of recording, 
+// need longer delay on Android 4.4.2
+// prompts with unvoiced words at end of prompt trip up VAD on Android 4.4.2
+// large number of prompts affect audio recording quality on Android 4.4.2
+// Android 4.4.2: there was definite degredation of recording quality when too many prompts were recorded
+
+*/
+
+Android research:
+    // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
+
+    // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
+    // need higher buffersize to avoid audio breakup and glitches, but
+    // VAD needs lower buffersize for accuracy; 
+    // 1. one option was to disable VAD, but then lose slience detection, etc.
+    // 2. chose another approach where we select largest audioNodebufferSize size,
+    // and use this accross all devices, and then split the buffer into smaller
+    // chunks that the VAD can digest... seeems to work much better.
+
+    /**
+    * Initialize objects
+    */
+    // prompts object has side effects, which cause timing problems on low 
+    // powered devices if try to initialize prompts and view objects asynchronously
+    // in standalone mode; therefore wait for prompts object to initialize 
+    // before initializing view object
+    // (note: async init of prompts and view objects seems to work OK from browser.)
+
+    // Note: need to make sure this is not delayed in execution, otherwise,
+    // the app page will display, then the selects will be set in DOM properties
+    // but will be too late for it to display to user correctly...
+
+
+    // same synchronization issues in controller object, so wait for view/prompts 
+    // and audio objects to initialize before calling controller object
+    //Promise.all([prompts_async, view_async, audio_async])
+    //.then(function() {
+    //    controller.start();
+    //});
+
+
+random notes:
+
+// see: http://diveintohtml5.info/everything.html
+//    if( ! window.Worker )
+   
+// Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
+// /etc/hosts or on local DNS server;
+// if get 'Bad Request' error after clearing caches, make sure to prefix URL
+// with 'HTTPS://' in browser
+
+// TODO figure out javascript & GPL licensing....
+// see: https://opensource.stackexchange.com/questions/4360/what-are-the-implications-of-licensing-a-javascript-library-under-gpl
+
+
+https://www.acunetix.com/websitesecurity/cross-site-scripting/
+XSS - How Cross-site Scripting works
+In order to run malicious JavaScript code in a victim’s browser, 
+an attacker must first find a way to inject a payload into a web page that 
+the victim visits. 
+In order for an XSS attack to take place the vulnerable website needs 
+to ***directly include user input in its pages***. An attacker can then 
+insert a string that will be used within the web page and treated as
+code by the victim’s browser.
+This app does not display other users' input in its pages, so no obvious XSS 
+vulnerability...
+
+TODO: CSRF - Cross site request forgery; XSS cross site scripting
+
+// for testing with Chrome: requires https; can bypass this with:
+// no longer works: google-chrome -user-data-dir=~/temp --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://jekyll_voxforge.org
+
+// see: https://stackoverflow.com/questions/32042187/chrome-error-you-are-using-an-unsupported-command-line-flag-ignore-certifcat
+// Note: if you actually want to ignore invalid certificates there's an option 
+// in chrome://flags you can enable: Allow invalid certificates for resources loaded from localhost
+// just start the browser at https://127.0.0.1/en/read/ (note: not same as jekyll with port 4000...)
+
+
+// need Google Chrome version > 58 for wavesurfer to work correctly
+
+// CPU throttling: enable: chrome://flags/#enable-experimental-web-platform-features
+got to performance tab and select 4x or 6x slowdown
+
+###############################################################################
+
+2. Audio.js
+
+* Audio processing notes:
+
+bit rate in Audacity
+  * 1. bit rate in Audacity does not match bit rate of file:
+  * WavAudioEncoder.js converts audio from 32-bit float to  16-bit signed.
+  * Audacity, depending on quality settings (in preferences), will 
+  * show whatever the default quality settings are... so even if audio recorded 
+  * in 16-bit, it will display default quality... which might be 32-bit float.
+  * - use ffprobe (part of ffmpeg suit) to read wav header file and tell
+  * you actual bit rate:
+      $  ffprobe en000048.wav
+       ... 
+       Input #0, wav, from 'en000463.wav':
+        Duration: 00:00:02.51, bitrate: 1411 kb/s
+          Stream #0:0: Audio: pcm_s32le ([1][0][0][0] / 0x0001), 44100 Hz, 1 channels, s32, 1411 kb/s
+      $ ffmpeg -formats | grep PCM
+       DE s32le           PCM signed 32-bit little-endian
+  * use: quelcom tool: qwavheaderdump
+  * see: https://www.hecticgeek.com/2012/06/fix-wav-header-errors-ubuntu-linux/
+      $ qwavheaderdump -F en000463.wav
+      en000463.wav (442412 bytes):
+          riff: 'RIFF'
+          riff length: 442404
+          wave: 'WAVE'
+          fmt: 'fmt '
+          fmt length: 16
+          format: 3
+	          format field should 1 (pcm tag)
+	          fixed
+          channels: 1
+          sample rate: 44100
+          bytes/second: 176400
+          bytes/sample: 4
+          bits/sample: 32
+          data: 'data'
+          data length: 442368
+
+  * see: https://trac.ffmpeg.org/wiki/audio%20types
+  *
+32 bit float
+  * 2. Why not just use 32 bit float in audio (with no downsample)?
+  * Chrome support recording and playback with 32-bit float wav format.
+  * Firefox HTML5 implementation can only play uncmopressed PCM audio at
+  * 8 or 16 bits per sample
+    (https://support.mozilla.org/en-US/kb/html5-audio-and-video-firefox
+    see also: see also https://bugzilla.mozilla.org/show_bug.cgi?id=524109)
+  * even thought it can record at 32-bit float... 
+    (The buffer contains data in the following format:  non-interleaved IEEE754 
+    32-bit linear PCM with a nominal range between -1 and +1, that is, 
+    32bits floating point buffer, with each samples between -1.0 and 1.0.
+    see: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer)
+  * Wavesurfer was originally thought to be the problem but it is a actually Firefox...
+  *
+  * therefore would need two sets of audio:
+  * one for display and one for saving as part of submission, which could be 
+  * done given that saving audio is done as a background Web Worker process
+
+Android 442 recording dropouts
+  * 3. Sometimes get scratches and pops when recording with Smartphone (Android 442 Samsung Galaxy)
+  * set recording to 32-bit float and still get scratches and pops in Firefox...
+  * Chrome seems to work better
+  *
+  * This might be the result of truncation distortion when converting from 
+  * 32-bit float to 16-bit... may need to apply dithering and noise shapping
+  * to address this issue
+  * Dither is low volume noise, introduced into digital audio when converting 
+  * from a higher bit-resolution to a lower bit-resolution.
+  * The process of reducing bit-resolution causes quantization errors, also
+  * known as truncation distortion, which if not prevented, can sound very
+  * unpleasant.
+  * see: http://darkroommastering.com/blog/dithering-explained
+  * and:  http://wiki.audacityteam.org/wiki/Dither
+  * or it could simply be that my low end smartphone does not have neough 
+  * processing power and the result is scratches and pops...
+
+
+volume slider demo
+  * view-source:https://robwu.nl/s/mediasource-change-volume.html
+
+
+/**
+* FireFox (on Linux) can record in 32-bit float, but cannot replay what 
+* it just recorded...
+* see: https://stackoverflow.com/questions/26169678/why-certain-wav-files-cannot-be-decoded-in-firefox
+* https://bugzilla.mozilla.org/show_bug.cgi?id=524109
+
+*/
+
+BaseAudioContext.sampleRate
+/**
+*
+    // Note: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext
+    // BaseAudioContext.sampleRate Read only
+    //    Returns a float representing the sample rate (in samples per second) 
+    //    used by all nodes in this context. The sample-rate of an
+    //    AudioContext _cannot_ be changed.
+    // see: https://stackoverflow.com/questions/37326846/disabling-auto-gain-conctrol-with-webrtc-app
+    // turning these off does not seem to work in Firefox android 442.
+
+bufferSize
+      // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
+      The buffer size in units of sample-frames. If specified, the bufferSize 
+      must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384. 
+      This value controls how frequently the audioprocess event is dispatched
+      and how many sample-frames need to be processed each call. 
+
+      *** Lower values for bufferSize will result in a lower (better) latency. 
+      Higher values will be necessary to avoid audio breakup and glitches. ***
+
+      It is recommended 
+      for authors to not specify this buffer size and allow the implementation 
+      to pick a good buffer size to balance between latency and audio quality.
+            -but-
+      But VAD does not work well enough with Android 4.4.2 default buffer size of
+      16384, so chunk up audio before sending to VAD
+
+      auto gain adjust:
+      see: https://robwu.nl/s/mediasource-change-volume.html
+
+    */
+
+constraints vs settings
+    /**
+      see: https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints#Applying_constraints
+      constraints vs settings: Constraints are a way to specify 
+      what values you need, want, and are willing to accept for the various 
+      constrainable properties (as described in the documentation for 
+      MediaTrackConstraints), while settings are the actual values of each 
+      constrainable property at the current time.
+      https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
+      https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
+    */
+
+    //https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getSupportedConstraints
+    var c = navigator.mediaDevices.getSupportedConstraints();
+    //https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
+
+//see https://github.com/higuma/wav-audio-encoder-js 
+
+script processor & latency
+    // script processor node introduces a large amount of audio 
+    // latency, at least 2048 samples in your example (because he 
+    // used:  audioCtx.createScriptProcessor(2048, 1, 1);_+ script execution time
+    // but this is only relevant if you are trying to display realtime wavform
+    // in a vuew meter or something lie that.
+    // see: https://stackoverflow.com/questions/47380352/webaudio-analyser-not-returning-any-data
+
+###############################################################################
+
+3. AudioWorker.js
+
+4. Controller.js
+
+5. processSavedSubmissions.js
+
+fetch failure
+    * Basically fetch() will only reject a promise if the user is offline, or 
+    * a networking error occurs, such a DNS lookup failure.
+    * see: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/
+    * research: https://medium.com/@shahata/why-i-wont-be-using-fetch-api-in-my-apps-6900e6c6fe78
+    *
+    * also may fail if file size is greater than settings in php.ini on server;
+    * if this happens, get this cryptic error:
+        server error message: Request failed - invalid server response: 
+        <br />
+        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>56</b><br />
+        <br />
+        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>59</b><br />
+        <br />
+        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>60</b><br />
+        <br />
+        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>61</b><br />
+        Invalid parameters.
+
+Form not supported on Edge browser
+        //https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/13596540/
+
+Wait for all promises to complete
+          // https://stackoverflow.com/questions/31426740/how-to-return-many-promises-in-a-loop-and-wait-for-them-all-to-do-other-stuff?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+
+###############################################################################
+
+6. Profile.js
+
+bit depth and sample rate
+    // see https://www.pmtonline.co.uk/blog/2004/11/04/what-does-the-bit-depth-and-sample-rate-refer-to/
+
+* see: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+
+remove unwanted characters from user input
+  *
+  * see: https://stackoverflow.com/questions/20864893/javascript-replace-all-non-alpha-numeric-characters-new-lines-and-multiple-whi
+  * \W is the negation of shorthand \w for [A-Za-z0-9_] word characters (including the underscore)
+  * 
+  * $('#username').val().replace(/[^a-z0-9_\-]/gi, '_').replace(/_{2,}/g, '_').toLowerCase();
+  * 
+  * first replace convert one or more spaces to underscore
+  * second replace removes all non-alphanumeric characters
+  * third remove consecutive underscores and replace them with single underscore
+  * lastly, trim string to max of length 40 characters
+
+###############################################################################
+
+7. Prompts.js
+
+Internet connection detection and 
+      /**
+        when offline, app hangs as it tries to communicate with server to
+        download another prompt file - takes too long: 30secs... even though it 
+        already has prompts cached in localstorage.
+
+        But, no good way to detect if online or offline - navigator.onLine too flaky:
+
+          //if (navigator.onLine) { // even with WIFI turned off, will still show as connected even without a cell data plan... useless
+
+        therefore, get first set of prompts from prompt cache, then asyncronously
+        try to get new set of prompts
+
+        only try to get prompts right away if none in localstorage
+        this way we can have very large prompt sets, but user only needs to 
+        download a small portion
+        */
+
+###############################################################################
+
+8. upload.js
+
+self signed certificates
+  /*
+  * Chrome and self signed certificates... need to make sure you install rootCA
+  * in Chrome certificate store...
+
+  * make sure you terminate old service workers: chrome://inspect/#service-workers
+  * then clear browser caches
+  * F12; Network>Disable Cache
+  * F12 Application>Service Workers>Update on reload
+
+  * In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost' ... does not work
+  * need to install rootCA in browser...
+
+background sync
+  * use service worker to perform background sync to upload submissions
+  * to server (if browser supports it: Chrome:yes, Firefox:no), and to 
+  * cache all javascript files so app can be run offline
+
+pass parameters to service worker:
+  http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.WvXYnWCEeis
+
+  // https://github.com/GoogleChromeLabs/sw-precache/issues/104
+  // https://github.com/GoogleChromeLabs/sw-precache/blob/master/demo/app/js/service-worker-registration.js#L25
+
+    // TODO passing parameters this way to service worker may be causing problems when
+    // when app installed and called as a standalone app...
+    const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
+
+service workers: 
+  https://www.twilio.com/blog/2017/02/send-messages-when-youre-back-online-with-service-workers-and-background-sync.html
+
+testing CORS
+    * for testing CORS make sure you have rootCA cert installed
+    * on browser to be tested (Linux, Android, Unix...)
+    * otherwise operation will fail (silently on Android...)
+
+    * FireFox: TypeError: swRegistration.sync is undefined
+    * background sync is not supported in FireFox
+    * https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/sync
+    * see: https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
+    * https://bugzilla.mozilla.org/show_bug.cgi?id=1217544 - planned for FFv61
+    *
+    * - Chrome on Linux and Windows 10 supports service workers for fetching
+    * and background sync; 
+    * - Chrome on Android >5 - works with service workers
+    * - Chrome on Android 4.4.2 - move to canadian hoster has SSL certificate 
+    * that now works with 4.4.2....
+    * - Firefox on Linux & Windows 10 supports service workers for fetching 
+    * but not background sync, therefore use Web Worker for uploads; 
+    * FireFox works on Andoid 4.4.2 - now needs a root certificate
+    * see: https://wiki.mozilla.org/CA:AddRootToFirefox
+    *
+    * - Edge on Windows 10 does not support service workers at all... try
+    * Web Workers... 
+    * TODO Edge does not support FormData... create alternate form (again...) to 
+    * support Edge.  no support for Edge for now...
+
+**
+    * TODO perform a synchronous upload
+    * if neither is supported... which makes no sense since using web workers
+    * to record and zip submission....
+    *
+    * service worker - background sync (e.g. current Chrome on Linux/Win10/Android 5 and up)
+    * swRegistration.sync.register: requests a one-off sync to upload the saved 
+    * submission.  It will upload if there is connectivity, if there is none, 
+    * it will keep on trying to upload until connectivity is made
+    * and then will delete saved submission from browser storage
+    *
+    * web worker - background upload  (e.g. current Firefox on Linux/Win10/Android 4.4.2 and up)
+    * some browsers implement service workers for caching files but not 
+    * background sync (e.g. Firefox), therefore use Web Worker to upload 
+    * submission and upload any previously saved submissions (in browser 
+    * storage)
+
+Handler for messages coming from the service worker
+  *
+  // http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
+  // https://github.com/jbmoelker/serviceworker-introduction/issues/1
+  // https://miguelmota.com/blog/getting-started-with-service-workers/
+  // when debugging, need to wait for service worker to trigger - 1-2 minutes
+  // create breakpoints in voxforge_sw.js to know when this occurs...
+// 
+
+###############################################################################
+
+9. voxforge_sw.js
+
+testing service workers
+  /**
+  this allows testing of service workers on private network:
+  https://stackoverflow.com/questions/43665243/invalid-self-signed-ssl-cert-subject-alternative-name-missing?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+
+  // F12; Network>Disable Cache
+  // F12 Application>Service Workers>Update on reload
+
+  // this does not work:
+  //In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost'
+
+  chrome://serviceworker-internals  > open DEvTools window and pause Javascript
+  execution on Service Worker startup...
+
+  see also: chrome://inspect/#service-workers
+  */
+
+take control over all open pages without waiting
+  // https://stackoverflow.com/questions/38168276/navigator-serviceworker-controller-is-null-until-page-refresh?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+  //  To take control over all open pages without waiting for refresh/reopen, 
+  // you have to add these commands to your Service Worker:
+  // self.skipWaiting(); // added above in install
+  // see also: https://gist.github.com/Rich-Harris/fd6c3c73e6e707e312d7c5d7d0f3b2f9
+  // https://stackoverflow.com/questions/37050383/unable-to-post-message-to-service-worker-because-controller-value-is-null
+  //self.addEventListener('activate', function(event) {
+  //    event.waitUntil(self.clients.claim()); // Become available to all pages
+  //});
+
+dynamic caching
+  // TODO don't need to cache requests that are not listed above...
+  * If we want to cache new requests cumulatively, we can do so by handling the
+  * response of the fetch request and then adding it to the cache:
+  *
+  * see: https://developers.google.com/web/fundamentals/primers/service-workers/
+
+  // http://diveintohtml5.info/offline.html
+  // TODO is this even required given that we have a list of the files we want
+  // cached above and we cache those...
+  */
+
+synching
+  * see: https://developers.google.com/web/updates/2015/12/background-sync
+  checkForSavedSubmissions() is promise indicating the success/failure of 
+  upload of submission to VoxForge server: 
+  If it fulfills, the sync is complete. 
+  If it fails, another sync will be scheduled to retry. 
+  Retry syncs also wait for connectivity, and employ an exponential back-off.
+
+  * .catch function:
+          // TODO causes weird behaviour in Chrome Android 4.4.2: rather than
+          // firing off as soon as internet disconnected after user tries to 
+          // upload to server, it queues and fires just before actual upload
+          // occurs after internet is re-connected????
+          // Chrome on LInux fires this off as soon as user tries to upload
+          // when there is no Internet connection...
+
+      // waitUntil method is used to tell the browser not to terminate the 
+      // service worker until the promise passed to waitUntil is either resolved 
+      // or rejected.
+
+      // https://googlechrome.github.io/samples/service-worker/post-message/index.html
+  */
+
+service worker page control
+  A page is controlled by a service worker on navigation to an origin that the 
+  * service worker is registered for. So the original page load that actually
+  * initializes the service worker is not itself controlled...
+  *
+  * https://stackoverflow.com/questions/35100759/serviceworkers-focus-tab-clients-is-empty-on-notificationclick/35108844?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+  *
+  * other research:
+  // https://stackoverflow.com/questions/30177782/chrome-serviceworker-postmessage?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+  // https://miguelmota.com/blog/getting-started-with-service-workers/
+  //http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
+  //https://developer.mozilla.org/en-US/docs/Web/API/Client/postMessage
+  //https://serviceworke.rs/message-relay_service-worker_doc.html
+
+passing parameters to service worker
+      // TODO passing parameters this way to service worker may be causing problems when
+      // when app installed and called as a standalone app...
+      //var uploadURL;
+      //if (self.location.origin === 'https://voxforge.github.io') { // prod
+      //    uploadURL = 'https://upload.voxforge1.org'; 
+      //} else { 
+      //    uploadURL = 'https://jekyll_voxforge.org/index.php'; // test
+      //}
+
+###############################################################################
+
+10. UploadWorker.js
+
+TypeError: NetworkError when attempting to fetch resource
+  /*
+  for testing:
+  if get Failed to load ‘https://jekyll2_voxforge.org/index.php’. A ServiceWorker 
+  passed a promise to FetchEvent.respondWith() that rejected with 
+  ‘TypeError: NetworkError when attempting to fetch resource.’.
+  make sure to import self-signed root Cert into Firefox certificate store
+
+  */
+
+###############################################################################
+
+10. VAD.js
+
+onRuntimeInitialized
+  // onRuntimeInitialized does not work in webworker???
+  // therefor call from object constructor
+  //Module['onRuntimeInitialized'] = function() { setupwebrtc(); }; 
+
+rms
+    * 1. Convert buffer samples from 32-bit float to 16bit PCM, and
+    * 2. Calculate root-mean-square to get an 'energy' measure of loudness of 
+    * audio samples in buffer
+
+    * http://www.statisticshowto.com/quadratic-mean/
+    * The quadratic mean (also called the root mean square*) is a type of 
+    * average. This type of mean gives a greater weight to larger items in the 
+    * set and is always equal to or greater than the arithmetic mean. ... 
+    * https://en.wikipedia.org/wiki/Root_mean_square#In_frequency_domain
+    * RMS of a signal in the time domain is directly proportional to the RMS of 
+    * the signal in the frequency domain
+    */
+    // see: https://github.com/cwilso/volume-meter/blob/master/volume-meter.js
+    // https://www.gaussianwaves.com/2015/07/significance-of-rms-root-mean-square-value/
+
+
+###############################################################################
+
+10. View.js
+
+11. ZipWorker.js
+
+
+debug
+  * use about:debugging#workers in firefox to get at web worker
+  * use chrome for debugging webworkers, no need to mess with about:...
+
+cross domain cookies
+  *  Note on cross domain cookies: cookies do not work in web workers
+  *    //https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
+  *
+  * references: 
+  * see also https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp
+  * See for debugging mobile: https://developer.mozilla.org/en-US/docs/Tools/Remote_Debugging/Debugging_Firefox_for_Android_with_WebIDE
+  * see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+  *
+  * https://mortoray.com/2014/04/09/allowing-unlimited-access-with-cors/
+  * cannot send cookies from a webworker...
+  * see https://stackoverflow.com/questions/34635057/can-i-access-document-cookie-on-web-worker
+
+
+###############################################################################
+
+10. WavAudioEncoder.js
+
+Dithering
+  given that audio recorded from smartphone sometimes contains scratches and pops, 
+  do we need to add dithering?
+  see: http://wiki.audacityteam.org/wiki/Dither
+  "Dither" is intentional noise which is added so as to randomise the quantisation 
+  errors  (rounding errors) that occur when downsampling the Bit Depth of an
+   audio stream to a lower resolution than the current format. 
+  see also: 
+  http://darkroommastering.com/blog/dithering-explained
+  Answer: no - just use maxBufferSize
+
+16-bit conversion
+  // why convert to 16-bit... because takes up less space...
+
+  //  convert raw 32-bit floating point audio samples to 16-bit signed integer
+  // see https://stackoverflow.com/questions/43881026/convert-32-bit-floating-points-to-16-bit-pcm-range
+  // see also: https://github.com/mattdiamond/Recorderjs/blob/master/src/recorder.js
+
+  // https://github.com/Jam3/audiobuffer-to-wav/blob/master/index.js
+
+  // see also: see: https://github.com/higuma/wav-audio-encoder-js
+
+  // a more efficient way to copy 32-bit float is: AudioBuffer.copyFromChannel()
+  // see: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/copyFromChannel
+

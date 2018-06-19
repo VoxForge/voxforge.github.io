@@ -15,94 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-* Audio processing notes:
-* 1. bit rate in Audacity does not match bit rate of file:
-* WavAudioEncoder.js converts audio from 32-bit float to  16-bit signed.
-* Audacity, depending on quality settings (in preferences), will 
-* show whatever the default quality settings are... so even if audio recorded 
-* in 16-bit, it will display default quality... which might be 32-bit float.
-* - use ffprobe (part of ffmpeg suit) to read wav header file and tell
-* you actual bit rate:
-    $  ffprobe en000048.wav
-     ... 
-     Input #0, wav, from 'en000463.wav':
-      Duration: 00:00:02.51, bitrate: 1411 kb/s
-        Stream #0:0: Audio: pcm_s32le ([1][0][0][0] / 0x0001), 44100 Hz, 1 channels, s32, 1411 kb/s
-    $ ffmpeg -formats | grep PCM
-     DE s32le           PCM signed 32-bit little-endian
-* use: quelcom tool: qwavheaderdump
-* see: https://www.hecticgeek.com/2012/06/fix-wav-header-errors-ubuntu-linux/
-    $ qwavheaderdump -F en000463.wav
-    en000463.wav (442412 bytes):
-        riff: 'RIFF'
-        riff length: 442404
-        wave: 'WAVE'
-        fmt: 'fmt '
-        fmt length: 16
-        format: 3
-	        format field should 1 (pcm tag)
-	        fixed
-        channels: 1
-        sample rate: 44100
-        bytes/second: 176400
-        bytes/sample: 4
-        bits/sample: 32
-        data: 'data'
-        data length: 442368
-
-* see: https://trac.ffmpeg.org/wiki/audio%20types
-*
-* 2. Why not just use 32 bit float in audio (with no downsample)?
-* Chrome support recording and playback with 32-bit float wav format.
-* Firefox HTML5 implementation can only play uncmopressed PCM audio at
-* 8 or 16 bits per sample
-  (https://support.mozilla.org/en-US/kb/html5-audio-and-video-firefox
-  see also: see also https://bugzilla.mozilla.org/show_bug.cgi?id=524109)
-* even thought it can record at 32-bit float... 
-  (The buffer contains data in the following format:  non-interleaved IEEE754 
-  32-bit linear PCM with a nominal range between -1 and +1, that is, 
-  32bits floating point buffer, with each samples between -1.0 and 1.0.
-  see: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer)
-* Wavesurfer was originally thought to be the problem but it is a actually Firefox...
-*
-* therefore would need two sets of audio:
-* one for display and one for saving as part of submission, which could be 
-* done given that saving audio is done as a background Web Worker process
-*
-* 3. Sometimes get scratches and pops when recording with Smartphone (Android 442 Samsung Galaxy)
-* set recording to 32-bit float and still get scratches and pops in Firefox...
-* Chrome seems to work better
-*
-* This might be the result of truncation distortion when converting from 
-* 32-bit float to 16-bit... may need to apply dithering and noise shapping
-* to address this issue
-* Dither is low volume noise, introduced into digital audio when converting 
-* from a higher bit-resolution to a lower bit-resolution.
-* The process of reducing bit-resolution causes quantization errors, also
-* known as truncation distortion, which if not prevented, can sound very
-* unpleasant.
-* see: http://darkroommastering.com/blog/dithering-explained
-* and:  http://wiki.audacityteam.org/wiki/Dither
-* or it could simply be that my low end smartphone does not have neough 
-* processing power and the result is scratches and pops...
-
-
-* volume slider demo
-* view-source:https://robwu.nl/s/mediasource-change-volume.html
-*/
-
-/**
-* FireFox (on Linux) can record in 32-bit float, but cannot replay what 
-* it just recorded...
-* see: https://stackoverflow.com/questions/26169678/why-certain-wav-files-cannot-be-decoded-in-firefox
-* https://bugzilla.mozilla.org/show_bug.cgi?id=524109
-
-*/
-
 'use strict';
 
-// recording Web Worker
 var audioworker = new Worker('/assets/static/scripts/AudioWorker.js');
 
 /**
@@ -149,16 +63,6 @@ function Audio (parms)
 
 // ### Methods #################################################################
 
-/**
-*
-    // Note: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext
-    // BaseAudioContext.sampleRate Read only
-    //    Returns a float representing the sample rate (in samples per second) 
-    //    used by all nodes in this context. The sample-rate of an
-    //    AudioContext _cannot_ be changed.
-    // see: https://stackoverflow.com/questions/37326846/disabling-auto-gain-conctrol-with-webrtc-app
-    // turning these off does not seem to work in Firefox android 442.
-*/
 Audio.prototype.init = function () {
     var self = this;
 
@@ -169,26 +73,6 @@ Audio.prototype.init = function () {
     * of the captured audio, a processor to capture the raw audio, and 
     * a destination audiocontext to capture audio
     *
-
-      // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
-      The buffer size in units of sample-frames. If specified, the bufferSize 
-      must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384. 
-      This value controls how frequently the audioprocess event is dispatched
-      and how many sample-frames need to be processed each call. 
-
-      *** Lower values for bufferSize will result in a lower (better) latency. 
-      Higher values will be necessary to avoid audio breakup and glitches. ***
-
-      It is recommended 
-      for authors to not specify this buffer size and allow the implementation 
-      to pick a good buffer size to balance between latency and audio quality.
-            -but-
-      But VAD does not work well enough with Android 4.4.2 default buffer size of
-      16384, so chunk up audio oldgain sending to VAD
-
-      auto gain adjust:
-      see: https://robwu.nl/s/mediasource-change-volume.html
-
     */
     function setupAudioNodes(stream) {
       return new Promise(function (resolve, reject) {
@@ -215,14 +99,7 @@ Audio.prototype.init = function () {
     }
 
     /**
-      see: https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints#Applying_constraints
-      constraints vs settings: Constraints are a way to specify 
-      what values you need, want, and are willing to accept for the various 
-      constrainable properties (as described in the documentation for 
-      MediaTrackConstraints), while settings are the actual values of each 
-      constrainable property at the current time.
-      https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
-      https://rawgit.com/w3c/mediacapture-main/master/getusermedia.html#def-constraint-autoGainControl
+    *
     */
     function setProfileAudioProperties(track) {
           self.audioPropertiesAndContraints = {
@@ -231,9 +108,7 @@ Audio.prototype.init = function () {
             'channels' : self.mediaStreamOutput.channelCount,
           };
 
-          //https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getSupportedConstraints
           var c = navigator.mediaDevices.getSupportedConstraints();
-          //https://blog.mozilla.org/webrtc/fiddle-of-the-week-audio-constraints/
           let s = track.getSettings();
 
           self.debugValues = {
@@ -333,21 +208,12 @@ Audio.prototype.getDebugValues = function () {
 
 /**
 * connect nodes; tell worker to start recording audio 
-*
-//see https://github.com/higuma/wav-audio-encoder-js 
-
 */
 Audio.prototype.record = function (prompt_id, last_one) {
     var self = this; // save context when calling inner functions
 
     var got_buffer_size = false;
 
-    // script processor node introduces a large amount of audio 
-    // latency, at least 2048 samples in your example (because he 
-    // used:  audioCtx.createScriptProcessor(2048, 1, 1);_+ script execution time
-    // but this is only relevant if you are trying to display realtime wavform
-    // in a vuew meter or something lie that.
-    // see: https://stackoverflow.com/questions/47380352/webaudio-analyser-not-returning-any-data
     this.microphone.connect(this.gainNode); 
     this.gainNode.connect(this.processor); 
     this.gainNode.connect(this.analyser); 
@@ -365,9 +231,6 @@ Audio.prototype.record = function (prompt_id, last_one) {
 
     // start recording
     this.processor.onaudioprocess = function(event) {
-      // debugging - see if this helps with drops outs and scratches on low powered Android
-      // var floatArray_time_domain = event.inputBuffer.getChannelData(0).slice();
-
       // only record left channel (mono)
       var floatArray_time_domain = event.inputBuffer.getChannelData(0);
 
@@ -389,7 +252,7 @@ Audio.prototype.record = function (prompt_id, last_one) {
         // since adjustments are made dynamically
 
         // chainging gain also increases noise in what were silence portions
-        // and this messes up VAD
+        // and this might mess up VAD
 
         // tells user that audio is too loud or soft, adjusts
         // gain (volume) up or down, then tells them to delete the 
@@ -424,9 +287,11 @@ Audio.prototype.record = function (prompt_id, last_one) {
     }
 
     return new Promise(function (resolve, reject) {
-      // reply from audio worker
-      // creates new function every time record is pressed
-      // why? needed a promise to resolve so could create promise chain in call to audio record
+      /**
+      * reply from audio worker
+      * creates new function every time record is pressed
+      * why? needed a promise to resolve so could create promise chain in call to audio record
+      */
       audioworker.onmessage = function(returnObj) { 
           var obj = returnObj.data.obj;
           switch (returnObj.data.status) {

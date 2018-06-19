@@ -14,55 +14,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-// TODO figure out javascript & GPL licensing....
-// see: https://opensource.stackexchange.com/questions/4360/what-are-the-implications-of-licensing-a-javascript-library-under-gpl
-// TODO do we need a manifest file???
-// http://diveintohtml5.info/offline.html
-
-/*
-https://www.acunetix.com/websitesecurity/cross-site-scripting/
-XSS - How Cross-site Scripting works
-In order to run malicious JavaScript code in a victim’s browser, 
-an attacker must first find a way to inject a payload into a web page that 
-the victim visits. 
-In order for an XSS attack to take place the vulnerable website needs 
-to ***directly include user input in its pages***. An attacker can then 
-insert a string that will be used within the web page and treated as
-code by the victim’s browser.
-This app does not display other users' input in its pages, so no obvious XSS 
-vulnerability...
-
-TODO: CSRF - Cross site request forgery; XSS cross site scripting
-
-// for testing with Chrome: requires https; can bypass this with:
-// no longer works: google-chrome -user-data-dir=~/temp --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://jekyll_voxforge.org
-
-// see: https://stackoverflow.com/questions/32042187/chrome-error-you-are-using-an-unsupported-command-line-flag-ignore-certifcat
-// Note: if you actually want to ignore invalid certificates there's an option 
-// in chrome://flags you can enable: Allow invalid certificates for resources loaded from localhost
-// just start the browser at https://127.0.0.1/en/read/ (note: not same as jekyll with port 4000...)
-
-
-// need Google Chrome version > 58 for wavesurfer to work correctly
-
-// CPU throttling: enable: chrome://flags/#enable-experimental-web-platform-features
-got to performance tab and select 4x or 6x slowdown
-
-*/
 
 'use strict';
 
 // ### GLOBALS #################################################################
 
-//debugging service workers: chrome://serviceworker-internals
 var uploadURL;
 if (window.location.origin === 'https://voxforge.github.io') { // prod
     uploadURL = 'https://upload.voxforge1.org'; 
 } else { // testing
-  // Note: make sure jekyll_voxforge.org and jekyll2_voxforge.org defined in
-  // /etc/hosts or on local DNS server;
-  // if get 'Bad Request' error after clearing caches, make sure to prefix URL
-  // with 'HTTPS://' in browser
+
   uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
   //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 }
@@ -71,31 +32,7 @@ var view;  // needs to be global so can be accessible to index.html
 
 // #############################################################################
 
-/**
-
-// Note: cannot change device sample rate from browser...
-
-// in order for the VAD to work reasonably well (without cutting off speech)
-// we need a smaller buffer size, but too small a buffer size taxes
-// processing power of phone, so disable waveform disaply on older phones.
-// The danger of lower buffer size is CPU cannot keep up with sending and
-// processing of many buffer events, and aritifacts (e.g. audio crackles,
-// scratches and pops) being inserted into the recording
-// see: https://help.ableton.com/hc/en-us/articles/209070329-How-to-avoid-crackles-and-audio-dropouts
-
-
-
-// Android 4.4.2 has default buffer size of: 16384
-// Android 4.4.2 trailing silence removal cuts of end of recording, 
-// need longer delay on Android 4.4.2
-// prompts with unvoiced words at end of prompt trip up VAD on Android 4.4.2
-// large number of prompts affect audio recording quality on Android 4.4.2
-// Android 4.4.2: there was definite degredation of recording quality when too many prompts were recorded
-
-*/
 (function () { // function context
-
-    // see: http://diveintohtml5.info/everything.html
     if( ! window.Worker )
     {
       window.alert( page_browser_support.no_worker_message );           
@@ -116,13 +53,15 @@ var view;  // needs to be global so can be accessible to index.html
   
     var prompt_parms = {
       // corresponds to the maximum number of prompts that a user can select from the 
-      // drop-down menu selector;  Changes based on type of device being used.
+      // drop-down menu selector;  This value changes based on type of device being used.
       max_numPrompts_selector: 50,
       num_prompts_to_trigger_upload: 10, // user can upload anytime after recording 10 prompts
       //num_prompts_to_trigger_upload: 3, // debug
     }
 
     var audio_parms = {
+      // this was used before we just set audioNodebufferSize to largest size 
+      // possible, since latency is not a issue for this app...
       //audioNodebufferSize: undefined, // let device decide appropriate buffer size
       audioNodebufferSize: 16384, // debug
       bitDepth:  '32bit-float', // 16 or 32bit-float
@@ -161,19 +100,8 @@ var view;  // needs to be global so can be accessible to index.html
     } 
 
     // ### ANDROID #############################################################
-    // research:
-    // see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
 
-    // see: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
-    // need higher buffersize to avoid audio breakup and glitches, but
-    // VAD needs lower buffersize for accuracy; 
-    // 1. one option was to disable VAD, but then lose slience detection, etc.
-    // 2. chose another approach where we select largest audioNodebufferSize size,
-    // and use this accross all devices, and then split the buffer into smaller
-    // chunks that the VAD can digest... seeems to work much better.
     if ( platform.os.family.includes("Android") ) {
-        // this was used before we just set audioNodebufferSize to largest size 
-        // possible, since latency is not a issue for this app...
         audio_parms.vad.maxsilence = 650; // detect longer silence period on Android
         audio_parms.vad.minvoice = 75; // use shorter min voice threshold period on Android
         audio_parms.blockDisplayOfRecordButton = true;
@@ -192,9 +120,6 @@ var view;  // needs to be global so can be accessible to index.html
     // #############################################################################
     const appversion = "0.2";
 
-    /**
-    * Instantiate classes
-    */
     var prompts = new Prompts(prompt_parms); 
     var profile = new Profile(appversion);
     // 'view' needs to be global so can be accessed by index.html
@@ -209,27 +134,10 @@ var view;  // needs to be global so can be accessible to index.html
                                      controller_parms,
                                      appversion);
 
-    /**
-    * Initialize objects
-    */
-    // prompts object has side effects, which cause timing problems on low 
-    // powered devices if try to initialize prompts and view objects asynchronously
-    // in standalone mode; therefore wait for prompts object to initialize 
-    // before initializing view object
-    // (note: async init of prompts and view objects seems to work OK from browser.)
     var prompts_async = prompts.init() 
-    // Note: need to make sure this is not delayed in execution, otherwise,
-    // the app page will display, then the selects will be set in DOM properties
-    // but will be too late for it to display to user correctly...
     var view_async = view.init();
     var audio_async = audio.init();
-
-    // same synchronization issues in controller object, so wait for view/prompts 
-    // and audio objects to initialize before calling controller object
-    //Promise.all([prompts_async, view_async, audio_async])
-    //.then(function() {
-        controller.start();
-    //});
+    controller.start();
 
 })(); // function context
 

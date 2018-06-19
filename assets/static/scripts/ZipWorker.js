@@ -17,24 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-/**
-* use about:debugging#workers in firefox to get at web worker
-* use chrome for debugging webworkers, no need to mess with about:...
-*
-*
-*  Note on cross domain cookies: cookies do not work in web workers
-*    //https://markitzeroday.com/x-requested-with/cors/2017/06/29/csrf-mitigation-for-ajax-requests.html
-*
-* references: 
-* see also https://www.w3schools.com/xml/ajax_xmlhttprequest_response.asp
-* See for debugging mobile: https://developer.mozilla.org/en-US/docs/Tools/Remote_Debugging/Debugging_Firefox_for_Android_with_WebIDE
-* see: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
-*
-* https://mortoray.com/2014/04/09/allowing-unlimited-access-with-cors/
-* cannot send cookies from a webworker...
-* see https://stackoverflow.com/questions/34635057/can-i-access-document-cookie-on-web-worker
-*/
-
 // #############################################################################
 
 importScripts('../lib/jszip.js', '../lib/localforage.js'); 
@@ -44,15 +26,14 @@ var submissionCache = localforage.createInstance({
 
 /**
 * Main worker function.  This worker, running in the background, takes the text
-* and audio blob files
-* and adds them to an in memory zip object which it then attempts to upload
-* to the VoxForge server; if it cannot, it will save the submission to InnoDB
-* using localForage, and upload to server next time it performs a successful
-* upload.
+* and audio blob files and adds them to an in memory zip object which it then 
+* attempts to upload to the VoxForge server; if it cannot, it will save the 
+* submission to InnoDB using localForage, and upload to server next time it 
+* performs a successful upload.
 * 
 * Problem: it will only upload saved submission to server if the user tries
-* another submission... should upload in background once network connectivity
-* is detected using a service worker
+* to upload another submission... should upload in background once network 
+* connectivity is detected using a service worker
 */
 self.onmessage = function(event) {
   var data = event.data;

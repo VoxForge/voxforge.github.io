@@ -172,7 +172,6 @@ Controller.prototype.start = function () {
         // Static States
         onNopromptsrecorded: function() {
           self.view.setRSUButtonDisplay(true, false, false);
-          //console.log('   *** onNopromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onFirstpromptrecorded: function() {
@@ -195,8 +194,6 @@ Controller.prototype.start = function () {
             self.profile.setDebugValues( self.audio.getDebugValues() );
             self.updatedDeviceEventBufferSize = true;
           }
-
-          //console.log('   *** onFirstpromptrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onMidpromptsrecorded: function() { 
@@ -212,7 +209,6 @@ Controller.prototype.start = function () {
           } else { // allows recording even though waveform display not completed
              self.view.setRSButtonDisplay(true, false); 
           }
-          //console.log('   *** onMidpromptsrecorded state: ' + this.state + " trans: " + this.transitions() );
         },
 
         // at maximum selected prompts, cannot record anymore, must upload to 
@@ -222,14 +218,12 @@ Controller.prototype.start = function () {
           self.view.showAudioPlayer();
           self.view.showPlayButtons();
           self.view.setRSUButtonDisplay(false, false, true);
-          //console.log('   *** onMaxprompts state: ' + this.state + " trans: " + this.transitions() );
         },
 
         // #####################################################################
         // Action States
         onRecordingfirst: function() { 
           self.view.setRSButtonDisplay(false, true);  
-          //console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
           recordAudio();
         },
 
@@ -238,7 +232,6 @@ Controller.prototype.start = function () {
           self.view.hideAudioPlayer();
           self.view.hidePlayButtons();
           self.view.setRSButtonDisplay(false, true);  
-          //console.log('   *** onRecordingltn state: ' + this.state + " trans: " + this.transitions() );
           recordAudio(); 
         },
 
@@ -248,7 +241,6 @@ Controller.prototype.start = function () {
           self.view.hidePlayButtons();
           self.view.setRSButtonDisplay(false, true);  
           recordAudio(); // should be blocking
-          //console.log('   *** onRecordinglast state: ' + this.state + " trans: " + this.transitions() );
         },
 
         onUploading: function() { 
@@ -256,7 +248,6 @@ Controller.prototype.start = function () {
           self.view.hideAudioPlayer();
           self.view.hidePlayButtons();
           self.view.setRSUButtonDisplay(false, false, false);
-          //console.log('   *** setRSUButtonDisplay state: ' + this.state + " trans: " + this.transitions() );
           
           // make sure all promises complete before trying to gather audio
           // from shadow DOM before upload, otherwise will miss some audio 

@@ -17,14 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-/*
-for testing:
-if get Failed to load ‘https://jekyll2_voxforge.org/index.php’. A ServiceWorker 
-passed a promise to FetchEvent.respondWith() that rejected with 
-‘TypeError: NetworkError when attempting to fetch resource.’.
-make sure to import self-signed root Cert into Firefox certificate store
-
-*/
 // TODO: processSavedSubmissions is called from service worker (voxforge_sw.js) from 
 // a different root, therefore localforage import must be done in calling script
 importScripts('../lib/localforage.js'); // localforage needs to be defined before call to processSavedSubmissions

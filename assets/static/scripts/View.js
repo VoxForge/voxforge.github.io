@@ -34,7 +34,7 @@ function View (parms,
     this.stop = document.querySelector('.stop');
     this.upload = document.querySelector('.upload');
 
-    // TODO this might work with delete if used class syntax (whcih shuold pick up many elements) instead of id synstax (which only pick up one element)
+    // TODO this might work with delete if used class syntax (which should pick up many elements) instead of id synstax (which only pick up one element)
     this.delete_clicked = document.querySelector('#delete_clicked'); // only picks up first instance of in=delete in DOM
 
     // where audio files will be displayed in HTML

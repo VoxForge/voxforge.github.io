@@ -17,10 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-// cannot put importScripts here even though code is being shared by voxforge_sw.js and 
-// UploadWorker.js because they are stored in different places and have 
-// different relative paths to localforage
+// cannot put importScripts here even though code is being shared by 
+// voxforge_sw.js and UploadWorker.js because they are stored in different 
+// places and have different relative paths to localforage
 // importScripts('assets/static/lib/localforage.js');
+
 var submissionCache = localforage.createInstance({
     name: "submissionCache"
 });
@@ -56,31 +57,12 @@ function processSavedSubmissions(uploadURL) {
     /**
     * upload the submission to the VoxForge server 
     *
-    * Basically fetch() will only reject a promise if the user is offline, or 
-    * a networking error occurs, such a DNS lookup failure.
-    * see: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/
-    * research: https://medium.com/@shahata/why-i-wont-be-using-fetch-api-in-my-apps-6900e6c6fe78
-    *
-    * also may fail if file size is greater than settings in php.ini on server;
-    * if this happens, get this cryptic error:
-        server error message: Request failed - invalid server response: 
-        <br />
-        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>56</b><br />
-        <br />
-        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>59</b><br />
-        <br />
-        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>60</b><br />
-        <br />
-        <b>Notice</b>:  Undefined index: file in <b>/home/daddy/git/voxforge.github.io/_site/index.php</b> on line <b>61</b><br />
-        Invalid parameters.
     */
     function uploadSubmission(data) {
       var [saved_submission_name, jsonOnject, uploadURL] = data;
 
       return new Promise(function (resolve, reject) {
-        //https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/13596540/
         var form = new FormData();
-        //form.append('file', jsonOnject['file'], "webworker_file.zip"); // optional filename not supported in Edge
         form.append('file', jsonOnject['file']);
         form.append('language', jsonOnject['language']);
         form.append('username', jsonOnject['username']);
@@ -155,7 +137,7 @@ function processSavedSubmissions(uploadURL) {
         console.log('number of submissions saved in browser storage: ' + numberOfKeys);
 
         // TODO since later loop iterates through all saved submissions, this 
-        // prevents service worker from turning into a zombie thread 
+        // _should_ prevents service worker from turning into a zombie thread 
         // and continually checking for (deleted) saved submissions...
         if (numberOfKeys <= 0) {
           resolve('no submissions found in browser storage: ' + numberOfKeys);
@@ -170,7 +152,6 @@ function processSavedSubmissions(uploadURL) {
       // process submissions saved in indexedDB
       submissionCache.keys()
       .then(function(savedSubmissionArray) {
-          // https://stackoverflow.com/questions/31426740/how-to-return-many-promises-in-a-loop-and-wait-for-them-all-to-do-other-stuff?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
           var promises = [];
           for (var i = 0; i < savedSubmissionArray.length; i++) {
             var saved_submission_name = savedSubmissionArray[i];

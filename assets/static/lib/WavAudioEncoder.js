@@ -26,18 +26,6 @@ see: https://github.com/higuma/wav-audio-encoder-js
 
 */
 
-/**
-*
-given that audio recorded from smartphone sometimes contains scratches and pops, 
-do we need to add dithering?
-see: http://wiki.audacityteam.org/wiki/Dither
-"Dither" is intentional noise which is added so as to randomise the quantisation 
-errors  (rounding errors) that occur when downsampling the Bit Depth of an
- audio stream to a lower resolution than the current format. 
-see also: 
-http://darkroommastering.com/blog/dithering-explained
-*/
-
 (function(self) {
   var min = Math.min,
       max = Math.max;
@@ -54,19 +42,6 @@ http://darkroommastering.com/blog/dithering-explained
     this.dataViews = [];
     this.bitDepth = bitDepth;
   };
-
-  // why convert to 16-bit... because takes up less space...
-
-  //  convert raw 32-bit floating point audio samples to 16-bit signed integer
-  // see https://stackoverflow.com/questions/43881026/convert-32-bit-floating-points-to-16-bit-pcm-range
-  // see also: https://github.com/mattdiamond/Recorderjs/blob/master/src/recorder.js
-
-  // https://github.com/Jam3/audiobuffer-to-wav/blob/master/index.js
-
-  // see also: see: https://github.com/higuma/wav-audio-encoder-js
-
-  // a more efficient way to copy 32-bit float is: AudioBuffer.copyFromChannel()
-  // see: https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/copyFromChannel
 
   Encoder.prototype.encode = function(buffer) {
     var len = buffer.length;
@@ -94,13 +69,6 @@ http://darkroommastering.com/blog/dithering-explained
     this.numSamples += len;
   };
 
-  /**
-  * see: http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
-
-see: https://github.com/rochars/wavefile
-// see https://stackoverflow.com/questions/15576798/create-32bit-float-wav-file-in-python
-
-  */
   Encoder.prototype.finish = function(mimeType) {
     //var dataSize = this.numChannels * this.numSamples * 2,
     if (this.bitDepth == 16) {

@@ -23,9 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function Prompts(parms) {
     this.max_num_prompts = parms.num_prompts_to_trigger_upload;
     this.max_numPrompts_selector = parms.max_numPrompts_selector;
-    // list of prompts to be recorded by user; iniitlaized in convertPromptDataToArray
-    this.list = [];
-
+    this.list = []; // list of prompts to be recorded by user; iniitlaized in convertPromptDataToArray
     this.previous_max_num_prompts = 0; // to decide what to do when use changes max number of prompts
     this.index = 0; // pointer to position in prompt list array
     this.prompt_count = 0; // number of prompts user read
@@ -69,7 +67,7 @@ Prompts.prototype.init = function () {
 
     /* Inner functions */
     /**
-    * verify that read.md entries contain valid data
+    * verify that read.md entries contain valid prompt related data
     */
     function validate_Readmd_file() {
       var variable_list = ['page_language', 
@@ -279,19 +277,11 @@ Prompts.prototype.init = function () {
 
     return new Promise(function (resolve, reject) {
       /**
-        when offline, app hangs as it tries to communicate with server to
-        download another prompt file - takes too long: 30secs... even though it 
-        already has prompts cached in localstorage.
+        no good way to detect if online or offline. therefore, get first set
+        of prompts from prompt cache, then asyncronously try to get new set of 
+        prompts.  Only try to get prompts right away if none in localstorage.
 
-        But, no good way to detect if online or offline - navigator.onLine too flaky:
-
-          //if (navigator.onLine) { // even with WIFI turned off, will still show as connected even without a cell data plan... useless
-
-        therefore, get first set of prompts from prompt cache, then asyncronously
-        try to get new set of prompts
-
-        only try to get prompts right away if none in localstorage
-        this way we can have very large prompt sets, but user only needs to 
+        This way we can have very large prompt sets, but user only needs to 
         download a small portion
         */
         function firstSetupOfPromptsFile(prompt_file_name) {
@@ -327,7 +317,7 @@ Prompts.prototype.init = function () {
           2. then asynchronously try to download updated prompt file...
 
           this prevents hang of app when user records offline (when using a 
-          promise chain) or timing issues with no primise chain when app starts
+          promise chain) or timing issues with no promise chain when app starts
           up offline and prompts file 'get' is hanging...
          */
         function subsequentSetupOfPromptsFile(prompt_file_name) {

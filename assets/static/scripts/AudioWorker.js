@@ -61,6 +61,7 @@ self.onmessage = function(event) {
 
     case 'record':
       buffers.push(data.event_buffer); // array of buffer arrays
+      // TODO either use this code or remove it!
       //startSimpleSilenceDetection(buffers.length - 1, data.event_buffer);
 
       if ( vad_run ) {

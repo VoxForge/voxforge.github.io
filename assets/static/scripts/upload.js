@@ -15,39 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-* Chrome and self signed certificates... need to make sure you install rootCA
-* in Chrome certificate store...
-
-* make sure you terminate old service workers: chrome://inspect/#service-workers
-* then clear browser caches
-* F12; Network>Disable Cache
-* F12 Application>Service Workers>Update on reload
-
-* In 'chrome://flags' set 'Allow invalid certificates from resources loaded from localhost' ... does not work
-* need to install rootCA in browser...
-*/
-
 'use strict';
 
-/**
-* use service worker to perform background sync to upload submissions
-* to server (if browser supports it: Chrome:yes, Firefox:no), and to 
-* cache all javascript files so app can be run offline
-
-pass parameters to service worker:
-http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.WvXYnWCEeis
-*/
 if ('serviceWorker' in navigator) {
-// https://github.com/GoogleChromeLabs/sw-precache/issues/104
-// https://github.com/GoogleChromeLabs/sw-precache/blob/master/demo/app/js/service-worker-registration.js#L25
-
   window.addEventListener('load', function() {
-    // TODO passing parameters this way to service worker may be causing problems when
-    // when app installed and called as a standalone app...
     const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
     navigator.serviceWorker.register(swUrl)
-    //navigator.serviceWorker.register('/voxforge_sw.js')
     .then(function(reg) {
       console.log('ServiceWorker registration successful with scope: ', reg.scope);
     }, function(err) {
@@ -57,9 +30,9 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// zip and upload Web Worker
 var zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
 var upload_worker = new Worker('/assets/static/scripts/UploadWorker.js');
+
 /**
 * if page reloaded kill background worker threads before page reload
 * to prevent zombie worker threads in FireFox
@@ -73,9 +46,6 @@ $( window ).unload(function() {
 * collect all recorded audio into an array (audioArray) then calls function 
 * that calls web worker that actually creates the zip file for download
 * to VoxForge server
-*
-* Notes:
-* service workers: https://www.twilio.com/blog/2017/02/send-messages-when-youre-back-online-with-service-workers-and-background-sync.html
 */
 function upload( prompts, 
                  profile, 
@@ -194,59 +164,16 @@ function upload( prompts,
             reject(m);
           }
         };
-
-        // wait until zip_worker postMesasge completed before resetting everything
-        //when_audio_processing_completed(); 
-
       }); // Promise
     } // callWorker2createZipFile
 
-    /**
-    * for testing CORS make sure you have rootCA cert installed
-    * on browser to be tested (Linux, Android, Unix...)
-    * otherwise operation will fail (silently on Android...)
 
-    * FireFox: TypeError: swRegistration.sync is undefined
-    * background sync is not supported in FireFox
-    * https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/sync
-    * see: https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
-    * https://bugzilla.mozilla.org/show_bug.cgi?id=1217544 - planned for FFv61
-    *
-    * - Chrome on Linux and Windows 10 supports service workers for fetching
-    * and background sync; 
-    * - Chrome on Android >5 - works with service workers
-    * - Chrome on Android 4.4.2 - move to canadian hoster has SSL certificate 
-    * that now works with 4.4.2....
-    * - Firefox on Linux & Windows 10 supports service workers for fetching 
-    * but not background sync, therefore use Web Worker for uploads; 
-    * FireFox works on Andoid 4.4.2 - now needs a root certificate
-    * see: https://wiki.mozilla.org/CA:AddRootToFirefox
-    *
-    * - Edge on Windows 10 does not support service workers at all... try
-    * Web Workers... 
-    * TODO Edge does not support FormData... create alternate form (again...) to 
-    * support Edge.  no support for Edge for now...
-    */
 
     /** 
     * worker Processing - depending on browser support, use service worker and 
     * background sync to upload submission, if not available, use a web
-    * worker that uploads in background; or 
-    * TODO perform a synchronous upload
-    * if neither is supported... which makes no sense since using web workers
-    * to record and zip submission....
-    *
-    * service worker - background sync (e.g. current Chrome on Linux/Win10/Android 5 and up)
-    * swRegistration.sync.register: requests a one-off sync to upload the saved 
-    * submission.  It will upload if there is connectivity, if there is none, 
-    * it will keep on trying to upload until connectivity is made
-    * and then will delete saved submission from browser storage
-    *
-    * web worker - background upload  (e.g. current Firefox on Linux/Win10/Android 4.4.2 and up)
-    * some browsers implement service workers for caching files but not 
-    * background sync (e.g. Firefox), therefore use Web Worker to upload 
-    * submission and upload any previously saved submissions (in browser 
-    * storage)
+    * worker that uploads in background; or perform a synchronous upload
+    * if neither is supported.
     */
     function uploadZippedSubmission() {
       return new Promise(function (resolve, reject) {
@@ -271,67 +198,68 @@ function upload( prompts,
         resolve("OK");
 
       }); // Promise
-        // ### inner functions #################################################
-        /** 
-        * upload submission from main thread, asynchronously...
-        * TODO is this even required anymore???
-        * might be useful to allow user to upload manually...
-        */
-        function asyncMainThreadUpload() {
-          // TODO make sure not deadlock with service/web workers...
-          // TODO: should try web workers first...
-          // TODO localize in Read.md page...
-          console.info('submission uploaded (in main thread) asynchronously to VoxForge server');
 
-          processSavedSubmissions()
-          .then(function(result) {
-            console.info('async upload message: ' + result);
-            window.alert( "the following submissions were successfully uploaded " +
-                          "using async procedure: " + result );   
-          })
-          .catch(function(err) {
-            console.error('async upload message: ' + err);
+      // ### inner functions #################################################
+      /** 
+      * upload submission from main thread, asynchronously...
+      * TODO is this even required anymore???
+      * might be useful to allow user to upload manually...
+      */
+      function asyncMainThreadUpload() {
+        // TODO make sure not deadlock with service/web workers...
+        // TODO: should try web workers first...
+        // TODO localize in Read.md page...
+        console.info('submission uploaded (in main thread) asynchronously to VoxForge server');
+
+        processSavedSubmissions()
+        .then(function(result) {
+          console.info('async upload message: ' + result);
+          window.alert( "the following submissions were successfully uploaded " +
+                        "using async procedure: " + result );   
+        })
+        .catch(function(err) {
+          console.error('async upload message: ' + err);
+        });
+      }
+
+      /** 
+      * send message to service worker to start submission upload.
+      *
+      * supposed continue to try to upload even if no Internet, until connection
+      * restablished, and if successful, remove uploaded submission from
+      * browser storage, but this does not seem to work in Windows or Linux, 
+      * only works with Android
+      */
+      function serviceWorkerUpload(swRegistration) {
+        // for processing of return values from service worker, see 
+        // service worker event above (i.e. navigator.serviceWorker.addEventListener... )
+        swRegistration.sync.register('voxforgeSync')
+        .then(function() {
+          console.info('service worker background sync event called - submission will be uploaded shortly');
+         }, function() {
+          console.error('service worker background sync failed, will retry later');
+        });
+      }
+
+      /** 
+      * send message to web worker to upload submission.  If fails, submission
+      * stays in InnoDB until next time user makes submission, and then new
+      * submission and any saved submissions will be uploaded, and removed
+      * from browser storage after successful upload
+      */
+      function webWorkerUpload() {
+          upload_worker.postMessage({
+            command: 'upload',
+            uploadURL: uploadURL,
           });
-        }
 
-        /** 
-        * send message to service worker to start submission upload.
-        *
-        * supposed continue to try to upload even if no Internet, until connection
-        * restablished, and if successful, remove uploaded submission from
-        * browser storage, but this does not seem to work in Windows, Linux, 
-        * just Android
-        */
-        function serviceWorkerUpload(swRegistration) {
-          // for processing of return values from service worker, see 
-          // service worker event above (i.e. navigator.serviceWorker.addEventListener... )
-          swRegistration.sync.register('voxforgeSync')
-          .then(function() {
-            console.info('service worker background sync event called - submission will be uploaded shortly');
-           }, function() {
-            console.error('service worker background sync failed, will retry later');
-          });
-        }
+          upload_worker.onmessage = function webWorkerUploadDone(event) { 
+            var returnObj = event.data;
+            console.log("*** webworker says: " + returnObj.status);
 
-        /** 
-        * send message to web worker to upload submission.  If fails, submission
-        * stays in InnoDB until next time user makes submission, and then new
-        * submission and any saved submissions will be uploaded, and removed
-        * from browser storage after successful upload
-        */
-        function webWorkerUpload() {
-            upload_worker.postMessage({
-              command: 'upload',
-              uploadURL: uploadURL,
-            });
-
-            upload_worker.onmessage = function webWorkerUploadDone(event) { 
-              var returnObj = event.data;
-              console.log("*** webworker says: " + returnObj.status);
-
-              processWorkerEventMessage(page_alert_message.webworker, returnObj);
-            };
-        }
+            processWorkerEventMessage(page_alert_message.webworker, returnObj);
+          };
+      }
 
     } // uploadZippedSubmission
 }
@@ -339,12 +267,6 @@ function upload( prompts,
 /** 
 * Handler for messages coming from the service worker
 *
-// http://craig-russell.co.uk/2016/01/29/service-worker-messaging.html#.Wsz7C-yEdNA
-// https://github.com/jbmoelker/serviceworker-introduction/issues/1
-// https://miguelmota.com/blog/getting-started-with-service-workers/
-// when debugging, need to wait for service worker to trigger - 1-2 minutes
-// create breakpoints in voxforge_sw.js to know when this occurs...
-// 
 */
 navigator.serviceWorker.addEventListener('message', function(event){
   var returnObj = event.data;
@@ -393,8 +315,8 @@ function processWorkerEventMessage(workertype, returnObj) {
         //}
         break;
 
-      // if there is an error with one prompt (usually server side check - e.g.
-      // too big for server settings), then other submissions will upload, but
+      // if there is an error with one submission (usually server side check - e.g.
+      // file too big for server settings), then other submissions will upload, but
       // erroneous one will stay in browser storage.
       // TODO need a way for user to save these their o/s filesystem and upload
       // them to VoxForge server some other way.
