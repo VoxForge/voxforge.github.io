@@ -12,8 +12,8 @@ VoxForge was set up to collect transcribed speech for use in the creation of
 acoustic models for [Free] and 
 [Open Source], [Speech Recognition Engines].
 
-Your speech is recorded in high quality ([uncompressed]) [WAV] format ([LPCM]).  Most 
-open corpora are recorded in [lossy] formats (such as mp3 or vorbis).
+Your speech is recorded in high quality, [uncompressed], [WAV] format.  Most 
+open corpora are recorded in [lossy compressed] formats (such as mp3 or vorbis).
 
 The collected audio is meant to provide an wide and varied sample of different user 
 recording environments: from line noise from their audio cards, poor quality 
@@ -32,9 +32,9 @@ your recordings to the VoxForge server.
 [Open Source]: /faq/what-is-open-source-software
 [Speech Recognition Engines]: /faq/what-is-the-difference-between-a-speech-recognition-engine-and-a-speech-recognition-system
 [Record yourself reading some text]: /en/read
-[lossy]: https://en.wikipedia.org/wiki/Lossy_compression
-[WAV]: https://en.wikipedia.org/wiki/WAV
-[uncompressed]: https://en.wikipedia.org/wiki/Audio_file_format#Uncompressed_audio_format
-[LPCM]: https://en.wikipedia.org/wiki/Pulse-code_modulation
+
+[WAV]: /faq/what-is-the-difference-between-lossy-lossless-and-uncompressed-audio-formats/
+[uncompressed]: /faq/what-is-the-difference-between-lossy-lossless-and-uncompressed-audio-formats/
+[lossy compressed]: /faq/what-is-the-difference-between-lossy-lossless-and-uncompressed-audio-formats/
 [acoustic models]: https://en.wikipedia.org/wiki/Acoustic_model
 
