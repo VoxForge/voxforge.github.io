@@ -58,9 +58,9 @@ var urlsToCache = [
 
   // need one entry for each language, otherwise will not be able to switch
   // language while offline
-  '/en/read.html',
-  '/fr/read.html',
-  '/es/read.html',
+  '/en/read',
+  '/fr/read',
+  '/es/read',
 
   // cache at least one prompt file for each language
   '/en/prompts/001.html',
