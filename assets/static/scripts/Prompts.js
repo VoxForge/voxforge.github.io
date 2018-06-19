@@ -353,11 +353,11 @@ Prompts.prototype.init = function () {
         /** 
         * get prompts file for given language from server; used cached version of 
         * prompt file if no network connection...
-        *
+
+        * Note: each language has its own prefixed prompt file, so counting keys
+        * tells you if prompt file was already locally cached in promptCache 
+        * for that language
         */
-        // TODO if already recorded in English, then number of keys stored 
-        // refers to all prompts files stored, not just the one for a specific 
-        // language
         self.promptCache.length() // Gets the number of keys in the offline store
         .then(function(numberOfKeys) { 
             var prompt_file_name = page_prompt_list_files[prompt_file_index]['file_location'];
