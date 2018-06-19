@@ -27,13 +27,14 @@ var submissionCache = localforage.createInstance({
 /**
 * Main worker function.  This worker, running in the background, takes the text
 * and audio blob files and adds them to an in memory zip object which it then 
-* attempts to upload to the VoxForge server; if it cannot, it will save the 
-* submission to InnoDB using localForage, and upload to server next time it 
-* performs a successful upload.
+* saves as an object in InnoDB.  It then attempts to upload it to the VoxForge 
+* server; if it cannot, it will upload the saved submission to the VoxForge 
+* server the next time it performs a successful upload.
 * 
 * Problem: it will only upload saved submission to server if the user tries
 * to upload another submission... should upload in background once network 
-* connectivity is detected using a service worker
+* connectivity is detected, like a service worker is supposed to so (though
+* the background unload by service worker only seems to work on Android)
 */
 self.onmessage = function(event) {
   var data = event.data;
