@@ -58,9 +58,11 @@ var urlsToCache = [
 
   // need one entry for each language, otherwise will not be able to switch
   // language while offline
-  '/en/read',
-  '/fr/read',
-  '/es/read',
+  // .html suffix does not work with jekyll server... 
+  // .html required for GithubPages
+  '/en/read.html',
+  '/fr/read.html',
+  '/es/read.html',
 
   // cache at least one prompt file for each language
   '/en/prompts/001.html',
