@@ -73,7 +73,9 @@ var urlsToCache = [
   '/voxforge_sw.js',
   '/manifest.json',
 
-  '/en/read/',
+  '/en/read.html',
+  '/fr/read.html',
+  '/es/read.html',
 
   // cache at least one prompt file for each language
   '/en/prompts/001.html',
