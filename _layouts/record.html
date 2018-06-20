@@ -92,41 +92,49 @@
             {% endfor %}
           </select>
 
-            <div style="display: none;"  id="first_language_display">
-
-              <label style="display: inline;"  for="first_language">{{ page.first_language.label }}</label>
-              <a href="#first_language_popupInfo" data-rel="popup" data-transition="pop" 
-                 class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-                 title="{{ page.first_language.popup_text }}">
-              </a>
-              <div data-role="popup" id="first_language_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-                <p><a href="{{ page.first_language.popup_link }}" target="_blank">{{ page.first_language.label }}</a>: {{ page.first_language.popup_text }}</p>
-              </div>
-          <div class="other">
-              <select type="text" id="first_language">
-              </select>
-              <div style="display: none;"  id="first_language_other_display">
-                <input id="first_language_other" 
-                   placeholder="{{ page.first_language.other_label }}" value="" 
-                   type="text">
-              </div><!--first_language_other_display-->
-          </div><!--other-->
-            </div><!--first_language_display-->
+          <div style="display: none;"  id="first_language_display">
+            <label style="display: inline;"  for="first_language">{{ page.first_language.label | default: default.first_language.label }}</label>
+            <a href="#first_language_popupInfo" data-rel="popup" data-transition="pop" 
+               class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
+               title="{{ page.first_language.popup_text | default: default.first_language.popup_text}}">
+            </a>
+            <div data-role="popup" id="first_language_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
+              <p><a href="{{ page.first_language.popup_link | default: default.first_language.popup_link}}" 
+                    target="_blank">{{ page.first_language.label | default: default.first_language.label}}</a>: 
+                    {{ page.first_language.popup_text  | default: default.first_language.popup_text}}</p>
+            </div>
+            <div class="other">
+                <select type="text" id="first_language">
+                </select>
+                <div style="display: none;"  id="first_language_other_display">
+                  <input id="first_language_other" 
+                     placeholder="{{ page.first_language.other_label | default: default.first_language.other_label }}" value="" 
+                     type="text">
+                </div><!--first_language_other_display-->
+            </div><!--other-->
+          </div><!--first_language_display-->
 
           <div style="display: none;"  id="dialect_display">
-	            <label style="display: inline;"  for="dialect">{{ page.dialect.label }}</label>
+	            <label style="display: inline;"  for="dialect">{{ page.dialect.label | default: default.dialect.label}}</label>
               <a href="#dialect_popupInfo" data-rel="popup" data-transition="pop" 
                 class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-                title="{{ page.dialect.text }}">
+                title="{{ page.dialect.text | default: default.dialect.text}}">
               </a>
               <div data-role="popup" id="dialect_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-                <p><a href="{{ page.dialect.popup_link }}" target="_blank">{{ page.dialect.label }}</a>: {{ page.dialect.popup_text }}</p>
+                <p><a href="{{ page.dialect.popup_link | default: default.dialect.popup_link}}" 
+                      target="_blank">{{ page.dialect.label | default: default.dialect.label}}</a>: 
+                      {{ page.dialect.popup_text | default: default.dialect.popup_text}}</p>
               </div>
               <div id=dialect_display>
                 <div class="other">
                   <select id="dialect">
-                    <option selected value="Unknown">{{ page.please_select }}</option>
-                    {% for region in page.dialect.selection %}
+                    <option selected value="Unknown">{{ page.please_select | default: default.please_select}}</option>
+                    {% if page.dialect.selection %}
+                      {% assign dialect_list = page.dialect.selection %} 
+                    {% else %}
+                      {% assign dialect_list = default.dialect.selection %}
+                    {% endif %}
+                    {% for region in dialect_list %}
                       <optgroup label=" {{ region[0] }}">
                       {% for dialect in region[1] %}
                         <option value="{{ dialect }}">{{ dialect }}</option>
@@ -136,12 +144,11 @@
 
                   <div style="display: none;"  id="dialect_other_display">
                     <input id="dialect_other" 
-                       placeholder="{{ page.dialect.other_label }}" value="" 
+                       placeholder="{{ page.dialect.other_label | default: default.dialect.other_label }}" value="" 
                        type="text">
                   </div><!-- dialect_other_display -->
                 </div><!--other-->
               </div> <!-- dialect_display -->
-
 
               <div style="display: none;" id=sub_dialect_display>
 	              <label style="display: inline;"  for="sub_dialect">{{ page.sub_dialect.label }}</label>
@@ -174,19 +181,25 @@
       </div>  <!--speaker_characteristics_display-->
 
     <!--#########################################################################-->
-        <button style="background: #cedfe8; " onclick="view.recordingInformation()">{{ page.recording_information }}</button>
+        <button style="background: #cedfe8; " onclick="view.recordingInformation()">
+            {{ page.recording_information | default: default.recording_information }}</button>
 	      <div style="display: none;" id="recording_information_display">
-          <label for="microphone">{{ page.microphone.label }}</label>
+          <label for="microphone">{{ page.microphone.label | default: default.microphone.label }}</label>
           <div class="other">
             <select type="text" id="microphone">
-              <option selected value="Unknown">{{ page.please_select }}</option>
-              {% for item in page.microphone.selection %}
+              <option selected value="Unknown">{{ page.please_select | default: default.please_select }}</option>
+              {% if page.microphone.selection %}
+                {% assign microphone_list = page.microphone.selection %} 
+              {% else %}
+                {% assign microphone_list = default.microphone.selection %}
+              {% endif %}
+              {% for item in microphone_list %}
                 <option value="{{ item }}">{{ item }}</option>    
               {% endfor %}
              </select>
           <div style="display: none;"  id="microphone_other_display">
             <input id="microphone_other" 
-               placeholder="{{ page.microphone.other_label }}" value="" 
+               placeholder="{{ page.microphone.other_label | default: default.microphone.other_label }}" value="" 
                type="text">
           </div> <!--microphone_other_display-->
         </div> <!--other-->

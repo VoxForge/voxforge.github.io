@@ -59,20 +59,10 @@ speaker_characteristics: Speaker Characteristics
 
 language_id: EN
 
-
-first_language:
-  label: First Language
-  popup_link: https://en.wikipedia.org/wiki/First_language
-  popup_text: language that a person has been exposed to from birth or within the critical period.
-  other_label: Other First Language
-
 # see https://en.wikipedia.org/wiki/Regional_accents_of_English
 # ( https://en.wikipedia.org/wiki/List_of_dialects_of_the_English_language
 # https://en.wikipedia.org/wiki/Non-native_pronunciations_of_English 
 dialect:
-  label: Pronunciation Dialect
-  popup_link: https://en.wikipedia.org/wiki/Dialect
-  popup_text: variety of a language that is a characteristic of a particular group of the language's speakers.
   selection:
   - [British Isles, [British English, Scottish English, Welsh English, Irish English]]
   - [European, [European English]]
@@ -80,7 +70,6 @@ dialect:
   - [Southern hemisphere, [Australian English, New Zealand English, South Atlantic English, South African English]]
   - [Asia, [Indian English, Philippine English, Hong Kong English, Malaysian English,  Singapore English]]
   - [Other, [Other]]
-  other_label: Other Dialect
 
 # see: https://en.wikipedia.org/wiki/North_American_English_regional_phonology
 sub_dialect:
@@ -98,20 +87,6 @@ sub_dialect:
       - [Southeastern United States, [Midland, Mid-Atlantic, South, Marginal Southeast]]
     Canadian English:
       - [Canadian English, [Atlantic, Central, West]]
-
-recording_information: Recording Information
-
-microphone:
-  label: Microphone Type
-  selection:
-    - Analog Microphone
-    - USB Microphone
-    - Laptop Builtin Microphone
-    - Smartphone
-    - Tablet
-    - Microphone Array/Far Field Mic
-    - Other
-  other_label: Other Microphone Type
 
 recording_location:
   label: Recording Location

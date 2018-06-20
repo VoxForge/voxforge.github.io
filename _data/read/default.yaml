@@ -47,5 +47,33 @@ native_speaker:
     - "Yes"
     - "No"
 
+first_language:
+  label: First Language
+  popup_link: https://en.wikipedia.org/wiki/First_language
+  popup_text: language that a person has been exposed to from birth or within the critical period.
+  other_label: Other First Language
 
+dialect:
+  label: Pronunciation Dialect
+  popup_link: https://en.wikipedia.org/wiki/Dialect
+  popup_text: variety of a language that is a characteristic of a particular group of the language's speakers.
+  selection:
+  - [Other, [Other]]
+  other_label: Other Dialect
+
+# no default required for sub-dialect
+
+recording_information: Recording Information
+
+microphone:
+  label: Microphone Type
+  selection:
+    - Analog Microphone
+    - USB Microphone
+    - Laptop Builtin Microphone
+    - Smartphone
+    - Tablet
+    - Microphone Array/Far Field Mic
+    - Other
+  other_label: Other Microphone Type
 
