@@ -142,7 +142,6 @@ Profile.prototype.toJsonString = function () {
 /**
 * Read HTML Form Data to convert profile data to array
 */
-// TODO all interactions with JQuery should be made in View class
 Profile.prototype.toTextArray = function () {
     var profile_hash = View.getUserProfileInfo();
 
@@ -220,10 +219,7 @@ Profile.prototype.toTextArray = function () {
     profile_array[i++] = '\nLicense: ' + profile_hash["license"]  + '\n';
 
     profile_array[i++] = '\nFile Info: \n\n';
-
     profile_array[i++] = 'File type: wav\n';
-
-    // see https://www.pmtonline.co.uk/blog/2004/11/04/what-does-the-bit-depth-and-sample-rate-refer-to/
     profile_array[i++] = 'Sample Rate: ' + this.sample_rate + '\n';
     profile_array[i++] = 'Sample Rate Format (bit depth): ' + this.bit_depth + '\n';
     profile_array[i++] = 'Number of channels: ' + this.channels + '\n';

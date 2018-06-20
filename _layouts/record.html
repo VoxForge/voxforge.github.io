@@ -23,52 +23,71 @@
       <div id="upload_status_display" border-style: solid;>
       </div>
 
+      {% assign default = site.data.read.default %}
+
       <button style="display: none;" 
               id="profile-button-display" 
               style="background: #cedfe8;" 
-              onclick="view.profileInfo()">{{ page.profile_info }}</button>
+              onclick="view.profileInfo()">{{ page.profile_info | default: default.profile_info}}</button>
 
         <!-- https://learn.jquery.com/using-jquery-core/selecting-elements/ -->
 	    <div id="profile-display">
 	      <div class="profile">
-
-          <label for="username">{{ page.username_label }}</label>
+          <label for="username">{{ page.username_label | default: default.username_label }}</label>
           <input id="username" 
-                 placeholder="{{ page.username_label }}" value="" 
+                 placeholder="{{ page.username_label | default: default.username_label}}" value="" 
                  type="text">
           <div id=anonymous_instructions_display>
-            <small>{{ page.anonymous_submission }}</small><br><br>
+            <small>{{ page.anonymous_submission | default: default.anonymous_submission }}</small><br><br>
           </div>
-      <button style="background: #cedfe8;" onclick="view.speakerCharacteristics()">{{ page.speaker_characteristics }}</button>
+      <button style="background: #cedfe8;" onclick="view.speakerCharacteristics()">{{ page.speaker_characteristics  | default: default.speaker_characteristics }}</button>
 	    <div style="display: none;" id="speaker_characteristics_display">
-          <label for="gender">{{ page.gender.label }}</label>
+
+          <label for="gender">{{ page.gender.label | default: default.gender.label }}</label>         
           <select name="gender" id="gender">
-            <option selected value="Unknown">{{ page.please_select }}</option>
-            {% for item in page.gender.selection %}
+            <option selected value="Unknown">{{ page.please_select | default: default.please_select }}</option>
+            {% if page.gender.selection  %}
+              {% assign gender_list = page.gender.selection %} 
+            {% else %}
+              {% assign gender_list = default.gender.selection %}
+            {% endif %}
+            {% for item in gender_list %}
               <option value="{{ item }}">{{ item }}</option>    
             {% endfor %}
           </select>
 
-          <label for="age">{{ page.age.label }}</label>
+          <label for="age">{{ page.age.label | default: default.age.label}}</label>
           <select type="text" id="age">
-            <option selected value="Unknown">{{ page.please_select }}</option>
-            {% for item in page.age.selection %}
+            <option selected value="Unknown">{{ page.please_select  | default: default.please_select }}</option>
+            {% if page.age.selection  %}
+              {% assign age_list = page.age.selection %} 
+            {% else %}
+              {% assign age_list = default.age.selection %}
+            {% endif %}
+            {% for item in age_list %}
               <option old_value="{{ item.old_value }}" value="{{ item.value }}">{{ item.value }}</option> 
             {% endfor %}
 
           </select>
 
-          <label style="display: inline;"  for="native_speaker">{{ page.native_speaker.label }}</label>
+          <label style="display: inline;"  for="native_speaker">{{ page.native_speaker.label | default: default.native_speaker.label}}</label>
           <a href="#native_speaker_popupInfo" data-rel="popup" data-transition="pop" 
              class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-             title="{{ page.native_speaker.popup_text }}">
+             title="{{ page.native_speaker.popup_text | default: default.native_speaker.popup_text}}">
           </a>
           <div data-role="popup" id="native_speaker_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-            <p><a href="{{ page.native_speaker.popup_link }}" target="_blank">{{ page.native_speaker.label }}</a>: {{ page.native_speaker.popup_text }}</p>
+            <p><a href="{{ page.native_speaker.popup_link | default: default.native_speaker.popup_link}}" 
+                  target="_blank">{{ page.native_speaker.label | default: default.native_speaker.label}}</a>: 
+                  {{ page.native_speaker.popup_text | default: default.native_speaker.popup_text}}</p>
           </div>
           <select type="text" id="native_speaker">
-            <option selected value="Unknown">{{ page.please_select }}</option>
-            {% for item in page.native_speaker.selection %}
+            <option selected value="Unknown">{{ page.please_select | default: default.please_select}}</option>
+            {% if page.native_speaker.selection  %}
+              {% assign native_speaker_list = page.native_speaker.selection %} 
+            {% else %}
+              {% assign native_speaker_list = default.native_speaker.selection %}
+            {% endif %}
+            {% for item in native_speaker_list %}
               <option value="{{ item }}">{{ item }}</option>
             {% endfor %}
           </select>
