@@ -360,9 +360,9 @@
       <section class="main-controls">
         <canvas class="visualizer"></canvas>
         <div id="buttons">
-          <button class="record">{{ page.controls.record }}</button>
-          <button class="stop">{{ page.controls.stop }}</button>
-          <button class="upload">{{ page.controls.upload }}</button>
+          <button class="record">{{ page.controls.record | default: default.controls.record }}</button>
+          <button class="stop">{{ page.controls.stop | default: default.controls.stop }}</button>
+          <button class="upload">{{ page.controls.upload | default: default.controls.upload }}</button>
         </div>
       </section> <!-- main-controls -->
 

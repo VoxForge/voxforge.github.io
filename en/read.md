@@ -16,7 +16,6 @@ weight: 2
 
 ################################################################################
 
-# TODO remove .html subffixes for prod
 # first prompt file (id: "001") gets cached by service worker
 total_number_of_prompts: 1176
 prompt_list_files:
@@ -38,24 +37,6 @@ prompt_list_files:
     number_of_prompts: 282
     contains_promptid: false
     prefix: en
-
-# need trailing slash for testing on localserver 
-# see: https://github.com/barryclark/jekyll-now/issues/13
-
-username_label: Username
-anonymous: anonymous
-anonymous_submission: (leave blank to submit anonymously)
-profile_info: Profile Info
-
-# Yes and No must be in quotes, otherwise evaluates to true/false
-# can't use 'yes' or 'no' as variable names in YAML
-localized_variable:
-  lv_yes: "Yes"
-  lv_no: "No"
-  other: "Other"
-
-please_select: Please Select
-speaker_characteristics: Speaker Characteristics
 
 language_id: EN
 
@@ -88,105 +69,28 @@ sub_dialect:
     Canadian English:
       - [Canadian English, [Atlantic, Central, West]]
 
-
-
-
-controls:
-  record: Record
-  stop: Stop
-  upload: Upload
-  upload_message: >
-    "Are you ready to upload your submission?\nIf not, press Cancel now, and 
-    then press Upload once you are ready."
-
-browser_support:
-  no_worker_message: >
-    "Your browser does not support service or web workers, please
-    upgrade to a current version of a Free and Open Source browser such as 
-    Chrome or Firefox."
-  no_indexedDB_message: >
-    "Your browser does not support indexedDB for offline storage of 
-    submissions, please upgrade to a current version of a Free and Open 
-    Source browser such as Chrome or Firefox."
-  no_formDataSupport_message: >
-    "Browser does not support FormData... please install 
-    a current version of a Free and Open Source browser such as Chrome or 
-    Firefox"
-  no_edgeSupport_message: >
-    "Microsoft browsers not supported... please install 
-    a current version of a Free and Open Source browser such as Chrome or 
-    Firefox"
-  no_FirefoxAndroid_message: >
-    Unfortunately, using the VoxForge app with the Firefox browser on Android
-    results in audio artifacts (scratches and pops) being included in wav file, 
-    please use Chrome.
-
-alert_message:
-  serviceworker: serviceworker
-  webworker: webworker
-  submission_singular: submission
-  submission_plural: submissions
-  localstorage_message: >
-    Cannot connect to server.  Your submission has been saved to your
-    browser's internal storage.  It will be uploaded with next submission you 
-    make when the VoxForge server is accessible.
-  browsercontains_message: >
-    Your browser storage contains
-  uploaded_message: >
-    uploaded to VoxForge Server:
-  audio_too_loud: >
-    Your recording is too loud!<br>
-    Please reduce your microphone volume<br>
-    delete this recording and re-record the prompt
-  audio_too_soft: >
-    Your recording levels are too low!<br>
-    Please increase your microphone volume, 
-    then delete this prompt recording and re-record it.
-  no_speech: >
-    No Speech or recording volume too low<br>
-    Please increase your microphone volume,
-    then delete and re-record this prompt.
-  audio_too_loud_autogain: >
-    Your recording is too loud!<br>
-    Automatically decreasing volume.<br>
-    Please delete this recording and re-record the prompt.
-  audio_too_soft_autogain: >
-    Your recording levels are too low!<br>
-    Automatically increasing volume.<br>
-    Please delete this recording and re-record the prompt.
-  no_speech_autogain: >
-    No Speech or recording volume too low.<br>
-    Automatically increasing volume.<br>
-    Please delete this recording and re-record the prompt.
-  no_trailing_silence: >
-    Not enough trailing silence - you clicked 'stop' too early! <br>
-    You did not leave enough silence at the end of your recording, or you
-    cut-off the end of your recording<br>
-    Please delete and re-record this prompt.
-
-  getUserMedia_error: >
-    Could not get audio input... make sure your microphone is connected to your 
-    computer.  Your browser is giving this error message:
-  notHtml5_error: >
-    Your device does not support the HTML5 API needed to record audio
-
 # script below gets loaded in {{ content }} section of layout page
 # these are used by Javascript, therefore need special handling for them to 
 # work as expected
 ---
 <script>
-  var page_localized_yes= "{{ page.localized_variable.lv_yes }}";
-  var page_localized_no= "{{ page.localized_variable.lv_no }}";
-  var page_localized_other= "{{ page.localized_variable.other }}";
-  var page_language= "{{ page.lang }}";
+  <!-- language specific -->
   var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
   var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
-  var page_please_select = "{{ page.please_select }}";
-  var page_anonymous = "{{ page.anonymous }}";
-  var page_upload_message = {{ page.controls.upload_message }};
-  var page_alert_message = {{ page.alert_message  | jsonify}};
-  var page_browser_support = {{ page.browser_support  | jsonify}};
-  var page_license = {{ page.license  | jsonify}};
+
+  <!-- use defaults -->
+  {% assign js_default = site.data.read.default %}
+
+  var page_localized_yes= "{{  page.localized_variable.lv_yes | default: js_default.localized_variable.lv_yes }}";
+  var page_localized_no= "{{ page.localized_variable.lv_no | default: js_default.localized_variable.lv_no }}";
+  var page_localized_other= "{{ page.localized_variable.other | default: js_default.localized_variable.other }}";
+  var page_language= "{{ page.localized_variable.lang | default: js_default.lang }}";
+  var page_please_select = "{{ page.please_select | default: js_default.please_select }}";
+  var page_anonymous = "{{ page.anonymous | default: js_default.anonymous }}";
+  var page_upload_message = {{ page.controls.upload_message | default: js_default.controls.upload_message }};
+  var page_alert_message = {{ page.alert_message | default: js_default.alert_message  | jsonify}};
+  var page_browser_support = {{ page.browser_support  | default: js_default.browser_support  | jsonify}};
+  var page_license = {{ page.license | default: js_default.license | jsonify}};
 </script>
 
 

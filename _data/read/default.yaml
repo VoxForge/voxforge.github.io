@@ -275,6 +275,84 @@ instructions:
 #        2. Choose your preferred setting for Let apps use my microphone.<br>
 #        3. Under Choose apps that can use your microphone, turn on the individual setting for the Edge browser.<br>
 
+controls:
+  record: Record
+  stop: Stop
+  upload: Upload
+  upload_message: >
+    "Are you ready to upload your submission?\nIf not, press Cancel now, and 
+    then press Upload once you are ready."
+
+browser_support:
+  no_worker_message: >
+    "Your browser does not support service or web workers, please
+    upgrade to a current version of a Free and Open Source browser such as 
+    Chrome or Firefox."
+  no_indexedDB_message: >
+    "Your browser does not support indexedDB for offline storage of 
+    submissions, please upgrade to a current version of a Free and Open 
+    Source browser such as Chrome or Firefox."
+  no_formDataSupport_message: >
+    "Browser does not support FormData... please install 
+    a current version of a Free and Open Source browser such as Chrome or 
+    Firefox"
+  no_edgeSupport_message: >
+    "Microsoft browsers not supported... please install 
+    a current version of a Free and Open Source browser such as Chrome or 
+    Firefox"
+  no_FirefoxAndroid_message: >
+    Unfortunately, using the VoxForge app with the Firefox browser on Android
+    results in audio artifacts (scratches and pops) being included in wav file, 
+    please use Chrome.
+
+alert_message:
+  serviceworker: serviceworker
+  webworker: webworker
+  submission_singular: submission
+  submission_plural: submissions
+  localstorage_message: >
+    Cannot connect to server.  Your submission has been saved to your
+    browser's internal storage.  It will be uploaded with next submission you 
+    make when the VoxForge server is accessible.
+  browsercontains_message: >
+    Your browser storage contains
+  uploaded_message: >
+    uploaded to VoxForge Server:
+  audio_too_loud: >
+    Your recording is too loud!<br>
+    Please reduce your microphone volume<br>
+    delete this recording and re-record the prompt
+  audio_too_soft: >
+    Your recording levels are too low!<br>
+    Please increase your microphone volume, 
+    then delete this prompt recording and re-record it.
+  no_speech: >
+    No Speech or recording volume too low<br>
+    Please increase your microphone volume,
+    then delete and re-record this prompt.
+  audio_too_loud_autogain: >
+    Your recording is too loud!<br>
+    Automatically decreasing volume.<br>
+    Please delete this recording and re-record the prompt.
+  audio_too_soft_autogain: >
+    Your recording levels are too low!<br>
+    Automatically increasing volume.<br>
+    Please delete this recording and re-record the prompt.
+  no_speech_autogain: >
+    No Speech or recording volume too low.<br>
+    Automatically increasing volume.<br>
+    Please delete this recording and re-record the prompt.
+  no_trailing_silence: >
+    Not enough trailing silence - you clicked 'stop' too early! <br>
+    You did not leave enough silence at the end of your recording, or you
+    cut-off the end of your recording<br>
+    Please delete and re-record this prompt.
+  getUserMedia_error: >
+    Could not get audio input... make sure your microphone is connected to your 
+    computer.  Your browser is giving this error message:
+  notHtml5_error: >
+    Your device does not support the HTML5 API needed to record audio
+
 
 
 
