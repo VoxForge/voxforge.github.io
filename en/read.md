@@ -78,7 +78,7 @@ sub_dialect:
   var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
   var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
 
-  <!-- use defaults -->
+  <!-- use defaults - see _data/read/default.yaml -->
   {% assign js_default = site.data.read.default %}
 
   var page_localized_yes= "{{  page.localized_variable.lv_yes | default: js_default.localized_variable.lv_yes }}";

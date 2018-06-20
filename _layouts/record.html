@@ -119,7 +119,7 @@
 	            <label style="display: inline;"  for="dialect">{{ page.dialect.label | default: default.dialect.label}}</label>
               <a href="#dialect_popupInfo" data-rel="popup" data-transition="pop" 
                 class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-                title="{{ page.dialect.text | default: default.dialect.text}}">
+                title="{{ page.dialect.popup_text | default: default.dialect.popup_text}}">
               </a>
               <div data-role="popup" id="dialect_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
                 <p><a href="{{ page.dialect.popup_link | default: default.dialect.popup_link}}" 

@@ -120,7 +120,6 @@ noise_type:
     - Other
   other_label: Other Type of Noise
 
-
 license:
   label: License
   popup:
