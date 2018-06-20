@@ -9,7 +9,7 @@
 
     <link href="/assets/static/styles/jquery.mobile-1.4.5.css" rel="stylesheet" type="text/css"> 
     <link href="/assets/static/styles/app.css" rel="stylesheet" type="text/css">
-<link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.json">
   </head>
 
   <body>
@@ -70,7 +70,8 @@
 
           </select>
 
-          <label style="display: inline;"  for="native_speaker">{{ page.native_speaker.label | default: default.native_speaker.label}}</label>
+          <label style="display: inline;"  for="native_speaker">
+             {{ page.native_speaker.label | default: default.native_speaker.label}}</label>
           <a href="#native_speaker_popupInfo" data-rel="popup" data-transition="pop" 
              class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
              title="{{ page.native_speaker.popup_text | default: default.native_speaker.popup_text}}">
@@ -204,121 +205,148 @@
           </div> <!--microphone_other_display-->
         </div> <!--other-->
 
-        <label for="recording_location">{{ page.recording_location.label }}</label>
+        <label for="recording_location">
+          {{ page.recording_location.label | default: default.recording_location.other_label }}</label>
         <div class="other">
           <select type="text" id="recording_location">
-            <option selected value="Unknown">{{ page.please_select }}</option>
-              {% for item in page.recording_location.selection %}
+            <option selected value="Unknown">{{ page.please_select | default: default.please_select}}</option>
+              {% if page.recording_location.selection %}
+                {% assign recording_location_list = page.recording_location.selection %} 
+              {% else %}
+                {% assign recording_location_list = default.recording_location.selection %}
+              {% endif %}
+              {% for item in recording_location_list %}
                 <option value="{{ item }}">{{ item }}</option>    
               {% endfor %}
             </select>
           <div style="display: none;"  id="recording_location_other_display">
             <input id="recording_location_other" 
-               placeholder="{{ page.recording_location.other_label }}" value="" 
+               placeholder="{{ page.recording_location.other_label | default: default.recording_location.other_label}}" value="" 
                type="text">
           </div><!--recording_location_other_display-->
         </div> <!--other-->
-        <label for="background_noise">{{ page.background_noise.label }}</label>
+        <label for="background_noise">
+          {{ page.background_noise.label | default: default.background_noise.label}}</label>
         <select type="text" id="background_noise">
-          <option selected value="Unknown">{{ page.please_select }}</option>
-          {% for item in page.background_noise.selection %}
+          <option selected value="Unknown">{{ page.please_select | default: default.please_select}}</option>
+          {% if page.background_noise.selection %}
+            {% assign background_noise_list = page.background_noise.selection %} 
+          {% else %}
+            {% assign background_noise_list = default.background_noise.selection %}
+          {% endif %}
+          {% for item in background_noise_list %}
             <option value="{{ item }}">{{ item }}</option>
           {% endfor %}
         </select>
 
         <div id=background_noise_display>
-          <label for="noise_volume">{{ page.noise_volume.label }}</label>
+          <label for="noise_volume">{{ page.noise_volume.label | default: default.noise_volume.label }}</label>
           <div class="other">
             <select type="text" id="noise_volume">
-              <option selected value="Unknown">{{ page.please_select }}</option>
-              {% for item in page.noise_volume.selection %}
+              <option selected value="Unknown">{{ page.please_select | default: default.please_select }}</option>
+              {% if page.noise_volume.selection %}
+                {% assign noise_volume_list = page.noise_volume.selection %} 
+              {% else %}
+                {% assign noise_volume_list = default.noise_volume.selection %}
+              {% endif %}
+              {% for item in noise_volume_list %}
                 <option value="{{ item }}">{{ item }}</option>
               {% endfor %}
             </select>
           </div><!--other-->
-          <label for="noise_type">{{ page.noise_type.label }}</label>
+          <label for="noise_type">{{ page.noise_type.label | default: default.noise_type.label }}</label>
           <div class="other">
             <select type="text" id="noise_type">
-              <option selected value="Unknown">{{ page.please_select }}</option>
-              {% for item in page.noise_type.selection %}
+              <option selected value="Unknown">{{ page.please_select | default: default.please_select }}</option>
+              {% if page.noise_type.selection %}
+                {% assign noise_type_list = page.noise_type.selection %} 
+              {% else %}
+                {% assign noise_type_list = default.noise_type.selection %}
+              {% endif %}
+              {% for item in noise_type_list %}
                 <option value="{{ item }}">{{ item }}</option>
               {% endfor %}
             </select>
 
             <div style="display: none;"  id="noise_type_other_display">
               <input id="noise_type_other" 
-                 placeholder="{{ page.noise_type.other_label }}" value="" 
+                 placeholder="{{ page.noise_type.other_label | default: default.noise_type.other_label }}" value="" 
                  type="text">
             </div>
           </div><!--other-->
          </div> <!-- background_noise_display -->
-           <label  style="display: inline;"  for="license">{{ page.license.label }}</label>
+           <label  style="display: inline;"  for="license">{{ page.license.label | default: default.license.label }}</label>
            <a href="#license_popupInfo" data-rel="popup" data-transition="pop" 
              class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-             title="{{ page.license.popup.hover_text }}">
+             title="{{ page.license.popup.hover_text | default: default.license.popup.hover_text}}">
            </a>
            <div data-role="popup" id="license_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-            <p><a href="{{ page.license.popup.link }}" target="_blank">{{ page.license.label }}</a>: {{ page.license.popup.text }}</p>
+            <p><a href="{{ page.license.popup.link | default: default.license.popup.link}}" 
+                  target="_blank">{{ page.license.label | default: default.license.label }}</a>: 
+                  {{ page.license.popup.text | default: default.license.popup.text }}</p>
            </div>
              <select type="text" id="license">
-              <option selected value="{{ page.license.selection_default.value }}">{{ page.license.selection_default.item }}</option>
-              {% for item in page.license.selection %}
+              <option selected value="{{ page.license.selection_default.value | default: default.license.selection_default.value}}">
+                    {{ page.license.selection_default.item | default: default.license.selection_default.item}}</option>
+              {% if page.license.selection %}
+                {% assign license_list = page.license.selection %} 
+              {% else %}
+                {% assign license_list = default.license.selection %}
+              {% endif %}
+              {% for item in license_list %}
                 <option value="{{ item.value }}">{{ item.option }}</option>
               {% endfor %}
               </select>
-<!-- !!!!!! -->
-<!--       <div style="display: none;"  id="ua-display"> -->
-           <label  style="display: inline;"  for="ua_string"><small>{{ page.ua_string.label }}</small></label>
+
+           <label  style="display: inline;"  for="ua_string"><small>
+                   {{ page.ua_string.label | default: default.ua_string.label }}</small></label>
            <a href="#ua_string_popupInfo" data-rel="popup" data-transition="pop" 
              class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-             title="{{ page.ua_string.popup.hover_text }}">
+             title="{{ page.ua_string.popup.hover_text | default: default.ua_string.popup.hover_text}}">
            </a>
            <div data-role="popup" id="ua_string_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-            <p><a href="{{ page.ua_string.popup.link }}" target="_blank">{{ page.ua_string.label }}</a>: {{ page.ua_string.popup.text }}</p>
+            <p><a href="{{ page.ua_string.popup.link | default: default.ua_string.popup.link}}" 
+                  target="_blank">{{ page.ua_string.label | default: default.ua_string.label}}</a>: 
+                  {{ page.ua_string.popup.text | default: default.ua_string.popup.text }}</p>
            </div>
            <select type="text" id="ua_string">
-            <option selected value="{{ page.ua_string.selection_default.value }}">{{ page.ua_string.selection_default.item }}</option>
-            {% for item in page.ua_string.selection %}
+            <option selected value="{{ page.ua_string.selection_default.value | default: default.ua_string.selection_default.value}}">
+                    {{ page.ua_string.selection_default.item | default: default.ua_string.selection_default.item}}</option>
+            {% if page.ua_string.selection %}
+              {% assign ua_string_list = page.ua_string.selection %} 
+            {% else %}
+              {% assign ua_string_list = default.ua_string.selection %}
+            {% endif %}
+            {% for item in ua_string_list %}
               <option value="{{ item.value }}">{{ item.option }}</option>
             {% endfor %}
             </select>
-<!-- 	   </div>  ua-display -->
 
-<!-- !!!!!! -->
 	       </div> <!-- recording_information_display -->
 	     </div><!-- profile -->
 	   </div> <!-- profile-display -->
 
         <br>
 
-
- <!-- <label for="max_num_prompts_disp">{{ page.num_prompts.label }}</label>
-    <select type="number" id="max_num_prompts_disp">
-        <option selected value="10">10</option>
-        <option value="15">15</option>
-        <option value="20">20</option>
-        <option value="25">25</option>
-        <option value="30">30</option>
-        <option value="35">35</option>
-        <option value="40">40</option>
-        <option value="45">45</option>
-        <option value="50">50</option>
-      </select>
- -->
       <div id="max_num_prompts-display">
-          <label for="max_num_prompts">{{ page.num_prompts.label }}</label>
+          <label for="max_num_prompts">{{ page.num_prompts.label | default: default.num_prompts.label }}</label>
           <select type="text" id="max_num_prompts">
           </select>
       </div>
       <button style="display: none;" 
               id="directions-button-display" 
               style="background: #cedfe8;" 
-              onclick="view.directionsInfo()">{{ page.instructions.label }}</button>
+              onclick="view.directionsInfo()">{{ page.instructions.label | default: default.instructions.label }}</button>
       <div id="instructions-display">
-        {% for line in page.instructions.lines %}
+        {% if page.instructions.lines %}
+          {% assign instructions_lines = page.instructions.lines %} 
+        {% else %}
+          {% assign instructions_lines = default.instructions.lines %}
+        {% endif %}
+        {% for line in instructions_lines %}
             {{ line }} <br>
         {% endfor %}
-        {{ page.instructions.lastline }}
+        {{ page.instructions.lastline | default: default.instructions.lastline }}
       </div>
 
       <div class="progress-display">
