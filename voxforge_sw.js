@@ -68,6 +68,16 @@ var urlsToCache = [
   '/en/prompts/001.html',
   '/fr/prompts/001.html',
   '/es/prompts/001.html',
+
+  // cache language specific front pages so can switch languages
+  '/',
+  '/fr/home',
+  '/es/home',
+  // supporting files for that language specific home pages work
+  '/css/main.css',
+  '/images/voxforge-logo-2.png',
+  '/images/search.jpg',
+  '/images/faq-icon.jpg',
 ];
 
 //var uploadURL;
