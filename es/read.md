@@ -19,5 +19,3 @@ prompt_list_files:
     prefix: es
 ---
 
-
-

@@ -266,7 +266,7 @@ View.prototype.init = function () {
     }
 
     showDivBasedonValue('#native_speaker', page_localized_no, '#first_language_display', false);
-    showDivBasedonValue('#native_speaker', page_localized_yes, '#dialect_display', false);
+    showDivBasedonValue('#native_speaker', page_localized_yes, '#outer_dialect_display', false);
     showDivBasedonValue('#first_language', page_localized_other, '#first_language_other_display', false);
     // true means hide if there is something in the username field
     showDivBasedonValue('#username', true, '#anonymous_instructions_display', false); 

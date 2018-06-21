@@ -115,7 +115,8 @@
             </div><!--other-->
           </div><!--first_language_display-->
 
-          <div style="display: none;"  id="dialect_display">
+          <div style="display: none;"  id="outer_dialect_display">
+
 	            <label style="display: inline;"  for="dialect">{{ page.dialect.label | default: default.dialect.label}}</label>
               <a href="#dialect_popupInfo" data-rel="popup" data-transition="pop" 
                 class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
@@ -165,7 +166,7 @@
                 <div class="other">
                   <select id="sub_dialect">
                      <!-- firefox does not display selected correctly... Egde does... -->
-                     <option selected name="American English" value="Unknown">{{ page.please_select }}</option>
+                     <option selected value="Unknown">{{ page.please_select | default: default.please_select }}</option>
                      {% for dialect in page.sub_dialect.selection_dialect %}
                        {% for region in page.sub_dialect.selection[dialect] %}
                          <optgroup name="{{ dialect }}" label=" {{ region[0] }}">
@@ -177,7 +178,8 @@
                   </select>    
                 </div><!--other-->      
               </div><!--sub_dialect_display -->
-          </div><!--dialect_display -->
+
+          </div><!--outer_dialect_display -->
 
       </div>  <!--speaker_characteristics_display-->
 
