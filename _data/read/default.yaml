@@ -1,5 +1,5 @@
-# need trailing slash for testing on localserver 
-# see: https://github.com/barryclark/jekyll-now/issues/13
+# default language
+lang: en
 
 username_label: Username
 anonymous: anonymous

@@ -8,9 +8,10 @@ weight: 2
 
 ################################################################################
 
-# TODO remove .html subffixes for prod
 total_number_of_prompts: 865
-# sequence number start, url to prompt file
+# sequence number start, url to prompt file not required since prompt file
+# already has prompt IDs in first column
+# first prompt file (id: "001") gets cached by service worker
 prompt_list_files:
   - id: "001"
     file_location: /fr/prompts/001.html
@@ -52,7 +53,6 @@ age:
     - { value: '80 - 89', old_value: 'Senior' }
     - { value: '>89', old_value: 'Senior' }
 
-language_id: FR
 # - leave a blank line between groupings of hash/objects; otherwise liquid does 
 # not parse properly
 # - Yes and No must be in quotes, otherwise evaluates to true/false
@@ -386,22 +386,8 @@ alert_message:
   notHtml5_error: >
     Votre appareil ne supporte pas l'API HTML5 nécessaire à l'enregistrement d'audio
 
-# script below gets loaded in {{ content }} section of layout page
 ---
-<script>
-  var page_localized_yes= "{{ page.localized_variable.lv_yes }}";
-  var page_localized_no= "{{ page.localized_variable.lv_no }}";
-  var page_localized_other= "{{ page.localized_variable.other }}";
-  var page_language= "{{ page.lang }}";
-  var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
-  var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
-  var page_please_select = "{{ page.please_select }}";
-  var page_anonymous = "{{ page.anonymous }}";
-  var page_upload_message = {{ page.controls.upload_message }};
-  var page_alert_message = {{ page.alert_message  | jsonify}};
-  var page_browser_support = {{ page.browser_support  | jsonify}};
-  var page_license = {{ page.license  | jsonify}};
-</script>
+
 
 
 

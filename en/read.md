@@ -1,4 +1,6 @@
 ---
+# See: _data/read/default.yaml for default variables
+
 layout: record
 title: Read Prompts and Record Speech
 menu: Read
@@ -38,8 +40,6 @@ prompt_list_files:
     contains_promptid: false
     prefix: en
 
-language_id: EN
-
 # see https://en.wikipedia.org/wiki/Regional_accents_of_English
 # ( https://en.wikipedia.org/wiki/List_of_dialects_of_the_English_language
 # https://en.wikipedia.org/wiki/Non-native_pronunciations_of_English 
@@ -69,28 +69,7 @@ sub_dialect:
     Canadian English:
       - [Canadian English, [Atlantic, Central, West]]
 
-# script below gets loaded in {{ content }} section of layout page
-# these are used by Javascript, therefore need special handling for them to 
-# work as expected
 ---
-<script>
-  <!-- language specific -->
-  var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
-  var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
 
-  <!-- use defaults - see _data/read/default.yaml -->
-  {% assign js_default = site.data.read.default %}
-
-  var page_localized_yes= "{{  page.localized_variable.lv_yes | default: js_default.localized_variable.lv_yes }}";
-  var page_localized_no= "{{ page.localized_variable.lv_no | default: js_default.localized_variable.lv_no }}";
-  var page_localized_other= "{{ page.localized_variable.other | default: js_default.localized_variable.other }}";
-  var page_language= "{{ page.localized_variable.lang | default: js_default.lang }}";
-  var page_please_select = "{{ page.please_select | default: js_default.please_select }}";
-  var page_anonymous = "{{ page.anonymous | default: js_default.anonymous }}";
-  var page_upload_message = {{ page.controls.upload_message | default: js_default.controls.upload_message }};
-  var page_alert_message = {{ page.alert_message | default: js_default.alert_message  | jsonify}};
-  var page_browser_support = {{ page.browser_support  | default: js_default.browser_support  | jsonify}};
-  var page_license = {{ page.license | default: js_default.license | jsonify}};
-</script>
 
 
