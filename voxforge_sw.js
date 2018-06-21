@@ -60,6 +60,7 @@ var urlsToCache = [
   // language while offline
   // no .html suffix required, but if make updates, need to wait for changes
   // to propagate in githubPages, because they cache on their server too...
+  // if change /en/read, make sure to change manifest file
   '/en/read',
   '/fr/read',
   '/es/read',
@@ -70,6 +71,7 @@ var urlsToCache = [
   '/es/prompts/001.html',
 
   // cache language specific front pages so can switch languages
+  // Note: caching only occurs after user goes to read page....
   '/',
   '/fr/home',
   '/es/home',
