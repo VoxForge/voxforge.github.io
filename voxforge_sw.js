@@ -73,8 +73,8 @@ var urlsToCache = [
   // cache language specific front pages so can switch languages
   // Note: caching only occurs after user goes to read page....
   '/',
-  '/fr/home',
-  '/es/home',
+  '/fr',
+  '/es',
   // supporting files for that language specific home pages work
   '/css/main.css',
   '/images/voxforge-logo-2.png',

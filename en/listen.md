@@ -7,8 +7,9 @@ ref: listen
 lang: en
 redirect_from: /home/listen
 ---
-The Audio listing below below comes from the [VoxForge repository website](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/)<br>
+[VoxForge repository website](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Original/)<br>
 
+<!--
 <html>
   <head>
         <title>Listen to Speech Audio</title>
@@ -21,6 +22,6 @@ The Audio listing below below comes from the [VoxForge repository website](http:
         </iframe>
    </body>
 </html>
-
+-->
 
 
