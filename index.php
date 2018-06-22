@@ -153,15 +153,24 @@ function createNewFileName($language, $username, $suffix, $uploadfolder) {
     $language = basename( $language ); // may prevent directory traversal attacks
     $language = preg_replace  ( "[^a-zA-Z0-9_-]" , "" , $language  ); // remove unwanted characters
     $language = strtoupper( substr($language , 0, 2) ); // set to uppercase; 2 character max size
+    if ($language === '') {
+      $language = 'XX';
+    }
 
     $username = basename( $username );
     $username = preg_replace  ( "/\s+/", "_", $username ); // replace one or more spaces with single undescore
     $username = preg_replace  ( "[^a-zA-Z0-9_-]"  , "" , $username ); // remove unwanted characters
     $username = substr($username , 0, 40); // 40 character max size
+    if ($username === '') {
+      $username = 'YYYYYYYY';
+    }
 
     $suffix = basename( $suffix ); 
     $suffix = preg_replace  ( "[^a-z]" , ""  , $suffix  ); // only allow lower case alpha characters
     $suffix = substr($suffix , 0, 3); // 3 character max size
+    if ($suffix === '') {
+      $suffix = 'ZZZ';
+    }
 
     date_default_timezone_set('America/Toronto');
     $date =  date('Ymd');
