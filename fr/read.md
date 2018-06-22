@@ -1,6 +1,6 @@
 ---
 layout: record
-title: Lire des Phrase et Enregistrer votre voix
+title: Enregistrement vocal VoxForge
 menu: Lire
 ref: read
 lang: fr

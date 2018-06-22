@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>{{ page.title }}</title>	
+    <title>{{ page.title  | default: default.title }}</title>	
 
     <link href="/assets/static/styles/jquery.mobile-1.4.5.css" rel="stylesheet" type="text/css"> 
     <link href="/assets/static/styles/app.css" rel="stylesheet" type="text/css">
@@ -17,7 +17,7 @@
     <div class="wrapper">
       <section class="top-display">
       <header>
-        <h1>VoxForge Speech Submission</h1>
+        <h1>{{ page.title  | default: default.title }}</h1>
       </header>
 
       <div id="upload_status_display" border-style: solid;>

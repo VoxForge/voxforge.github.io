@@ -1,10 +1,10 @@
 ---
 layout: page
 title: Écoutez audio
-menu: Listen
+menu: Écoutez
 weight: 4
 ref: listen
-lang: es
+lang: fr
 ---
 [VoxForge repository website](http://www.repository.voxforge1.org/downloads/fr/Trunk/Audio/Original/)<br>
 

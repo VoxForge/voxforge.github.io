@@ -2,7 +2,7 @@
 # See: _data/read/default.yaml for default variables
 
 layout: record
-title: Read Prompts and Record Speech
+title: VoxForge Speech Recorder
 menu: Read
 ref: read
 lang: en

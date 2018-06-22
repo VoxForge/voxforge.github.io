@@ -1,6 +1,6 @@
 ---
 layout: record
-title: Read
+title: Grabador de voz VoxForge
 menu: Read
 ref: read
 lang: es
