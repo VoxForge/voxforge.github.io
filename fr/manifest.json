@@ -1,0 +1,24 @@
+{
+  "short_name": "VoxForge",
+  "name": "Voxforge French speech submission app",
+  "description": "French language app to record and upload speech to VoxForge.org.",
+  "dir": "rtl",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/voxforge-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/voxforge-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/fr/read",
+  "background_color" : "#3367D6",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#3367D6"
+}
