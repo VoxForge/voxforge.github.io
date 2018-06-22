@@ -1,7 +1,7 @@
 {
-  "short_name": "VoxForge",
-  "name": "Voxforge French speech submission app",
-  "description": "French language app to record and upload speech to VoxForge.org.",
+  "short_name": "VoxForge_fr",
+  "name": "Application de langue française d'enregistrement vocal Voxforge",
+  "description": "Application d'enregistrement vocal et de téléchargement au site VoxForge.org.",
   "dir": "rtl",
   "lang": "fr",
   "icons": [

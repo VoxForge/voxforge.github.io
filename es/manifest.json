@@ -1,7 +1,7 @@
 {
-  "short_name": "VoxForge",
-  "name": "Voxforge Spanish speech submission app",
-  "description": "Spanish app to record and upload speech to VoxForge.org.",
+  "short_name": "VoxForge_es",
+  "name": "Aplicación de grabación de voz en español de Voxforge",
+  "description": "Aplicación en español para grabar y cargar voz a VoxForge.org",
   "dir": "rtl",
   "lang": "es",
   "icons": [

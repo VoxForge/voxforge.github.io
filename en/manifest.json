@@ -1,7 +1,7 @@
 {
-  "short_name": "VoxForge",
-  "name": "Voxforge English speech submission app",
-  "description": "English only (for now) app to record and upload speech to VoxForge.org.",
+  "short_name": "VoxForge_en",
+  "name": "Voxforge English speech recording app",
+  "description": "app to record and upload speech to VoxForge.org.",
   "dir": "rtl",
   "lang": "en",
   "icons": [
