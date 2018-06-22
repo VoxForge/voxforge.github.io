@@ -9,7 +9,7 @@
 
     <link href="/assets/static/styles/jquery.mobile-1.4.5.css" rel="stylesheet" type="text/css"> 
     <link href="/assets/static/styles/app.css" rel="stylesheet" type="text/css">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
   </head>
 
   <body>
@@ -386,18 +386,16 @@
       var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
 
       // use defaults - see _data/read/default.yaml
-      {% assign js_default = site.data.read.default %}
-
-      var page_localized_yes= "{{  page.localized_variable.lv_yes | default: js_default.localized_variable.lv_yes }}";
-      var page_localized_no= "{{ page.localized_variable.lv_no | default: js_default.localized_variable.lv_no }}";
-      var page_localized_other= "{{ page.localized_variable.other | default: js_default.localized_variable.other }}";
-      var page_language= "{{ page.lang | default: js_default.lang }}";
-      var page_please_select = "{{ page.please_select | default: js_default.please_select }}";
-      var page_anonymous = "{{ page.anonymous | default: js_default.anonymous }}";
-      var page_upload_message = {{ page.controls.upload_message | default: js_default.controls.upload_message }};
-      var page_alert_message = {{ page.alert_message | default: js_default.alert_message  | jsonify}};
-      var page_browser_support = {{ page.browser_support  | default: js_default.browser_support  | jsonify}};
-      var page_license = {{ page.license | default: js_default.license | jsonify}};
+      var page_localized_yes= "{{  page.localized_variable.lv_yes | default: default.localized_variable.lv_yes }}";
+      var page_localized_no= "{{ page.localized_variable.lv_no | default: default.localized_variable.lv_no }}";
+      var page_localized_other= "{{ page.localized_variable.other | default: default.localized_variable.other }}";
+      var page_language= "{{ page.lang | default: default.lang }}";
+      var page_please_select = "{{ page.please_select | default: default.please_select }}";
+      var page_anonymous = "{{ page.anonymous | default: default.anonymous }}";
+      var page_upload_message = {{ page.controls.upload_message | default: default.controls.upload_message }};
+      var page_alert_message = {{ page.alert_message | default: default.alert_message  | jsonify}};
+      var page_browser_support = {{ page.browser_support  | default: default.browser_support  | jsonify}};
+      var page_license = {{ page.license | default: default.license | jsonify}};
     </script>
 
     <script src="/assets/static/lib/jquery-1.12.4.js"></script>

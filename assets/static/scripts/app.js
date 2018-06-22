@@ -27,6 +27,9 @@ if (window.location.origin === 'https://voxforge.github.io') { // prod
   uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
   //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 }
+if (window.location.origin === 'http://localhost:4000') { 
+   window.alert( "upload to jekyll server localhost may not work - need SSL certificate" );        
+}
 
 var view;  // needs to be global so can be accessible to index.html
 

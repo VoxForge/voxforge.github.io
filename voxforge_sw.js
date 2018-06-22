@@ -54,7 +54,8 @@ var urlsToCache = [
   PATH + 'styles/jquery.mobile-1.4.5.css',
 
   '/voxforge_sw.js',
-  '/manifest.json',
+  '/en/manifest.json',
+  '/fr/manifest.json',
 
   // need one entry for each language, otherwise will not be able to switch
   // language while offline
