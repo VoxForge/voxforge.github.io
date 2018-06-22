@@ -309,10 +309,13 @@ alert_message:
   webworker: webworker
   submission_singular: submission
   submission_plural: submissions
+
+# TODO move this - this is a windows alert and formatting is not same as other messages
   localstorage_message: >
-    Cannot connect to server.  Your submission has been saved to your
-    browser's internal storage.  It will be uploaded with next submission you 
-    make when the VoxForge server is accessible.
+    Cannot connect to server.\n
+    Submission saved to browser storage.\n
+    Will upload with next submission made with connection to server. 
+
   browsercontains_message: >
     Your browser storage contains
   uploaded_message: >
