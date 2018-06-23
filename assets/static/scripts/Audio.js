@@ -210,7 +210,7 @@ Audio.prototype.getDebugValues = function () {
 /**
 * connect nodes; tell worker to start recording audio 
 */
-Audio.prototype.record = function (prompt_id, last_one) {
+Audio.prototype.record = function (prompt_id) {
     var self = this; // save context when calling inner functions
 
     var got_buffer_size = false;
@@ -307,8 +307,7 @@ Audio.prototype.record = function (prompt_id, last_one) {
                   adjustVolume(obj); 
 
                   // TODO the assignment of yaml front-matter variables should be done in View class 
-                  // not burried in here...
-
+                  // not buried in here...
 
                   obj.audio_too_loud_message = page_alert_message.audio_too_loud_autogain;
                   obj.audio_too_soft_message = page_alert_message.audio_too_soft_autogain;

@@ -335,10 +335,12 @@
           <select type="text" id="max_num_prompts">
           </select>
       </div>
-      <button style="display: none;" 
-              id="directions-button-display" 
+      <button id="instructions-button-display" 
+              style="display: none;" 
               style="background: #cedfe8;" 
-              onclick="view.directionsInfo()">{{ page.instructions.label | default: default.instructions.label }}</button>
+              onclick="view.directionsInfo()">
+                {{ page.instructions.label | default: default.instructions.label }}
+      </button>
       <div id="instructions-display">
         {% if page.instructions.lines %}
           {% assign instructions_lines = page.instructions.lines %} 
