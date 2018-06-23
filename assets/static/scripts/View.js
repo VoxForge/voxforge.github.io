@@ -233,7 +233,7 @@ View.getUserName = function() {
 // ### METHODS #################################################################
 
 /** 
-* Initialize object with async operations
+* Initialize object with async operations (returns a promise)
 */
 View.prototype.init = function () {
     var self = this;
