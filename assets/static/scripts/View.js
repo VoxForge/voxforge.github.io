@@ -204,12 +204,14 @@ View.getUserProfileInfo = function() {
     return profile_hash;
 }
 
-// confirm that all default properties exist in page property, and if not
-// add default property to page property
-View.addAnyMissingPropertyDefaults = function(def, hash) {
-  Object.keys(def).forEach(function (key) { 
+/**
+* confirm that all default properties exist in page property, and if not
+* add default property to page property
+*/
+View.addAnyMissingPropertyDefaults = function(default_hash, hash) {
+  Object.keys(default_hash).forEach(function (key) { 
       if ( ! hash[key] ) {
-          hash[key] = def[key];
+          hash[key] = default_hash[key];
       }
   })
 }

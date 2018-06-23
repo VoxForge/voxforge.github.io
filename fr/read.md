@@ -367,19 +367,23 @@ alert_message:
     Volume est trop doux.<br>
     le system a augmente le volume automatiquement<br>
     Veuillez réenregistrer.
-  audio_too_loud_autogain: >
-    Volume est trop fort.<br>
-    le system a reduit le volume automatiquement<br>
-    Veuillez effacer votre enregistrement et ré-enregistrer.
-  audio_too_soft_autogain: >
-    Volume est trop doux.<br>
-    le system a augmente le volume automatiquement<br>
-    Veuillez effacer votre enregistrement et ré-enregistrer.
   no_trailing_silence: >
     Vous avez couper votre enregistrement (vous avez cliqué trop tôt) <br> 
     Veuillez ré-enregistrer.
   no_speech: >
     Pas d'audio vocal enregistré! <br> Veuillez supprimer et réenregistrer.
+  audio_too_loud_autogain: >
+    Volume est trop fort.<br>
+    le system a reduit le volume automatiquement<br>
+    Veuillez effacer et ré-enregistrer.
+  audio_too_soft_autogain: >
+    Volume est trop doux.<br>
+    le system a augmente le volume automatiquement<br>
+    Veuillez effacer et ré-enregistrer.
+  no_speech_autogain: >
+    Volume est trop doux.<br>
+    le system a augmente le volume automatiquement<br>
+    Veuillez effacer et ré-enregistrer.
   getUserMedia_error: >
     Impossible d'obtenir une entrée audio... assurez-vous que votre microphone 
     est connecté à votre ordinateur.  <br> Votre navigateur donne ce message d'erreur:

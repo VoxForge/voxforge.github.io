@@ -69,5 +69,9 @@ sub_dialect:
     Canadian English:
       - [Canadian English, [Atlantic, Central, West]]
 
+
+alert_message:
+  no_speech: >
+    WTF asdflkajsdlfjalskdjflasjd ljalsdfjlajsljkf
 ---
 

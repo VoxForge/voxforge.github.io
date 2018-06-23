@@ -328,6 +328,11 @@ alert_message:
     Your recording levels are too low!<br>
     Please increase your microphone volume, 
     then delete this prompt recording and re-record it.
+  no_trailing_silence: >
+    Not enough trailing silence - you clicked 'stop' too early! <br>
+    You did not leave enough silence at the end of your recording, or you
+    cut-off the end of your recording<br>
+    Please delete and re-record this prompt.
   no_speech: >
     No Speech or recording volume too low<br>
     Please increase your microphone volume,
@@ -344,11 +349,7 @@ alert_message:
     No Speech or recording volume too low.<br>
     Automatically increasing volume.<br>
     Please delete this recording and re-record the prompt.
-  no_trailing_silence: >
-    Not enough trailing silence - you clicked 'stop' too early! <br>
-    You did not leave enough silence at the end of your recording, or you
-    cut-off the end of your recording<br>
-    Please delete and re-record this prompt.
+
   getUserMedia_error: >
     Could not get audio input... make sure your microphone is connected to your 
     computer.  Your browser is giving this error message:

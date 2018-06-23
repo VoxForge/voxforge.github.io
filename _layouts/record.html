@@ -433,7 +433,7 @@
       if ( page_browser_support ) {
         View.addAnyMissingPropertyDefaults({{ default.browser_support | jsonify}}, page_browser_support);
       } else {
-        page_alert_message = {{ default.browser_support | jsonify}};
+        page_browser_support = {{ default.browser_support | jsonify}};
       }
     </script>
   </body>
