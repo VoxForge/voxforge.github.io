@@ -204,6 +204,16 @@ View.getUserProfileInfo = function() {
     return profile_hash;
 }
 
+// confirm that all default properties exist in page property, and if not
+// add default property to page property
+View.addAnyMissingPropertyDefaults = function(def, hash) {
+  Object.keys(def).forEach(function (key) { 
+      if ( ! hash[key] ) {
+          hash[key] = def[key];
+      }
+  })
+}
+
 /**
 * get user entered DOM data
 */
