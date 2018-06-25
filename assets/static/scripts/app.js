@@ -144,7 +144,6 @@ var view;  // needs to be global so can be accessible to index.html
 
 })(); // function context
 
-
 // see: https://developers.google.com/web/fundamentals/app-install-banners/#criteria
 window.addEventListener('appinstalled', (evt) => {
   console.log('a2hs installed');
@@ -153,4 +152,6 @@ window.addEventListener('appinstalled', (evt) => {
 if (window.matchMedia('(display-mode: standalone)').matches) {
   console.log('display-mode is standalone');
 }
+
+
 

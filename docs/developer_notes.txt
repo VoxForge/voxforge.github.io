@@ -111,6 +111,64 @@ TODO: CSRF - Cross site request forgery; XSS cross site scripting
 // CPU throttling: enable: chrome://flags/#enable-experimental-web-platform-features
 got to performance tab and select 4x or 6x slowdown
 
+
+
+/*
+let deferredPrompt;
+let install_button = document.querySelector('#install-button');
+install_button.disabled = true;
+
+//https://developers.google.com/web/updates/2018/06/a2hs-updates
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent Chrome <= 67 from automatically showing the prompt
+  // e.preventDefault();
+
+  // Chrome 67 and before: will show the A2HS banner 
+  // Chrome 68 and later: with show Mini-infobar on; but if user cancels, will
+  // not show again for 3months... 
+  // Chrome all versions: but can also be shown after the user clicks
+  // 'Add to Home screen' from the Chrome menu
+  // Chrome future: mini-infobar is an interim experience for Chrome on Android as they 
+  // work towards including an install button into the omnibox (to the far righ
+  // of URL); see: https://developers.google.com/web/updates/2018/06/a2hs-updates
+
+  // Stash the event so it can be triggered later.
+  deferredPrompt = e;
+  // Update the install UI to notify the user app can be installed
+  document.querySelector('#install-button').disabled = false;
+});
+
+// https://www.androidpolice.com/2018/06/05/chrome-68-will-make-annoying-add-home-screen-banners-less-conspicuous/
+//https://developers.google.com/web/updates/2018/06/a2hs-updates
+install_button.addEventListener('click', (e) => {
+  // hide our user interface that shows our A2HS button
+  //install_button.hide(); // does not work??
+  document.querySelector('#install-button').disabled = true;
+  // Show the prompt
+  deferredPrompt.prompt();
+  // Wait for the user to respond to the prompt
+  deferredPrompt.userChoice
+  .then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the A2HS prompt');
+      } else {
+        console.log('User dismissed the A2HS prompt');
+      }
+      // Clear the saved prompt since it can't be used again
+      deferredPrompt = null;
+    });
+});
+
+add this to record.html:
+  <!-- !!!!!! 
+  <button id="install-button">Install VoxForge app to desktop
+  </button>
+   !!!!!! -->
+*/
+
+
+
+
 ###############################################################################
 
 2. Audio.js
