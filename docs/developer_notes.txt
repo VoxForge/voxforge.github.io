@@ -682,3 +682,23 @@ Wav header
          see: http://ixti.net/software/2012/12/30/unleash-mr-hyde-introduction-of-jekyll-assets.html
 -->
 
+
+###############################################################################
+
+10. /en/manifest.json
+
+A2HS - Add to Home Screen
+  Chrome 67 and before: will show the A2HS banner 
+  Chrome 68 and later: with show Mini-infobar on; but if user cancels, will
+  not show again for 3months... 
+
+  But user can always go to Chrome menu and click 'Add to Home screen'
+
+  // Chrome future: mini-infobar is an interim experience for Chrome on Android as they 
+  // work towards including an install button into the omnibox (to the far righ
+  // of URL); see: https://developers.google.com/web/updates/2018/06/a2hs-updates
+
+Can only install one language on home screen... TODO need to add multilingual 
+selector to speech recorder app...
+
+

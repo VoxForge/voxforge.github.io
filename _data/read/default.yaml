@@ -299,27 +299,20 @@ browser_support:
     "Microsoft browsers not supported... please install 
     a current version of a Free and Open Source browser such as Chrome or 
     Firefox"
-  no_FirefoxAndroid_message: >
-    Unfortunately, using the VoxForge app with the Firefox browser on Android
-    results in audio artifacts (scratches and pops) being included in wav file, 
-    please use Chrome.
 
 alert_message:
   serviceworker: serviceworker
   webworker: webworker
   submission_singular: submission
   submission_plural: submissions
-
-# TODO move this - this is a windows alert and formatting is not same as other messages
   localstorage_message: >
-    Cannot connect to server.\n
-    Submission saved to browser storage.\n
+    Cannot connect to server.<br>
+    Submission saved to browser storage.<br>
     Will upload with next submission made with connection to server. 
-
   browsercontains_message: >
     Your browser storage contains
   uploaded_message: >
-    uploaded to VoxForge Server:
+    uploaded to VoxForge Server
   audio_too_loud: >
     Your recording is too loud!<br>
     Please reduce your microphone volume<br>
@@ -349,7 +342,6 @@ alert_message:
     No Speech or recording volume too low.<br>
     Automatically increasing volume.<br>
     Please delete this recording and re-record the prompt.
-
   getUserMedia_error: >
     Could not get audio input... make sure your microphone is connected to your 
     computer.  Your browser is giving this error message:

@@ -344,10 +344,6 @@ browser_support:
     "Les navigateurs de Microsoft ne sont pas supportés ... veuillez installer
     une version courrante d'un navigateur Libre et 'Open Source' tel que Chrome ou
     Firefox"
-  no_FirefoxAndroid_message: >
-    Malheureusement, utilisant le logiciel VoxForge avec le navigateur Firefox 
-    sur Android résulte en rayures et éclats étant inclus dans le fichier wav,
-    s.v.p. veuillez utiliser Chrome.
 
 alert_message:
   serviceworker: serviceworker
