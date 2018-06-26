@@ -22,6 +22,7 @@ username_label: Nombre de Usuario
 anonymous: anónimo
 anonymous_submission: (dejar en blanco para enviar anonimamente)
 profile_info: Información de perfil
+default_value: no seleccionado
 
 # Yes and No must be in quotes, otherwise evaluates to true/false
 # can't use 'yes' or 'no' as variable names in YAML

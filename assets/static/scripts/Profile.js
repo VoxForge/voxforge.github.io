@@ -29,6 +29,9 @@ function Profile (appversion) {
   this.randomDigits = Profile.makeRandString (10,'1234567890');
 }
 
+/**
+* ### Static methods ##############################################
+*/
 
 /**
 * make random string of length strlen, can override default characters to use
@@ -64,6 +67,15 @@ Profile.cleanUserInput = function (user_input) {
 }
 
 /**
+* remove unwanted characters from user input
+*/
+Profile.cleanUserInputRemoveSpaces = function (user_input) {
+    var user_input = user_input.replace(/\s+/, '_').replace(/[^a-z0-9_\-]/gi,'').replace(/_+/g, '_');
+
+    return user_input.substring(0, 40);
+}
+
+/**
 * ### METHODS ##############################################
 */
 
@@ -76,7 +88,7 @@ Profile.prototype.updateRandomStrings = function () {
 }
 
 /**
-* Read HTML Form Data to convert profile data to hash (associative array)
+*
 */
 Profile.prototype.getProfileFromBrowserStorage = function () {
   /**
@@ -106,11 +118,10 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
   } else {
     return null;
   }
-
 }
 
 /**
-* Read HTML Form Data to convert profile data to hash (associative array)
+* 
 */
 Profile.prototype.toHash = function () {
     var profile_hash = View.getUserProfileInfo();
@@ -251,14 +262,14 @@ Profile.prototype.getUserName = function () {
 }
 
 /**
-*
+* return submission name with random digits appended
 */
 Profile.prototype.getTempSubmissionName = function () {
   return this.getShortSubmissionName() + '[' + this.randomDigits + ']';
 }
 
 /**
-*
+* return submission name in lang-username-date format
 */
 Profile.prototype.getShortSubmissionName = function () {
   var d = new Date();
@@ -272,14 +283,6 @@ Profile.prototype.getShortSubmissionName = function () {
   return result;
 }
 
-/**
-* remove unwanted characters from user input
-*/
-Profile.cleanUserInputRemoveSpaces = function (user_input) {
-    var user_input = user_input.replace(/\s+/, '_').replace(/[^a-z0-9_\-]/gi,'').replace(/_+/g, '_');
-
-    return user_input.substring(0, 40);
-}
 
 /**
 * return suffix used in for submission name
@@ -310,6 +313,8 @@ Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
 }
 
 /**
+* values used in debugging app on other devices
+*
 * updates:
       this.debug 
 */
@@ -322,7 +327,8 @@ Profile.prototype.setDebugValues = function (obj) {
 }
 
 /**
-* get translated license text from Read.md file
+* get translated license text from language specific Read.md file, or default
+* contained in _data/read/default.yaml
 *
 * if none present, then set CC0 as default.
 */

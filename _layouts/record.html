@@ -45,7 +45,9 @@
 
           <label for="gender">{{ page.gender.label | default: default.gender.label }}</label>         
           <select name="gender" id="gender">
-            <option selected value="Unknown">{{ page.please_select | default: default.please_select }}</option>
+            <option selected value="{{ page.default_value | default: default.default_value }}">
+                {{ page.please_select | default: default.please_select }}
+            </option>
             {% if page.gender.selection  %}
               {% assign gender_list = page.gender.selection %} 
             {% else %}
@@ -58,7 +60,9 @@
 
           <label for="age">{{ page.age.label | default: default.age.label}}</label>
           <select type="text" id="age">
-            <option selected value="Unknown">{{ page.please_select  | default: default.please_select }}</option>
+            <option selected value="{{ page.default_value | default: default.default_value }}">
+                {{ page.please_select  | default: default.please_select }}
+            </option>
             {% if page.age.selection  %}
               {% assign age_list = page.age.selection %} 
             {% else %}
@@ -82,7 +86,9 @@
                   {{ page.native_speaker.popup_text | default: default.native_speaker.popup_text}}</p>
           </div>
           <select type="text" id="native_speaker">
-            <option selected value="Unknown">{{ page.please_select | default: default.please_select}}</option>
+            <option selected value="{{ page.default_value | default: default.default_value }}">
+                {{ page.please_select | default: default.please_select}}
+            </option>
             {% if page.native_speaker.selection  %}
               {% assign native_speaker_list = page.native_speaker.selection %} 
             {% else %}
@@ -130,7 +136,9 @@
               <div id=dialect_display>
                 <div class="other">
                   <select id="dialect">
-                    <option selected value="Unknown">{{ page.please_select | default: default.please_select}}</option>
+                    <option selected value="{{ page.default_value | default: default.default_value }}">
+                        {{ page.please_select | default: default.please_select}}
+                    </option>
                     {% if page.dialect.selection %}
                       {% assign dialect_list = page.dialect.selection %} 
                     {% else %}
@@ -166,7 +174,9 @@
                 <div class="other">
                   <select id="sub_dialect">
                      <!-- firefox does not display selected correctly... Egde does... -->
-                     <option selected value="Unknown">{{ page.please_select | default: default.please_select }}</option>
+                     <option selected value="{{ page.default_value | default: default.default_value }}">
+                        {{ page.please_select | default: default.please_select }}
+                     </option>
                      {% for dialect in page.sub_dialect.selection_dialect %}
                        {% for region in page.sub_dialect.selection[dialect] %}
                          <optgroup name="{{ dialect }}" label=" {{ region[0] }}">
@@ -190,7 +200,9 @@
           <label for="microphone">{{ page.microphone.label | default: default.microphone.label }}</label>
           <div class="other">
             <select type="text" id="microphone">
-              <option selected value="Unknown">{{ page.please_select | default: default.please_select }}</option>
+              <option selected value="{{ page.default_value | default: default.default_value }}">
+                  {{ page.please_select | default: default.please_select }}
+              </option>
               {% if page.microphone.selection %}
                 {% assign microphone_list = page.microphone.selection %} 
               {% else %}
@@ -211,7 +223,9 @@
           {{ page.recording_location.label | default: default.recording_location.other_label }}</label>
         <div class="other">
           <select type="text" id="recording_location">
-            <option selected value="Unknown">{{ page.please_select | default: default.please_select}}</option>
+            <option selected value="{{ page.default_value | default: default.default_value }}">
+                {{ page.please_select | default: default.please_select}}
+            </option>
               {% if page.recording_location.selection %}
                 {% assign recording_location_list = page.recording_location.selection %} 
               {% else %}
@@ -230,7 +244,9 @@
         <label for="background_noise">
           {{ page.background_noise.label | default: default.background_noise.label}}</label>
         <select type="text" id="background_noise">
-          <option selected value="Unknown">{{ page.please_select | default: default.please_select}}</option>
+          <option selected value="{{ page.default_value | default: default.default_value }}">
+              {{ page.please_select | default: default.please_select}}
+          </option>
           {% if page.background_noise.selection %}
             {% assign background_noise_list = page.background_noise.selection %} 
           {% else %}
@@ -245,7 +261,9 @@
           <label for="noise_volume">{{ page.noise_volume.label | default: default.noise_volume.label }}</label>
           <div class="other">
             <select type="text" id="noise_volume">
-              <option selected value="Unknown">{{ page.please_select | default: default.please_select }}</option>
+              <option selected value="{{ page.default_value | default: default.default_value }}">
+                  {{ page.please_select | default: default.please_select }}
+              </option>
               {% if page.noise_volume.selection %}
                 {% assign noise_volume_list = page.noise_volume.selection %} 
               {% else %}
@@ -259,7 +277,9 @@
           <label for="noise_type">{{ page.noise_type.label | default: default.noise_type.label }}</label>
           <div class="other">
             <select type="text" id="noise_type">
-              <option selected value="Unknown">{{ page.please_select | default: default.please_select }}</option>
+              <option selected value="{{ page.default_value | default: default.default_value  }}">
+                  {{ page.please_select | default: default.please_select }}
+              </option>
               {% if page.noise_type.selection %}
                 {% assign noise_type_list = page.noise_type.selection %} 
               {% else %}
@@ -411,7 +431,8 @@
       var page_please_select = "{{ page.please_select | default: default.please_select }}";
       var page_anonymous = "{{ page.anonymous | default: default.anonymous }}";
       var page_upload_message = {{ page.controls.upload_message | default: default.controls.upload_message }};
-      var page_license = {{ page.license | default: default.license | jsonify}};
+      var page_license = {{ page.license | default: default.license | jsonify }};
+      var page_default_value = "{{ page.default_value | default: default.default_value }}";
     </script>
 
     <script src="/assets/static/scripts/Audio.js"></script>

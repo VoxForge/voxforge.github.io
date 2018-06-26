@@ -183,12 +183,12 @@ View.getUserProfileInfo = function() {
     if ($('#ua_string').val() === page_localized_yes) {
       profile_hash["user_agent_string"] = platform.ua;
       // attempts to parse the ua string
-      profile_hash["os_family"] = platform.os.family;
-      profile_hash["os_version"] = platform.os.version;
-      profile_hash["browser_name"] = platform.name;
-      profile_hash["browser_version"] = platform.version;
-      profile_hash["product"] = platform.product || "";
-      profile_hash["manufacturer"] = platform.manufacturer || "";
+      profile_hash["os_family"] = platform.os.family = '';
+      profile_hash["os_version"] = platform.os.version = '';
+      profile_hash["browser_name"] = platform.name = '';
+      profile_hash["browser_version"] = platform.version = '';
+      profile_hash["product"] = platform.product = '';
+      profile_hash["manufacturer"] = platform.manufacturer = '';
     } else {
       profile_hash["user_agent_string"] = '';
       profile_hash["os_family"] = '';
@@ -217,14 +217,14 @@ View.addAnyMissingPropertyDefaults = function(default_hash, hash) {
 }
 
 /**
-* get user entered DOM data
+* get user selected license
 */
 View.getLicenseID = function() {
   return $("#license").val();
 }
 
 /**
-* get user entered DOM data
+* get user keyed in username
 */
 View.getUserName = function() {
   return $('#username').val();
@@ -305,7 +305,7 @@ View.prototype.init = function () {
     * .html() in #subdialect:
     */
     var $select1 = $( '#dialect' );
-    $( '#sub_dialect select' ).val("Unknown");
+    $( '#sub_dialect select' ).val( page_default_value );
     var $select2 = $( '#sub_dialect' );
     var $optgroup = $select2.find( 'optgroup' );
     var $selected = $select2.find( ':selected' );
@@ -331,7 +331,7 @@ View.prototype.init = function () {
     */
     var langscodes = languages.getAllLanguageCode(); // array of language codes
     //var option = ''; // string
-    var option = '<option value="Unknown">'+ page_please_select + '</option>';
+    var option = '<option value="' + page_default_value + '">'+ page_please_select + '</option>';
     for (var i=1;i<langscodes.length;i++){
        option += '<option value="'+ langscodes[i] + '">' +
        languages.getLanguageInfo(langscodes[i]).name + " (" +
