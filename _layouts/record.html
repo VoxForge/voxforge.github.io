@@ -437,6 +437,13 @@
       } else {
         page_browser_support = {{ default.browser_support | jsonify}};
       }
+
+      var page_license = {{ page.page_license | jsonify}};
+      if ( page_license ) {
+        View.addAnyMissingPropertyDefaults({{ default.license | jsonify}}, page_license);
+      } else {
+        page_license = {{ default.license | jsonify}};
+      }
     </script>
   </body>
 </html>
