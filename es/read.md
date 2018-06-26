@@ -75,7 +75,9 @@ dialect:
   popup_link: https://en.wikipedia.org/wiki/Dialect
   popup_text: variedad de un idioma que es una característica de un grupo particular de hablantes del idioma.
   selection:
-  - [Otro, [otro]]
+  - [España, [Español España]]
+  - [America latina, [Español Mexicano, Español Argentina, Español Chile, Español Latinoamerica]]
+  - [Otro, [Otro]]
   other_label: Otro dialecto
 
 # no default required for sub-dialect

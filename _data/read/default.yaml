@@ -58,6 +58,7 @@ dialect:
   popup_link: https://en.wikipedia.org/wiki/Dialect
   popup_text: variety of a language that is a characteristic of a particular group of the language's speakers.
   selection:
+# major geographical region e.g. North American [array containing subdialects e.g. canadian English...]
   - [Other, [Other]]
   other_label: Other Dialect
 
