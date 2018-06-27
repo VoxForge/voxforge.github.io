@@ -1,7 +1,7 @@
 ---
 layout: default
-menu: Downloads
-title: Downloads
+menu: Descargas
+title: Descargar archivos
 ref: downloads
 lang: es
 weight: 7

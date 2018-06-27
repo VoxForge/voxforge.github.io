@@ -5,7 +5,7 @@ title: Page D’accueil
 ref: home
 lang: fr
 weight: 1
-permalink: /fr/
+permalink: /fr
 ---
 
 VoxForge est un projet qui vise à collecter des enregistrements oraux de 

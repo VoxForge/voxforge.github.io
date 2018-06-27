@@ -1,11 +1,11 @@
 ---
 layout: default
-menu: Home
-title: Home
+menu: Casa
+title: Página de inicio
 ref: home
 lang: es
 weight: 1
-permalink: /es/
+permalink: /es
 ---
 
 Página bienvenida - Castellano

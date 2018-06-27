@@ -5,7 +5,10 @@ title: Home
 weight: 1
 ref: home
 lang: en
-permalink: /en/
+# get intermittent link not found errors when using without trailing slash
+# when using jekyll server; seems to work OK on GithubPages...
+#permalink: /en/
+permalink: /en
 redirect_from: /
 ---
 VoxForge was set up to collect transcribed speech for use in the creation of 

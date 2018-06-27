@@ -1,7 +1,7 @@
 ---
 layout: default
-menu: Listen
-title: Listen
+menu: Escucha
+title: Escuchar audio
 ref: listen
 lang: es
 weight: 3
