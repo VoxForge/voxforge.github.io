@@ -1,7 +1,7 @@
 ---
 layout: record
 title: Grabador de voz VoxForge
-menu: Read
+menu: Leer
 ref: read
 lang: es
 weight: 2
@@ -228,33 +228,33 @@ alert_message:
   submission_plural: sumisión
   audio_too_loud: >
     ¡Tu grabación es demasiado fuerte! <br>
-    Por favor reduzca el volumen de su micrófono <br>
-    elimine esta grabación y vuelva a grabar la solicitud
+    Por favor reduzca el volumen de su micrófono, <br>
+    luego borre esta grabación y vuelva a grabarla.
   audio_too_soft: >
     ¡Tus niveles de grabación son demasiado bajos! <br>
-    Por favor, aumente el volumen de su micrófono
-    luego borre esta grabación de aviso y vuelva a grabarla.
+    Por favor, aumente el volumen de su micrófono, <br>
+    luego borre esta grabación y vuelva a grabarla.
   no_trailing_silence: >
     No hay suficiente silencio final: has hecho clic en "detener" demasiado pronto. <br>
     No dejaste suficiente silencio al final de tu grabación, o
     cortar el final de su grabación <br>
-    Por favor borre y vuelva a grabar este mensaje.
+    Por favor borre esta grabación y vuelva a grabarla.
   no_speech: >
     No hay volumen de voz o grabación demasiado bajo <br>
-    Por favor, aumente el volumen de su micrófono
+    Por favor, aumente el volumen de su micrófono,<br>
     luego borre y vuelva a grabar este mensaje.
   audio_too_loud_autogain: >
     ¡Tu grabación es demasiado fuerte! <br>
     Disminución automática del volumen. <br>
-    Elimine esta grabación y vuelva a grabar el mensaje.
+    Borre esta grabación y vuelva a grabarla.
   audio_too_soft_autogain: >
     ¡Tus niveles de grabación son demasiado bajos! <br>
     Aumento automático del volumen. <br>
-    Elimine esta grabación y vuelva a grabar el mensaje.
+    Borre esta grabación y vuelva a grabarla.
   no_speech_autogain: >
     No hay volumen de voz o grabación demasiado bajo. <br>
     Aumento automático del volumen. <br>
-    Elimine esta grabación y vuelva a grabar el mensaje.
+    Borre esta grabación y vuelva a grabarla.
   getUserMedia_error: >
     No se pudo obtener la entrada de audio ... asegúrese de que su micrófono esté conectado a su
     computadora. Su navegador está dando este mensaje de error:
