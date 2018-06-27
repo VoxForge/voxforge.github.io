@@ -5,7 +5,7 @@ title: Home
 weight: 1
 ref: home
 lang: en
-permalink: /en
+permalink: /en/
 redirect_from: /
 ---
 VoxForge was set up to collect transcribed speech for use in the creation of 
@@ -29,21 +29,21 @@ the audio best suited to their needs.
 your recordings to the VoxForge server.
 
 
-[Free]: /faq/what-is-free-software
-[Open Source]: /faq/what-is-open-source-software
-[Speech Recognition Engines]: /faq/what-is-the-difference-between-a-speech-recognition-engine-and-a-speech-recognition-system
+[Free]: {% link _faqs/en/what-is-free-software.md %}
+[Open Source]: {% link _faqs/en/what-is-open-source-software.md %}
+[Speech Recognition Engines]: {% link _faqs/en/what-is-the-difference-between-a-speech-recognition-engine-and-a-speech-recognition-system.md %}
 
 [Sphinx]: https://cmusphinx.github.io/
 [Julius]: https://github.com/julius-speech/julius
 [HTK]: http://htk.eng.cam.ac.uk/
 
-[Record yourself reading some text]: /en/read
+[Record yourself reading some text]: {% link en/read.md %}
 
-[WAV]: /faq/what-is-the-difference-between-lossy-lossless-and-uncompressed-audio-formats/
-[uncompressed]: /faq/what-is-the-difference-between-lossy-lossless-and-uncompressed-audio-formats/
-[lossy compressed]: /faq/what-is-the-difference-between-lossy-lossless-and-uncompressed-audio-formats/
+[WAV]: {% link _faqs/en/what-is-the-difference-between-lossy-lossless-and-uncompressed-audio-formats.md %}
+[uncompressed]: {% link _faqs/en/what-is-the-difference-between-lossy-lossless-and-uncompressed-audio-formats.md %}
+[lossy compressed]: {% link _faqs/en/what-is-the-difference-between-lossy-lossless-and-uncompressed-audio-formats.md %}
 [acoustic models]: https://en.wikipedia.org/wiki/Acoustic_model
-[audio corpus]: /faq/what-is-a-speech-corpus-or-speech-corpora/
+[audio corpus]: {% link _faqs/en/what-is-a-speech-corpus-or-speech-corpora.md %}
 
 
 

@@ -5,7 +5,7 @@ title: Page D’accueil
 ref: home
 lang: fr
 weight: 1
-permalink: /fr
+permalink: /fr/
 ---
 
 VoxForge est un projet qui vise à collecter des enregistrements oraux de 
@@ -38,12 +38,13 @@ ordinateur en utilisant un applet Javascript qui vous propose une liste de
 
 
 
-[Open Source]: /faq/what-is-open-source-software
-[GPL]: /faq/what-is-gpl
+[Open Source]: {% link _faqs/en/what-is-open-source-software.md %}
+[GPL]: {% link _faqs/en/what-is-gpl.md %}
+[modèles acoustiques]: {% link _faqs/en/what-is-an-acoustic-model.md %}
+[corpus oraux]: {% link _faqs/en/what-is-a-speech-corpus-or-speech-corpora.md %}
+[Enregistrez vos lectures de textes]: {% link fr/read.md %}
+
 [Sphinx]: https://cmusphinx.github.io/
 [Julius]: https://github.com/julius-speech/julius
 [HTK]: http://htk.eng.cam.ac.uk/
-[modèles acoustiques]: /faq/what-is-an-acoustic-model
-[corpus oraux]: /faq/what-is-a-speech-corpus-or-speech-corpora
-[Enregistrez vos lectures de textes]: /fr/read
 

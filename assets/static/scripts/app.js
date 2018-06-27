@@ -141,10 +141,6 @@ var view;  // needs to be global so can be accessible to index.html
                                      controller_parms,
                                      appversion);
 
-    // debug timing issue
-    //var prompts_async = prompts.init();
-    //var view_async = view.init();
-    //var audio_async = audio.init();
     prompts.init();
     view.init();
     audio.init();

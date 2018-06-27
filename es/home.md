@@ -5,7 +5,7 @@ title: Home
 ref: home
 lang: es
 weight: 1
-permalink: /es
+permalink: /es/
 ---
 
 Página bienvenida - Castellano
@@ -28,10 +28,12 @@ requiere ningún conocimiento técnico especial. ¡Anímate a grabarlo para que
 tengamos software de reconocimiento de voz en castellano!
 
 
-[Código Abierto]: /home/docs/faq/faq/what-is-open-source-software
-[GPL]: /home/docs/faq/faq/what-is-gpl
+[Código Abierto]: {% link _faqs/en/what-is-open-source-software.md %}
+[GPL]: {% link _faqs/en/what-is-gpl.md %}
+[leer algunas frases]: {% link es/read.md %}
+
 [Sphinx]: http://cmusphinx.sourceforge.net/html/cmusphinx.php
 [ISIP]: http://www.ece.msstate.edu/research/isip/projects/speech/index.html
 [Julius]: http://julius.sourceforge.jp/en_index.php?q=en/index.html
 [HTK]: http://htk.eng.cam.ac.uk/
-[leer algunas frases]: /fr/read
+
