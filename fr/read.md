@@ -77,7 +77,7 @@ first_language:
 # https://en.wikipedia.org/wiki/Non-native_pronunciations_of_English 
 dialect:
   label: Variante régionale
-  popup_link: https://fr.wikipedia.org/wiki/Variétés_régionales_du_français#En_Afrique
+  popup_link: https://fr.wikipedia.org/wiki/Variétés_régionales_du_français
   popup_text: variety of a language that is a characteristic of a particular group of the language's speakers.
   selection:
   - [En Afrique, [Français d'Afrique]]
@@ -176,120 +176,6 @@ license:
     - { value: 'CC_BY-SA',  option: 'CC BY-SA -  Creative Commons - Attribution - Partage dans les Mêmes Conditions' }
     - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License' }
 
-license:
-  label: License
-  popup:
-    title: Creative Commons Licences
-    link: https://creativecommons.org/licenses/
-    hover_text: >
-      CC0 1.0 - Creative Commons Public Domain Dedication;
-      CC BY 4.0 - Creative Commons Attribution;
-      CC BY-SA 4.0 - Creative Commons Attribution-ShareAlike;
-      GPLv3 - GNU General Public License.
-    text:  > 
-      <b>CC0 1.0 - Creative Commons - Pas de droit d’auteur</b> permet aux titulaires de droits de 
-      renoncer à tous leurs droits et de placer une œuvre dans le domaine 
-      public. <br>
-      <b>CC BY 4.0 - Creative Commons - Attribution</b>  Cette licence permet aux autres de distribuer,
-      remixer, arranger, et adapter votre œuvre, même à des fins commerciales, 
-      tant qu’on vous accorde le mérite de la création originale en citant 
-      votre nom.<br>
-      <b>CC BY-SA 4.0 - Creative Commons - Attribution - Partage dans les Mêmes Conditions</b>  Cette 
-      licence permet aux autres de remixer, arranger, et adapter votre œuvre, 
-      même à des fins commerciales, tant qu’on vous accorde le mérite en citant 
-      votre nom et qu’on diffuse les nouvelles créations selon des conditions 
-      identiques. <br>
-      <b>GPLv3 GNU General Public License</b> similaire à CC BY-SA, mais créé pour 
-      les logiciels ... utilisé par le corpus VoxForge 1.0.
-  selection_default: { value: 'CC0',  item: 'CC0 1.0 - Creative Commons - No rights Reserved (recommended)' }
-  selection:
-    - { value: 'CC_BY',     option: 'CC BY 4.0 - Creative Commons - Attribution' }
-    - { value: 'CC_BY-SA',  option: 'CC BY-SA 4.0 - Creative Commons Attribution-ShareAlike' }
-    - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License' }
-  full_license:
-    CC0:
-      title: CC0 1.0 - Creative Commons CC0 1.0 Universal Public Domain Dedication
-      link: "https://creativecommons.org/publicdomain/zero/1.0/"
-      attribution: "_year_ VoxForge Speech Recording by:"
-      text:
-        - The person who associated a work with this deed has dedicated the work 
-        - to the public domain by waiving all of his or her rights to the work
-        - worldwide under copyright law, including all related and neighboring 
-        - rights, to the extent allowed by law.
-        - ""
-        - You can copy, modify, distribute and perform the work, even for 
-        - commercial purposes, all without asking permission. 
-        - ""
-        - You should have received a copy of the CC0 legalcode along with this
-      text_last: work.  If not, see
-    CC_BY:
-      title: CC BY 4.0 - Creative Commons Attribution 4.0 International Public License
-      link: "https://creativecommons.org/licenses/by/4.0/"
-      attribution: "VoxForge Speech Recording, Copyright (C) _year_"
-      text:
-        - This Speech Recording is licensed under a Creative Commons Attribution 4.0
-        - Unported License.
-        - ""
-        - "You are free to:"
-        - ""
-        - Share — copy and redistribute the material in any medium or format
-        - Adapt — remix, transform, and build upon the material
-        - for any purpose, even commercially.
-        - ""
-        - "Under the following terms:"
-        - ""
-        - Attribution - You must give appropriate credit, provide a link to the 
-        - license, and indicate if changes were made. You may do so in any 
-        - reasonable manner, but not in any way that suggests the licensor 
-        - endorses you or your use.
-        - ""
-        - You should have received a copy of the CC BY 4.0 legalcode along with 
-      text_last: this work.  If not, see
-    CC_BY-SA:
-      title: CC BY-SA 4.0 - Creative Commons Attribution-ShareAlike 4.0 International Public License
-      link: "https://creativecommons.org/licenses/by-sa/4.0/"
-      attribution: "VoxForge Speech Recording, Copyright (C) _year_"
-      text:
-        - This Speech Recording is licensed under a Creative Commons 
-        - Attribution 4.0 Unported License.
-        - ""
-        - "You are free to:"
-        - ""
-        - Share — copy and redistribute the material in any medium or format
-        - Adapt — remix, transform, and build upon the material
-        - for any purpose, even commercially.
-        - ""
-        - "Under the following terms:"
-        - ""
-        - Attribution - You must give appropriate credit, provide a link to the 
-        - license, and indicate if changes were made. You may do so in any 
-        - reasonable manner, but not in any way that suggests the licensor 
-        - endorses you or your use.
-        - ""
-        - ShareAlike — If you remix, transform, or build upon the material, 
-        - you must distribute your contributions under the same license as 
-        - the original.
-        - ""
-        - You should have received a copy of the CC BY-SA 4.0 legalcode along 
-      text_last: with this work.  If not, see
-    GPLv3:
-      title: GPLv3 - GNU General Public License.
-      link: "https://www.gnu.org/licenses/"
-      attribution: "VoxForge Speech Recording, Copyright (C) _year_"
-      text:
-        - "This program is free software: you can redistribute it and/or modify"
-        - it under the terms of the GNU General Public License as published by
-        - the Free Software Foundation, either version 3 of the License, or
-        - (at your option) any later version.
-        - ""
-        - This program is distributed in the hope that it will be useful,
-        - but WITHOUT ANY WARRANTY; without even the implied warranty of
-        - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        - GNU General Public License for more details.
-        - ""
-        - You should have received a copy of the GNU General Public License
-      text_last: along with this program.  If not, see
-
 ua_string:
   label: inclure l'agent utilisateur
   popup:
@@ -338,25 +224,28 @@ browser_support:
     (ou installer une version courrante d'un navigateur Libre et 'Open Source' 
     tel que Chrome ou Firefox)"
   no_formDataSupport_message: >
-    "Browser does not support FormData... please install 
-    a current version of a Free and Open Source browser such as Chrome or 
+    "Votre navigateur ne supporte pas FormData ... s'il vous plaît installer
+    une version courrante d'un navigateur Libre et Open Source tel que Chrome ou
     Firefox"
   no_edgeSupport_message: >
     "Les navigateurs de Microsoft ne sont pas supportés ... veuillez installer
     une version courrante d'un navigateur Libre et 'Open Source' tel que Chrome ou
     Firefox"
 
+# localstorage_message - <br> or \n line breaks don't work...
 alert_message:
-  serviceworker: serviceworker
-  webworker: webworker
-  submission_singular: soumission
-  submission_plural: soumissions
   localstorage_message: >
+    Ne peut pas se connecter au serveur.
     Soumission enregistrée dans le stockage du navigateur.
+    Elle va être Téléchargé avec la prochaine soumission faite avec connexion au serveur.
   browsercontains_message: >
     Le stockage de votre navigateur contient
   uploaded_message: >
     téléchargé sur serveur Web VoxForge
+  serviceworker: serviceworker
+  webworker: webworker
+  submission_singular: soumission
+  submission_plural: soumissions
   audio_too_loud: >
     Volume est trop fort.<br>
     Veuillez réduire votre volume et réenregistrer.

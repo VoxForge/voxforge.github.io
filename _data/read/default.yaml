@@ -1,3 +1,5 @@
+# some updates to this file require restart of jekyll server
+
 # default language
 lang: en
 
@@ -302,19 +304,20 @@ browser_support:
     a current version of a Free and Open Source browser such as Chrome or 
     Firefox"
 
+# localstorage_message - <br> or \n line breaks don't work...
 alert_message:
-  serviceworker: serviceworker
-  webworker: webworker
-  submission_singular: submission
-  submission_plural: submissions
   localstorage_message: >
-    Cannot connect to server.<br>
-    Submission saved to browser storage.<br>
+    Cannot connect to server.
+    Submission saved to browser storage.
     Will upload with next submission made with connection to server. 
   browsercontains_message: >
     Your browser storage contains
   uploaded_message: >
     uploaded to VoxForge Server
+  serviceworker: serviceworker
+  webworker: webworker
+  submission_singular: submission
+  submission_plural: submissions
   audio_too_loud: >
     Your recording is too loud!<br>
     Please reduce your microphone volume<br>

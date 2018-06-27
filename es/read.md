@@ -59,7 +59,7 @@ age:
 # - Yes and No must be in quotes, otherwise evaluates to true/false
 native_speaker:
   label: Hablante nativo?
-  popup_link: 'https://en.wikipedia.org/wiki/First_language'
+  popup_link: https://es.wikipedia.org/wiki/Lengua_materna
   popup_text: alguien que habla un idioma como su primer idioma o lengua materna.
   selection:
     - "Sí"
@@ -73,7 +73,7 @@ first_language:
 
 dialect:
   label: Dialecto de la pronunciación
-  popup_link: https://en.wikipedia.org/wiki/Dialect
+  popup_link: https://es.wikipedia.org/wiki/Dialecto_(programación)
   popup_text: variedad de un idioma que es una característica de un grupo particular de hablantes del idioma.
   selection:
   - [España, [Español España]]
@@ -145,7 +145,7 @@ license:
   label: Licencia
   popup:
     title: Licencias Creative Commons
-    link: https://creativecommons.org/licenses/
+    link: https://creativecommons.org/licenses/?lang=es
     hover_text: >
       CC0 1.0 - Dedicación del dominio público de Creative Commons;
       CC BY 4.0 - Creative Commons Reconocimiento;
@@ -212,19 +212,20 @@ browser_support:
     una versión actual de un navegador de código libre y abierto como Chrome o
     Firefox"
 
+# localstorage_message - <br> or \n line breaks don't work...
 alert_message:
-  serviceworker: serviceworker
-  webworker: webworker
-  submission_singular: sumisión
-  submission_plural: sumisión
   localstorage_message: >
-    No se puede conectar al servidor. <br>
-    Envío guardado en el almacenamiento del navegador. <br>
+    No se puede conectar al servidor.\n
+    Envío guardado en el almacenamiento del navegador.\n
     Se cargará con la siguiente presentación realizada con conexión al servidor.
   browsercontains_message: >
     El almacenamiento de su navegador contiene
   uploaded_message: >
     cargado en el servidor VoxForge
+  serviceworker: serviceworker
+  webworker: webworker
+  submission_singular: sumisión
+  submission_plural: sumisión
   audio_too_loud: >
     ¡Tu grabación es demasiado fuerte! <br>
     Por favor reduzca el volumen de su micrófono <br>
