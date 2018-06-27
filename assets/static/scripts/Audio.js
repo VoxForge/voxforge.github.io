@@ -302,21 +302,11 @@ Audio.prototype.record = function (prompt_id) {
               */
               case 'finished':
                 obj.gain = self.gainNode.gain.value;
-                obj.no_trailing_silence_message = page_alert_message.no_trailing_silence;
-                if (self.parms.app_auto_gain) {
+                obj.app_auto_gain = self.parms.app_auto_gain;
+                if (obj.app_auto_gain) {
                   adjustVolume(obj); 
-
-                  // TODO the assignment of yaml front-matter variables should be done in View class 
-                  // not buried in here...
-
-                  obj.audio_too_loud_message = page_alert_message.audio_too_loud_autogain;
-                  obj.audio_too_soft_message = page_alert_message.audio_too_soft_autogain;
-                  obj.no_speech_message = page_alert_message.no_speech_autogain;
-                } else {
-                  obj.audio_too_loud_message = page_alert_message.audio_too_loud;
-                  obj.audio_too_soft_message = page_alert_message.audio_too_soft;
-                  obj.no_speech_message = page_alert_message.no_speech;
                 }
+
                 resolve(obj);
               break;
 

@@ -650,19 +650,22 @@ View.prototype.displayAudioPlayer = function (obj)
 
       if (obj.no_speech) {
         waveformElement.setAttribute("style", "background: #ff4500");
-        waveformElement.innerHTML = "<h4>" + obj.no_speech_message + "</h4>";
+        var no_speech_message = obj.app_auto_gain ? page_alert_message.no_speech_autogain : page_alert_message.no_speech;
+        waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
       } else if (obj.no_trailing_silence) {
         waveformElement.setAttribute("style", "background: #ffA500");
-        waveformElement.innerHTML = "<h4>" + obj.no_trailing_silence_message + "</h4>";
+        waveformElement.innerHTML = "<h4>" + page_alert_message.no_trailing_silence + "</h4>";
       //TODO need confidence level for clipping
       } else if (obj.clipping) {
         // TODO should not be able to upload if too loud
         waveformElement.setAttribute("style", "background: #ff4500");
-        waveformElement.innerHTML = "<h4>" + obj.audio_too_loud_message + "</h4>";
+        var audio_too_loud_message = obj.app_auto_gain ? page_alert_message.audio_too_loud_autogain : page_alert_message.audio_too_loud;
+        waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
       //TODO need confidence level for soft speaker
       } else if (obj.too_soft) {
         waveformElement.setAttribute("style", "background: #ff4500");
-        waveformElement.innerHTML = "<h4>" + obj.audio_too_soft_message + "</h4>";
+        var audio_too_soft_message = obj.app_auto_gain ? page_alert_message.audio_too_soft_autogain : page_alert_message.audio_too_soft;
+        waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
       }
 
       console.log("clip_id: " + self.clip_id);
