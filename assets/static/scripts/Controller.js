@@ -46,7 +46,7 @@ function Controller(prompts,
 }
 
 /**
-* initialize object with async operations
+* 
 */
 Controller.prototype.start = function () {
     var self = this;

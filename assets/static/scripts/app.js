@@ -111,12 +111,16 @@ var view;  // needs to be global so can be accessible to index.html
         audio_parms.app_auto_gain = true;
         controller_parms.recording_stop_delay = 750;
 
-        if (platform.os.version && parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
-          // the more prompts to display the more it cpu is uses on mobile 
-          // devices causing problems with drop outs crackles in recorded audio
-          prompt_parms.max_numPrompts_selector = 10;
-        } else { // Android 5 and above
-          prompt_parms.max_numPrompts_selector = 20;
+        if (platform.os.version) {
+          if (parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
+            // the more prompts to display the more it cpu is uses on mobile 
+            // devices causing problems with drop outs crackles in recorded audio
+            prompt_parms.max_numPrompts_selector = 10;
+          } else { // Android 5 and above
+            prompt_parms.max_numPrompts_selector = 20;
+          }
+        } else { // can't parse user agent... assume older version of Android/browser
+            prompt_parms.max_numPrompts_selector = 10;
         }
     }
 
@@ -137,9 +141,13 @@ var view;  // needs to be global so can be accessible to index.html
                                      controller_parms,
                                      appversion);
 
-    var prompts_async = prompts.init() 
-    var view_async = view.init();
-    var audio_async = audio.init();
+    // debug timing issue
+    //var prompts_async = prompts.init();
+    //var view_async = view.init();
+    //var audio_async = audio.init();
+    prompts.init();
+    view.init();
+    audio.init();
     controller.start();
 
 })(); // function context
