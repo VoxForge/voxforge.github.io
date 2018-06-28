@@ -9,7 +9,6 @@ weight: 2
 ################################################################################
 
 # first prompt file (id: "001") gets cached by service worker
-total_number_of_prompts: 43
 prompt_list_files:
   - id: "001"
     start: 0

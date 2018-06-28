@@ -27,7 +27,8 @@ function Controller(prompts,
                     view, 
                     audio,
                     parms,
-                    appversion,)
+                    appversion,
+                    pageVariables)
 {
 
     this.prompts  = prompts; 
@@ -36,6 +37,7 @@ function Controller(prompts,
     this.audio  = audio; 
     this.parms  = parms; 
     this.appversion  = appversion; 
+    this.pageVariables = pageVariables;
 
     this.updatedDeviceEventBufferSize = false;
 
@@ -255,7 +257,12 @@ Controller.prototype.start = function () {
           Promise.all(promise_list)
           .then(function() {
             var allClips = document.querySelectorAll('.clip');
-            upload(self.prompts, self.profile, self.appversion, allClips)
+            upload(self.prompts,
+                   self.profile,
+                   self.appversion,
+                   allClips,
+                   self.pageVariables.language,
+                   self.pageVariables.alert_message)
             .then(saveProfileAndReset);
           });
         },

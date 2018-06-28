@@ -36,20 +36,27 @@ var view;  // needs to be global so can be accessible to index.html
 // #############################################################################
 
 (function () { // function context
+    // ### Get Jekyll variables#################################################
+
+    // references inline Javascript in record.html - so that Jekyll will localize variables properly
+    var pageVariables = new PageVariables(); 
+
+    // ### Confirm app can run on browser ######################################
+
     if( ! window.Worker )
     {
-      window.alert( page_browser_support.no_worker_message );           
+      window.alert( pageVariables.browser_support.no_worker_message );           
     }
 
     if( ! window.indexedDB )
     {
-      window.alert( page_browser_support.no_indexedDB_message );          
+      window.alert( pageVariables.browser_support.no_indexedDB_message );          
     }
 
     // Edge webworkers do not support FormData, and their web worker debugging is not there yet...
     if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
     {
-      window.alert( page_browser_support.no_edgeSupport_message );         
+      window.alert( pageVariables.browser_support.no_edgeSupport_message );         
     }
 
     // ### PARMS ###############################################################
@@ -127,19 +134,22 @@ var view;  // needs to be global so can be accessible to index.html
     // #############################################################################
     const appversion = "0.2";
 
-    var prompts = new Prompts(prompt_parms); 
-    var profile = new Profile(appversion);
+    var prompts = new Prompts(prompt_parms, pageVariables); 
+    var profile = new Profile(appversion, pageVariables);
     // 'view' needs to be global so can be accessed by index.html
     view = new View(view_parms,
                     prompts,
-                    profile); 
-    var audio = new Audio(audio_parms);
+                    profile,
+                    pageVariables); 
+    var audio = new Audio(audio_parms,
+                          pageVariables);
     var controller =  new Controller(prompts, 
                                      profile, 
                                      view, 
                                      audio,
                                      controller_parms,
-                                     appversion);
+                                     appversion,
+                                     pageVariables);
 
     prompts.init();
     view.init();

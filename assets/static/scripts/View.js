@@ -19,7 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 function View (parms,
                prompts,
-               profile)
+               profile,
+               pageVariables)
 {
     this.parms = parms;
     this.prompts = prompts;
@@ -44,6 +45,13 @@ function View (parms,
 
     // unique id for wavesurfer objects in DOM
     this.clip_id = 0;
+
+    this.localized_yes = pageVariables.localized_yes;
+    this.localized_no = pageVariables.localized_no;
+    this.localized_other = pageVariables.localized_other;
+    this.please_select = pageVariables.please_select;
+    this.default_value = pageVariables.default_value;
+    this.alert_message = pageVariables.alert_message;
 }
 
 
@@ -58,7 +66,7 @@ but will be too late for it to display to the user correctly... so user will
 see "Please Select" after a page refresh, even though the select will have
 properties showing that a certain element was selected...
 */
-View.updateView = function(json_object) {
+View.updateView = function(json_object, localized_yes, localized_other) {
     //Speaker Characteristics
     $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
     if (json_object.username) {
@@ -71,11 +79,8 @@ View.updateView = function(json_object) {
 
     $('#age').val( json_object.age );
 
-    // TODO implied by the page the user is on... 
-    // $('#page_language').val( json_object.page_language );
-
     $('#native_speaker').val( json_object.native_speaker );
-    if ( $('#native_speaker').val() === page_localized_yes )
+    if ( $('#native_speaker').val() === localized_yes )
     {
       $("#sub_dialect_display").show();
     } else {
@@ -85,7 +90,7 @@ View.updateView = function(json_object) {
     $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
     $('#dialect').val( json_object.dialect );
     $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
-    if ( $('#dialect').val() === page_localized_other )
+    if ( $('#dialect').val() === localized_other )
     {
       $("#dialect_other_display").show();
     }
@@ -93,26 +98,26 @@ View.updateView = function(json_object) {
     //Recording Information:
     $('#microphone').val( json_object.microphone );
     $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
-    if ( $('#microphone').val() === page_localized_other )
+    if ( $('#microphone').val() === localized_other )
     {
       $("#microphone_other_display").show();
     }
 
     $('#recording_location').val( json_object.recording_location );
     $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
-    if ( $('#recording_location').val() === page_localized_other )
+    if ( $('#recording_location').val() === localized_other )
     {
       $("#recording_location_other_display").show();
     }
     $('#background_noise').val( json_object.background_noise );
-    if ( $('#background_noise').val() === page_localized_yes )
+    if ( $('#background_noise').val() === localized_yes )
     {
       $("#background_noise_display").show();
     }
     $('#noise_volume').val( json_object.noise_volume );
     $('#noise_type').val( json_object.noise_type );
     $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
-    if ( $('#noise_type').val() === page_localized_other )
+    if ( $('#noise_type').val() === localized_other )
     {
       $("#noise_type_other_display").show();
     }
@@ -123,7 +128,7 @@ View.updateView = function(json_object) {
 /**
 * get user entered DOM data
 */
-View.getUserProfileInfo = function() {
+View.getUserProfileInfo = function(localized_yes, localized_other, localized_anonymous) {
     var profile_hash = {};
 
     // note, this leaves the contents of Form unchanged, only when user 
@@ -131,7 +136,7 @@ View.getUserProfileInfo = function() {
     if ( $('#username').val() ) {
       profile_hash["username"] = Profile.cleanUserInputRemoveSpaces( $("#username").val() );
     } else {
-      profile_hash["username"] = "Anonymous";
+      profile_hash["username"] = localized_anonymous || "anonymous";
     }
     profile_hash["gender"] = $("#gender").val();
     profile_hash["age"] = $("#age").val();
@@ -140,14 +145,14 @@ View.getUserProfileInfo = function() {
     profile_hash["native_speaker"] = $("#native_speaker").val();
 
     profile_hash["first_language"] = $('#first_language').val();
-    if ($('#first_language').val() !== page_localized_other) {
+    if ($('#first_language').val() !== localized_other) {
         profile_hash["first_language_other"] = "";
     } else {
         profile_hash["first_language_other"] = Profile.cleanUserInput( $("#first_language_other").val() );
     }
 
     profile_hash["dialect"] = $("#dialect").val();
-    if ($('#dialect').val() !== page_localized_other) {
+    if ($('#dialect').val() !== localized_other) {
         profile_hash["dialect_other"] = "";
     } else {
         profile_hash["dialect_other"] = Profile.cleanUserInput( $("#dialect_other").val() );
@@ -156,14 +161,14 @@ View.getUserProfileInfo = function() {
     profile_hash["sub_dialect"] = $("#sub_dialect").val();
 
     profile_hash["microphone"] = $("#microphone").val() ;
-    if ($('#microphone').val() !== page_localized_other) {
+    if ($('#microphone').val() !== localized_other) {
         profile_hash["microphone_other"] = "";
     } else {
         profile_hash["microphone_other"] = Profile.cleanUserInput( $("#microphone_other").val() );
     }
 
     profile_hash["recording_location"] = $("#recording_location").val() ;
-    if ($('#recording_location').val() !== page_localized_other) {
+    if ($('#recording_location').val() !== localized_other) {
         profile_hash["recording_location_other"] = "";
     } else {
         profile_hash["recording_location_other"] = Profile.cleanUserInput( $("#recording_location_other").val() );
@@ -173,7 +178,7 @@ View.getUserProfileInfo = function() {
     profile_hash["noise_volume"] = $("#noise_volume").val() ;
 
     profile_hash["noise_type"] = $("#noise_type").val();
-    if ($('#noise_type').val() !== page_localized_other) {
+    if ($('#noise_type').val() !== localized_other) {
         profile_hash["noise_type_other"] = "";
     } else {
         profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
@@ -182,7 +187,7 @@ View.getUserProfileInfo = function() {
     profile_hash["ua_string"] = $("#ua_string").val();
     // see http://www.whatsmyua.info/
     // https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
-    if ($('#ua_string').val() === page_localized_yes) {
+    if ($('#ua_string').val() === localized_yes) {
       profile_hash["user_agent_string"] = platform.ua;
       // attempts to parse the ua string
       profile_hash["os_family"] = platform.os.family = '';
@@ -245,7 +250,7 @@ View.prototype.init = function () {
           $(dependent_div).show();
         } else {
           $(dependent_div).hide();
-    //      if (value === page_localized_other) { // trying to clear text in other field if user unselects
+    //      if (value === self.localized_other) { // trying to clear text in other field if user unselects
     //         $(dependent_div).empty();
     //      }
         }
@@ -267,16 +272,16 @@ View.prototype.init = function () {
       }
     }
 
-    showDivBasedonValue('#native_speaker', page_localized_no, '#first_language_display', false);
-    showDivBasedonValue('#native_speaker', page_localized_yes, '#outer_dialect_display', false);
-    showDivBasedonValue('#first_language', page_localized_other, '#first_language_other_display', false);
+    showDivBasedonValue('#native_speaker', self.localized_no, '#first_language_display', false);
+    showDivBasedonValue('#native_speaker', self.localized_yes, '#outer_dialect_display', false);
+    showDivBasedonValue('#first_language', self.localized_other, '#first_language_other_display', false);
     // true means hide if there is something in the username field
     showDivBasedonValue('#username', true, '#anonymous_instructions_display', false); 
-    showDivBasedonValue('#microphone', page_localized_other, '#microphone_other_display', false);
-    showDivBasedonValue('#dialect', page_localized_other, '#dialect_other_display', false);
-    showDivBasedonValue('#recording_location', page_localized_other, '#recording_location_other_display', false);
-    showDivBasedonValue('#background_noise', page_localized_yes, '#background_noise_display', false);
-    showDivBasedonValue('#noise_type', page_localized_other, '#noise_type_other_display', false);
+    showDivBasedonValue('#microphone', self.localized_other, '#microphone_other_display', false);
+    showDivBasedonValue('#dialect', self.localized_other, '#dialect_other_display', false);
+    showDivBasedonValue('#recording_location', self.localized_other, '#recording_location_other_display', false);
+    showDivBasedonValue('#background_noise', self.localized_yes, '#background_noise_display', false);
+    showDivBasedonValue('#noise_type', self.localized_other, '#noise_type_other_display', false);
 
     /**
     *
@@ -295,7 +300,7 @@ View.prototype.init = function () {
     * .html() in #subdialect:
     */
     var $select1 = $( '#dialect' );
-    $( '#sub_dialect select' ).val( page_default_value );
+    $( '#sub_dialect select' ).val( self.default_value );
     var $select2 = $( '#sub_dialect' );
     var $optgroup = $select2.find( 'optgroup' );
     var $selected = $select2.find( ':selected' );
@@ -321,14 +326,14 @@ View.prototype.init = function () {
     */
     var langscodes = languages.getAllLanguageCode(); // array of language codes
     //var option = ''; // string
-    var option = '<option value="' + page_default_value + '">'+ page_please_select + '</option>';
+    var option = '<option value="' + self.default_value + '">'+ self.please_select + '</option>';
     for (var i=1;i<langscodes.length;i++){
        option += '<option value="'+ langscodes[i] + '">' +
        languages.getLanguageInfo(langscodes[i]).name + " (" +
        languages.getLanguageInfo(langscodes[i]).nativeName + ")" +  
        '</option>';
     }
-    option += '<option value="' + page_localized_other + '">' + page_localized_other + '</option>'; 
+    option += '<option value="' + self.localized_other + '">' + self.localized_other + '</option>'; 
     $('#first_language').append(option);
 
     // Prompts
@@ -363,7 +368,7 @@ View.prototype.init = function () {
     return new Promise(function (resolve, reject) {
         var json_object = self.profile.getProfileFromBrowserStorage();
         if (json_object) {
-          View.updateView(json_object);  
+          View.updateView(json_object, self.localized_yes, self.localized_other);  
         }
         resolve("OK");  // TODO not waiting for updateView
     }); // promise
@@ -640,21 +645,21 @@ View.prototype.displayAudioPlayer = function (obj)
 
       if (obj.no_speech) {
         waveformElement.setAttribute("style", "background: #ff4500");
-        var no_speech_message = obj.app_auto_gain ? page_alert_message.no_speech_autogain : page_alert_message.no_speech;
+        var no_speech_message = obj.app_auto_gain ? self.alert_message.no_speech_autogain : self.alert_message.no_speech;
         waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
       } else if (obj.no_trailing_silence) {
         waveformElement.setAttribute("style", "background: #ffA500");
-        waveformElement.innerHTML = "<h4>" + page_alert_message.no_trailing_silence + "</h4>";
+        waveformElement.innerHTML = "<h4>" + self.alert_message.no_trailing_silence + "</h4>";
       //TODO need confidence level for clipping
       } else if (obj.clipping) {
         // TODO should not be able to upload if too loud
         waveformElement.setAttribute("style", "background: #ff4500");
-        var audio_too_loud_message = obj.app_auto_gain ? page_alert_message.audio_too_loud_autogain : page_alert_message.audio_too_loud;
+        var audio_too_loud_message = obj.app_auto_gain ? self.alert_message.audio_too_loud_autogain : self.alert_message.audio_too_loud;
         waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
       //TODO need confidence level for soft speaker
       } else if (obj.too_soft) {
         waveformElement.setAttribute("style", "background: #ff4500");
-        var audio_too_soft_message = obj.app_auto_gain ? page_alert_message.audio_too_soft_autogain : page_alert_message.audio_too_soft;
+        var audio_too_soft_message = obj.app_auto_gain ? self.alert_message.audio_too_soft_autogain : self.alert_message.audio_too_soft;
         waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
       }
 

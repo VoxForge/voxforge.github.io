@@ -42,6 +42,10 @@ $( window ).unload(function() {
   upload_worker.terminate();
 });
 
+// make global so accessible to service worker return event processing
+// TODO could event processing be done within class? need to test...
+var page_alert_message; // TODO hack
+
 /**
 * collect all recorded audio into an array (audioArray) then calls function 
 * that calls web worker that actually creates the zip file for download
@@ -50,10 +54,14 @@ $( window ).unload(function() {
 function upload( prompts, 
                  profile, 
                  speechSubmissionAppVersion, 
-                 allClips) {
+                 allClips,
+                 language,
+                 alert_message) {
 
     var clipIndex = 0;
     var audioArray = [];
+
+    page_alert_message = alert_message;
 
     return new Promise(function (resolve, reject) {
       processAudio()
@@ -137,7 +145,7 @@ function upload( prompts,
           temp_submission_name: profile.getTempSubmissionName(),
           short_submission_name: profile.getShortSubmissionName(),
           username: profile.getUserName(),
-          language: page_language,
+          language: language,
           suffix: profile.getSuffix(),
 
           readme_blob: new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"}),
@@ -257,7 +265,7 @@ function upload( prompts,
             var returnObj = event.data;
             console.log("*** webworker says: " + returnObj.status);
 
-            processWorkerEventMessage(page_alert_message.webworker, returnObj);
+            processWorkerEventMessage(alert_message.webworker, returnObj);
           };
       }
 

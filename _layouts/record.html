@@ -420,54 +420,56 @@
     <script src="/assets/static/lib/state-machine-visualize.js"></script>
 -->
     <script>
-      // Javascript variables
+    /**
+    * using inline Javascript - so that Jekyll will localize variables using
+    * front matter variables
+    */
+    function PageVariables() {
+        // language specific
+        this.prompt_list_files = {{ page.prompt_list_files | jsonify }};
 
-      // language specific
-      var page_prompt_list_files = {{ page.prompt_list_files | jsonify }};
-      var page_total_number_of_prompts = {{ page.total_number_of_prompts }};
+        // use defaults if not defined in read.md front matter - see _data/read/default.yaml
+        this.localized_yes = "{{  page.localized_variable.lv_yes | default: default.localized_variable.lv_yes }}";
+        this.localized_no = "{{ page.localized_variable.lv_no | default: default.localized_variable.lv_no }}";
+        this.localized_other = "{{ page.localized_variable.other | default: default.localized_variable.other }}";
+        this.language = "{{ page.lang | default: default.lang }}";
+        this.please_select = "{{ page.please_select | default: default.please_select }}";
+        this.anonymous = "{{ page.anonymous | default: default.anonymous }}";
+        this.default_value = "{{ page.default_value | default: default.default_value }}";
 
-      // use defaults - see _data/read/default.yaml
-      var page_localized_yes= "{{  page.localized_variable.lv_yes | default: default.localized_variable.lv_yes }}";
-      var page_localized_no= "{{ page.localized_variable.lv_no | default: default.localized_variable.lv_no }}";
-      var page_localized_other= "{{ page.localized_variable.other | default: default.localized_variable.other }}";
-      var page_language= "{{ page.lang | default: default.lang }}";
-      var page_please_select = "{{ page.please_select | default: default.please_select }}";
-      var page_anonymous = "{{ page.anonymous | default: default.anonymous }}";
-      var page_license = {{ page.license | default: default.license | jsonify }};
-      var page_default_value = "{{ page.default_value | default: default.default_value }}";
+        /**
+        * confirm that all default properties exist in page property, and if not
+        * add default property to page property
+        */
+        function addAnyMissingPropertyDefaults(default_hash, hash) {
+          Object.keys(default_hash).forEach(function (key) { 
+              if ( ! hash[key] ) {
+                  hash[key] = default_hash[key];
+              }
+          })
+        }
 
-      /**
-      * confirm that all default properties exist in page property, and if not
-      * add default property to page property
-      */
-      function addAnyMissingPropertyDefaults(default_hash, hash) {
-        Object.keys(default_hash).forEach(function (key) { 
-            if ( ! hash[key] ) {
-                hash[key] = default_hash[key];
-            }
-        })
-      }
+        this.alert_message = {{ page.alert_message | jsonify}};
+        if ( this.alert_message ) {
+          addAnyMissingPropertyDefaults({{ default.alert_message | jsonify}}, this.alert_message);
+        } else {
+          this.alert_message = {{ default.alert_message | jsonify}};
+        }
 
-      var page_alert_message = {{ page.alert_message | jsonify}};
-      if ( page_alert_message ) {
-        addAnyMissingPropertyDefaults({{ default.alert_message | jsonify}}, page_alert_message);
-      } else {
-        page_alert_message = {{ default.alert_message | jsonify}};
-      }
+        this.browser_support = {{ page.browser_support | jsonify}};
+        if ( this.browser_support ) {
+          addAnyMissingPropertyDefaults({{ default.browser_support | jsonify}}, this.browser_support);
+        } else {
+          this.browser_support = {{ default.browser_support | jsonify}};
+        }
 
-      var page_browser_support = {{ page.browser_support | jsonify}};
-      if ( page_browser_support ) {
-        addAnyMissingPropertyDefaults({{ default.browser_support | jsonify}}, page_browser_support);
-      } else {
-        page_browser_support = {{ default.browser_support | jsonify}};
-      }
-
-      var page_license = {{ page.page_license | jsonify}};
-      if ( page_license ) {
-        addAnyMissingPropertyDefaults({{ default.license | jsonify}}, page_license);
-      } else {
-        page_license = {{ default.license | jsonify}};
-      }
+        this.license = {{ page.license | jsonify}};
+        if ( this.license ) {
+          addAnyMissingPropertyDefaults({{ default.license | jsonify}}, this.license);
+        } else {
+          this.license = {{ default.license | jsonify}};
+        }
+    }
     </script>
 
     <script src="/assets/static/scripts/Audio.js"></script>

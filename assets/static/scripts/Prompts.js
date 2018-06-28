@@ -20,7 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * ### Contructor ##############################################
 */
-function Prompts(parms) {
+function Prompts(parms,
+                 pageVariables)
+{
     this.max_num_prompts = parms.num_prompts_to_trigger_upload;
     this.max_numPrompts_selector = parms.max_numPrompts_selector;
     this.list = []; // list of prompts to be recorded by user; iniitlaized in convertPromptDataToArray
@@ -32,9 +34,13 @@ function Prompts(parms) {
     this.prompt_stack = []; // stack; makes it easier to add deleted elements for re-record
     this.current_promptLine = null; // need to keep track of current prompt since no longer tracking index
 
+    this.language = pageVariables.language;
+
     this.promptCache = localforage.createInstance({
-        name: page_language + "_promptCache"
+        name: this.language + "_promptCache"
     });
+
+    this.prompt_list_files = pageVariables.prompt_list_files;
 }
 
 /**
@@ -70,51 +76,50 @@ Prompts.prototype.init = function () {
     * verify that read.md entries contain valid prompt related data
     */
     function validate_Readmd_file() {
-      var variable_list = ['page_language', 
-                        'page_prompt_list_files', 
-                        'page_total_number_of_prompts'];
+      var variable_list = ['language', 
+                        'prompt_list_files'];
       for (var i = 0; i < variable_list.length; i++) {
         if (typeof variable_list[i] === 'undefined') {
           console.warn(variable_list + " not defined in read.md for language: " + 
-                      page_language);
+                      self.language);
         }
       }
-      // validate contents of page_prompt_list_files array
+      // validate contents of prompt_list_files array
       var num_prompts_calc = 0;
-      for (var i = 0; i < page_prompt_list_files.length; i++) {
+      for (var i = 0; i < self.prompt_list_files.length; i++) {
         // check for undefined fields
-        if (typeof page_prompt_list_files[i].id === 'undefined') {
+        if (typeof self.prompt_list_files[i].id === 'undefined') {
           console.warn("prompt_list_files[" + i + "].id not defined in read.md for language: " + 
-                      page_language);
+                      self.language);
         }
-        if (typeof page_prompt_list_files[i].file_location === 'undefined') {
+        if (typeof self.prompt_list_files[i].file_location === 'undefined') {
           console.warn("prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
-                      page_language);
+                      self.language);
         }
-        if (typeof page_prompt_list_files[i].contains_promptid === 'undefined') {
+        if (typeof self.prompt_list_files[i].contains_promptid === 'undefined') {
           console.warn("prompt_list_files[" + i + "].contains_promptid not defined in read.md for language: " + 
-                      page_language);
+                      self.language);
         }
-        if (typeof page_prompt_list_files[i].file_location === 'undefined') {
+        if (typeof self.prompt_list_files[i].file_location === 'undefined') {
           console.warn("prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
-                      page_language);
+                      self.language);
         }
-        if (typeof page_prompt_list_files[i].number_of_prompts === 'undefined') {
+        if (typeof self.prompt_list_files[i].number_of_prompts === 'undefined') {
           console.warn("prompt_list_files[" + i + "].number_of_prompts not defined in read.md for language: " + 
-                      page_language);
+                      self.language);
         }
 
         // if prompt lines already have promptid, then don't need start or prefix
         // fields in read.md front matter
-        if ( !  page_prompt_list_files[i].contains_promptid ) {
-          if (typeof page_prompt_list_files[i].start === 'undefined') {
+        if ( !  self.prompt_list_files[i].contains_promptid ) {
+          if (typeof self.prompt_list_files[i].start === 'undefined') {
             console.warn("prompt_list_files[" + i + "].start not defined in read.md for language: " + 
-                        page_language);
+                        self.language);
           }
 
-          if (typeof page_prompt_list_files[i].prefix === 'undefined') {
+          if (typeof self.prompt_list_files[i].prefix === 'undefined') {
             console.warn("prompt_list_files[" + i + "].prefix not defined in read.md for language: " + 
-                        page_language);
+                        self.language);
           }
         }
       }
@@ -126,12 +131,12 @@ Prompts.prototype.init = function () {
     * in read.md file gets converted to an array.
     */
     function get_promptFile_count() {
-      if (typeof page_prompt_list_files.length === 'undefined') {
-        console.warn("page_prompt_list_files.length not defined in read.md for language: " + 
-                    page_language);
+      if (typeof self.prompt_list_files.length === 'undefined') {
+        console.warn("prompt_list_files.length not defined in read.md for language: " + 
+                    self.language);
       }
 
-      return page_prompt_list_files.length;
+      return self.prompt_list_files.length;
     }
 
     /**
@@ -154,23 +159,23 @@ Prompts.prototype.init = function () {
       // add prompt ID to each prompt line if none exists
       for (var i = 0; i < sentences.length; i++) {
         if (sentences[i] != "") { // skip empty string
-          if (page_prompt_list_files[prompt_file_index].contains_promptid)
+          if (self.prompt_list_files[prompt_file_index].contains_promptid)
           { // first word of prompt line is the prompt ID
               self.list[i] = sentences[i];
           } else {
-              var start_promptId = page_prompt_list_files[prompt_file_index].start;
-              var prefix = page_prompt_list_files[prompt_file_index].prefix;
+              var start_promptId = self.prompt_list_files[prompt_file_index].start;
+              var prefix = self.prompt_list_files[prompt_file_index].prefix;
               var prompt_id = prefix + pad( i + start_promptId, 5 );
               self.list[i] = prompt_id  + " " + sentences[i];
           }
         }
       }
 
-      if (page_prompt_list_files[prompt_file_index].number_of_prompts !=  self.list.length) {
+      if (self.prompt_list_files[prompt_file_index].number_of_prompts !=  self.list.length) {
         console.warn("number of prompts in prompt_list_files[" + prompt_file_index + "] = " + 
-                     page_prompt_list_files[prompt_file_index].number_of_prompts + 
+                     self.prompt_list_files[prompt_file_index].number_of_prompts + 
                     " in read.md, not same as prompt file line counts for language: " + 
-                    page_language + "= " + self.list.length );
+                    self.language + "= " + self.list.length );
       }
     }
 
@@ -180,8 +185,8 @@ Prompts.prototype.init = function () {
     */
     function savePromptListLocally() {
       var jsonOnject = {};
-      jsonOnject['language'] = page_language;
-      jsonOnject['id'] = page_prompt_list_files[prompt_file_index].id;
+      jsonOnject['language'] = self.language;
+      jsonOnject['id'] = self.prompt_list_files[prompt_file_index].id;
       jsonOnject['list'] = self.list;
 
       self.promptCache.setItem(local_prompt_file_name, jsonOnject)
@@ -271,7 +276,7 @@ Prompts.prototype.init = function () {
     /* ====================================================================== */
     /* Main */
     // TODO duplicate definition in service worker file: processSavedSubmission.js
-    var local_prompt_file_name = page_language + '_' + 'prompt_file';
+    var local_prompt_file_name = self.language + '_' + 'prompt_file';
 
     var prompt_file_index;
 
@@ -294,7 +299,7 @@ Prompts.prototype.init = function () {
                 }
             ).fail(function() { // first prompt file should be cached by service worker
                 prompt_file_index = 0;
-                prompt_file_name = page_prompt_list_files[prompt_file_index]['file_location'];
+                prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
 
                 $.get(prompt_file_name, 
                     function(prompt_data) {
@@ -334,10 +339,10 @@ Prompts.prototype.init = function () {
 
         validate_Readmd_file();
         prompt_file_index = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
-        console.log("prompt file id: " + page_prompt_list_files[prompt_file_index].id + 
+        console.log("prompt file id: " + self.prompt_list_files[prompt_file_index].id + 
                     " (prompt file array index: " + prompt_file_index + ")");
-        if ( ! page_prompt_list_files[prompt_file_index].contains_promptid) {
-            console.log("starting promptId: " + page_prompt_list_files[prompt_file_index].start);
+        if ( ! self.prompt_list_files[prompt_file_index].contains_promptid) {
+            console.log("starting promptId: " + self.prompt_list_files[prompt_file_index].start);
         }
 
         /** 
@@ -350,7 +355,7 @@ Prompts.prototype.init = function () {
         */
         self.promptCache.length() // Gets the number of keys in the offline store
         .then(function(numberOfKeys) { 
-            var prompt_file_name = page_prompt_list_files[prompt_file_index]['file_location'];
+            var prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
             if (numberOfKeys == 0) { // first time set up of prompts file
                 firstSetupOfPromptsFile(prompt_file_name);
             } else { 

@@ -8,7 +8,6 @@ weight: 2
 
 ################################################################################
 
-total_number_of_prompts: 865
 # sequence number start, url to prompt file not required since prompt file
 # already has prompt IDs in first column
 # first prompt file (id: "001") gets cached by service worker

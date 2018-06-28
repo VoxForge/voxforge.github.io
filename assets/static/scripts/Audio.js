@@ -37,7 +37,8 @@ var wavesurfer = [];
 /**
 * Class definition
 */
-function Audio (parms) 
+function Audio (parms,
+                pageVariables) 
 {
     // 'self' used to save current context when calling function references
     var self = this;
@@ -59,6 +60,8 @@ function Audio (parms)
             autoGainControl: false
           }
     };
+
+    this.alert_message = pageVariables.alert_message;
 }
 
 // ### Methods #################################################################
@@ -157,8 +160,8 @@ Audio.prototype.init = function () {
         // an error to keep a consistent interface
         if (!getUserMedia) {
           console.error('getUserMedia not supported on your browser!');
-          //document.querySelector('.info-display').innerText = page_alert_message.notHtml5_error;
-          windows.alert( page_alert_message.notHtml5_error );
+          //document.querySelector('.info-display').innerText = self.alert_message.notHtml5_error;
+          windows.alert( self.alert_message.notHtml5_error );
           document.querySelector('.prompt_id').innerText = "";
           return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
         }
@@ -185,8 +188,8 @@ Audio.prototype.init = function () {
         })
         .catch(function(err) {
           // TODO should this be done in View class?
-          window.alert( page_alert_message.getUserMedia_error + " " + err);
-          console.error(page_alert_message.getUserMedia_error + " " + err);
+          window.alert( self.alert_message.getUserMedia_error + " " + err);
+          console.error(self.alert_message.getUserMedia_error + " " + err);
           reject("Not ok");
         });
 

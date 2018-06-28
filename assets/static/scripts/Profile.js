@@ -20,13 +20,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Class declaration
 */
-function Profile (appversion) {
+function Profile (appversion, 
+                  pageVariables) 
+{
   this.appversion = appversion;
  
   this.debug = {};
 
   this.suffix = Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
   this.randomDigits = Profile.makeRandString (10,'1234567890');
+
+  this.localized_yes = pageVariables.localized_yes;
+  this.localized_other = pageVariables.localized_other;
+  this.language = pageVariables.language;
+  this.anonymous = pageVariables.anonymous;
+  this.license = pageVariables.license;
 }
 
 /**
@@ -91,12 +99,13 @@ Profile.prototype.updateRandomStrings = function () {
 *
 */
 Profile.prototype.getProfileFromBrowserStorage = function () {
+  var self = this;
   /**
   * get profile information from local storage and if it exists, return parsed
   * JSON object, otherwise return null.
   */
   function retrieve() {
-      var retrievedObject = localStorage.getItem(page_language);
+      var retrievedObject = localStorage.getItem(self.language);
       // boolean expression. Second part is evaluated only if left one is true. 
       // therefore if retrievedObject is null, that gets returned
       return retrievedObject && JSON.parse(retrievedObject);
@@ -124,9 +133,9 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
 * 
 */
 Profile.prototype.toHash = function () {
-    var profile_hash = View.getUserProfileInfo();
+    var profile_hash = View.getUserProfileInfo(this.localized_yes, this.localized_other, this.localized_anonymous);
 
-    profile_hash["language"] = page_language;
+    profile_hash["language"] = this.language;
 
     profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
     profile_hash["app_version"] = this.appversion;
@@ -154,7 +163,7 @@ Profile.prototype.toJsonString = function () {
 * Read HTML Form Data to convert profile data to array
 */
 Profile.prototype.toTextArray = function () {
-    var profile_hash = View.getUserProfileInfo();
+    var profile_hash = View.getUserProfileInfo(this.localized_yes, this.localized_other, this.localized_anonymous);
 
     var profile_array = [];
     var i=0;
@@ -171,11 +180,11 @@ Profile.prototype.toTextArray = function () {
       profile_array[i++] = 'Age Range: ' +  profile_hash["age"] + '\n';
     }
 
-    profile_array[i++] = 'Language: ' +  page_language + '\n';
+    profile_array[i++] = 'Language: ' +  this.language + '\n';
 
     profile_array[i++] = 'Native Speaker: ' + profile_hash["native_speaker"] + '\n';
     if (profile_hash["native_speaker"] !== "No") {  // is a native speaker - default
-      if (profile_hash["dialect"] !== page_localized_other) {
+      if (profile_hash["dialect"] !== this.localized_other) {
         profile_array[i++] = 'Pronunciation dialect: ' + profile_hash["dialect"] + '\n';
         if ( profile_hash["sub_dialect"] ) {
           profile_array[i++] = '  sub-dialect: ' + profile_hash["sub_dialect"] + '\n';
@@ -184,7 +193,7 @@ Profile.prototype.toTextArray = function () {
         profile_array[i++] =  'Pronunciation dialect: Other - ' + profile_hash["dialect_other"] + '\n';
       }
     } else { // Not a native speaker
-      if ( profile_hash["first_language"] !== page_localized_other) 
+      if ( profile_hash["first_language"] !== this.localized_other) 
       {
         var langId = profile_hash["first_language"];
         profile_array[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
@@ -194,13 +203,13 @@ Profile.prototype.toTextArray = function () {
     }
 
     profile_array[i++] = '\nRecording Information: \n\n';
-    if (profile_hash["microphone"] !== page_localized_other) {
+    if (profile_hash["microphone"] !== this.localized_other) {
       profile_array[i++] = 'Microphone Type: ' + profile_hash["microphone"] + '\n';
     } else {
       profile_array[i++] = 'Microphone Type: Other - ' + profile_hash["microphone_other"]  + '\n';
     }
 
-    if ( profile_hash["recording_location"] !== page_localized_other) {
+    if ( profile_hash["recording_location"] !== this.localized_other) {
       profile_array[i++] = 'Recording Location: ' +  profile_hash["recording_location"] + '\n';
     } else {
       profile_array[i++] = 'Recording Location: Other - ' + profile_hash["recording_location_other"] + '\n';
@@ -209,7 +218,7 @@ Profile.prototype.toTextArray = function () {
     profile_array[i++] = 'Background Noise: ' + profile_hash["background_noise"] + '\n';
     if (profile_hash["background_noise"] === "Yes") {
       profile_array[i++] = 'Noise Volume: ' + profile_hash["noise_volume"] + '\n';
-      if (profile_hash["noise_type"] !== page_localized_other) {
+      if (profile_hash["noise_type"] !== this.localized_other) {
         profile_array[i++] = 'Noise Type: ' + profile_hash["noise_type"]  + '\n';
       } else {
         profile_array[i++] = 'Noise Type: Other - ' + profile_hash["noise_type_other"] + '\n';
@@ -250,7 +259,7 @@ Profile.prototype.toArray = function () {
 * add profile information to local storage
 */
 Profile.prototype.addProfile2LocalStorage = function () {
-   localStorage.setItem(page_language, this.toJsonString());
+   localStorage.setItem(this.language, this.toJsonString());
 };
 
 
@@ -258,7 +267,7 @@ Profile.prototype.addProfile2LocalStorage = function () {
 * return cleaned username user entered into input field
 */
 Profile.prototype.getUserName = function () {
-    return Profile.cleanUserInputRemoveSpaces( View.getUserName() ) || page_anonymous || "anonymous";
+    return Profile.cleanUserInputRemoveSpaces( View.getUserName() ) || this.anonymous || "anonymous";
 }
 
 /**
@@ -278,7 +287,7 @@ Profile.prototype.getShortSubmissionName = function () {
   var day = d.getDate();
   day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
   var date = d.getFullYear().toString() + month.toString() + day.toString();
-  var result = page_language.toUpperCase() + '-' + this.getUserName() + '-' + date + '-' + this.suffix;
+  var result = this.language.toUpperCase() + '-' + this.getUserName() + '-' + date + '-' + this.suffix;
 
   return result;
 }
@@ -333,7 +342,7 @@ Profile.prototype.setDebugValues = function (obj) {
 * if none present, then set CC0 as default.
 */
 Profile.prototype.getLicense = function (license) {
-    var license_obj = page_license.full_license[license];
+    var license_obj = this.license.full_license[license];
 
     var license_array = [];
     var i=0;
