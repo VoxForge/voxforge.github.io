@@ -9,7 +9,7 @@
 
     <link href="/assets/static/styles/jquery.mobile-1.4.5.css" rel="stylesheet" type="text/css"> 
     <link href="/assets/static/styles/app.css" rel="stylesheet" type="text/css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="../manifest.json">
   </head>
 
   <body>
@@ -433,19 +433,8 @@
       var page_upload_message = {{ page.controls.upload_message | default: default.controls.upload_message }};
       var page_license = {{ page.license | default: default.license | jsonify }};
       var page_default_value = "{{ page.default_value | default: default.default_value }}";
-    </script>
-
-    <script src="/assets/static/scripts/Audio.js"></script>
-    <script src="/assets/static/scripts/processSavedSubmissions.js"></script>
-    <script src="/assets/static/scripts/Profile.js"></script>
-    <script src="/assets/static/scripts/Prompts.js"></script>
-    <script src="/assets/static/scripts/upload.js"></script>
-    <script src="/assets/static/scripts/View.js"></script>
-    <script src="/assets/static/scripts/Controller.js"></script>
-    <script src="/assets/static/scripts/app.js"></script>
-    <script> 
-      // needs to be after View class
       var page_alert_message = {{ page.alert_message | jsonify}};
+
       if ( page_alert_message ) {
         View.addAnyMissingPropertyDefaults({{ default.alert_message | jsonify}}, page_alert_message);
       } else {
@@ -466,5 +455,14 @@
         page_license = {{ default.license | jsonify}};
       }
     </script>
+
+    <script src="/assets/static/scripts/Audio.js"></script>
+    <script src="/assets/static/scripts/processSavedSubmissions.js"></script>
+    <script src="/assets/static/scripts/Profile.js"></script>
+    <script src="/assets/static/scripts/Prompts.js"></script>
+    <script src="/assets/static/scripts/upload.js"></script>
+    <script src="/assets/static/scripts/View.js"></script>
+    <script src="/assets/static/scripts/Controller.js"></script>
+    <script src="/assets/static/scripts/app.js"></script>
   </body>
 </html>

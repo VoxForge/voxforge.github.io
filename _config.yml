@@ -44,15 +44,15 @@ url: "https://voxforge.github.io" # the base hostname & protocol for your site
 # trailing slash (/) added to it automatically. Jekyll 3 no longer adds a
 # trailing slash automatically to permalink: URLs
 # see: https://jekyllrb.com/docs/upgrading/2-to-3/
-# add trailing slash to permalinks:
-#permalink: /:lang/:ref/
+
+# add trailing slash to permalinks for debugging with Apache2 and self signed SSL certificate
+#permalink: /:lang/:ref/ # debugging
 permalink: /:lang/:ref
 
 collections:
   faqs:
     output: true
     title: FAQs
-#    permalink: :lang/faq/:name/ # this is for faq item path
 
 # see: https://help.github.com/articles/redirects-on-github-pages/
 plugins:
