@@ -207,18 +207,6 @@ View.getUserProfileInfo = function() {
 }
 
 /**
-* confirm that all default properties exist in page property, and if not
-* add default property to page property
-*/
-View.addAnyMissingPropertyDefaults = function(default_hash, hash) {
-  Object.keys(default_hash).forEach(function (key) { 
-      if ( ! hash[key] ) {
-          hash[key] = default_hash[key];
-      }
-  })
-}
-
-/**
 * get user selected license
 */
 View.getLicenseID = function() {

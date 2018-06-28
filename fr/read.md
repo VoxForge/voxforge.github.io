@@ -208,9 +208,6 @@ controls:
   record: Enregistrer
   stop: Arrêter
   upload: Télécharger
-  upload_message: >
-    "Êtes-vous prêt à télécharger votre soumission? \nSi non, appuyez sur 
-    Annuler, puis appuyez sur Télécharger une fois que vous êtes prêt."
 
 browser_support:
   no_worker_message: >

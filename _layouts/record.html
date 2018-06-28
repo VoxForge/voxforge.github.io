@@ -433,27 +433,38 @@
       var page_language= "{{ page.lang | default: default.lang }}";
       var page_please_select = "{{ page.please_select | default: default.please_select }}";
       var page_anonymous = "{{ page.anonymous | default: default.anonymous }}";
-      var page_upload_message = {{ page.controls.upload_message | default: default.controls.upload_message }};
       var page_license = {{ page.license | default: default.license | jsonify }};
       var page_default_value = "{{ page.default_value | default: default.default_value }}";
-      var page_alert_message = {{ page.alert_message | jsonify}};
 
+      /**
+      * confirm that all default properties exist in page property, and if not
+      * add default property to page property
+      */
+      function addAnyMissingPropertyDefaults(default_hash, hash) {
+        Object.keys(default_hash).forEach(function (key) { 
+            if ( ! hash[key] ) {
+                hash[key] = default_hash[key];
+            }
+        })
+      }
+
+      var page_alert_message = {{ page.alert_message | jsonify}};
       if ( page_alert_message ) {
-        View.addAnyMissingPropertyDefaults({{ default.alert_message | jsonify}}, page_alert_message);
+        addAnyMissingPropertyDefaults({{ default.alert_message | jsonify}}, page_alert_message);
       } else {
         page_alert_message = {{ default.alert_message | jsonify}};
       }
 
       var page_browser_support = {{ page.browser_support | jsonify}};
       if ( page_browser_support ) {
-        View.addAnyMissingPropertyDefaults({{ default.browser_support | jsonify}}, page_browser_support);
+        addAnyMissingPropertyDefaults({{ default.browser_support | jsonify}}, page_browser_support);
       } else {
         page_browser_support = {{ default.browser_support | jsonify}};
       }
 
       var page_license = {{ page.page_license | jsonify}};
       if ( page_license ) {
-        View.addAnyMissingPropertyDefaults({{ default.license | jsonify}}, page_license);
+        addAnyMissingPropertyDefaults({{ default.license | jsonify}}, page_license);
       } else {
         page_license = {{ default.license | jsonify}};
       }

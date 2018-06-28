@@ -282,9 +282,6 @@ controls:
   record: Record
   stop: Stop
   upload: Upload
-  upload_message: >
-    "Are you ready to upload your submission?\nIf not, press Cancel now, and 
-    then press Upload once you are ready."
 
 browser_support:
   no_worker_message: >

@@ -189,10 +189,6 @@ controls:
   record: Grabar
   stop: Parar
   upload: Reproducir
-  upload_message: >
-    "¿Estás listo para subir tu envío?\n
-    Si no, presiona Cancelar ahora y
-    luego presione Subir una vez que esté listo"
 
 browser_support:
   no_worker_message: >
