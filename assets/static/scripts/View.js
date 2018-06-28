@@ -65,7 +65,9 @@ View.updateView = function(json_object) {
       $('#anonymous_instructions_display').hide();
     }
     $('#gender').val( json_object.gender );
-    $("#gender option[text=" + json_object.gender + "]").attr("selected","selected"); 
+
+    //$("#gender option[text=" + json_object.gender + "]").attr("selected","selected"); 
+    $('#gender option[text=" + json_object.gender + "]').attr('selected','selected'); 
 
     $('#age').val( json_object.age );
 
