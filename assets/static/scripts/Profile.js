@@ -33,7 +33,7 @@ function Profile (appversion,
   this.localized_yes = pageVariables.localized_yes;
   this.localized_other = pageVariables.localized_other;
   this.language = pageVariables.language;
-  this.anonymous = pageVariables.anonymous;
+  this.localized_anonymous = pageVariables.anonymous;
   this.license = pageVariables.license;
 }
 
