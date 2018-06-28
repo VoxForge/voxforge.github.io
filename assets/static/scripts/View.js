@@ -190,12 +190,12 @@ View.getUserProfileInfo = function(localized_yes, localized_other, localized_ano
     if ($('#ua_string').val() === localized_yes) {
       profile_hash["user_agent_string"] = platform.ua;
       // attempts to parse the ua string
-      profile_hash["os_family"] = platform.os.family = '';
-      profile_hash["os_version"] = platform.os.version = '';
-      profile_hash["browser_name"] = platform.name = '';
-      profile_hash["browser_version"] = platform.version = '';
-      profile_hash["product"] = platform.product = '';
-      profile_hash["manufacturer"] = platform.manufacturer = '';
+      profile_hash["os_family"] = platform.os.family || '';
+      profile_hash["os_version"] = platform.os.version || '';
+      profile_hash["browser_name"] = platform.name || '';
+      profile_hash["browser_version"] = platform.version || '';
+      profile_hash["product"] = platform.product || '';
+      profile_hash["manufacturer"] = platform.manufacturer || '';
     } else {
       profile_hash["user_agent_string"] = '';
       profile_hash["os_family"] = '';

@@ -133,6 +133,8 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
 * 
 */
 Profile.prototype.toHash = function () {
+    // TODO View.getUserProfileInfo gets called twice to get same info
+    // everytime a user uploads... cache info somehow...
     var profile_hash = View.getUserProfileInfo(this.localized_yes, this.localized_other, this.localized_anonymous);
 
     profile_hash["language"] = this.language;
@@ -163,6 +165,9 @@ Profile.prototype.toJsonString = function () {
 * Read HTML Form Data to convert profile data to array
 */
 Profile.prototype.toTextArray = function () {
+    // TODO View.getUserProfileInfo gets called twice to get same info
+    // everytime a user uploads... cache info somehow...
+    // TODO this method assumes that toHash was called before it... 
     var profile_hash = View.getUserProfileInfo(this.localized_yes, this.localized_other, this.localized_anonymous);
 
     var profile_array = [];
