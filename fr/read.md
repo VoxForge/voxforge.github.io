@@ -18,7 +18,7 @@ prompt_list_files:
     number_of_prompts: 865
 
 username_label: Nom d'utilisateur
-anonymous: anonymous
+anonymous: anonyme
 anonymous_submission: (laisser vide pour soumettre anonymement)
 profile_info: Profil
 default_value: non séléctionné
