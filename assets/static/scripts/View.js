@@ -189,7 +189,7 @@ View.getUserProfileInfo = function(localized_yes, localized_other, localized_ano
     // https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
     if ($('#ua_string').val() === localized_yes) {
       profile_hash["user_agent_string"] = platform.ua;
-      // attempts to parse the ua string
+      // attempts to parse the ua string; use empty string if cannot parse
       profile_hash["os_family"] = platform.os.family || '';
       profile_hash["os_version"] = platform.os.version || '';
       profile_hash["browser_name"] = platform.name || '';

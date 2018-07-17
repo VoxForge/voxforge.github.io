@@ -7,6 +7,12 @@ lang: en
 permalink: en/faqs/:title
 redirect_from: /home/docs/faq/faq/licensing-of-public-domain-audio-books-librivox
 ---
-VoxForge uses Public Domain Audio Books (LibriVox) recordings to create a derivative works which will be licensed under the [GPL](/faq/what-is-gpl) (with all applicable rights held by the  [Free Software Foundation](http://www.fsf.org/)). 
+VoxForge uses Public Domain Audio Books (LibriVox) recordings to create
+derivative works which will be licensed under the [GPL]. 
 
-This will not affect the legal status of the recording you submitted here or anywhere else (e.g. LibriVox). Therefore you will still be able to put your recording into the public domain (or it will remain in the public domain if it's already in there).
+This will not affect the legal status of the recording you submitted here or 
+anywhere else (e.g. LibriVox). Therefore you will still be able to put your 
+recording into the public domain (or it will remain in the public domain if 
+it's already in there).
+
+[GPL]: en/faqs/what-is-gpl

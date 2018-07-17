@@ -7,6 +7,14 @@ lang: en
 permalink: en/faqs/:title
 redirect_from: /home/docs/faq/faq/speech-recognition-vs-voice-recognition
 ---
-from an article on DZone: [Introduction to Synthetic Agents: Speech Recognition - Part 1](https://dzone.com/articles/introduction-to-synthetic-agents-speech-recognitio)
+from an article on DZone: [Introduction to Synthetic Agents: Speech Recognition - Part 1]:
 
-> Technically, **speech recognition** extracts the _words_ that are spoken whereas **voice recognition** identifies the _voice_ that is speaking. Speech recognition is "**what** someone said" and voice recognition is "**who** said it". The underlying technologies do overlap but they serve very different purposes.
+> Technically, **speech recognition** extracts the _words_ that are spoken 
+whereas **voice recognition** identifies the _voice_ that is speaking. 
+Speech recognition is "**what** someone said" and voice recognition is 
+"**who** said it". The underlying technologies do overlap but they serve very 
+different purposes.
+
+
+
+[Introduction to Synthetic Agents: Speech Recognition - Part 1]: https://dzone.com/articles/introduction-to-synthetic-agents-speech-recognitio

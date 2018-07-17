@@ -23,7 +23,11 @@ From the [HTK mailing list archives](http://htk.eng.cam.ac.uk/pipermail/):
     Did you try to follow htk wsj1 reciept? It has almost everything
     required I think:
 
-    [http://www.inference.phy.cam.ac.uk/kv227/htk/](http://www.inference.phy.cam.ac.uk/kv227/htk/)
-    [http://www.inference.phy.cam.ac.uk/kv227/lm_giga/](http://www.inference.phy.cam.ac.uk/kv227/lm_giga/)
+[http://www.inference.phy.cam.ac.uk/kv227/htk/]
+
+[http://www.inference.phy.cam.ac.uk/kv227/lm_giga/]
 
     with all beams used and lm factors. Though for really large vocabulary lm factor should be smaller (around 6-8).
+
+[http://www.inference.phy.cam.ac.uk/kv227/htk/]: http://www.inference.phy.cam.ac.uk/kv227/htk/
+[http://www.inference.phy.cam.ac.uk/kv227/lm_giga/]: http://www.inference.phy.cam.ac.uk/kv227/lm_giga/

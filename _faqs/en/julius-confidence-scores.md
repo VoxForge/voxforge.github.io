@@ -7,7 +7,6 @@ lang: en
 permalink: en/faqs/:title
 redirect_from: /home/docs/faq/faq/julius-confidence-scores
 ---
-From this thread: [For Noisy Input](../../../forums/message-boards/speech-recognition-engines/for-noisy-input)
 
 For a recognition result like this:
 
@@ -28,16 +27,28 @@ For a recognition result like this:
     cmscore1: 1.000 0.316 1.000**
     **score1: -1944.799561**
 
-([tpavelka's post](../../../forums/message-boards/speech-recognition-engines/for-noisy-input)): Julius outputs two types of scores:
+tpavelka says: Julius outputs two types of scores:
 
     **The Viterbi score**, e.g.:
 
     score1: -1944.799561
 
-This is the cummulative score of the most likeli HMM path. The Viterbi algorithm (decoder) is just a graph search which compares scores of all possible paths through the HMM and outputs the best one. The problem is, that a score of a path (sentence) depends on the sound files length but also on the sound file itself (see [this thread](../../../forums/message-boards/audio-discussions/missing-prompts) for more discussion). This means that Viterbi scores for different files are not comparable. I understand that you want some kind of measure, which can tell you something about whether the result found by Julius is believable or not. In that case, have a look at
+This is the cummulative score of the most likeli HMM path. The Viterbi 
+algorithm (decoder) is just a graph search which compares scores of all 
+possible paths through the HMM and outputs the best one. The problem is, 
+that a score of a path (sentence) depends on the sound files length but also 
+on the sound file itself (see [this thread](../../../forums/message-boards/audio-discussions/missing-prompts) 
+for more discussion). This means that Viterbi scores for different files are not 
+comparable. I understand that you want some kind of measure, which can tell you 
+something about whether the result found by Julius is believable or not. In 
+that case, have a look at
 
     **The confidence score**, in your example:
 
     cmscore1: 1.000 0.316 1.000
 
-Julius outputs a separate score for each word, so in your example the starting silence has confidence score of 1.0 (i.e. 100%), the word "five" has the score 0.316 (i.e. not that reliable) and the ending silence has again 1.0\.
+Julius outputs a separate score for each word, so in your example the starting
+silence has confidence score of 1.0 (i.e. 100%), the word "five" has the score
+ 0.316 (i.e. not that reliable) and the ending silence has again 1.0.
+
+

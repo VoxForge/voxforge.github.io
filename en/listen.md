@@ -7,7 +7,7 @@ ref: listen
 lang: en
 redirect_from: /home/listen
 ---
-[VoxForge repository website](http://www.repository.voxforge1.org/downloads/en/Trunk/Audio/Original/)<br>
+[VoxForge repository website](http://www.repository.voxforge1.org/downloads/en/Trunk/Audio/Original/48kHz_16bit/)<br>
 
 <!--
 <html>

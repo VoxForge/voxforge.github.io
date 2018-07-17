@@ -7,7 +7,10 @@ lang: en
 permalink: en/faqs/:title
 redirect_from: /home/docs/faq/faq/what-is-gpl
 ---
-GPL refers to the  '[GNU General Public License](http://www.gnu.org/copyleft/gpl.html)'.  **Copyright** provides an _author_ with the right to control copies and changes to a work, whereas the **GPL license** (also referred to as "copyleft") provides a _user_ with the right to copy and change a work.
+GPL refers to the  '[GNU General Public License]'.  **Copyright** provides an 
+_author_ with the right to control copies and changes to a work, whereas the 
+**GPL license** (also referred to as "copyleft") provides a _user_ with the 
+right to copy and change a work.
 
 The [preamble](http://www.gnu.org/copyleft/gpl.html#SEC2) to the GPL license follows:
 
@@ -68,3 +71,8 @@ The [preamble](http://www.gnu.org/copyleft/gpl.html#SEC2) to the GPL license fol
 > avoid the special danger that patents applied to a free program could
 > make it effectively proprietary. To prevent this, the GPL assures that
 > patents cannot be used to render the program non-free.
+
+
+
+[GNU General Public License]: http://www.gnu.org/copyleft/gpl.html
+[preamble]: http://www.gnu.org/copyleft/gpl.html#SEC2

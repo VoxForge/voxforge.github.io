@@ -6,7 +6,7 @@ weight: 4
 ref: listen
 lang: fr
 ---
-[VoxForge repository website](http://www.repository.voxforge1.org/downloads/fr/Trunk/Audio/Original/)<br>
+[VoxForge repository website](http://www.repository.voxforge1.org/downloads/fr/Trunk/Audio/Original/48kHz_16bit/)<br>
 
 <!--
 <html>

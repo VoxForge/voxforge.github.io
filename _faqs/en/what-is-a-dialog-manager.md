@@ -7,17 +7,29 @@ lang: en
 permalink: en/faqs/:title
 redirect_from: /home/docs/faq/faq/what-is-a-dialog-manager
 ---
-A [Dialog Manager](http://en.wikipedia.org/wiki/Dialog_manager) is one component of a [Speech Recognition System](http://www.zim.org/home/docs/faq/faq/what-is-the-difference-between-a-speech-recognition-engine-and-a-speech-recognition-system).
+A [Dialog Manager] is one component of a [Speech Recognition System].
 
 **Telephony and Command & Control Dialog Managers**
 
-A Dialog Manager used in Telephony applications (IVR - Interactive Voice Response), and in some desktop Command and Control Application, assigns meaning to the words recognized by the Speech Recognition Engine, determines how the utterance fits into the dialog spoken so far,and decides what to do next.  It might need to retrieve information from an external source.  If a response to the user is required, it will choose the words and phrases to be used in its response to the user, and transmit these to the Text-to-Speech System to speak the response to the user.
+A Dialog Manager used in Telephony applications (IVR - Interactive Voice 
+Response) and in desktop Command and Control Application, assigns meaning 
+to the words recognized by the Speech Recognition Engine, determines how the 
+utterance fits into the dialog spoken so far, and decides what to do next.  It 
+might need to retrieve information from an external source.  If a response to 
+the user is required, it will choose the words and phrases to be used in its 
+response to the user, and transmit these to the Text-to-Speech System to speak 
+the response to the user.
 
-**Dictation Dialog Manager **
+**Dictation System**
 
-A Dictation Dialog Manager will typically take the words recognized by the Speech Recognition Engine and type out the corresponding text on your computer screen.  It may also have some Command and Control elements, but these are usually limited to the types of commands typically used in a word processing program.  It usually responds to the user using text (i.e. it might not use Text to Speech to respond to the user).
+A Dictation System will typically take the words recognized by the 
+Speech Recognition Engine and type out the corresponding text on your computer 
+screen.  It may also have some Command and Control elements, but these are 
+usually limited to the types of commands typically used in a word processing 
+program.  It usually responds to the user using text (i.e. it might not use 
+Text to Speech to respond to the user).
 
-**Examples **
+**Examples**
 
 Examples of Telephony Dialog Managers include: 
 
@@ -28,7 +40,7 @@ Examples of Telephony Dialog Managers include:
 
 Examples of Command & Control Dialog Managers:
 
-*   [Gnome-Voice-Control](http://live.gnome.org/GnomeVoiceControl)<span class="icon"> </span> <span class="icon">(uses PocketSphinx)</span>
+*   [Gnome-Voice-Control](http://live.gnome.org/GnomeVoiceControl) (uses PocketSphinx)
 *   [SpeechLion](http://home.comcast.net/%7Ebrewer123/projects/speechlion/) (uses Sphinx4)
 *   [Vedics](http://vedics.sourceforge.net/) (uses Sphinx4)
 *   [PerlBox](http://www.perlbox.org/) (uses Sphinx2)
@@ -38,25 +50,25 @@ Examples of Command & Control Dialog Managers:
 *   [ruby-pocketsphinx-server](https://github.com/alumae/ruby-pocketsphinx-server) (for Android)[
     ](https://github.com/alumae/ruby-pocketsphinx-server)
 *   [Jaivox](http://www.jaivox.com/speechcommand.html) (uses Sphinx4)
-*   [pocketVox](https://github.com/benoitfragit/pocketVox) (uses <span class="icon">PocketSphinx</span>)
-
-**[<span></span>](https://github.com/alumae/ruby-pocketsphinx-server)**
+*   [pocketVox](https://github.com/benoitfragit/pocketVox) (uses PocketSphinx)
 
 Examples of Dictation Dialog Managers, with Command & Control elements, would be:
 
 *   [xVoice](http://xvoice.sourceforge.net/) (needs IBM's ViaVoice engine for Linux - no longer available)
-*   [Evaldictator](http://www.speech.cs.cmu.edu/sphinx/dictator/) <span class="icon">(uses Sphinx4)</span>
-*   [<span>speechoo</span>](http://code.google.com/p/speechoo/) (uses Julius) a <span>dictation pad for LibreOffice</span>
-*   [<span>freespeech-vr</span>](http://code.google.com/p/freespeech-vr/)<span></span> <span>Free streaming voice recognition with dynamic language learning</span>
+*   [Evaldictator](http://www.speech.cs.cmu.edu/sphinx/dictator/) (uses Sphinx4)
+*   [speechoo](http://code.google.com/p/speechoo/) (uses Julius) a dictation pad for LibreOffice
+*   [freespeech-vr](http://code.google.com/p/freespeech-vr/)F ree streaming voice recognition with dynamic language learning
 
-You can also write a domain specific application to perform Dialog Manager-like tasks using a traditional programming language (C, C++, Java, etc.) or a scripting Language (Perl, Python, Ruby, etc.). For example:
+You can also write a domain specific application to perform Dialog Manager-like 
+tasks using a traditional programming language (C, C++, Java, etc.) or a 
+scripting Language (Perl, Python, Ruby, etc.). For example:
 
 *   Sphinx
-    *   using Perl: [Cepstral's](http://www.cepstral.com/source/) <span class="subject">[Speech and audio POE components](http://www.cepstral.com/source/) ([announcement](http://www.mail-archive.com/poe@perl.org/msg00088.html));</span>
-    *   <span class="subject"></span>Perl: [Speech-Recognizer-SPX-0.09](http://search.cpan.org/~djhd/Speech-Recognizer-SPX-0.09/) (CPAN)
-    *   <span class="subject">Perl and PHP: [Sphinx and Asterisk](http://www.voip-info.org/wiki/view/Sphinx) integration (as a starting point for creating your own script-based dialog manager)</span>
-    *   <span class="subject">Python: [voximp](http://code.google.com/p/voximp/)
-        </span>
+    *   using Perl: [Cepstral's](http://www.cepstral.com/source/) [Speech and audio POE components](http://www.cepstral.com/source/) ([announcement](http://www.mail-archive.com/poe@perl.org/msg00088.html));
+    *   Perl: [Speech-Recognizer-SPX-0.09](http://search.cpan.org/~djhd/Speech-Recognizer-SPX-0.09/) (CPAN)
+    *   Perl and PHP: [Sphinx and Asterisk](http://www.voip-info.org/wiki/view/Sphinx) integration (as a starting point for creating your own script-based dialog manager)
+    *   Python: [voximp](http://code.google.com/p/voximp/)
+        
     *   Java & C++ API: [Voce](http://voce.sourceforge.net/)
     *   Python: [Blather](http://gitorious.org/blather)
     *   Javascript: [JuliusJS](https://github.com/zzmp/juliusjs)
@@ -84,26 +96,41 @@ You can also write a domain specific application to perform Dialog Manager-like 
 **User:** kmaclean
 **Date:** 3/9/2010 9:14 am
 
-Here is [video](http://www.pcgenius.com/computer-accessories/linux/linux-remote-controll-with-a-voice-speech-recognition/) that describes an approach ([Linux – remote controll with a voice](http://www.pcgenius.com/computer-accessories/linux/linux-remote-controll-with-a-voice-speech-recognition/)) that uses [Voximp](http://code.google.com/p/voximp/) as the dialog manager (which uses pocketsphinx), [xbindkeys](http://www.nongnu.org/xbindkeys/xbindkeys.html) to bind program to a key and [zenity](http://freshmeat.net/projects/zenity) to display notifications.
+this link (now dead, but should be accessible from [Internet Archive - Wayback Machine]):
 
-From the [Voximp](http://code.google.com/p/voximp/) home page:
+    http://www.pcgenius.com/computer-accessories/linux/linux-remote-controll-with-a-voice-speech-recognition/
 
-Voximp is an application which allows simple voice commands to be bound to spawn programs or simulate key/mouse presses. It's written in python and uses pocketsphinx for voice-recognition.
+describes an approach that uses [Voximp] as the dialog manager (which uses pocketsphinx), 
+[xbindkeys] to bind program to a key and [zenity] to display notifications.
 
-From the [xbindkeys](http://www.nongnu.org/xbindkeys/xbindkeys.html) web page:
+From the [Voximp] home page:
 
-[xbindkeys](http://www.nongnu.org/xbindkeys/xbindkeys.html) is a program that allows you to launch shell commands with your keyboard or your mouse under X Window. It links commands to keys or mouse buttons, using a configuration file. It's independant of the window manager and can capture all keyboard keys (ex: Power, Wake...).
+Voximp is an application which allows simple voice commands to be bound to spawn 
+programs or simulate key/mouse presses. It's written in python and uses 
+pocketsphinx for voice-recognition.
 
-From the [zenity](http://freshmeat.net/projects/zenity) web page
+From the [xbindkeys] home page:
 
-Zenity is a tool that allows you to display Gtk+ dialog boxes from the command line and through shell scripts. It is similar to gdialog, but is intended to be saner. It comes from the same family as dialog, Xdialog, and cdialog, but it surpasses those projects by having a cooler name.
+[xbindkeys] is a program that 
+allows you to launch shell commands with your keyboard or your mouse under X 
+Window. It links commands to keys or mouse buttons, using a configuration file. 
+It's independant of the window manager and can capture all keyboard keys 
+(ex: Power, Wake...).
+
+From the [zenity] home page
+
+Zenity is a tool that allows you to display Gtk+ dialog boxes from the command 
+line and through shell scripts. It is similar to gdialog, but is intended to be 
+saner. It comes from the same family as dialog, Xdialog, and cdialog, but it 
+surpasses those projects by having a cooler name.
 
 -------------------------------
 **User:** kmaclean
 **Date:** 10/2/2010 10:47 am
 
 
-Here is an article (Google translated from Russian) that gives another [example of using Julius with Python](http://translate.google.ca/translate?js=n&prev=_t&hl=en&ie=UTF-8&layout=2&eotf=1&sl=auto&tl=en&u=http%3A%2F%2Fwww.xakep.ru%2Fmagazine%2Fxa%2F133%2F082%2F1.asp):
+Here is an article (Google translated from Russian) that gives another 
+[example of using Julius with Python]:
 
 $ vi sample.voca
 
@@ -122,7 +149,7 @@ $ vi sample.voca
     PREV pr iy v
     SILENCE s ay l ax ns
 
-$ vi sample.<span>grammar</span>
+$ vi sample.grammar
 
     S: NS_B ID COMMAND NS_E
 
@@ -145,3 +172,19 @@ $ vi command.py
        if params[1] in commands: os.popen(commands[params[1]])
 
 $ julius -quiet -input mic -C julian.jconf 2>/dev/null | ./command.py
+
+
+
+[Dialog Manager]: http://en.wikipedia.org/wiki/Dialog_manager
+[Speech Recognition System]: http://www.zim.org/home/docs/faq/faq/what-is-the-difference-between-a-speech-recognition-engine-and-a-speech-recognition-system
+[example of using Julius with Python]: http://translate.google.ca/translate?js=n&prev=_t&hl=en&ie=UTF-8&layout=2&eotf=1&sl=auto&tl=en&u=http%3A%2F%2Fwww.xakep.ru%2Fmagazine%2Fxa%2F133%2F082%2F1.asp
+[Linux – remote controll with a voice]: http://www.pcgenius.com/computer-accessories/linux/linux-remote-controll-with-a-voice-speech-recognition/
+
+[Internet Archive - Wayback Machine]: https://archive.org/web/
+[Voximp]: http://code.google.com/p/voximp/
+[xbindkeys]: http://www.nongnu.org/xbindkeys/xbindkeys.html
+[zenity]: http://freshmeat.net/projects/zenity
+
+
+
+

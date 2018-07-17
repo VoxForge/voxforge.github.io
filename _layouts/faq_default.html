@@ -8,27 +8,14 @@
     {% include header.html %}
 <div class="wrapper">
 
-<!--- TODO fix this mess of divs!!!!!
-<div id="google_translate_element"></div><script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({pageLanguage: '{{ my_page.lang }}', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
-}
-</script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
----!>
-
-<div class="faq-link">
-    <a href="{{ site.baseurl }}/{{ page.lang }}/faq"><img src="{{ site.baseurl }}/images/faq-icon.jpg" width=20 height=20 alt="" title="FAQ - Frequently Asked Questions"/> </a>
-</div><!--faq-link -->
     <div class="page-content">
       <div class="wrapper">
-
-
-<h1>
-    <a href="{{ site.baseurl }}/faqs/{{ page.lang }}">Frequently Asked Questions </a>
-</h1>
+        <h1>
+            <a href="{{ site.baseurl }}/{{ page.lang }}/faqs">Frequently Asked Questions </a>
+        </h1>
         {{ content }}
+     </div><!-- wrapper -->
     </div><!-- page-content -->
-
     {% include footer.html %}
 
   </body>
