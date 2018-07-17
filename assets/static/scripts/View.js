@@ -73,16 +73,14 @@ View.updateView = function(json_object, localized_yes, localized_other) {
       $('#anonymous_instructions_display').hide();
     }
     $('#gender').val( json_object.gender );
-
-    //$("#gender option[text=" + json_object.gender + "]").attr("selected","selected"); 
     $('#gender option[text=" + json_object.gender + "]').attr('selected','selected'); 
 
     $('#age').val( json_object.age );
 
     $('#native_speaker').val( json_object.native_speaker );
-    if ( $('#native_speaker').val() === localized_yes )
+    if ( json_object.native_speaker === localized_yes )
     {
-      $("#sub_dialect_display").show();
+      $("#dialect_display").show();
     } else {
       $("#first_language_display").show();
     }
@@ -90,7 +88,7 @@ View.updateView = function(json_object, localized_yes, localized_other) {
     $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
     $('#dialect').val( json_object.dialect );
     $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
-    if ( $('#dialect').val() === localized_other )
+    if ( json_object.dialect === localized_other )
     {
       $("#dialect_other_display").show();
     }
@@ -98,26 +96,26 @@ View.updateView = function(json_object, localized_yes, localized_other) {
     //Recording Information:
     $('#microphone').val( json_object.microphone );
     $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
-    if ( $('#microphone').val() === localized_other )
+    if ( json_object.microphone === localized_other )
     {
       $("#microphone_other_display").show();
     }
 
     $('#recording_location').val( json_object.recording_location );
     $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
-    if ( $('#recording_location').val() === localized_other )
+    if ( json_object.recording_location === localized_other )
     {
       $("#recording_location_other_display").show();
     }
     $('#background_noise').val( json_object.background_noise );
-    if ( $('#background_noise').val() === localized_yes )
+    if ( json_object.background_noise === localized_yes )
     {
       $("#background_noise_display").show();
     }
     $('#noise_volume').val( json_object.noise_volume );
     $('#noise_type').val( json_object.noise_type );
     $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
-    if ( $('#noise_type').val() === localized_other )
+    if ( json_object.noise_type === localized_other )
     {
       $("#noise_type_other_display").show();
     }
@@ -273,7 +271,7 @@ View.prototype.init = function () {
     }
 
     showDivBasedonValue('#native_speaker', self.localized_no, '#first_language_display', false);
-    showDivBasedonValue('#native_speaker', self.localized_yes, '#outer_dialect_display', false);
+    showDivBasedonValue('#native_speaker', self.localized_yes, '#dialect_display', false);
     showDivBasedonValue('#first_language', self.localized_other, '#first_language_other_display', false);
     // true means hide if there is something in the username field
     showDivBasedonValue('#username', true, '#anonymous_instructions_display', false); 
@@ -294,6 +292,10 @@ View.prototype.init = function () {
     * contents of the sub-dialect selection list based on the value the dialect
     * selection list.
     *
+    * Read.md contains the entire list of possbile subdialects for a language,
+    * this function filters those contents based on what is contained in dialect
+    * so that user only sees filtered results
+    *
     * see https://stackoverflow.com/questions/10570904/use-jquery-to-change-a-second-select-list-based-on-the-first-select-list-option
     * Store all #subdialect's options in a variable, filter them according 
     * to the value of the chosen option in #dialect, and set them using 
@@ -308,6 +310,7 @@ View.prototype.init = function () {
 
     $select1.on( 'change', function() {
         var filter =  $result.filter( '[name="' + this.value + '"]' );
+        //filter.add ( $result.filter( 'selected value' ) );
         var temp = filter.val();
         if ( filter.length ) {
           $("#sub_dialect_display").show();
@@ -369,6 +372,10 @@ View.prototype.init = function () {
         var json_object = self.profile.getProfileFromBrowserStorage();
         if (json_object) {
           View.updateView(json_object, self.localized_yes, self.localized_other);  
+        } else {
+          $("#first_language_display").hide();
+          $("#dialect_display").hide();
+          $("#sub_dialect_display").hide();
         }
         resolve("OK");  // TODO not waiting for updateView
     }); // promise
