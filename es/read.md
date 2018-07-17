@@ -210,8 +210,8 @@ browser_support:
 # localstorage_message - <br> or \n line breaks don't work...
 alert_message:
   localstorage_message: >
-    No se puede conectar al servidor.\n
-    Envío guardado en el almacenamiento del navegador.\n
+    No se puede conectar al servidor.
+    Envío guardado en el almacenamiento del navegador.
     Se cargará con la siguiente presentación realizada con conexión al servidor.
   browsercontains_message: >
     El almacenamiento de su navegador contiene
