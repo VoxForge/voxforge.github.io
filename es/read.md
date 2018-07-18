@@ -220,7 +220,7 @@ alert_message:
   serviceworker: serviceworker
   webworker: webworker
   submission_singular: sumisión
-  submission_plural: sumisión
+  submission_plural: sumisiones
   audio_too_loud: >
     ¡Tu grabación es demasiado fuerte! <br>
     Por favor reduzca el volumen de su micrófono, <br>
