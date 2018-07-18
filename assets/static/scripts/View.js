@@ -372,11 +372,7 @@ View.prototype.init = function () {
         var json_object = self.profile.getProfileFromBrowserStorage();
         if (json_object) {
           View.updateView(json_object, self.localized_yes, self.localized_other);  
-        } else {
-          $("#first_language_display").hide();
-          $("#dialect_display").hide();
-          $("#sub_dialect_display").hide();
-        }
+        } 
         resolve("OK");  // TODO not waiting for updateView
     }); // promise
 }

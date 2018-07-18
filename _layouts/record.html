@@ -102,8 +102,7 @@
             {% endfor %}
           </select>
 
-          <!-- <div style="display: none;"  id="first_language_display"> -->
-          <div id="first_language_display">
+          <div style="display: none;"  id="first_language_display"> 
             <label style="display: inline;"  for="first_language">{{ page.first_language.label | default: default.first_language.label }}</label>
             <a href="#first_language_popupInfo" data-rel="popup" data-transition="pop" 
                class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
@@ -125,7 +124,7 @@
             </div><!--other-->
           </div><!--first_language_display-->
 
-          <div id=dialect_display>
+          <div style="display: none;"  id="dialect_display"> 
             <label style="display: inline;"  for="dialect">{{ page.dialect.label | default: default.dialect.label}}</label>
             <a href="#dialect_popupInfo" data-rel="popup" data-transition="pop" 
               class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
@@ -163,8 +162,7 @@
             </div><!--other-->
           </div> <!-- dialect_display -->
 
-          <!-- <div style="display: none;" id=sub_dialect_display> -->
-          <div id=sub_dialect_display>
+          <div style="display: none;" id=sub_dialect_display>
             <label style="display: inline;"  for="sub_dialect">{{ page.sub_dialect.label }}</label>
             <a href="#sub_dialect_popupInfo" data-rel="popup" data-transition="pop" 
                class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
