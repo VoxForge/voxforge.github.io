@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Acoustic Model Creation
-permalink: en/acoustic-model-creation
 redirect_from: /home/docs/acoustic-model-creation
 ---
 

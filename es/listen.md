@@ -1,13 +1,14 @@
 ---
-layout: default
+layout: listen
 menu: Escucha
-title: Escuchar audio
+title: Escuchar Discurso Archivo
 ref: listen
 lang: es
 weight: 3
 ---
+Desde [Sitio web del repositorio de VoxForge]:
 
-Escuchar Discurso Archivo - español
-===================================
 
-[VoxForge repository website](http://www.repository.voxforge1.org/downloads/es/Trunk/Audio/Original/48kHz_16bit/)<br>
+
+
+[Sitio web del repositorio de VoxForge]: https://repository.voxforge1.org/downloads/{{ page.lang | default: default.lang }}/Trunk/Audio/Original/

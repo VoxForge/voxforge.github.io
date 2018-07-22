@@ -10,14 +10,14 @@ redirect_from: /home/downloads
 *   **English**
     *   Acoustic Models:
         *   HTK/Julius
-            *   [Releases](http://www.repository.voxforge1.org/downloads/Main/Tags/Releases/)
-            *   [Nightly Builds](http://www.repository.voxforge1.org/downloads/Nightly_Builds/)
-        *   [Sphinx](http://www.repository.voxforge1.org/downloads/Main/Trunk/AcousticModels/Sphinx/)
+            *   [Releases](https://repository.voxforge1.org/downloads/Main/Tags/Releases/)
+            *   [Nightly Builds](https://repository.voxforge1.org/downloads/Nightly_Builds/)
+        *   [Sphinx](https://repository.voxforge1.org/downloads/Main/Trunk/AcousticModels/Sphinx/)
     *   Speech Audio File Repository:
-        *   <span class="verticalMenu"></span>[Speech Corpus](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/)
-            *   [Audio](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/)
-            *   [Lexicon](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Lexicon/)
-            *   [Prompts](http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Prompts/)
+        *   <span class="verticalMenu"></span>[Speech Corpus](https://repository.voxforge1.org/downloads/SpeechCorpus/Trunk/)
+            *   [Audio](https://repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/)
+            *   [Lexicon](https://repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Lexicon/)
+            *   [Prompts](https://repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Prompts/)
 
 
 ## QuickStart download
@@ -30,7 +30,7 @@ These downloads contain everything you need to get Julius working:
     *   VoxForge Acoustic Model files; and
     *   VoxForge sample Grammar files.
 
-Click the link for your operating system for the and follow the instructions in the enclosed README file.  You can also try one of the [Nightly Builds](http://www.repository.voxforge1.org/downloads/Nightly_Builds/) for the most up to date version of the Acoustic Models.
+Click the link for your operating system for the and follow the instructions in the enclosed README file.  You can also try one of the [Nightly Builds](https://repository.voxforge1.org/downloads/Nightly_Builds/) for the most up to date version of the Acoustic Models.
 
  
 

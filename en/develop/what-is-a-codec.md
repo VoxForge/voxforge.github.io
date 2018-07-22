@@ -1,7 +1,6 @@
 ---
 layout: default
 title: What is a Codec?
-permalink: en/what-is-a-codec
 redirect_from: /home/docs/faq/faq/what-is-a-codec
 ---
 

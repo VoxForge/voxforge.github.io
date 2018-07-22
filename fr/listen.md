@@ -1,26 +1,15 @@
 ---
-layout: page
+layout: listen
 title: Écoutez audio
 menu: Écoutez
 weight: 4
 ref: listen
 lang: fr
 ---
-[VoxForge repository website](http://www.repository.voxforge1.org/downloads/fr/Trunk/Audio/Original/48kHz_16bit/)<br>
+De [site de dépôt VoxForge]:
 
-<!--
-<html>
-  <head>
-        <title>Listen to Speech Audio</title>
-  </head>
-  <body>
 
-<br>
-        <iframe sandbox src="http://www.repository.voxforge1.org/downloads/fr/Trunk/Audio/Original/48kHz_16bit/" width="500" height="800">
-            Click here [VoxForge repository website](http://www.repository.voxforge1.org/downloads/fr/Trunk/Audio/Original/) to listen to audio
-        </iframe>
-   </body>
-</html>
--->
 
+
+[site de dépôt VoxForge]: https://repository.voxforge1.org/downloads/{{ page.lang | default: default.lang }}/Trunk/Audio/Original/
 

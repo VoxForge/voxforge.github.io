@@ -1,7 +1,6 @@
 ---
 layout: default
 title: What are Sampling Rate and Bits per Sample?
-permalink: en/what-are-sampling-rate-and-bits-per-sample
 redirect_from: /home/docs/faq/faq/what-are-sampling-rate-and-bits-per-sample
 ---
 

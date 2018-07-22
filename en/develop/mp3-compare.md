@@ -2,7 +2,6 @@
 layout: default
 title: Convert Audio to MP3 and Compare Results with Original Wav
 lang: en
-permalink: en/dev/mp3-compare
 redirect_from: /home/dev/mp3-compare
 ---
 

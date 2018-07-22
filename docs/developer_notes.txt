@@ -1,3 +1,5 @@
+Notes:
+
 1. app.js
 
 debugging service workers: chrome://serviceworker-internals

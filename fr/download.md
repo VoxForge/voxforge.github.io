@@ -13,8 +13,8 @@ Il n'y a pas encore de modèle acoustique pour le Français... Nous avons besoin
 
 Cliquez ici pour [une autre contribution](/fr/read).
 
-*   [Corpus de parole](http://www.repository.voxforge1.org/downloads/fr/Trunk/)
-    *   [L'audio](http://www.repository.voxforge1.org/downloads/fr/Trunk/Audio/)
-    *   [Lexique](http://www.repository.voxforge1.org/downloads/fr/Trunk/Lexicon/)
+*   [Corpus de parole](https://repository.voxforge1.org/downloads/fr/Trunk/)
+    *   [L'audio](https://repository.voxforge1.org/downloads/fr/Trunk/Audio/)
+    *   [Lexique](https://repository.voxforge1.org/downloads/fr/Trunk/Lexicon/)
 
 
