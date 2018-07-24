@@ -341,6 +341,12 @@ Profile.prototype.setDebugValues = function (obj) {
 }
 
 /**
+*/
+Profile.prototype.clearDebugValues = function () {
+    this.debug = {};
+}
+
+/**
 * get translated license text from language specific Read.md file, or default
 * contained in _data/read/default.yaml
 *

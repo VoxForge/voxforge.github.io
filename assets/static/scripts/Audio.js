@@ -255,7 +255,7 @@ Audio.prototype.record = function (prompt_id) {
         // TODO update Prompts.json with gain level for each submission, 
         // since adjustments are made dynamically
 
-        // chainging gain also increases noise in what were silence portions
+        // changing gain also increases noise in what were silence portions
         // and this might mess up VAD
 
         // tells user that audio is too loud or soft, adjusts
@@ -264,6 +264,7 @@ Audio.prototype.record = function (prompt_id) {
 
     */
     function adjustVolume(obj) {
+        // TODO use constant for 3.4
         if (Math.abs(obj.gain) < 3.4 ) {
             var newgain;
             if (obj.clipping) {

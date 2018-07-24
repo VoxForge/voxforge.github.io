@@ -30,7 +30,6 @@ function Controller(prompts,
                     appversion,
                     pageVariables)
 {
-
     this.prompts  = prompts; 
     this.profile  = profile; 
     this.view  = view; 
@@ -38,8 +37,6 @@ function Controller(prompts,
     this.parms  = parms; 
     this.appversion  = appversion; 
     this.pageVariables = pageVariables;
-
-    this.updatedDeviceEventBufferSize = false;
 
     //  recording timeout object
     this.rec_timeout_obj;
@@ -188,14 +185,6 @@ Controller.prototype.start = function () {
           } else { // allows recording even though waveform display not completed
               self.view.setRSButtonDisplay(true, false); 
           }
-          // deviceEventBufferSize only available after first recording
-          if ( ! self.updatedDeviceEventBufferSize ) {
-            self.profile.setAudioPropertiesAndContraints( 
-                self.audio.getAudioPropertiesAndContraints()
-            );
-            self.profile.setDebugValues( self.audio.getDebugValues() );
-            self.updatedDeviceEventBufferSize = true;
-          }
         },
 
         onMidpromptsrecorded: function() { 
@@ -250,6 +239,19 @@ Controller.prototype.start = function () {
           self.view.hideAudioPlayer();
           self.view.hidePlayButtons();
           self.view.setRSUButtonDisplay(false, false, false);
+
+          // audio.device_event_buffer_size only available after first recording
+          self.profile.setAudioPropertiesAndContraints( 
+              self.audio.getAudioPropertiesAndContraints()
+          );
+
+          // user may change debug setting just before upload, so only
+          // get audio debug values at last recorded audio prompt
+          if ( view.getDebugStatus() ) {
+              self.profile.setDebugValues( self.audio.getDebugValues() );
+          } else {
+              self.profile.clearDebugValues();
+          }
           
           // make sure all promises complete before trying to gather audio
           // from shadow DOM before upload, otherwise will miss some audio 

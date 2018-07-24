@@ -182,10 +182,10 @@ View.getUserProfileInfo = function(localized_yes, localized_other, localized_ano
         profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
     }
 
-    profile_hash["ua_string"] = $("#ua_string").val();
+    profile_hash["ua_string"] = $('#ua_string').is(":checked") ? true : false;
     // see http://www.whatsmyua.info/
     // https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
-    if ($('#ua_string').val() === localized_yes) {
+    if ( $('#ua_string').is(":checked") ) {
       profile_hash["user_agent_string"] = platform.ua;
       // attempts to parse the ua string; use empty string if cannot parse
       profile_hash["os_family"] = platform.os.family || '';
@@ -533,6 +533,13 @@ View.prototype.hidePromptDisplay = function () {
 */
 View.prototype.clearSoundClips = function () {
     $( '.sound-clips' ).empty();
+}
+
+/**
+* get debug value
+*/
+View.prototype.getDebugStatus = function () {
+    return $('#debug').is(":checked");
 }
 
 /**

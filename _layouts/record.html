@@ -19,45 +19,45 @@
     <div class="wrapper">
       <section class="top-display">
 
-      <div id="settings" 
-           align="right">
+         <div id="settings" 
+             align="right">
 
-          <a href="#popupSettings"  
-             data-rel="popup" 
-             data-transition="pop"
-             data-inline="true">
-              <svg
-                 viewBox="0 -256 1792 1792"
-                 width="20"
-                 height="20">
-                <g
-                   transform="matrix(1,0,0,-1,121.49153,1285.4237)"
-                   id="g3027">
-                  <path
-                     d="m 1024,640 q 0,106 -75,181 -75,75 -181,75 -106,0 -181,-75 -75,-75 -75,-181 0,-106 75,-181 75,-75 181,-75 106,0 181,75 75,75 75,181 z m 512,109 V 527 q 0,-12 -8,-23 -8,-11 -20,-13 l -185,-28 q -19,-54 -39,-91 35,-50 107,-138 10,-12 10,-25 0,-13 -9,-23 -27,-37 -99,-108 -72,-71 -94,-71 -12,0 -26,9 l -138,108 q -44,-23 -91,-38 -16,-136 -29,-186 -7,-28 -36,-28 H 657 q -14,0 -24.5,8.5 Q 622,-111 621,-98 L 593,86 q -49,16 -90,37 L 362,16 Q 352,7 337,7 323,7 312,18 186,132 147,186 q -7,10 -7,23 0,12 8,23 15,21 51,66.5 36,45.5 54,70.5 -27,50 -41,99 L 29,495 Q 16,497 8,507.5 0,518 0,531 v 222 q 0,12 8,23 8,11 19,13 l 186,28 q 14,46 39,92 -40,57 -107,138 -10,12 -10,24 0,10 9,23 26,36 98.5,107.5 72.5,71.5 94.5,71.5 13,0 26,-10 l 138,-107 q 44,23 91,38 16,136 29,186 7,28 36,28 h 222 q 14,0 24.5,-8.5 Q 914,1391 915,1378 l 28,-184 q 49,-16 90,-37 l 142,107 q 9,9 24,9 13,0 25,-10 129,-119 165,-170 7,-8 7,-22 0,-12 -8,-23 -15,-21 -51,-66.5 -36,-45.5 -54,-70.5 26,-50 41,-98 l 183,-28 q 13,-2 21,-12.5 8,-10.5 8,-23.5 z"
-                     id="path3029"
-                     inkscape:connector-curvature="0"
-                     style="fill:currentColor" />
-                </g>
-              </svg>
-          </a>
-          <div data-role="popup" 
-               id="popupSettings" 
-               style="padding:10px 20px;">
-            <fieldset data-role="controlgroup">
-              <legend>Settings:</legend>
-              <input type="checkbox" name="UA" id="UA">
-              <label for="UA">include User Agent in Submission</label>
-              <input type="checkbox" name="Debug" id="Debug">
-              <label for="Debug">include Debug Information with Submission</label>
-            </fieldset>   
-          </div>
-
-      </div> <!-- settings -->
+            <a href="#popupSettings"  
+               data-rel="popup" 
+               data-transition="pop"
+               data-inline="true"
+               title="Settings">
+                <svg
+                   viewBox="0 -256 1792 1792"
+                   width="25"
+                   height="25">
+                  <g
+                     transform="matrix(1,0,0,-1,121.49153,1285.4237)"
+                     id="g3027">
+                    <path
+                       d="m 1024,640 q 0,106 -75,181 -75,75 -181,75 -106,0 -181,-75 -75,-75 -75,-181 0,-106 75,-181 75,-75 181,-75 106,0 181,75 75,75 75,181 z m 512,109 V 527 q 0,-12 -8,-23 -8,-11 -20,-13 l -185,-28 q -19,-54 -39,-91 35,-50 107,-138 10,-12 10,-25 0,-13 -9,-23 -27,-37 -99,-108 -72,-71 -94,-71 -12,0 -26,9 l -138,108 q -44,-23 -91,-38 -16,-136 -29,-186 -7,-28 -36,-28 H 657 q -14,0 -24.5,8.5 Q 622,-111 621,-98 L 593,86 q -49,16 -90,37 L 362,16 Q 352,7 337,7 323,7 312,18 186,132 147,186 q -7,10 -7,23 0,12 8,23 15,21 51,66.5 36,45.5 54,70.5 -27,50 -41,99 L 29,495 Q 16,497 8,507.5 0,518 0,531 v 222 q 0,12 8,23 8,11 19,13 l 186,28 q 14,46 39,92 -40,57 -107,138 -10,12 -10,24 0,10 9,23 26,36 98.5,107.5 72.5,71.5 94.5,71.5 13,0 26,-10 l 138,-107 q 44,23 91,38 16,136 29,186 7,28 36,28 h 222 q 14,0 24.5,-8.5 Q 914,1391 915,1378 l 28,-184 q 49,-16 90,-37 l 142,107 q 9,9 24,9 13,0 25,-10 129,-119 165,-170 7,-8 7,-22 0,-12 -8,-23 -15,-21 -51,-66.5 -36,-45.5 -54,-70.5 26,-50 41,-98 l 183,-28 q 13,-2 21,-12.5 8,-10.5 8,-23.5 z"
+                       id="path3029"
+                       inkscape:connector-curvature="0"
+                       style="fill:currentColor" />
+                  </g>
+                </svg>
+            </a>
+            <div id="popupSettings" 
+                 data-role="popup" 
+                 style="padding:10px 20px;">
+              <fieldset data-role="controlgroup">
+                <legend>Settings:</legend>
+                <input type="checkbox" name="ua_string" id="ua_string">
+                <label for="ua_string">include User Agent in Submission</label>
+                <input type="checkbox" name="debug" id="debug">
+                <label for="debug">include Debug Information with Submission</label>
+              </fieldset>   
+            </div> <!-- popupSettings -->
+        </div> <!-- settings -->
 
       <header>
         <h1>{{ page.title  | default: default.title }}</h1>
- 
+
       </header>
 
       <div id="upload_status_display" border-style: solid;>
@@ -358,29 +358,7 @@
               {% endfor %}
               </select>
 
-           <label  style="display: inline;"  for="ua_string"><small>
-                   {{ page.ua_string.label | default: default.ua_string.label }}</small></label>
-           <a href="#ua_string_popupInfo" data-rel="popup" data-transition="pop" 
-             class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
-             title="{{ page.ua_string.popup.hover_text | default: default.ua_string.popup.hover_text}}">
-           </a>
-           <div data-role="popup" id="ua_string_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
-            <p><a href="{{ page.ua_string.popup.link | default: default.ua_string.popup.link}}" 
-                  target="_blank">{{ page.ua_string.label | default: default.ua_string.label}}</a>: 
-                  {{ page.ua_string.popup.text | default: default.ua_string.popup.text }}</p>
-           </div>
-           <select type="text" id="ua_string">
-            <option selected value="{{ page.ua_string.selection_default.value | default: default.ua_string.selection_default.value}}">
-                    {{ page.ua_string.selection_default.item | default: default.ua_string.selection_default.item}}</option>
-            {% if page.ua_string.selection %}
-              {% assign ua_string_list = page.ua_string.selection %} 
-            {% else %}
-              {% assign ua_string_list = default.ua_string.selection %}
-            {% endif %}
-            {% for item in ua_string_list %}
-              <option value="{{ item.value }}">{{ item.option }}</option>
-            {% endfor %}
-            </select>
+
 
 	       </div> <!-- recording_information_display -->
 	     </div><!-- profile -->

@@ -236,6 +236,7 @@ license:
         - You should have received a copy of the GNU General Public License
       text_last: along with this program.  If not, see
 
+# TODO no longer used
 ua_string:
   label: User Agent String
   popup:
