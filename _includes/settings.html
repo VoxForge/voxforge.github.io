@@ -1,3 +1,6 @@
+<!--### settings ###-->
+<!--### needs default Jekyll variable to be defined -->
+
 <div id="settings" 
    align="right">
 
@@ -21,6 +24,7 @@
         </g>
       </svg>
   </a>
+
   <div id="popupSettings" 
        data-role="popup" 
        style="padding:10px 20px;">
@@ -30,6 +34,22 @@
       <label for="ua_string">include User Agent in Submission</label>
       <input type="checkbox" name="debug" id="debug">
       <label for="debug">include Debug Information with Submission</label>
+
+      {{ page.license.label | default: default.license.label }}
+      <select type="text" id="license">
+        <option selected value="{{ page.license.selection_default.value | default: default.license.selection_default.value}}">
+              {{ page.license.selection_default.item | default: default.license.selection_default.item}}</option>
+        {% if page.license.selection %}
+          {% assign license_list = page.license.selection %} 
+        {% else %}
+          {% assign license_list = default.license.selection %}
+        {% endif %}
+        {% for item in license_list %}
+          <option value="{{ item.value }}">{{ item.option }}</option>
+        {% endfor %}
+      </select>
+
     </fieldset>   
   </div> <!-- popupSettings -->
+
 </div> <!-- settings -->

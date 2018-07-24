@@ -169,7 +169,7 @@ license:
       identiques. <br>
       <b>GPLv3 GNU General Public License</b> similar to CC BY-SA, but made for software... used by
       VoxForge 1.0 corpus.
-  selection_default: { value: 'CC0',  item: 'CC0 - Creative Commons - Pas de droit d’auteur (conseillé)' }
+  selection_default: { value: 'CC0',  item: 'CC0 - Creative Commons - Pas de droit d’auteur (défaut)' }
   selection:
     - { value: 'CC_BY',     option: 'CC BY - Creative Commons - Attribution' }
     - { value: 'CC_BY-SA',  option: 'CC BY-SA -  Creative Commons - Attribution - Partage dans les Mêmes Conditions' }

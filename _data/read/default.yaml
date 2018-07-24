@@ -147,11 +147,11 @@ license:
       identical terms.  <br>
       <b>GPLv3 GNU General Public License</b> similar to CC BY-SA, but made for software... used by
       VoxForge 1.0 corpus.
-  selection_default: { value: 'CC0',  item: 'CC0 1.0 - Creative Commons - No rights Reserved (recommended)' }
+  selection_default: { value: 'CC0',  item: 'CC0 - Creative Commons 1.0 - No rights Reserved (default)' }
   selection:
-    - { value: 'CC_BY',     option: 'CC BY 4.0 - Creative Commons - Attribution' }
-    - { value: 'CC_BY-SA',  option: 'CC BY-SA 4.0 - Creative Commons Attribution-ShareAlike' }
-    - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License' }
+    - { value: 'CC_BY',     option: 'CC BY - Creative Commons - Attribution 4.0' }
+    - { value: 'CC_BY-SA',  option: 'CC BY-SA - Creative Commons Attribution-ShareAlike 4.0' }
+    - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License version 3' }
   full_license:
     CC0:
       title: CC0 1.0 - Creative Commons CC0 1.0 Universal Public Domain Dedication

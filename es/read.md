@@ -150,7 +150,7 @@ license:
       CC BY 4.0 - Creative Commons Reconocimiento;
       CC BY-SA 4.0 - Creative Commons Reconocimiento-Compartir por igual;
       GPLv3 - Licencia pública general de GNU.
-  selection_default: { value: 'CC0',  item: 'CC0 1.0 - Creative Commons - No hay derechos reservados (recomendado)' }
+  selection_default: { value: 'CC0',  item: 'CC0 1.0 - Creative Commons - No hay derechos reservados (defecto)' }
   selection:
     - { value: 'CC_BY',     option: 'CC BY 4.0 - Creative Commons - Attribution' }
     - { value: 'CC_BY-SA',  option: 'CC BY-SA 4.0 - Creative Commons Reconocimiento-Compartir por igual' }

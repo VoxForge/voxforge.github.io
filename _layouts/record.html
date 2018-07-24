@@ -18,18 +18,16 @@
   <body>
     <div class="wrapper">
       <section class="top-display">
+      {% assign default = site.data.read.default %}
 
       {% include settings.html %}
 
       <header>
         <h1>{{ page.title  | default: default.title }}</h1>
-
       </header>
 
       <div id="upload_status_display" border-style: solid;>
       </div>
-
-      {% assign default = site.data.read.default %}
 
       <button style="display: none;" 
               id="profile-button-display" 
