@@ -1,0 +1,151 @@
+<!--#########################################################################-->
+<button style="background: #cedfe8;" onclick="view.speakerCharacteristics()">{{ page.speaker_characteristics  | default: default.speaker_characteristics }}</button>
+<div style="display: none;" id="speaker_characteristics_display">
+
+    <label for="gender">{{ page.gender.label | default: default.gender.label }}</label>         
+    <select name="gender" id="gender">
+      <option selected value="{{ page.default_value | default: default.default_value }}">
+          {{ page.please_select | default: default.please_select }}
+      </option>
+      {% if page.gender.selection  %}
+        {% assign gender_list = page.gender.selection %} 
+      {% else %}
+        {% assign gender_list = default.gender.selection %}
+      {% endif %}
+      {% for item in gender_list %}
+        <option value="{{ item }}">{{ item }}</option>    
+      {% endfor %}
+    </select>
+
+    <label for="age">{{ page.age.label | default: default.age.label}}</label>
+    <select type="text" id="age">
+      <option selected value="{{ page.default_value | default: default.default_value }}">
+          {{ page.please_select  | default: default.please_select }}
+      </option>
+      {% if page.age.selection  %}
+        {% assign age_list = page.age.selection %} 
+      {% else %}
+        {% assign age_list = default.age.selection %}
+      {% endif %}
+      {% for item in age_list %}
+        <option old_value="{{ item.old_value }}" value="{{ item.value }}">{{ item.value }}</option> 
+      {% endfor %}
+
+    </select>
+
+    <label style="display: inline;"  for="native_speaker">
+       {{ page.native_speaker.label | default: default.native_speaker.label}}</label>
+    <a href="#native_speaker_popupInfo" data-rel="popup" data-transition="pop" 
+       class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
+       title="{{ page.native_speaker.popup_text | default: default.native_speaker.popup_text}}">
+    </a>
+    <div data-role="popup" id="native_speaker_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
+      <p><a href="{{ page.native_speaker.popup_link | default: default.native_speaker.popup_link}}" 
+            target="_blank">{{ page.native_speaker.label | default: default.native_speaker.label}}</a>: 
+            {{ page.native_speaker.popup_text | default: default.native_speaker.popup_text}}</p>
+    </div>
+    <select type="text" id="native_speaker">
+      <option selected value="{{ page.default_value | default: default.default_value }}">
+          {{ page.please_select | default: default.please_select}}
+      </option>
+      {% if page.native_speaker.selection  %}
+        {% assign native_speaker_list = page.native_speaker.selection %} 
+      {% else %}
+        {% assign native_speaker_list = default.native_speaker.selection %}
+      {% endif %}
+      {% for item in native_speaker_list %}
+        <option value="{{ item }}">{{ item }}</option>
+      {% endfor %}
+    </select>
+
+    <div style="display: none;"  id="first_language_display"> 
+      <label style="display: inline;"  for="first_language">{{ page.first_language.label | default: default.first_language.label }}</label>
+      <a href="#first_language_popupInfo" data-rel="popup" data-transition="pop" 
+         class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
+         title="{{ page.first_language.popup_text | default: default.first_language.popup_text}}">
+      </a>
+      <div data-role="popup" id="first_language_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
+        <p><a href="{{ page.first_language.popup_link | default: default.first_language.popup_link}}" 
+              target="_blank">{{ page.first_language.label | default: default.first_language.label}}</a>: 
+              {{ page.first_language.popup_text | default: default.first_language.popup_text}}</p>
+      </div>
+      <div class="other">
+          <select type="text" id="first_language">
+          </select>
+          <div style="display: none;"  id="first_language_other_display">
+            <input id="first_language_other" 
+               placeholder="{{ page.first_language.other_label | default: default.first_language.other_label }}" value="" 
+               type="text">
+          </div><!--first_language_other_display-->
+      </div><!--other-->
+    </div><!--first_language_display-->
+
+    <div style="display: none;"  id="dialect_display"> 
+      <label style="display: inline;"  for="dialect">{{ page.dialect.label | default: default.dialect.label}}</label>
+      <a href="#dialect_popupInfo" data-rel="popup" data-transition="pop" 
+        class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
+        title="{{ page.dialect.popup_text | default: default.dialect.popup_text}}">
+      </a>
+      <div data-role="popup" id="dialect_popupInfo" class="ui-content" data-theme="a" style="max-width:350px;">
+        <p><a href="{{ page.dialect.popup_link | default: default.dialect.popup_link}}" 
+              target="_blank">{{ page.dialect.label | default: default.dialect.label}}</a>: 
+              {{ page.dialect.popup_text | default: default.dialect.popup_text}}</p>
+      </div>
+
+      <div class="other">
+        <select id="dialect">
+          <option selected value="{{ page.default_value | default: default.default_value }}">
+              {{ page.please_select | default: default.please_select}}
+          </option>
+          {% if page.dialect.selection %}
+            {% assign dialect_list = page.dialect.selection %} 
+          {% else %}
+            {% assign dialect_list = default.dialect.selection %}
+          {% endif %}
+          {% for region in dialect_list %}
+            <optgroup label=" {{ region[0] }}">
+            {% for dialect in region[1] %}
+              <option value="{{ dialect }}">{{ dialect }}</option>
+            {% endfor %}
+          {% endfor %}
+        </select>
+
+        <div style="display: none;"  id="dialect_other_display">
+          <input id="dialect_other" 
+             placeholder="{{ page.dialect.other_label | default: default.dialect.other_label }}" value="" 
+             type="text">
+        </div><!-- dialect_other_display -->
+      </div><!--other-->
+    </div> <!-- dialect_display -->
+
+    <div style="display: none;" id=sub_dialect_display>
+      <label style="display: inline;"  for="sub_dialect">{{ page.sub_dialect.label }}</label>
+      <a href="#sub_dialect_popupInfo" data-rel="popup" data-transition="pop" 
+         class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ui-btn-inline ui-icon-info ui-btn-icon-notext" 
+         title="{{ page.popup_text.label }}">
+      </a>
+      <div data-role="popup" id="sub_dialect_popupInfo" 
+           class="ui-content" data-theme="a" style="max-width:350px;">
+        <p><a href="{{ page.sub_dialect.popup_link }}" 
+           target="_blank">{{ page.sub_dialect.label }}</a>: {{ page.sub_dialect.popup_text }}</p>
+      </div>
+      <div class="other">
+        <select id="sub_dialect">
+           <!-- firefox does not display selected correctly... Edge does... -->
+           <option selected value="{{ page.default_value | default: default.default_value }}">
+              {{ page.please_select | default: default.please_select }}
+           </option>
+           {% for dialect in page.sub_dialect.selection_dialect %}
+             {% for region in page.sub_dialect.selection[dialect] %}
+               <optgroup name="{{ dialect }}" label=" {{ region[0] }}">
+               {% for dialect in region[1] %}
+                 <option value="{{ dialect }}">{{ dialect }}</option>
+               {% endfor %}
+             {% endfor %}
+           {% endfor %}
+        </select>    
+      </div><!--other-->      
+    </div><!--sub_dialect_display -->
+
+
+</div>  <!--speaker_characteristics_display-->
