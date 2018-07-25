@@ -544,7 +544,7 @@ View.prototype.clearSoundClips = function () {
 /**
 * get debug value
 */
-View.prototype.getDebugStatus = function () {
+View.prototype.debugChecked = function () {
     return $('#debug').is(":checked");
 }
 

@@ -71,10 +71,16 @@ Controller.prototype.start = function () {
           fsm.recordingtimeout();
         }, self.parms.recording_timeout);
 
-        promise_list[self.promise_index++] = 
-              self.audio.record( self.prompts.getPromptId() )
-              .then( self.view.displayAudioPlayer.bind(self.view) )
-              .then( self.prompts.setAudioCharacteristics.bind(self.prompts) );
+        if ( view.debugChecked() ) {
+          promise_list[self.promise_index++] = 
+                self.audio.record( self.prompts.getPromptId() )
+                .then( self.view.displayAudioPlayer.bind(self.view) )
+                .then( self.prompts.setAudioCharacteristics.bind(self.prompts) );
+        } else {
+          promise_list[self.promise_index++] = 
+                self.audio.record( self.prompts.getPromptId() )
+                .then( self.view.displayAudioPlayer.bind(self.view) )
+        }
     }
 
     /**
@@ -247,7 +253,7 @@ Controller.prototype.start = function () {
 
           // user may change debug setting just before upload, so only
           // get audio debug values at last recorded audio prompt
-          if ( view.getDebugStatus() ) {
+          if ( view.debugChecked() ) {
               self.profile.setDebugValues( self.audio.getDebugValues() );
           } else {
               self.profile.clearDebugValues();
