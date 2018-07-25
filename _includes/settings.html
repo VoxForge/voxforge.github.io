@@ -30,8 +30,13 @@
        style="padding:10px 20px;">
     <fieldset data-role="controlgroup">
       <legend>Settings:</legend>
+      <a href="{{ page.ua_string.link | default: default.ua_string.link}}"
+         title="{{ page.ua_string.hover_text | default: default.ua_string.hover_text}}"> 
+          {{ page.ua_string.label | default: default.ua_string.label}}
+      </a>
       <input type="checkbox" name="ua_string" id="ua_string">
-      <label for="ua_string">include User Agent in Submission</label>
+      <label for="ua_string">include User Agent String in Submission</label>
+
       <input type="checkbox" name="debug" id="debug">
       <label for="debug">include Debug Information with Submission</label>
 

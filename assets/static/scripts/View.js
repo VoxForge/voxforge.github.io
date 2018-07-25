@@ -120,7 +120,13 @@ View.updateView = function(json_object, localized_yes, localized_other) {
       $("#noise_type_other_display").show();
     }
     $('#license').val( json_object.license );
-    $('#ua_string').val( json_object.ua_string );
+
+    if ( json_object.ua_string ) {
+      $('#ua_string').attr('checked','checked');
+    }
+    if ( json_object.debug ) {
+      $('#debug').attr('checked','checked');
+    }
 }
 
 /**

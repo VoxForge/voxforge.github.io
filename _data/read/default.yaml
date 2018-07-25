@@ -239,6 +239,13 @@ license:
 # TODO no longer used
 ua_string:
   label: User Agent String
+  link: http://www.useragentstring.com
+  hover_text:  > 
+    When your web browser makes a request to a website, it also sends a User 
+    Agent string.  This string contains information about your browser name, 
+    operating system, device type, etc.\n
+    The VoxForge app collects this information to help troubleshoot and
+    determine which devices work best with this app.
   popup:
     title: Collect User Agent String Information
     link: http://www.useragentstring.com
