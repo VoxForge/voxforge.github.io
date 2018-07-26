@@ -79,7 +79,9 @@ Controller.prototype.start = function () {
         } else {
           promise_list[self.promise_index++] = 
                 self.audio.record( self.prompts.getPromptId() )
-                .then( self.view.displayAudioPlayer.bind(self.view) )
+                .then( self.view.displayAudioPlayer.bind(self.view) );
+
+          self.prompts.clearAudioCharacteristics.bind(self.prompts);
         }
     }
 
