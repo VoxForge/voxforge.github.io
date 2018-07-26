@@ -15,6 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+* common code for service worker and web worker uploading of submission
+*/
+
 'use strict';
 
 // cannot put importScripts here even though code is being shared by 

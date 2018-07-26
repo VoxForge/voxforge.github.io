@@ -188,7 +188,6 @@ View.getUserProfileInfo = function(localized_yes, localized_other, localized_ano
         profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
     }
 
-    //profile_hash["ua_string"] = $('#ua_string').is(":checked") ? true : false;
     // see http://www.whatsmyua.info/
     // https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
     if ( $('#ua_string').is(":checked") ) {

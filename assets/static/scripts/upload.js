@@ -137,7 +137,7 @@ function upload( prompts,
 
         // need to copy to blobs here (rather than in web worker) because if pass 
         // them as references to ZipWorker, they will be overwritten when page refreshes
-        // and not be accessible withing web worker
+        // and not be accessible within web worker
         zip_worker.postMessage({
           command: 'zipAndSave',
 
@@ -175,12 +175,10 @@ function upload( prompts,
       }); // Promise
     } // callWorker2createZipFile
 
-
-
     /** 
     * worker Processing - depending on browser support, use service worker and 
     * background sync to upload submission, if not available, use a web
-    * worker that uploads in background; or perform a synchronous upload
+    * worker that uploads in background; or perform asynchronous upload
     * if neither is supported.
     */
     function uploadZippedSubmission() {
@@ -240,7 +238,7 @@ function upload( prompts,
       */
       function serviceWorkerUpload(swRegistration) {
         // for processing of return values from service worker, see 
-        // service worker event above (i.e. navigator.serviceWorker.addEventListener... )
+        // service worker event below (i.e. navigator.serviceWorker.addEventListener... )
         swRegistration.sync.register('voxforgeSync')
         .then(function() {
           console.info('service worker background sync event called - submission will be uploaded shortly');

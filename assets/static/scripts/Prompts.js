@@ -493,6 +493,14 @@ Prompts.prototype.setAudioCharacteristics = function (obj) {
     resolve(obj);
   });//promise
 }
+
+/**
+* removes debug properties from prompts
+*/
+Prompts.prototype.clearAudioCharacteristics = function () {
+  this.audio_characteristics = {};
+}
+
 /**
 * true when max number of prompts user wants to record is reached
 */
