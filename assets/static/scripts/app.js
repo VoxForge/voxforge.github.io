@@ -23,7 +23,11 @@ var uploadURL;
 if (window.location.origin === 'https://voxforge.github.io') { // prod
     uploadURL = 'https://upload.voxforge1.org'; 
 } else { // testing
-
+  // NOTE: need to update _config.yaml var for local apache2 ssl to work
+  // correctly:
+  //    # add trailing slash to permalinks for debugging with Apache2 and self signed SSL certificate
+  //    permalink: /:lang/:ref/ # debugging
+  //    #permalink: /:lang/:ref
   uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
   //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 }

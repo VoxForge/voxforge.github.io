@@ -321,6 +321,7 @@ alert_message:
     uploaded to VoxForge Server
   serviceworker: serviceworker
   webworker: webworker
+  workernotfound: worker type not found
   submission_singular: submission
   submission_plural: submissions
   audio_too_loud: >

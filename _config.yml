@@ -37,8 +37,9 @@ index:
   es: boenosdias
 baseurl: "" # the subpath of your site, e.g. /blog
 
+# redirects use this url:
 url: "https://voxforge.github.io" # the base hostname & protocol for your site
-#url: "https://jekyll_voxforge.org" # dev (redirects use this url)
+#url: "https://jekyll_voxforge.org" # dev
 
 # Note: In Jekyll 2, any URL constructed from the permalink: field had a 
 # trailing slash (/) added to it automatically. Jekyll 3 no longer adds a
@@ -46,8 +47,8 @@ url: "https://voxforge.github.io" # the base hostname & protocol for your site
 # see: https://jekyllrb.com/docs/upgrading/2-to-3/
 
 # add trailing slash to permalinks for debugging with Apache2 and self signed SSL certificate
-#permalink: /:lang/:ref/ # debugging
-permalink: /:lang/:ref
+permalink: /:lang/:ref/ # debugging
+#permalink: /:lang/:ref # needed for links to work properly on Github
 
 collections:
   faqs:

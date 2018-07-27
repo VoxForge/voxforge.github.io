@@ -41,7 +41,7 @@ self.onmessage = function(event) {
 * had problems uploading to server
 */
 function upload(self, uploadURL) {
-    processSavedSubmissions(uploadURL)
+    processSavedSubmissions(uploadURL, "webworker")
     .then((returnObj) => {
       self.postMessage(returnObj);
     })

@@ -35,6 +35,10 @@ function Profile (appversion,
   this.language = pageVariables.language;
   this.localized_anonymous = pageVariables.anonymous;
   this.license = pageVariables.license;
+
+  this.internal = {};
+  this.internal.numberOfUploadedSubmissions = 0;
+  this.internal.timeOfLastSubmission = 0;
 }
 
 /**
@@ -88,7 +92,7 @@ Profile.cleanUserInputRemoveSpaces = function (user_input) {
 */
 
 /**
-*
+* create 3 lower case character suffix and random 10 digit id for submission
 */
 Profile.prototype.updateRandomStrings = function () {
   this.suffix = Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
@@ -121,7 +125,11 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
       this.sample_rate = parsedLocalStorageObject.sample_rate;
       this.bit_depth = parsedLocalStorageObject.bit_depth;
       this.channels = parsedLocalStorageObject.channels;
+
       this.debug = parsedLocalStorageObject.debug;
+
+      this.internal.numberOfUploadedSubmissions = parsedLocalStorageObject.internal.numberOfUploadedSubmissions;
+      this.internal.timeOfLastSubmission = parsedLocalStorageObject.internal.timeOfLastSubmission;
 
       return parsedLocalStorageObject;
   } else {
@@ -150,15 +158,39 @@ Profile.prototype.toHash = function () {
 
     profile_hash["debug"] = this.debug;
 
+    profile_hash.internal = {};
+    profile_hash.internal["numberOfUploadedSubmissions"] = this.internal.numberOfUploadedSubmissions;
+    profile_hash.internal["timeOfLastSubmission"] = this.internal.timeOfLastSubmission;
+
     return profile_hash;
 };
 
 /**
 * Convert profile object to JSON string, with line feeds after every key 
+* value lines
+*
+* used for saving state between submissions.
+*/
+Profile.prototype.toJsonStringAll = function () {
+   return JSON.stringify(this.toHash() ,null ,"  ");
+}
+
+/**
+* Convert profile object to JSON string, with line feeds after every key 
 * value line
+*
+* ignores any 'internal' keys - used to create profile.json file
 */
 Profile.prototype.toJsonString = function () {
-    return JSON.stringify(this.toHash() ,null ,"  ");
+    var hash = this.toHash();
+    var filtered_hash = {};
+    for (var key in hash) {
+      if (key != "internal") {
+        filtered_hash[key] = hash[key];
+      }
+    }
+
+    return JSON.stringify(filtered_hash ,null ,"  ");
 }
 
 /**
@@ -264,7 +296,7 @@ Profile.prototype.toArray = function () {
 * add profile information to local storage
 */
 Profile.prototype.addProfile2LocalStorage = function () {
-   localStorage.setItem(this.language, this.toJsonString());
+   localStorage.setItem(this.language, this.toJsonStringAll());
 };
 
 
@@ -344,6 +376,18 @@ Profile.prototype.setDebugValues = function (obj) {
 */
 Profile.prototype.clearDebugValues = function () {
     this.debug = {};
+}
+
+/**
+*/
+Profile.prototype.addToNumSubmissonsUploaded = function (num) {
+    this.internal.numberOfUploadedSubmissions = this.internal.numberOfUploadedSubmissions + num;
+}
+
+/**
+*/
+Profile.prototype.setTimeOfLastSubmission = function (time) {
+    this.internal.timeOfLastSubmission = time;
 }
 
 /**

@@ -124,7 +124,7 @@ self.addEventListener('sync', function(event) {
       let uploadURL = new URL(location).searchParams.get('uploadURL');
 
       event.waitUntil(
-          processSavedSubmissions(uploadURL)
+          processSavedSubmissions(uploadURL, "serviceworker")
           .then(function(returnObj) {
               sendMessage(returnObj);
           })
@@ -146,6 +146,4 @@ function sendMessage(returnObj) {
     });
   });
 }
-
-
 

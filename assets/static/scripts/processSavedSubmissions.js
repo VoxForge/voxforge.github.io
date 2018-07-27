@@ -33,7 +33,7 @@ var submissionCache = localforage.createInstance({
 /**
 * if saved submissions exists, get then upload the submission 
 */
-function processSavedSubmissions(uploadURL) {
+function processSavedSubmissions(uploadURL, workertype) {
     var uploadList = [];
     var noUploadList = [];
     var uploadIdx = 0;
@@ -172,6 +172,7 @@ function processSavedSubmissions(uploadURL) {
             var returnObj = {
               status: 'AllUploaded',
               filesUploaded: uploadList,
+              workertype: workertype,
             };
             resolve(returnObj);
           })
@@ -182,6 +183,7 @@ function processSavedSubmissions(uploadURL) {
                    status: 'partialUpload',
                    filesNotUploaded: noUploadList,
                    filesUploaded: uploadList,
+                   workertype: workertype,
                    err: err,
                  };
                  reject(returnObj);
