@@ -288,31 +288,6 @@ Uploader.prototype.upload = function ( prompts,
     * if neither is supported.
     */
     function uploadZippedSubmission() {
-      return new Promise(function (resolve, reject) {
-
-            if (typeof navigator.serviceWorker !== 'undefined') { 
-                navigator.serviceWorker.ready
-                .then(function(swRegistration) { // service workers supported
-                  if (typeof swRegistration.sync !== 'undefined') { 
-                    serviceWorkerUpload(swRegistration);  // background sync supported
-                  } else { 
-                    console.warn('service worker does not support background sync... using web worker');
-                    webWorkerUpload(); // background sync not supported
-                  }
-                });
-            } else { // service workers not supported
-              if( !! window.Worker ) { // web workers supported
-                  webWorkerUpload();
-              } else { // should never get here...
-                  asyncMainThreadUpload();
-              }
-            }
-            resolve("OK");
-
-        }); // Promise
-      } // uploadZippedSubmission
-
-      // ### inner functions #################################################
       /** 
       * send message to service worker to start submission upload.
       *
@@ -367,15 +342,40 @@ Uploader.prototype.upload = function ( prompts,
         });
       }
 
+      // #######################################################################
 
-
-      // return of promise must be after worker handler creation
       return new Promise(function (resolve, reject) {
-        processAudio()
-        .then(callWorker2createZipFile)
-        .then(uploadZippedSubmission)
-        .then(resolve); // required for returned promise to complete properly
-      });
+
+          if (typeof navigator.serviceWorker !== 'undefined') { 
+              navigator.serviceWorker.ready
+              .then(function(swRegistration) { // service workers supported
+                if (typeof swRegistration.sync !== 'undefined') { 
+                  serviceWorkerUpload(swRegistration);  // background sync supported
+                } else { 
+                  console.warn('service worker does not support background sync... using web worker');
+                  webWorkerUpload(); // background sync not supported
+                }
+              });
+          } else { // service workers not supported
+            if( !! window.Worker ) { // web workers supported
+                webWorkerUpload();
+            } else { // should never get here...
+                asyncMainThreadUpload();
+            }
+          }
+          resolve("OK");
+
+        }); // Promise
+     } // uploadZippedSubmission
+
+    // #######################################################################
+
+    return new Promise(function (resolve, reject) {
+      processAudio()
+      .then(callWorker2createZipFile)
+      .then(uploadZippedSubmission)
+      .then(resolve); // required for returned promise to complete properly
+    });
 }
 
 
