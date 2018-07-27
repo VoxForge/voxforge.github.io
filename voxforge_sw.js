@@ -44,7 +44,7 @@ var urlsToCache = [
   PATH + 'scripts/processSavedSubmissions.js',
   PATH + 'scripts/Profile.js',
   PATH + 'scripts/Prompts.js',
-  PATH + 'scripts/upload.js',
+  PATH + 'scripts/Uploader.js',
   PATH + 'scripts/UploadWorker.js',
   PATH + 'scripts/Vad.js',
   PATH + 'scripts/View.js',

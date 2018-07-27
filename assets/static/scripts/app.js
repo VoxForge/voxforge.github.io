@@ -147,10 +147,12 @@ var view;  // needs to be global so can be accessible to index.html
                     pageVariables); 
     var audio = new Audio(audio_parms,
                           pageVariables);
+    var uploader = new Uploader(pageVariables.alert_message);
     var controller =  new Controller(prompts, 
                                      profile, 
                                      view, 
                                      audio,
+                                     uploader,
                                      controller_parms,
                                      appversion,
                                      pageVariables);
@@ -158,6 +160,7 @@ var view;  // needs to be global so can be accessible to index.html
     prompts.init();
     view.init();
     audio.init();
+    uploader.init();
     controller.start();
 
 })(); // function context

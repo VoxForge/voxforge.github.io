@@ -26,6 +26,7 @@ function Controller(prompts,
                     profile,
                     view, 
                     audio,
+                    uploader,
                     parms,
                     appversion,
                     pageVariables)
@@ -34,6 +35,7 @@ function Controller(prompts,
     this.profile  = profile; 
     this.view  = view; 
     this.audio  = audio; 
+    this.uploader  = uploader; 
     this.parms  = parms; 
     this.appversion  = appversion; 
     this.pageVariables = pageVariables;
@@ -260,21 +262,17 @@ Controller.prototype.start = function () {
           } else {
               self.profile.clearDebugValues();
           }
-          
+
           // make sure all promises complete before trying to gather audio
           // from shadow DOM before upload, otherwise will miss some audio 
           // recordings...
           Promise.all(promise_list)
-          .then(function() {
-            var allClips = document.querySelectorAll('.clip');
-            upload(self.prompts,
-                   self.profile,
-                   self.appversion,
-                   allClips,
-                   self.pageVariables.language,
-                   self.pageVariables.alert_message)
-            .then(saveProfileAndReset);
-          });
+          .then( self.uploader.upload(self.prompts,
+                                 self.profile,
+                                 self.appversion,
+                                 document.querySelectorAll('.clip'), // all clips
+                                 self.pageVariables.language) )
+          .then(saveProfileAndReset);
         },
       }
     });

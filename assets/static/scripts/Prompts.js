@@ -63,6 +63,9 @@ Prompts.splitPromptLine = function(promptLine) {
 */
 /**
 * initialize object with async operations
+
+* create separate init function so can return promises on init (can't do that 
+* with a constructor)
 */
 Prompts.prototype.init = function () {
     // lexical closure of 'this' value so that when function 'processPromptsFile' 
@@ -363,7 +366,7 @@ Prompts.prototype.init = function () {
             }
         
         });
-  }); // promise
+    }); // promise
 }
 
 /**
