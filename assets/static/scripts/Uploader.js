@@ -26,6 +26,10 @@ function Uploader(alert_message) {
 
     this.alert_message = alert_message;
 
+    this.numberOfUploadedSubmissions = 0;
+    this.timeOfLastSubmission = 0;
+    // TODO keep track of names of uploaded submissions... and allow user to display
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
@@ -88,8 +92,9 @@ Uploader.prototype.init = function () {
         switch (returnObj.status) {
           case 'AllUploaded':
             var filesUploaded = returnObj.filesUploaded;
-            // TODO too late... profile has already been saved to localstorage
-            //profile.addToNumSubmissonsUploaded( filesUploaded.length );
+            this.numberOfUploadedSubmissions = this.numberOfUploadedSubmissions + filesUploaded.length;
+            this.timeOfLastSubmission = Date.now;
+
             var submissionText = (filesUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
             processMessage( filesUploaded.length + " " + 
                             submissionText + " " +
@@ -118,8 +123,8 @@ Uploader.prototype.init = function () {
           case 'partialUpload':
             var filesNotUploaded = returnObj.filesNotUploaded;
             var filesUploaded = returnObj.filesUploaded;
-            //profile.addToNumSubmissonsUploaded( filesUploaded.length );
-
+            this.numberOfUploadedSubmissions = this.numberOfUploadedSubmissions + filesUploaded.length;
+            this.timeOfLastSubmission = Date.now;
             var savedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
             var uploadedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
 
@@ -279,6 +284,7 @@ Uploader.prototype.upload = function ( prompts,
         };
 
       }); // Promise
+
     } // callWorker2createZipFile
 
     /** 
@@ -366,6 +372,7 @@ Uploader.prototype.upload = function ( prompts,
           resolve("OK");
 
         }); // Promise
+
      } // uploadZippedSubmission
 
     // #######################################################################
@@ -378,5 +385,17 @@ Uploader.prototype.upload = function ( prompts,
     });
 }
 
+/**
+* 
+*/
+Uploader.prototype.getNumberOfUploadedSubmissions = function () {
+  return this.numberOfUploadedSubmissions;
+}
 
+/**
+* 
+*/
+Uploader.prototype.getTimeOfLastSubmission = function () {
+  return this.timeOfLastSubmission;
+}
 

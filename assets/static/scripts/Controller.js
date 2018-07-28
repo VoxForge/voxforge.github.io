@@ -95,6 +95,9 @@ Controller.prototype.start = function () {
     * blobs for later processing by zipupload web worker.
     */
     function saveProfileAndReset () {
+      self.profile.addToNumSubmissonsUploaded(self.uploader.getNumberOfUploadedSubmissions());
+      self.profile.setTimeOfLastSubmission(self.uploader.getTimeOfLastSubmission());
+
       self.profile.addProfile2LocalStorage();
       self.prompts.resetIndices();
       self.view.reset();
