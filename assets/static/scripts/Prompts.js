@@ -201,23 +201,6 @@ Prompts.prototype.init = function () {
       });
     }
 
-    /** 
-    * User's set of prompts to be read in contained in a stack, that way
-    * if a user wants to re-read a prompt, they delete it, and it gets
-    * placed in the stack and re-displayed to the user to record again.
-    *
-    * reading prompt list using the self.index and modulus to wrap
-    * around the prompt list array.
-    */
-    function initializePromptStack() {
-      for (var i = 0 ; i <  self.max_num_prompts; i++) { 
-        self.index = self.index % (self.list.length)
-        // using unshift rather than push to keep prompt elements in order
-        self.prompt_stack.unshift(self.list[self.index]);
-        self.index++;
-      }
-    }
-
     /**
     * callback (for jquery 'get') - reads single prompt file into memory
     *
@@ -228,10 +211,7 @@ Prompts.prototype.init = function () {
       convertPromptDataToArray(prompt_data);
       savePromptListLocally();
 
-      // set random index of prompt line to present to user
-      self.index = Math.floor((Math.random() * self.list.length)); // zero indexed
-
-      initializePromptStack();
+      self.initPromptStack();
     }
 
     /* get the submission object */
@@ -253,7 +233,7 @@ Prompts.prototype.init = function () {
     }
 
     /*
-    * // async: try to download an updated prompt file from server
+    * async: try to download an updated prompt file from server
 
     * Note: does not touch prompt stack, just replaces prompt file in
     * localstorage with a new random one from VoxForge server
@@ -332,7 +312,7 @@ Prompts.prototype.init = function () {
             getSavedPromptList()
             .then( function(jsonObject) {
                 self.list = jsonObject.list;
-                initializePromptStack();
+                self.initPromptStack();
 
                 asyncAttemptToDownloadPrompts(prompt_file_name);
                
@@ -342,11 +322,13 @@ Prompts.prototype.init = function () {
 
         validate_Readmd_file();
         prompt_file_index = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
-        console.log("prompt file id: " + self.prompt_list_files[prompt_file_index].id + 
-                    " (prompt file array index: " + prompt_file_index + ")");
+        var m = "";
         if ( ! self.prompt_list_files[prompt_file_index].contains_promptid) {
-            console.log("starting promptId: " + self.prompt_list_files[prompt_file_index].start);
+            m = "starting promptId: " + self.prompt_list_files[prompt_file_index].start;
         }
+        console.log("prompt file id: " + self.prompt_list_files[prompt_file_index].id + 
+                    " (prompt file array index: " + prompt_file_index + ") " + m);
+
 
         /** 
         * get prompts file for given language from server; used cached version of 
@@ -371,15 +353,20 @@ Prompts.prototype.init = function () {
 
 /**
 * initialize prompt stack with number of prompts chosen by user
+*
+* User's set of prompts to be read in contained in a stack, that way
+* if a user wants to re-read a prompt, they delete it, and it gets
+* placed in the stack and re-displayed to the user to record again.
+*
+* reading prompt list using the self.index and modulus to wrap
+* around the prompt list array.
 */
 Prompts.prototype.initPromptStack = function () {
-    this.prompt_stack = [];
     this.index = Math.floor((Math.random() * this.list.length));
 
-    for (var i = this.max_num_prompts -1 ; i >=0; i--) { 
-      // using unshift rather than push to keep prompt elements in order
-      this.prompt_stack.unshift(this.list[this.index]);
-      this.index++;
+    for (var i = 0; i < this.max_num_prompts; i++) { // just count number of prompts to select
+      // using unshift (rather than push) to keep prompt elements in order
+      this.prompt_stack.unshift(this.list[this.index++]);
       this.index = this.index % (this.list.length -1);
     }
 }
@@ -392,6 +379,7 @@ Prompts.prototype.resetIndices = function () {
     this.prompts_recorded = []; // list of prompts that have been recorded
     this.audio_characteristics = {};
 
+    this.prompt_stack = [];
     this.initPromptStack();
 }
 
