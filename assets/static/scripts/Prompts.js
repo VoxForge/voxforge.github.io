@@ -183,15 +183,6 @@ Prompts.getSavedPromptList = function(promptCache, local_prompt_file_name) {
 * verify that read.md entries contain valid prompt related data
 */
 Prompts.validate_Readmd_file = function(prompt_list_files) {
-    var variable_list = ['language', 
-                      'prompt_list_files'];
-    for (var i = 0; i < variable_list.length; i++) {
-      if (typeof prompt_list_files[i][variable_list[i]] === 'undefined') {
-        console.warn(variable_list + " not defined in read.md for language: " + 
-                    self.language);
-      }
-    }
-
     // validate contents of prompt_list_files array
     var num_prompts_calc = 0;
     for (var i = 0; i < prompt_list_files.length; i++) {
@@ -243,10 +234,7 @@ Prompts.validate_Readmd_file = function(prompt_list_files) {
 * with a constructor)
 */
 Prompts.prototype.init = function () {
-    // save context
-    var self = this;
-
-
+    var self = this;     // save context
 
     /* ====================================================================== */
     // TODO duplicate definition in service worker file: processSavedSubmission.js
