@@ -162,6 +162,77 @@ Prompts.initPromptStack =
     return prompt_stack;
 }
 
+/* get the saved submission object from browser storage */
+Prompts.getSavedPromptList = function(promptCache, local_prompt_file_name) {
+  return new Promise(function (resolve, reject) {
+
+      // getItem only returns jsonObject
+      promptCache.getItem(local_prompt_file_name)
+      .then(function(jsonOnject) {
+        // resolve sends these as parameters to next promise in chain
+        resolve(jsonOnject);
+      })
+      .catch(function(err) {
+        reject('error getting saved promptList file: ' + err);
+      });
+
+  });
+}
+
+/**
+* verify that read.md entries contain valid prompt related data
+*/
+Prompts.validate_Readmd_file = function(prompt_list_files) {
+    var variable_list = ['language', 
+                      'prompt_list_files'];
+    for (var i = 0; i < variable_list.length; i++) {
+      if (typeof prompt_list_files[i][variable_list[i]] === 'undefined') {
+        console.warn(variable_list + " not defined in read.md for language: " + 
+                    self.language);
+      }
+    }
+
+    // validate contents of prompt_list_files array
+    var num_prompts_calc = 0;
+    for (var i = 0; i < prompt_list_files.length; i++) {
+      // check for undefined fields
+      if (typeof prompt_list_files[i].id === 'undefined') {
+        console.warn("prompt_list_files[" + i + "].id not defined in read.md for language: " + 
+                    self.language);
+      }
+      if (typeof prompt_list_files[i].file_location === 'undefined') {
+        console.warn("prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
+                    self.language);
+      }
+      if (typeof prompt_list_files[i].contains_promptid === 'undefined') {
+        console.warn("prompt_list_files[" + i + "].contains_promptid not defined in read.md for language: " + 
+                    self.language);
+      }
+      if (typeof prompt_list_files[i].file_location === 'undefined') {
+        console.warn("prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
+                    self.language);
+      }
+      if (typeof prompt_list_files[i].number_of_prompts === 'undefined') {
+        console.warn("prompt_list_files[" + i + "].number_of_prompts not defined in read.md for language: " + 
+                    self.language);
+      }
+
+      // if prompt lines already have promptid, then don't need start or prefix
+      // fields in read.md front matter
+      if ( !  prompt_list_files[i].contains_promptid ) {
+        if (typeof prompt_list_files[i].start === 'undefined') {
+          console.warn("prompt_list_files[" + i + "].start not defined in read.md for language: " + 
+                      self.language);
+        }
+
+        if (typeof prompt_list_files[i].prefix === 'undefined') {
+          console.warn("prompt_list_files[" + i + "].prefix not defined in read.md for language: " + 
+                      self.language);
+        }
+      }
+    }
+}
+
 /**
 * ### METHODS ##############################################
 */
@@ -175,93 +246,7 @@ Prompts.prototype.init = function () {
     // save context
     var self = this;
 
-    /* Inner functions */
-    /**
-    * verify that read.md entries contain valid prompt related data
-    */
-    function validate_Readmd_file() {
-      var variable_list = ['language', 
-                        'prompt_list_files'];
-      for (var i = 0; i < variable_list.length; i++) {
-        if (typeof variable_list[i] === 'undefined') {
-          console.warn(variable_list + " not defined in read.md for language: " + 
-                      self.language);
-        }
-      }
-      // validate contents of prompt_list_files array
-      var num_prompts_calc = 0;
-      for (var i = 0; i < self.prompt_list_files.length; i++) {
-        // check for undefined fields
-        if (typeof self.prompt_list_files[i].id === 'undefined') {
-          console.warn("prompt_list_files[" + i + "].id not defined in read.md for language: " + 
-                      self.language);
-        }
-        if (typeof self.prompt_list_files[i].file_location === 'undefined') {
-          console.warn("prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
-                      self.language);
-        }
-        if (typeof self.prompt_list_files[i].contains_promptid === 'undefined') {
-          console.warn("prompt_list_files[" + i + "].contains_promptid not defined in read.md for language: " + 
-                      self.language);
-        }
-        if (typeof self.prompt_list_files[i].file_location === 'undefined') {
-          console.warn("prompt_list_files[" + i + "].file_location not defined in read.md for language: " + 
-                      self.language);
-        }
-        if (typeof self.prompt_list_files[i].number_of_prompts === 'undefined') {
-          console.warn("prompt_list_files[" + i + "].number_of_prompts not defined in read.md for language: " + 
-                      self.language);
-        }
 
-        // if prompt lines already have promptid, then don't need start or prefix
-        // fields in read.md front matter
-        if ( !  self.prompt_list_files[i].contains_promptid ) {
-          if (typeof self.prompt_list_files[i].start === 'undefined') {
-            console.warn("prompt_list_files[" + i + "].start not defined in read.md for language: " + 
-                        self.language);
-          }
-
-          if (typeof self.prompt_list_files[i].prefix === 'undefined') {
-            console.warn("prompt_list_files[" + i + "].prefix not defined in read.md for language: " + 
-                        self.language);
-          }
-        }
-      }
-    }
-
-    /**
-    * get number of prompt files defined in language's read.md file
-    * Jekyll front-matter uses YAML to define data structures... prompt_list_files
-    * in read.md file gets converted to an array.
-    */
-    function get_promptFile_count() {
-      if (typeof self.prompt_list_files.length === 'undefined') {
-        console.warn("prompt_list_files.length not defined in read.md for language: " + 
-                    self.language);
-      }
-
-      return self.prompt_list_files.length;
-    }
-
-
-
-    /* get the submission object */
-    function getSavedPromptList() {
-      return new Promise(function (resolve, reject) {
-
-          // getItem only returns jsonObject
-          //localforage.getItem(local_prompt_file_name)
-          self.promptCache.getItem(local_prompt_file_name)
-          .then(function(jsonOnject) {
-            // resolve sends these as parameters to next promise in chain
-            resolve(jsonOnject);
-          })
-          .catch(function(err) {
-            reject('getSavedPromptList err: ' + err);
-          });
-
-      });
-    }
 
     /* ====================================================================== */
     // TODO duplicate definition in service worker file: processSavedSubmission.js
@@ -370,10 +355,10 @@ Prompts.prototype.init = function () {
             var prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
             var plf = self.prompt_list_files[prompt_file_index];
 
-            getSavedPromptList()
+            Prompts.getSavedPromptList(self.promptCache, local_prompt_file_name)
             .then( function(jsonObject) {
                 // get saved promptList file (from browser storage) and update
-                // prompt stack. 
+                // prompt stack.
                 // doing prompt stack update here means that the prompt stack 
                 // is always one behind the call to VoxForge server... see above
                 self.prompt_stack = Prompts.initPromptStack(jsonObject.list,
@@ -409,15 +394,16 @@ Prompts.prototype.init = function () {
             });
         }
 
-        validate_Readmd_file();
-        var prompt_file_index = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
+        // #####################################################################
+
+        Prompts.validate_Readmd_file(self.prompt_list_files);
+        var prompt_file_index = Math.floor((Math.random() * self.prompt_list_files.length)); // zero indexed
         var m = "";
         if ( ! self.prompt_list_files[prompt_file_index].contains_promptid) {
             m = "starting promptId: " + self.prompt_list_files[prompt_file_index].start;
         }
         console.log("prompt file id: " + self.prompt_list_files[prompt_file_index].id + 
                     " (prompt file array index: " + prompt_file_index + ") " + m);
-
 
         /** 
         * get prompts file for given language from server; used cached version of 
