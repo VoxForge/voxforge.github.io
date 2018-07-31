@@ -550,9 +550,9 @@ View.prototype.debugChecked = function () {
 /**
 * display prompt line
 */
-View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
-    document.querySelector('.prompt_id').innerText = getPromptId;
-    document.querySelector('.info-display').innerText = getPromptSentence;
+View.prototype.displayPrompt = function (promptId, promptSentence) {
+    document.querySelector('.prompt_id').innerText = promptId;
+    document.querySelector('.info-display').innerText = promptSentence;
 }
 
 /**
@@ -563,7 +563,7 @@ View.prototype.displayPrompt = function (getPromptId, getPromptSentence) {
 */
 View.prototype.displayAudioPlayer = function (obj) 
 {
-    var prompt_id = obj.prompt_id; // TODO not used yet...
+    //var prompt_id = obj.prompt_id; // TODO not used yet...
     var blob = obj.blob;
 
     // 'self' used to save the current context when calling function
@@ -580,7 +580,7 @@ View.prototype.displayAudioPlayer = function (obj)
       var prompt_sentence = document.querySelector('.info-display').innerText;
       var clipLabel = document.createElement('prompt');
       clipLabel.classList.add('clip-label');
-      clipLabel.textContent = prompt_id + prompt_sentence;
+      clipLabel.textContent = prompt_id + " " + prompt_sentence;
     
       return clipLabel;
     }
