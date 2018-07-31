@@ -27,6 +27,7 @@ function Prompts(parms,
     this.max_numPrompts_selector = parms.max_numPrompts_selector;
     this.list = []; // list of prompts to be recorded by user; iniitlaized in convertPromptDataToArray
     this.previous_max_num_prompts = 0; // to decide what to do when use changes max number of prompts
+    this.index = 0; // pointer to position in prompt list array
     this.prompt_count = 0; // number of prompts user read
     this.prompts_recorded = []; // list of prompts that have been recorded
     this.audio_characteristics = {}; // hash of audio characteritics of recorded audio; indexed by promptID
@@ -57,41 +58,15 @@ Prompts.splitPromptLine = function(promptLine) {
     return [promptId, promptSentence];
 }
 
-/**
-* initialize prompt stack with number of prompts chosen by user
-*
-* User's set of prompts to be read in contained in a stack, that way
-* if a user wants to re-read a prompt, they delete it, and it gets
-* placed in the stack and re-displayed to the user to record again.
-*
-* reading prompt list using the self.index and modulus to wrap
-* around the prompt list array.
-*/
-Prompts.initPromptStack = function (list, 
-                                    max_num_prompts) 
-{
-    var prompt_stack = [];
-    var index = Math.floor((Math.random() * list.length));
-
-    for (var i = 0; i < max_num_prompts; i++) { // just count number of prompts to select
-      // using unshift (rather than push) to keep prompt elements in order
-      prompt_stack.unshift(list[index++]);
-      index = index % (list.length -1);
-    }
-
-    return (prompt_stack);
-}
 
 /**
 * split prompt file from server into an array and decide if it needs a 
 * prompt ID added; store in 'self.list'
 */
-Prompts.convertPromptDataToArray = function (prompt_data, 
-                                             contains_promptid,
-                                             start_promptId,
-                                             prefix,
-                                             number_of_prompts,
-                                             prompt_file_index) 
+Prompts.convertPromptDataToArray = function(prompt_data,
+                                            contains_promptid,
+                                            start,
+                                            prefix) 
 {
     // see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
     function pad(num, size) {
@@ -101,101 +76,38 @@ Prompts.convertPromptDataToArray = function (prompt_data,
     }
 
     var sentences = prompt_data.split('\n');
-    // need to reset prompts or short prompt files will only overwrite start 
-    // of prompt file that was longer
-    var prompt_list = []; 
+    var list = []; 
 
     // add prompt ID to each prompt line if none exists
     for (var i = 0; i < sentences.length; i++) {
       if (sentences[i] != "") { // skip empty string
         if (contains_promptid)
         { // first word of prompt line is the prompt ID
-            prompt_list[i] = sentences[i];
+            list[i] = sentences[i];
         } else {
-            var prompt_id = prefix + pad( i + start_promptId, 5 );
-            prompt_list[i] = prompt_id  + " " + sentences[i];
+            var prompt_id = prefix + pad( i + start, 5 );
+            list[i] = prompt_id  + " " + sentences[i];
         }
       }
     }
 
-    if (number_of_prompts !=  prompt_list.length) {
+    return list;
+}
+
+/**
+*
+*/
+Prompts.confirmPromptListLength = function(list,
+                                           number_of_prompts,
+                                           prompt_file_index,
+                                           language)
+{
+    if (number_of_prompts !=  list.length) {
       console.warn("number of prompts in prompt_list_files[" + prompt_file_index + "] = " + 
                    number_of_prompts + 
                   " in read.md, not same as prompt file line counts for language: " + 
-                  self.language + "= " + prompt_list.length );
+                  language + "= " + list.length );
     }
-
-    return prompt_list;
-}
-
-
-/** 
-* save the prompt file as a JSON object in user's browser 
-* InnoDB database using LocalForage 
-*/
-Prompts.savePromptListLocally = function (language, 
-                                          id,
-                                          list, 
-                                          local_prompt_file_name,
-                                          promptCache) 
-{
-  var jsonOnject = {};
-  jsonOnject['language'] = language;
-  jsonOnject['id'] = id;
-  jsonOnject['list'] = list;
-
-  promptCache.setItem(local_prompt_file_name, jsonOnject)
-  .then(function (value) {
-    console.info('saved promptfile to localforage browser storage: ' + local_prompt_file_name);
-  })
-  .catch(function(err) {
-      console.error('save Prompt List Locally failed!', err);
-  });
-}
-
-
-/*
-* async: async download of updated prompt file from server
-
-* Note: does not touch prompt stack, just replaces prompt file in
-* localstorage with a new random one from VoxForge server
-*/
-Prompts.tryToDownloadPrompts = function (prompt_file_name,
-                                         contains_promptid,
-                                         start,
-                                         prefix,
-                                         number_of_prompts,
-                                         prompt_file_index,
-                                         language,
-                                         id,
-                                         local_prompt_file_name,
-                                         promptCache)
-{
-    $.get(prompt_file_name, 
-        function(prompt_data) {
-          var list = Prompts.convertPromptDataToArray(prompt_data,
-                                                      contains_promptid,
-                                                      start,
-                                                      prefix,
-                                                      number_of_prompts,
-                                                      prompt_file_index);
-          // don't touch prompt stack that user is currently recording
-          Prompts.savePromptListToBrowser(language,
-                                          id,
-                                          list,
-                                          local_prompt_file_name,
-                                          promptCache);
-          console.log("updating saved prompts file with new one from VoxForge server");
-
-          return list;
-    })
-    .fail(function() {
-        var m = "cannot get updated prompts file from VoxForge server: " + 
-                prompt_file_name + 
-                "; device offline or has bad Internet connection, " + 
-                "using local storage prompts file\n ";
-        console.log(m);
-    });
 }
 
 /**
@@ -279,152 +191,173 @@ Prompts.prototype.init = function () {
       return self.prompt_list_files.length;
     }
 
-    /**
-    no good way to detect if online or offline. therefore, get first set
-    of prompts from prompt cache, then asyncronously try to get new set of 
-    prompts.  Only try to get prompts right away if none in localstorage.
 
-    This way we can have very large prompt sets, but user only needs to 
-    download a small portion
-
-    * (note complete prompt list is split into many smaller prompt files so
-    * that browser does not need to load them all in at once...)
+    /** 
+    * save the prompt file as a JSON object in user's browser 
+    * InnoDB database using LocalForage 
     */
-    function firstSetupOfPromptsFile(p) {
-      [prompt_file_name,
-       prompt_list_files,
-       language,
-       id,
-       local_prompt_file_name,
-       max_num_prompts
-       promptCache] = p;
-        /**
-        * reads single prompt file from server. puts it in memory and saves
-        * to browser storage
-        */
-        function processPromptsFile(prompt_data) {
-            var list = Prompts.convertPromptDataToArray(prompt_data,
-                      prompt_list_files.contains_promptid,
-                      prompt_list_files.start,
-                      prompt_list_files.prefix,
-                      prompt_list_files.number_of_prompts,
-                      prompt_list_files.prompt_file_index);
-            var prompt_stack = Prompts.initPromptStack(list, 
-                                                       max_num_prompts);
-            Prompts.savePromptListToBrowser(language,
-                                            id,
-                                            list,
-                                            local_prompt_file_name,
-                                            promptCache);
+    function savePromptListLocally(prompt_file_index) {
+      var jsonOnject = {};
+      jsonOnject['language'] = self.language;
+      jsonOnject['id'] = self.prompt_list_files[prompt_file_index].id;
+      jsonOnject['list'] = self.list;
 
-            return [list, prompt_stack];
-        }
-
-        $.get(prompt_file_name, 
-            function(prompt_data) {
-              [list, prompt_stack] = processPromptsFile(prompt_data);
-              var m = "downloaded prompt file from VoxForge server";
-              console.log(m);
-              return [false, m, list, prompt_stack];
-            }
-        )
-        .fail(function() { // first prompt file should be cached by service worker
-            prompt_file_index = 0;
-            prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
-
-            $.get(prompt_file_name, 
-                function(prompt_data) {
-                  [list, prompt_stack] = processPromptsFile(prompt_data);
-                  var m = "using service worker cached prompt file id: 001";
-                  console.log(m);
-                  return [false, m, list, prompt_stack];
-                }
-            )
-            .fail(function() {
-                var m = "cannot find prompts file on VoxForge server: " + prompt_file_name + 
-                        "or in service worker cache; could be bad Internet connection...\n ";
-                console.warn(m);
-                //reject(m);
-                return [true, m, null, null];
-            });
-        });
-    } 
-
-    // ###
+      self.promptCache.setItem(local_prompt_file_name, jsonOnject)
+      .then(function (value) {
+        console.info('savePromptListLocally: saved promptfile to localforage browser storage: ' + local_prompt_file_name);
+      })
+      .catch(function(err) {
+          console.error('savePromptListLocally failed!', err);
+      });
+    }
 
     /* get the submission object */
-    function getSavedPromptList(promptCache) {
+    function getSavedPromptList() {
       return new Promise(function (resolve, reject) {
 
           // getItem only returns jsonObject
-          promptCache.getItem(local_prompt_file_name)
+          //localforage.getItem(local_prompt_file_name)
+          self.promptCache.getItem(local_prompt_file_name)
           .then(function(jsonOnject) {
             // resolve sends these as parameters to next promise in chain
             resolve(jsonOnject);
           })
           .catch(function(err) {
-            reject('err: ' + err);
+            reject('getSavedPromptList err: ' + err);
           });
 
-      });// promise
+      });
     }
 
-    /**
-      1. use localstorage prompts to start with,
-      2. then asynchronously try to download updated prompt file...
-
-      this prevents hang of app when user records offline (when using a 
-      promise chain) or timing issues with no promise chain when app starts
-      up offline and prompts file 'get' is hanging...
-     */
-    function subsequentSetupOfPromptsFile(p) {
-        [prompt_file_name,
-         prompt_list_files,
-         language,
-         id,
-         local_prompt_file_name,
-         max_num_prompts
-         promptCache] = p;
-
-        getSavedPromptList(promptCache)
-        .then( function(jsonObject) {
-            var prompt_stack = Prompts.initPromptStack(jsonObject.list, 
-                                                       max_num_prompts);
-            var list = Prompts.tryToDownloadPrompts(prompt_file_name,
-                                                    prompt_list_files.contains_promptid,
-                                                    prompt_list_files.start,
-                                                    prompt_list_files.prefix,
-                                                    prompt_list_files.number_of_prompts,
-                                                    prompt_file_index,
-                                                    language,
-                                                    id,
-                                                    local_prompt_file_name,
-                                                    promptCache);
-            var m = "got prompts from local storage";
-            console.log(m);
-
-            return [false, m, list, prompt_stack];
-        });
+    /*
+    *
+    */
+    function returnProcessPromptsFileParms(prompt_data, prompt_file_index, language) {
+        var plf = self.prompt_list_files[prompt_file_index];
+        return [prompt_data,
+               plf.contains_promptid,
+               plf.start,
+               plf.prefix];
     }
 
     /* ====================================================================== */
     /* Main */
     // TODO duplicate definition in service worker file: processSavedSubmission.js
     var local_prompt_file_name = self.language + '_' + 'prompt_file';
-    var prompt_file_index;
 
     return new Promise(function (resolve, reject) {
+      /**
+        no good way to detect if online or offline. therefore, get first set
+        of prompts from prompt cache, then asyncronously try to get new set of 
+        prompts.  Only try to get prompts right away if none in localstorage.
+
+        This way we can have very large prompt sets, but user only needs to 
+        download a small portion
+        */
+        function firstSetupOfPromptsFile(prompt_file_index, prompt_file_name) {
+            var plf = self.prompt_list_files[prompt_file_index];
+
+            $.get(prompt_file_name, 
+                function(prompt_data) {
+                  self.list = 
+                      Prompts.convertPromptDataToArray(prompt_data,
+                                                       plf.contains_promptid,
+                                                       plf.start,
+                                                       plf.prefix);
+                  Prompts.confirmPromptListLength(self.list,
+                                                  plf.number_of_prompts,
+                                                  prompt_file_index,
+                                                  self.language);
+                  savePromptListLocally(prompt_file_index);
+
+                  self.initPromptStack();
+                  var m = "downloaded prompt file from VoxForge server";
+                  console.log(m);
+                  resolve(m);
+                }
+            )
+            .fail(function() { // first prompt file should be cached by service worker
+                // TODO need to be able to reset prompt_file_index gloablly in a functional manner???
+                prompt_file_index = 0;
+                prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
+                $.get(prompt_file_name, 
+                    function(prompt_data) {
+                      self.list = 
+                          Prompts.convertPromptDataToArray(prompt_data,
+                                                           plf.contains_promptid,
+                                                           plf.start,
+                                                           plf.prefix);
+                      Prompts.confirmPromptListLength(self.list,
+                                                      plf.number_of_prompts,
+                                                      prompt_file_index,
+                                                      self.language);
+                      savePromptListLocally(prompt_file_index);
+
+                      self.initPromptStack();
+                      var m = "using service worker cached prompt file id: 001";
+                      console.log(m);
+                      resolve(m);
+                    }
+                )
+                .fail(function() {
+                    var m = "cannot find prompts file on VoxForge server: " + prompt_file_name + 
+                            "or in service worker cache; could be bad Internet connection...\n ";
+                    console.warn(m);
+                    reject(m);
+                });
+            });
+        }
+
+        /**
+          1. use localstorage prompts to start with,
+          2. then asynchronously try to download updated prompt file...
+
+          this prevents hang of app when user records offline (when using a 
+          promise chain) or timing issues with no promise chain when app starts
+          up offline and prompts file 'get' is hanging...
+         */
+        function subsequentSetupOfPromptsFile(prompt_file_index, prompt_file_name) {
+            var plf = self.prompt_list_files[prompt_file_index];
+
+            getSavedPromptList()
+            .then( function(jsonObject) {
+                self.list = jsonObject.list;
+                self.initPromptStack();
+                console.log("attempting async update of saved prompts file to replace " + 
+                            "with new one from VoxForge server");
+
+                $.get(prompt_file_name, 
+                    function(prompt_data) {
+                      self.list = 
+                          Prompts.convertPromptDataToArray(prompt_data,
+                                                           plf.contains_promptid,
+                                                           plf.start,
+                                                           plf.prefix);
+                      savePromptListLocally(prompt_file_index); // don't touch prompt stack that user is currently recording
+                      console.log("updating saved prompts file with new one from VoxForge server");
+                    }
+                )
+                .fail(function() {
+                    var m = "cannot get updated prompts file from VoxForge server: " + 
+                            prompt_file_name + 
+                            "; device offline or has bad Internet connection, " + 
+                            "using local storage prompts file\n ";
+                    console.log(m);
+                });
+
+                resolve("got prompts from local storage");
+            });
+        }
 
         validate_Readmd_file();
-
-        prompt_file_index = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
-        var prompt_list_files = self.prompt_list_files[prompt_file_index];
+        var prompt_file_index = Math.floor((Math.random() * get_promptFile_count())); // zero indexed
         var m = "";
-        if ( ! prompt_list_files.contains_promptid ) {
-            m = "starting promptId: " + prompt_list_files.start;
+        if ( ! self.prompt_list_files[prompt_file_index].contains_promptid) {
+            m = "starting promptId: " + self.prompt_list_files[prompt_file_index].start;
         }
-        console.log("prompt file id: " + prompt_list_files.id + 
+        console.log("prompt file id: " + self.prompt_list_files[prompt_file_index].id + 
                     " (prompt file array index: " + prompt_file_index + ") " + m);
+
 
         /** 
         * get prompts file for given language from server; used cached version of 
@@ -436,33 +369,35 @@ Prompts.prototype.init = function () {
         */
         self.promptCache.length() // Gets the number of keys in the offline store
         .then(function(numberOfKeys) { 
-
-            var prompt_file_name = prompt_list_files.file_location;
-            var p = [prompt_file_name,
-                    prompt_list_files,
-                    self.language,
-                    prompt_list_files.id,
-                    local_prompt_file_name,
-                    self.max_num_prompts,
-                    self.promptCache];
+            var prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
             if (numberOfKeys == 0) { // first time set up of prompts file
-                [error, m, self.list, self.prompt_stack] = firstSetupOfPromptsFile(p);
-                if (error) {
-                  reject(m);
-                } else {
-                  resolve(m);
-                }
-            } else {
-                [error, m, self.list, self.prompt_stack] = subsequentSetupOfPromptsFile(p);
-                if (error) {
-                  reject(m);
-                } else {
-                  resolve(m);
-                }
+                firstSetupOfPromptsFile(prompt_file_index, prompt_file_name);
+            } else { 
+                subsequentSetupOfPromptsFile(prompt_file_index, prompt_file_name);
             }
+        
         });
-
     }); // promise
+}
+
+/**
+* initialize prompt stack with number of prompts chosen by user
+*
+* User's set of prompts to be read in contained in a stack, that way
+* if a user wants to re-read a prompt, they delete it, and it gets
+* placed in the stack and re-displayed to the user to record again.
+*
+* reading prompt list using the self.index and modulus to wrap
+* around the prompt list array.
+*/
+Prompts.prototype.initPromptStack = function () {
+    this.index = Math.floor((Math.random() * this.list.length));
+
+    for (var i = 0; i < this.max_num_prompts; i++) { // just count number of prompts to select
+      // using unshift (rather than push) to keep prompt elements in order
+      this.prompt_stack.unshift(this.list[this.index++]);
+      this.index = this.index % (this.list.length -1);
+    }
 }
 
 /**
@@ -473,8 +408,8 @@ Prompts.prototype.resetIndices = function () {
     this.prompts_recorded = []; // list of prompts that have been recorded
     this.audio_characteristics = {};
 
-    this.prompt_stack = Prompts.initPromptStack(this.list, this.max_num_prompts);
-
+    this.prompt_stack = [];
+    this.initPromptStack();
 }
 
 /**
@@ -576,8 +511,7 @@ Prompts.prototype.setAudioCharacteristics = function (obj) {
         gain : obj.gain,
     };
     resolve(obj);
-  });
-
+  });//promise
 }
 
 /**
@@ -591,6 +525,7 @@ Prompts.prototype.clearAudioCharacteristics = function () {
 * true when max number of prompts user wants to record is reached
 */
 Prompts.prototype.lastone = function () {
+    //return this.prompt_count >= this.max_num_prompts - 1;
     return this.prompt_count >= this.max_num_prompts;
 }
 
@@ -616,6 +551,7 @@ Prompts.prototype.recordedmorethancurrentmaxprompts = function () {
     return this.prompt_count >= this.max_num_prompts;
 }
 
+
 /**
 *
 */
@@ -638,6 +574,7 @@ Prompts.prototype.getProgressDescription = function () {
     return this.prompt_count + "/" + this.max_num_prompts;
 }
 
+
 /**
 * user changed the maximum number of prompts to record from drop down menu
 *
@@ -651,7 +588,7 @@ Prompts.prototype.userChangedMaxNum = function (new_max_prompts) {
 
     // promptId start point will be randomized and not be consecutive
     // to previous prompt IDs.
-    this.prompt_stack = Prompts.initPromptStack(this.list, this.max_num_prompts);
+    this.initPromptStack();
 
     console.log('max_num_prompts:' + new_max_prompts);
 }
