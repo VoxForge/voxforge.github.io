@@ -353,7 +353,7 @@ Prompts.prototype.init = function () {
           promise chain) or timing issues with no promise chain when app starts
           up offline and prompts file 'get' is hanging...
 
-         * doing prompt stack update here means that the prompt stack 
+         * doing prompt stack update at beginning means that the prompt stack 
          * is always one behind the call to VoxForge server... 
          * why? for reponsiveness when user is recording offline.  
          * If were to try to access server while offline,
@@ -372,9 +372,11 @@ Prompts.prototype.init = function () {
 
             getSavedPromptList()
             .then( function(jsonObject) {
+                // get saved promptList file (from browser storage) and update
+                // prompt stack. 
                 // doing prompt stack update here means that the prompt stack 
                 // is always one behind the call to VoxForge server... see above
-                self.prompt_stack = Prompts.initPromptStack(self.list,
+                self.prompt_stack = Prompts.initPromptStack(jsonObject.list,
                                                             self.max_num_prompts);
 
                 console.log("attempting async update of saved prompts file to replace " + 
