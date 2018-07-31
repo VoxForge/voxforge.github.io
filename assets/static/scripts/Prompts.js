@@ -110,6 +110,29 @@ Prompts.confirmPromptListLength = function(list,
     }
 }
 
+/** 
+* save the prompt file as a JSON object in user's browser 
+* InnoDB database using LocalForage 
+*/
+Prompts.savePromptListLocally = function(local_prompt_file_name,
+                                         language,
+                                         id,
+                                         list,
+                                         promptCache) 
+{
+    var jsonOnject = {};
+    jsonOnject['language'] = language;
+    jsonOnject['id'] = id;
+    jsonOnject['list'] = list;
+
+    promptCache.setItem(local_prompt_file_name, jsonOnject)
+    .then(function (value) {
+      console.info('saved promptfile to localforage browser storage: ' + local_prompt_file_name);
+    }).catch(function(err) {
+        console.error('save of promptfile to localforage browser storage failed!', err);
+    });
+}
+
 /**
 * ### METHODS ##############################################
 */
@@ -192,24 +215,6 @@ Prompts.prototype.init = function () {
     }
 
 
-    /** 
-    * save the prompt file as a JSON object in user's browser 
-    * InnoDB database using LocalForage 
-    */
-    function savePromptListLocally(prompt_file_index) {
-      var jsonOnject = {};
-      jsonOnject['language'] = self.language;
-      jsonOnject['id'] = self.prompt_list_files[prompt_file_index].id;
-      jsonOnject['list'] = self.list;
-
-      self.promptCache.setItem(local_prompt_file_name, jsonOnject)
-      .then(function (value) {
-        console.info('savePromptListLocally: saved promptfile to localforage browser storage: ' + local_prompt_file_name);
-      })
-      .catch(function(err) {
-          console.error('savePromptListLocally failed!', err);
-      });
-    }
 
     /* get the submission object */
     function getSavedPromptList() {
@@ -241,12 +246,12 @@ Prompts.prototype.init = function () {
     }
 
     /* ====================================================================== */
-    /* Main */
     // TODO duplicate definition in service worker file: processSavedSubmission.js
     var local_prompt_file_name = self.language + '_' + 'prompt_file';
 
+    /* Main */
     return new Promise(function (resolve, reject) {
-      /**
+        /**
         no good way to detect if online or offline. therefore, get first set
         of prompts from prompt cache, then asyncronously try to get new set of 
         prompts.  Only try to get prompts right away if none in localstorage.
@@ -257,7 +262,7 @@ Prompts.prototype.init = function () {
         function firstSetupOfPromptsFile(prompt_file_index, prompt_file_name) {
             var plf = self.prompt_list_files[prompt_file_index];
 
-            $.get(prompt_file_name, 
+            $.get(prompt_file_name,
                 function(prompt_data) {
                   self.list = 
                       Prompts.convertPromptDataToArray(prompt_data,
@@ -268,7 +273,12 @@ Prompts.prototype.init = function () {
                                                   plf.number_of_prompts,
                                                   prompt_file_index,
                                                   self.language);
-                  savePromptListLocally(prompt_file_index);
+                  Prompts.savePromptListLocally(local_prompt_file_name,
+                                        self.language,
+                                        plf.id,
+                                        self.list,
+                                        self.promptCache
+                  );
 
                   self.initPromptStack();
                   var m = "downloaded prompt file from VoxForge server";
@@ -291,7 +301,12 @@ Prompts.prototype.init = function () {
                                                       plf.number_of_prompts,
                                                       prompt_file_index,
                                                       self.language);
-                      savePromptListLocally(prompt_file_index);
+                      Prompts.savePromptListLocally(local_prompt_file_name,
+                                            self.language,
+                                            plf.id,
+                                            self.list,
+                                            self.promptCache
+                      );
 
                       self.initPromptStack();
                       var m = "using service worker cached prompt file id: 001";
@@ -333,7 +348,13 @@ Prompts.prototype.init = function () {
                                                            plf.contains_promptid,
                                                            plf.start,
                                                            plf.prefix);
-                      savePromptListLocally(prompt_file_index); // don't touch prompt stack that user is currently recording
+                      // don't touch prompt stack that user is currently recording
+                      Prompts.savePromptListLocally(local_prompt_file_name,
+                                            self.language,
+                                            plf.id,
+                                            self.list,
+                                            self.promptCache
+                      );
                       console.log("updating saved prompts file with new one from VoxForge server");
                     }
                 )
