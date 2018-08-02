@@ -62,11 +62,10 @@ Prompts.splitPromptLine = function(promptLine) {
 * split prompt file from server into an array and decide if it needs a 
 * prompt ID added; store in 'self.list'
 */
-Prompts.convertPromptDataToArray = 
-    function(prompt_data,
-             contains_promptid,
-             start,
-             prefix) 
+Prompts.convertPromptDataToArray = function(prompt_data,
+                                           contains_promptid,
+                                           start,
+                                           prefix) 
 {
     // see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
     function pad(num, size) {
@@ -97,11 +96,10 @@ Prompts.convertPromptDataToArray =
 /**
 *
 */
-Prompts.confirmPromptListLength = 
-    function(list,
-             number_of_prompts,
-             prompt_file_index,
-             language)
+Prompts.confirmPromptListLength = function(list,
+                                           number_of_prompts,
+                                           prompt_file_index,
+                                           language)
 {
     if (number_of_prompts !=  list.length) {
       console.warn("number of prompts in prompt_list_files[" + prompt_file_index + "] = " + 
@@ -115,12 +113,11 @@ Prompts.confirmPromptListLength =
 * save the prompt file as a JSON object in user's browser 
 * InnoDB database using LocalForage 
 */
-Prompts.savePromptListLocally = 
-    function(local_prompt_file_name,
-             language,
-             id,
-             list,
-             promptCache) 
+Prompts.save2BrowserStorage = function(local_prompt_file_name,
+                                       language,
+                                       id,
+                                       list,
+                                       promptCache) 
 {
     var jsonOnject = {};
     jsonOnject['language'] = language;
@@ -146,9 +143,8 @@ Prompts.savePromptListLocally =
 * reading prompt list using the self.index and modulus to wrap
 * around the prompt list array.
 */
-Prompts.initPromptStack = 
-    function(list,
-             max_num_prompts) 
+Prompts.initPromptStack = function(list,
+                                  max_num_prompts) 
 {
     var prompt_stack = [];
     var index = Math.floor((Math.random() * list.length));
@@ -163,7 +159,9 @@ Prompts.initPromptStack =
 }
 
 /* get the saved submission object from browser storage */
-Prompts.getSavedPromptList = function(promptCache, local_prompt_file_name) {
+Prompts.getSavedPromptList = function(promptCache, 
+                                      local_prompt_file_name) 
+{
   return new Promise(function (resolve, reject) {
 
       // getItem only returns jsonObject
@@ -183,7 +181,6 @@ Prompts.getSavedPromptList = function(promptCache, local_prompt_file_name) {
 * verify that read.md entries contain valid prompt related data
 */
 Prompts.validate_Readmd_file = function(prompt_list_files) {
-
     // validate contents of prompt_list_files array
     var num_prompts_calc = 0;
     for (var i = 0; i < prompt_list_files.length; i++) {
@@ -238,22 +235,20 @@ Prompts.prototype.init = function () {
     // save context
     var self = this;
 
-
-
     /* ====================================================================== */
     // TODO duplicate definition in service worker file: processSavedSubmission.js
     var local_prompt_file_name = self.language + '_' + 'prompt_file';
 
     /* Main */
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve, reject) { // returnPromise
         /**
         No good way to detect if online or offline. Therefore, first try to 
-        get a random prompts file from server (i.e. not prompt_file_index == 0).  
-        If fail, then fall back and use
+        get a random prompts file from server (i.e. might not be 
+        prompt_file_index == 0).  If fail, then fall back and use
         service worker cached prompt file (which should work since it downloaded
         the entire app in the first place...)
         Failure in this case would be where prompt file is described in read.md
-        bu missing from server; or where user while offline, erroneously deletes
+        but missing from server; or where user while offline, erroneously deletes
         the prompt cache from their browser, but leaves service worker cache untouched.
 
         This way we can have very large prompt sets, but user only needs to 
@@ -273,7 +268,7 @@ Prompts.prototype.init = function () {
                                                   plf.number_of_prompts,
                                                   prompt_file_index,
                                                   self.language);
-                  Prompts.savePromptListLocally(local_prompt_file_name,
+                  Prompts.save2BrowserStorage(local_prompt_file_name,
                                                 self.language,
                                                 plf.id,
                                                 self.list,
@@ -283,7 +278,7 @@ Prompts.prototype.init = function () {
                                                               self.max_num_prompts);
                   var m = "downloaded prompt file from VoxForge server";
                   console.log(m);
-                  resolve(m);
+                  resolve(m); // returnPromise
                 }
             )
             .fail(function() { // first prompt file should be cached by service worker
@@ -296,7 +291,7 @@ Prompts.prototype.init = function () {
                     var m = "cannot find prompts file on VoxForge server: " + prompt_file_name + 
                             "or in service worker cache; could be bad Internet connection...\n ";
                     console.warn(m);
-                    reject(m);
+                    reject(m); // returnPromise
                 }
             });
         }
@@ -344,13 +339,14 @@ Prompts.prototype.init = function () {
                                                            plf.contains_promptid,
                                                            plf.start,
                                                            plf.prefix);
-                      Prompts.savePromptListLocally(local_prompt_file_name,
+                      Prompts.save2BrowserStorage(local_prompt_file_name,
                                                     self.language,
                                                     plf.id,
                                                     self.list,
                                                     self.promptCache
                       );
                       console.log("updating saved prompts file with new one from VoxForge server");
+                      resolve("got prompts from local storage"); // returnPromise
                     }
                 )
                 .fail(function() {
@@ -359,9 +355,10 @@ Prompts.prototype.init = function () {
                             "; device offline or has bad Internet connection, " + 
                             "using local storage prompts file\n ";
                     console.log(m);
+                    reject(m); // returnPromise
                 });
 
-                resolve("got prompts from local storage");
+
             });
         }
 
@@ -387,7 +384,8 @@ Prompts.prototype.init = function () {
         self.promptCache.length() // Gets the number of keys in the offline store
         .then(function(numberOfKeys) { 
             if (numberOfKeys == 0) { // first time set up of prompts file
-                getPromptsFileFromServerOrCache(prompt_file_index, "downloaded prompt file from VoxForge server");
+                getPromptsFileFromServerOrCache(prompt_file_index, 
+                                "downloaded prompt file from VoxForge server");
             } else { 
                 getPromptsFileFromBrowserStorage(prompt_file_index);
             }
