@@ -144,7 +144,7 @@ Prompts.save2BrowserStorage = function(local_prompt_file_name,
 * around the prompt list array.
 */
 Prompts.initPromptStack = function(list,
-                                  max_num_prompts) 
+                                   max_num_prompts) 
 {
     var prompt_stack = [];
     var index = Math.floor((Math.random() * list.length));
@@ -181,7 +181,6 @@ Prompts.getSavedPromptList = function(promptCache,
 * verify that read.md entries contain valid prompt related data
 */
 Prompts.validate_Readmd_file = function(prompt_list_files) {
-    // validate contents of prompt_list_files array
     var num_prompts_calc = 0;
     for (var i = 0; i < prompt_list_files.length; i++) {
       // check for undefined fields
@@ -269,11 +268,10 @@ Prompts.prototype.init = function () {
                                                   prompt_file_index,
                                                   self.language);
                   Prompts.save2BrowserStorage(local_prompt_file_name,
-                                                self.language,
-                                                plf.id,
-                                                self.list,
-                                                self.promptCache);
-
+                                              self.language,
+                                              plf.id,
+                                              self.list,
+                                              self.promptCache);
                   self.prompt_stack = Prompts.initPromptStack(self.list,
                                                               self.max_num_prompts);
                   var m = "downloaded prompt file from VoxForge server";
@@ -283,6 +281,7 @@ Prompts.prototype.init = function () {
             )
             .fail(function() { // first prompt file should be cached by service worker
                 if (prompt_file_index > 0) {
+
                     prompt_file_index = 0;
                     getPromptsFileFromServerOrCache(prompt_file_index, 
                                           "using service worker cached prompt file id: 001");
@@ -340,11 +339,10 @@ Prompts.prototype.init = function () {
                                                            plf.start,
                                                            plf.prefix);
                       Prompts.save2BrowserStorage(local_prompt_file_name,
-                                                    self.language,
-                                                    plf.id,
-                                                    self.list,
-                                                    self.promptCache
-                      );
+                                                  self.language,
+                                                  plf.id,
+                                                  self.list,
+                                                  self.promptCache);
                       console.log("updating saved prompts file with new one from VoxForge server");
                       resolve("got prompts from local storage"); // returnPromise
                     }
@@ -353,9 +351,9 @@ Prompts.prototype.init = function () {
                     var m = "cannot get updated prompts file from VoxForge server: " + 
                             prompt_file_name + 
                             "; device offline or has bad Internet connection, " + 
-                            "using local storage prompts file\n ";
+                            "using browser storage prompts file\n ";
                     console.log(m);
-                    reject(m); // returnPromise
+                    // reject(m); // no need to reject since already updated prompt_stack
                 });
 
 
@@ -366,11 +364,15 @@ Prompts.prototype.init = function () {
 
         Prompts.validate_Readmd_file(self.prompt_list_files);
         var prompt_file_index = Math.floor((Math.random() * self.prompt_list_files.length)); // zero indexed
+
+        var plf = self.prompt_list_files[prompt_file_index];
         var m = "";
-        if ( ! self.prompt_list_files[prompt_file_index].contains_promptid) {
-            m = "starting promptId: " + self.prompt_list_files[prompt_file_index].start;
+        if ( ! plf.contains_promptid) {
+            let end = plf.start + plf.number_of_prompts;
+            m = "promptId start: " + plf.start +
+                "; end: " + end;
         }
-        console.log("prompt file id: " + self.prompt_list_files[prompt_file_index].id + 
+        console.log("prompt file id: " + plf.id + 
                     " (prompt file array index: " + prompt_file_index + ") " + m);
 
         /** 
