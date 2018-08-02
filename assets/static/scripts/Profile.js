@@ -37,8 +37,6 @@ function Profile (appversion,
   this.license = pageVariables.license;
 
   this.internal = {};
-  this.internal.numberOfUploadedSubmissions = 0;
-  this.internal.timeOfLastSubmission = 0;
 }
 
 /**
@@ -128,9 +126,6 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
 
       this.debug = parsedLocalStorageObject.debug;
 
-      this.internal.numberOfUploadedSubmissions = parsedLocalStorageObject.internal.numberOfUploadedSubmissions;
-      this.internal.timeOfLastSubmission = parsedLocalStorageObject.internal.timeOfLastSubmission;
-
       return parsedLocalStorageObject;
   } else {
     return null;
@@ -157,10 +152,6 @@ Profile.prototype.toHash = function () {
     profile_hash["channels"] = this.channels;
 
     profile_hash["debug"] = this.debug;
-
-    profile_hash.internal = {};
-    profile_hash.internal["numberOfUploadedSubmissions"] = this.internal.numberOfUploadedSubmissions;
-    profile_hash.internal["timeOfLastSubmission"] = this.internal.timeOfLastSubmission;
 
     return profile_hash;
 };
@@ -376,12 +367,6 @@ Profile.prototype.setDebugValues = function (obj) {
 */
 Profile.prototype.clearDebugValues = function () {
     this.debug = {};
-}
-
-/**
-*/
-Profile.prototype.addToNumSubmissonsUploaded = function (num) {
-    this.internal.numberOfUploadedSubmissions = this.internal.numberOfUploadedSubmissions + num;
 }
 
 /**

@@ -26,8 +26,6 @@ function Uploader(alert_message) {
 
     this.alert_message = alert_message;
 
-    this.numberOfUploadedSubmissions = 0;
-    this.timeOfLastSubmission = 0;
     // TODO keep track of names of uploaded submissions... and allow user to display
 
     if ('serviceWorker' in navigator) {
@@ -54,6 +52,21 @@ function Uploader(alert_message) {
       self.zip_worker.terminate();
       self.upload_worker.terminate();
     });
+
+    function retrieve() {
+        var retrievedObject = localStorage.getItem('internal');
+        // boolean expression. Second part is evaluated only if left one is true. 
+        // therefore if retrievedObject is null, null is returned
+        return retrievedObject && JSON.parse(retrievedObject);
+    }
+    var parsedLocalStorageObject = retrieve();
+    if ( parsedLocalStorageObject ) {
+        this.numberOfUploadedSubmissions = parsedLocalStorageObject.numberOfUploadedSubmissions;
+        this.timeOfLastSubmission = parsedLocalStorageObject.timeOfLastSubmission;
+    } else {
+        this.numberOfUploadedSubmissions = 0;
+        this.timeOfLastSubmission = 0;
+    }
 }
 
 /**
@@ -92,8 +105,12 @@ Uploader.prototype.init = function () {
         switch (returnObj.status) {
           case 'AllUploaded':
             var filesUploaded = returnObj.filesUploaded;
-            this.numberOfUploadedSubmissions = this.numberOfUploadedSubmissions + filesUploaded.length;
-            this.timeOfLastSubmission = Date.now;
+
+            self.numberOfUploadedSubmissions = self.numberOfUploadedSubmissions + filesUploaded.length;
+            var internal = {};
+            internal.numberOfUploadedSubmissions = self.numberOfUploadedSubmissions;
+            internal.timeOfLastSubmission = Date.now();
+            localStorage.setItem('internal', JSON.stringify(internal));
 
             var submissionText = (filesUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
             processMessage( filesUploaded.length + " " + 
@@ -123,8 +140,13 @@ Uploader.prototype.init = function () {
           case 'partialUpload':
             var filesNotUploaded = returnObj.filesNotUploaded;
             var filesUploaded = returnObj.filesUploaded;
-            this.numberOfUploadedSubmissions = this.numberOfUploadedSubmissions + filesUploaded.length;
-            this.timeOfLastSubmission = Date.now;
+
+            self.numberOfUploadedSubmissions = self.numberOfUploadedSubmissions + filesUploaded.length;
+            var internal = {};
+            internal.numberOfUploadedSubmissions = self.numberOfUploadedSubmissions;
+            internal.timeOfLastSubmission = Date.now();
+            localStorage.setItem('internal', JSON.stringify(internal));
+
             var savedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
             var uploadedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
 
