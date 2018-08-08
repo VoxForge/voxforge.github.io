@@ -31,19 +31,21 @@ function Controller(prompts,
                     appversion,
                     pageVariables)
 {
-    this.prompts  = prompts; 
-    this.profile  = profile; 
-    this.view  = view; 
-    this.audio  = audio; 
-    this.uploader  = uploader; 
-    this.parms  = parms; 
-    this.appversion  = appversion; 
+    this.prompts = prompts; 
+    this.profile = profile; 
+    this.view = view; 
+    this.audio = audio; 
+    this.uploader = uploader; 
+    this.parms = parms; 
+    this.appversion = appversion; 
     this.pageVariables = pageVariables;
 
     //  recording timeout object
     this.rec_timeout_obj;
 
     this.promise_index = 0;
+    //this.numPrompt2SubmittForRecordInfo = 5;
+    this.numPrompt2SubmittForRecordInfo = 0; // debug
 }
 
 /**
@@ -187,7 +189,7 @@ Controller.prototype.start = function () {
           self.view.enableDeleteButtons();
           self.view.showPlayButtons();
           if (self.audio.parms.blockDisplayOfRecordButton) {
-              //block display of record button stays off until after recording is done
+              //block display of record button - stays off until after recording is done
               Promise.all(promise_list)
               .then(function() {
                  self.view.setRSButtonDisplay(true, false);
@@ -236,7 +238,9 @@ Controller.prototype.start = function () {
           recordAudio(); 
         },
 
-        onRecordinglast: async function() {
+        // TODO why was this async??? 
+        //onRecordinglast: async function() {
+        onRecordinglast: function() {
           self.view.disableDeleteButtons();
           self.view.hideAudioPlayer();
           self.view.hidePlayButtons();
@@ -299,6 +303,14 @@ Controller.prototype.start = function () {
       setTimeout( function () {
         fsm.stopclicked(); 
       }, self.parms.recording_stop_delay);
+
+      if (! self.view.displayRecordingInfoChecked()  && 
+          self.uploader.getNumberOfUploadedSubmissions() > self.numPrompt2SubmittForRecordInfo)
+      {
+        self.view.recordingInformationButtonDisplay();
+        // TODO translate
+        window.alert("Recording Information section activated - used to help classify speech (can be disabled in settings)");
+      } 
     }
 
     self.view.upload.onclick = function() {

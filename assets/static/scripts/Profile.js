@@ -123,7 +123,8 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
       this.sample_rate = parsedLocalStorageObject.sample_rate;
       this.bit_depth = parsedLocalStorageObject.bit_depth;
       this.channels = parsedLocalStorageObject.channels;
-
+      
+      // TODO does nto make sense to cache debug info, it should be newly generated with each submission....
       this.debug = parsedLocalStorageObject.debug;
 
       return parsedLocalStorageObject;
@@ -367,12 +368,6 @@ Profile.prototype.setDebugValues = function (obj) {
 */
 Profile.prototype.clearDebugValues = function () {
     this.debug = {};
-}
-
-/**
-*/
-Profile.prototype.setTimeOfLastSubmission = function (time) {
-    this.internal.timeOfLastSubmission = time;
 }
 
 /**

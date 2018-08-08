@@ -120,13 +120,6 @@ View.updateView = function(json_object, localized_yes, localized_other) {
       $("#noise_type_other_display").show();
     }
     $('#license').val( json_object.license );
-
-    if ( json_object.user_agent_string ) {
-      $('#ua_string').attr('checked','checked');
-    }
-    if ( json_object.debug ) {
-      $('#debug').attr('checked','checked');
-    }
 }
 
 /**
@@ -226,6 +219,60 @@ View.getLicenseID = function() {
 */
 View.getUserName = function() {
   return $('#username').val();
+}
+
+/**
+* settings pop up
+* Note: localstorage only stores strings
+*/
+View.initSettingsPopup = function() {
+   if ( localStorage.getItem("debug") === 'true') { // string
+      $('#debug').attr('checked', true);  // boolean
+    } else {
+      $('#debug').attr('checked', false);
+    }
+
+    if ( localStorage.getItem("ua_string") === 'true') {
+      $('#ua_string').attr('checked', true); 
+    } else {
+      $('#ua_string').attr('checked', false);
+    }
+    
+    if ( localStorage.getItem("recording_information_button_display") === 'true') {
+      $('#display_record_info').attr('checked', true); 
+      $('#recording_information_button_display').show();
+    } else {
+      $('#display_record_info').attr('checked', false);
+      $('#recording_information_button_display').hide();
+    }
+
+    // handlers
+  
+    $('#debug').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("debug", 'true');
+      } else {
+        localStorage.setItem("debug", 'false');
+      }
+    });
+
+    $('#ua_string').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("ua_string", 'true');
+      } else {
+        localStorage.setItem("ua_string", 'false');
+      }
+    });
+        
+    $('#display_record_info').change(function () { 
+      if (this.checked) {
+        $("#recording_information_button_display").show();
+        localStorage.setItem("recording_information_button_display", 'true');
+      } else {
+        $("#recording_information_button_display").hide();
+        localStorage.setItem("recording_information_button_display", 'false');
+      }
+    });
 }
 
 // ### METHODS #################################################################
@@ -371,6 +418,8 @@ View.prototype.init = function () {
       self.updateProgress();
     });
 
+    View.initSettingsPopup();
+
     // ########################################################################
 
     return new Promise(function (resolve, reject) {
@@ -378,6 +427,8 @@ View.prototype.init = function () {
         if (json_object) {
           View.updateView(json_object, self.localized_yes, self.localized_other);  
         } 
+
+
         resolve("OK");  // TODO not waiting for updateView
     }); // promise
 }
@@ -408,15 +459,24 @@ View.prototype.speakerCharacteristics = function () {
 * toggle to display profile info
 */
 View.prototype.profileInfo = function () {
-    $("#profile-display").toggle(); 
+    $("#profile-display").toggle();
 }
 
 /**
 * toggle to display recording info
 */
 View.prototype.recordingInformation = function () {
-    $("#recording_information_display").toggle(); 
-    $("#speaker_characteristics_display").hide(); 
+    $("#recording_information_display").toggle();
+    $("#speaker_characteristics_display").hide();
+}
+
+/**
+* toggle to display recording info button
+*/
+View.prototype.recordingInformationButtonDisplay = function () {
+    $("#recording_information_button_display").show(); 
+    $('#display_record_info').attr('checked', true);
+    localStorage.setItem("recording_information_button_display", true);
 }
 
 /**
@@ -545,6 +605,13 @@ View.prototype.clearSoundClips = function () {
 */
 View.prototype.debugChecked = function () {
     return $('#debug').is(":checked");
+}
+
+/**
+* get recording information value
+*/
+View.prototype.displayRecordingInfoChecked = function () {
+    return $('#recording_info').is(":checked");
 }
 
 /**

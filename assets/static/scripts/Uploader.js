@@ -52,21 +52,6 @@ function Uploader(alert_message) {
       self.zip_worker.terminate();
       self.upload_worker.terminate();
     });
-
-    function retrieve() {
-        var retrievedObject = localStorage.getItem('internal');
-        // boolean expression. Second part is evaluated only if left one is true. 
-        // therefore if retrievedObject is null, null is returned
-        return retrievedObject && JSON.parse(retrievedObject);
-    }
-    var parsedLocalStorageObject = retrieve();
-    if ( parsedLocalStorageObject ) {
-        this.numberOfUploadedSubmissions = parsedLocalStorageObject.numberOfUploadedSubmissions;
-        this.timeOfLastSubmission = parsedLocalStorageObject.timeOfLastSubmission;
-    } else {
-        this.numberOfUploadedSubmissions = 0;
-        this.timeOfLastSubmission = 0;
-    }
 }
 
 /**
@@ -106,11 +91,9 @@ Uploader.prototype.init = function () {
           case 'AllUploaded':
             var filesUploaded = returnObj.filesUploaded;
 
-            self.numberOfUploadedSubmissions = self.numberOfUploadedSubmissions + filesUploaded.length;
-            var internal = {};
-            internal.numberOfUploadedSubmissions = self.numberOfUploadedSubmissions;
-            internal.timeOfLastSubmission = Date.now();
-            localStorage.setItem('internal', JSON.stringify(internal));
+            var numberOfUploadedSubmissions = self.getNumberOfUploadedSubmissions() + filesUploaded.length;
+            localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
+
 
             var submissionText = (filesUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
             processMessage( filesUploaded.length + " " + 
@@ -141,11 +124,8 @@ Uploader.prototype.init = function () {
             var filesNotUploaded = returnObj.filesNotUploaded;
             var filesUploaded = returnObj.filesUploaded;
 
-            self.numberOfUploadedSubmissions = self.numberOfUploadedSubmissions + filesUploaded.length;
-            var internal = {};
-            internal.numberOfUploadedSubmissions = self.numberOfUploadedSubmissions;
-            internal.timeOfLastSubmission = Date.now();
-            localStorage.setItem('internal', JSON.stringify(internal));
+            var numberOfUploadedSubmissions = self.getNumberOfUploadedSubmissions() + filesUploaded.length;
+            localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
 
             var savedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
             var uploadedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
@@ -293,6 +273,11 @@ Uploader.prototype.upload = function ( prompts,
         * this is a worker callback inside the worker context
         */
         self.zip_worker.onmessage = function zipworkerDone(event) { 
+
+          localStorage.setItem('timeOfLastSubmission', Date.now());
+          var numberOfSubmissions = localStorage.getItem('numberOfSubmissions');
+          localStorage.setItem('numberOfSubmissions', numberOfSubmissions + 1);
+
           if (event.data.status === "savedInBrowserStorage") {
             console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
 
@@ -395,7 +380,7 @@ Uploader.prototype.upload = function ( prompts,
 
         }); // Promise
 
-     } // uploadZippedSubmission
+    } // uploadZippedSubmission
 
     // #######################################################################
 
@@ -411,13 +396,25 @@ Uploader.prototype.upload = function ( prompts,
 * 
 */
 Uploader.prototype.getNumberOfUploadedSubmissions = function () {
-  return this.numberOfUploadedSubmissions;
+  return localStorage.getItem('numberOfUploadedSubmissions') || 0;
 }
 
 /**
 * 
 */
-Uploader.prototype.getTimeOfLastSubmission = function () {
-  return this.timeOfLastSubmission;
+Uploader.prototype.getNumberOfSubmissions = function () {
+  return localStorage.getItem('numberOfSubmissions') || 0;
 }
 
+/**
+* 
+*/
+Uploader.prototype.askUserToConfirmSameRecordingInfo = function () {
+  var millisecondsSinceLastSubmission = Date.Now() - localStorage.getItem('timeOfLastSubmission') || 0;
+  var hoursSinceLastSubmission = millisecondsSinceLastSubmission * 1000 * 60 * 60;
+  if (hoursSinceLastSubmission > 2) {
+    return true;
+  } else {
+    return false;
+  }
+}
