@@ -26,11 +26,17 @@
 
           {{ page.ua_string.label | default: default.ua_string.label}}
       </a>
+      <!-- TODO translate  -->
       <input type="checkbox" name="ua_string" id="ua_string">
       <label for="ua_string">include User Agent String in Submission</label>
 
+      <!-- TODO translate  -->
       <input type="checkbox" name="debug" id="debug">
       <label for="debug">include Debug Information with Submission</label>
+
+      <!-- TODO translate  -->
+      <input type="checkbox" name="display_record_info" id="display_record_info">
+      <label for="display_record_info">display Recording Information section (helps with classifying submissions)</label>
 
       {{ page.license.label | default: default.license.label }}
       <select type="text" id="license">
