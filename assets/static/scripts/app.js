@@ -73,6 +73,11 @@ var view;  // needs to be global so can be accessible to index.html
       //num_prompts_to_trigger_upload: 3, // debug
     }
 
+    // TODO debug
+    if ( ! (window.location.origin === 'https://voxforge.github.io') ) { // prod
+        prompt_parms.num_prompts_to_trigger_upload = 3;
+    } 
+
     var audio_parms = {
       // this was used before we just set audioNodebufferSize to largest size 
       // possible, since latency is not a issue for this app...
