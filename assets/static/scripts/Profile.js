@@ -138,7 +138,7 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
 */
 Profile.prototype.toHash = function () {
     // TODO View.getUserProfileInfo gets called twice to get same info
-    // everytime a user uploads... cache info somehow...
+    // everytime a user uploads... 
     var profile_hash = View.getUserProfileInfo(this.localized_yes, this.localized_other, this.localized_anonymous);
 
     profile_hash["language"] = this.language;

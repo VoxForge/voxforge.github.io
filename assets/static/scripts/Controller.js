@@ -183,6 +183,14 @@ Controller.prototype.start = function () {
         // Static States
         onNopromptsrecorded: function() {
           self.view.setRSUButtonDisplay(true, false, false);
+                    
+          if (! self.view.displayRecordingInfoChecked()  && 
+              self.uploader.getNumberOfSubmissions() > self.numPrompt2SubmittForRecordInfo)
+          {
+            self.view.recordingInformationButtonDisplay();
+            // TODO translate
+            window.alert('Recording Information section activated (can be disabled in <a href="/en/read/#&ui-state=dialog">settings</a>) - used to help classify speech');
+          } 
         },
 
         onFirstpromptrecorded: function() {
@@ -303,14 +311,6 @@ Controller.prototype.start = function () {
       setTimeout( function () {
         fsm.stopclicked(); 
       }, self.parms.recording_stop_delay);
-
-      if (! self.view.displayRecordingInfoChecked()  && 
-          self.uploader.getNumberOfUploadedSubmissions() > self.numPrompt2SubmittForRecordInfo)
-      {
-        self.view.recordingInformationButtonDisplay();
-        // TODO translate
-        window.alert("Recording Information section activated - used to help classify speech (can be disabled in settings)");
-      } 
     }
 
     self.view.upload.onclick = function() {

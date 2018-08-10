@@ -275,8 +275,7 @@ Uploader.prototype.upload = function ( prompts,
         self.zip_worker.onmessage = function zipworkerDone(event) { 
 
           localStorage.setItem('timeOfLastSubmission', Date.now());
-          var numberOfSubmissions = localStorage.getItem('numberOfSubmissions');
-          localStorage.setItem('numberOfSubmissions', numberOfSubmissions + 1);
+          localStorage.setItem('numberOfSubmissions', self.getNumberOfSubmissions() + 1);
 
           if (event.data.status === "savedInBrowserStorage") {
             console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
@@ -393,17 +392,17 @@ Uploader.prototype.upload = function ( prompts,
 }
 
 /**
-* 
+* localStorage stores everything as a string
 */
 Uploader.prototype.getNumberOfUploadedSubmissions = function () {
-  return localStorage.getItem('numberOfUploadedSubmissions') || 0;
+  return parseInt( localStorage.getItem('numberOfUploadedSubmissions') || 0);
 }
 
 /**
-* 
+* localStorage stores everything as a string
 */
 Uploader.prototype.getNumberOfSubmissions = function () {
-  return localStorage.getItem('numberOfSubmissions') || 0;
+  return parseInt( localStorage.getItem('numberOfSubmissions') || 0);
 }
 
 /**
