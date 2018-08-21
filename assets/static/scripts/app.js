@@ -73,11 +73,6 @@ var view;  // needs to be global so can be accessible to index.html
       //num_prompts_to_trigger_upload: 3, // debug
     }
 
-    // TODO debug
-    if ( ! (window.location.origin === 'https://voxforge.github.io') ) { // prod
-        prompt_parms.num_prompts_to_trigger_upload = 3;
-    } 
-
     var audio_parms = {
       // this was used before we just set audioNodebufferSize to largest size 
       // possible, since latency is not a issue for this app...
@@ -110,12 +105,19 @@ var view;  // needs to be global so can be accessible to index.html
     var controller_parms = {
       recording_timeout: 20000, // 20 seconds - silence detection should remove leading and trailing silence
       recording_stop_delay: 500, // time between when stop button is clicks and app actually stops recording
+      numPrompt2SubmittForRecordInfo: 5,
     }
 
     // FF on (all platforms) can record 32-bit float, but cannot play back 32-bit 
     // float; therefore only us 16bit bitdepth on all version of Firefox
     if ( platform.name.includes("Firefox") ) { 
       audio_parms.bitDepth = 16;
+    } 
+
+    // TODO debug
+    if ( ! (window.location.origin === 'https://voxforge.github.io') ) { 
+        prompt_parms.num_prompts_to_trigger_upload = 3;
+        controller_parms.numPrompt2SubmittForRecordInfo = 0;
     } 
 
     // ### ANDROID #############################################################
