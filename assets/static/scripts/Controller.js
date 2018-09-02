@@ -44,8 +44,6 @@ function Controller(prompts,
     this.rec_timeout_obj;
 
     this.promise_index = 0;
-    //this.numPrompt2SubmittForRecordInfo = 5;
-    this.numPrompt2SubmittForRecordInfo = 0; // debug
 }
 
 /**
@@ -96,7 +94,7 @@ Controller.prototype.start = function () {
     * basically a blocking wait until audio files get converted into
     * blobs for later processing by zipupload web worker.
     */
-    function saveProfileAndReset () {
+    function saveProfileAndReset (result) {
       self.profile.addProfile2LocalStorage();
       self.prompts.resetIndices();
       self.view.reset();
@@ -183,13 +181,17 @@ Controller.prototype.start = function () {
         // Static States
         onNopromptsrecorded: function() {
           self.view.setRSUButtonDisplay(true, false, false);
-                    
+          
           if (! self.view.displayRecordingInfoChecked()  && 
-              self.uploader.getNumberOfSubmissions() > self.numPrompt2SubmittForRecordInfo)
+              self.uploader.getNumberOfSubmissions() > self.parms.numPrompt2SubmittForRecordInfo &&
+              localStorage.getItem("recording_asked_user") !== 'true'
+              )
           {
+            // only ask the user once if they want to activate the Recording Information section
+            localStorage.setItem("recording_asked_user", true); 
             self.view.recordingInformationButtonDisplay();
             // TODO translate
-            window.alert('Recording Information section activated (can be disabled in <a href="/en/read/#&ui-state=dialog">settings</a>) - used to help classify speech');
+            window.alert('"Recording Information" section activated - under "Profile Info" (disable in Settings)');
           } 
         },
 
@@ -279,12 +281,18 @@ Controller.prototype.start = function () {
           // from shadow DOM before upload, otherwise will miss some audio 
           // recordings...
           Promise.all(promise_list)
-          .then( self.uploader.upload(self.prompts,
-                                 self.profile,
-                                 self.appversion,
-                                 document.querySelectorAll('.clip'), // all clips
-                                 self.pageVariables.language) )
-          .then(saveProfileAndReset);
+          .then( function() {
+              self.uploader.upload(self.prompts,
+                                   self.profile,
+                                   self.appversion,
+                                   document.querySelectorAll('.clip'), // all clips
+                                   self.pageVariables.language)
+              .then(saveProfileAndReset)
+              .catch(function (err) {
+                  console.log(err.message);
+                  console.log(err.stack);
+              });
+          });
         },
       }
     });

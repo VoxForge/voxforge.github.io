@@ -194,7 +194,7 @@ Uploader.prototype.upload = function ( prompts,
     */
     function processAudio() {
       return new Promise(function (resolve, reject) {
-
+      
         function audioArrayLoop() {
           var clip = allClips[clipIndex];
           clip.style.display = 'None';
@@ -236,8 +236,8 @@ Uploader.prototype.upload = function ( prompts,
         } // audioArrayLoop
 
         audioArrayLoop();
-
       }); // Promise
+      
     };// processAudio
     /**
     * call web worker to create zip file and upload to VoxForge server
@@ -280,7 +280,7 @@ Uploader.prototype.upload = function ( prompts,
           if (event.data.status === "savedInBrowserStorage") {
             console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
 
-            resolve('OK');
+            resolve('savedInBrowserStorage');
 
           } else {
             var m = 'webworker says: zip error: ' + event.data.status;
@@ -375,7 +375,7 @@ Uploader.prototype.upload = function ( prompts,
                 asyncMainThreadUpload();
             }
           }
-          resolve("OK");
+          resolve("uploadZippedSubmission");
 
         }); // Promise
 
@@ -387,7 +387,11 @@ Uploader.prototype.upload = function ( prompts,
       processAudio()
       .then(callWorker2createZipFile)
       .then(uploadZippedSubmission)
-      .then(resolve); // required for returned promise to complete properly
+//      .then(resolve("upload done")) //this caused the outer promise to resolve immediately... 
+      .catch(function (err) {
+        console.log(err.message);
+        console.log(err.stack);
+      });
     });
 }
 
