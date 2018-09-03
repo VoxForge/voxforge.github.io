@@ -121,7 +121,7 @@ var view;  // needs to be global so can be accessible to index.html
     // TODO debug
     if ( ! (window.location.origin === 'https://voxforge.github.io') ) { 
         prompt_parms.num_prompts_to_trigger_upload = 3;
-        controller_parms.numPrompt2SubmittForRecordInfo = 0;
+        controller_parms.numPrompt2SubmittForRecordInfo = 1;
     } 
 
     // ### ANDROID #############################################################

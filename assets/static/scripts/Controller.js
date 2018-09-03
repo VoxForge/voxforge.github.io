@@ -198,7 +198,9 @@ Controller.prototype.start = function () {
             localStorage.setItem("recording_asked_user", true); 
             self.view.recordingInformationButtonDisplay();
             // TODO translate
-            window.alert('"Recording Information" section activated - under "Profile Info" (disable in Settings)');
+            window.alert('More than ' + self.parms.numPrompt2SubmittForRecordInfo + ' ' +
+                         'submissions recorded, "Recording Information" section activated ' +
+                         '(can be disabled in Settings)');
           } 
         },
 
