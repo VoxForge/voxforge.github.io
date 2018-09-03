@@ -97,9 +97,7 @@ var view;  // needs to be global so can be accessible to index.html
       gain_max_increment_factor: 2.0, // no speech detected, assume volume set really low, double volume
       gain_decrement_factor: 0.75, // if clipping, reduce volume
     }
-    if ( ! localStorage.getItem("vad_run") ) {
-      localStorage.setItem("vad_run", 'true');
-    } 
+
     
     var view_parms = {
       displayWaveform: true,
@@ -124,6 +122,19 @@ var view;  // needs to be global so can be accessible to index.html
         controller_parms.numPrompt2SubmittForRecordInfo = 1;
     } 
 
+    // ### localstorage defaults ###############################################
+    if ( ! localStorage.getItem("vad_run") ) {
+      localStorage.setItem("vad_run", 'true');
+    } 
+
+    if ( ! localStorage.getItem("debug") ) {
+      localStorage.setItem("debug", 'true');
+    } 
+
+    if ( ! localStorage.getItem("ua_string") ) {
+      localStorage.setItem("ua_string", 'true');
+    }
+    
     // ### ANDROID #############################################################
 
     if ( platform.os.family.includes("Android") ) {
