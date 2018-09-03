@@ -48,7 +48,7 @@ self.onmessage = function(event) {
       console.log('bitDepth: ' + bitDepth);
       encoder = new WavAudioEncoder(data.sampleRate, bitDepth);
 
-      vad_run = data.vad_parms.run;
+      vad_run = data.vad_run;
       ssd_parms = data.ssd_parms;
 
       if ( vad_run ) {

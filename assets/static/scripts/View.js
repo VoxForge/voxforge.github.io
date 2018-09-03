@@ -246,6 +246,12 @@ View.initSettingsPopup = function() {
       $('#recording_information_button_display').hide();
     }
 
+    if ( localStorage.getItem("vad_run") === 'true') {
+      $('#vad_run').attr('checked', true); 
+    } else {
+      $('#vad_run').attr('checked', false);
+    }
+
     // handlers
   
     $('#debug').change(function () { 
@@ -271,6 +277,14 @@ View.initSettingsPopup = function() {
       } else {
         $("#recording_information_button_display").hide();
         localStorage.setItem("recording_information_button_display", 'false');
+      }
+    });
+    
+    $('#vad_run').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("vad_run", 'true');
+      } else {
+        localStorage.setItem("vad_run", 'false');
       }
     });
 }
@@ -474,9 +488,12 @@ View.prototype.recordingInformation = function () {
 * toggle to display recording info button
 */
 View.prototype.recordingInformationButtonDisplay = function () {
-    $("#recording_information_button_display").show(); 
-    $('#display_record_info').attr('checked', true);
-    localStorage.setItem("recording_information_button_display", true);
+    //$("#recording_information_button_display").show(); 
+    //$('#display_record_info').attr('checked', true);
+
+    //localStorage.setItem("recording_information_button_display", true);
+    //$('#display_record_info').attr('checked', true);
+    $('#display_record_info').trigger( "click" );
 }
 
 /**
@@ -538,6 +555,13 @@ View.prototype.enableDeleteButtons = function () {
     $('.delete').prop('disabled', false);
 }
 
+/**
+* 
+*/
+View.prototype.enableVoiceActivityDetection = function () {
+    $('#vad_run').attr('checked', true); 
+}
+      
 /**
 * 
 

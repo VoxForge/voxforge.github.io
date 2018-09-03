@@ -73,14 +73,21 @@ Controller.prototype.start = function () {
           fsm.recordingtimeout();
         }, self.parms.recording_timeout);
 
+        var vad_run;
+        if ( localStorage.getItem("vad_run") === 'true') {
+            vad_run = true;
+        } else {
+            vad_run = false;
+        }
+
         if ( view.debugChecked() ) {
           promise_list[self.promise_index++] = 
-                self.audio.record( self.prompts.getPromptId() )
+                self.audio.record( self.prompts.getPromptId(), vad_run )
                 .then( self.view.displayAudioPlayer.bind(self.view) )
                 .then( self.prompts.setAudioCharacteristics.bind(self.prompts) );
         } else {
           promise_list[self.promise_index++] = 
-                self.audio.record( self.prompts.getPromptId() )
+                self.audio.record( self.prompts.getPromptId(), vad_run )
                 .then( self.view.displayAudioPlayer.bind(self.view) );
 
           self.prompts.clearAudioCharacteristics.bind(self.prompts);

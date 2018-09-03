@@ -213,7 +213,7 @@ Audio.prototype.getDebugValues = function () {
 /**
 * connect nodes; tell worker to start recording audio 
 */
-Audio.prototype.record = function (prompt_id) {
+Audio.prototype.record = function (prompt_id, vad_run) {
     var self = this; // save context when calling inner functions
 
     var got_buffer_size = false;
@@ -227,10 +227,11 @@ Audio.prototype.record = function (prompt_id) {
     audioworker.postMessage({
       command: 'start',
       prompt_id: prompt_id,
-      vad_parms: this.parms.vad,
+      vad_run: vad_run,
+      vad_parms: self.parms.vad,
       ssd_parms : self.parms.ssd,
-      sampleRate: this.audioCtx.sampleRate,
-      bitDepth: this.parms.bitDepth,
+      sampleRate: self.audioCtx.sampleRate,
+      bitDepth: self.parms.bitDepth,
     });
 
     // start recording

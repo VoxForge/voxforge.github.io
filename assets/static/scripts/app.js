@@ -70,8 +70,7 @@ var view;  // needs to be global so can be accessible to index.html
       // drop-down menu selector;  This value changes based on type of device being used.
       max_numPrompts_selector: 50,
       num_prompts_to_trigger_upload: 10, // user can upload anytime after recording 10 prompts
-      //num_prompts_to_trigger_upload: 3, // debug
-    }
+     }
 
     var audio_parms = {
       // this was used before we just set audioNodebufferSize to largest size 
@@ -80,23 +79,28 @@ var view;  // needs to be global so can be accessible to index.html
       audioNodebufferSize: 16384, // debug
       bitDepth:  '32bit-float', // 16 or 32bit-float
       vad: { // Voice Activity Detection parameters
-        run: true,
         // maxsilence: 1500, minvoice: 250, buffersize: 480,//  original values
         maxsilence: 350, 
         minvoice: 250, 
         buffersize: 480, // don't change; current 'chunking' of of sending audio to VAD assumes this buffeersize
       },
+
+      // TODO not being used
       ssd: { // simple silence detection parameters
         duration: 1000, // duration threshhold for silence detection (in milliseconds)
         amplitude: 0.02, // amplitude threshold for silence detection
       },
+
       blockDisplayOfRecordButton: false, // on slower devices, allowing user to record while display is still working can cause dropout/scratches
       app_auto_gain: false, // only needed for smartphones where you cannot adjust volume
       gain_increment_factor: 1.25, // speech detected, but volume too low, use this factor to increase volume
       gain_max_increment_factor: 2.0, // no speech detected, assume volume set really low, double volume
       gain_decrement_factor: 0.75, // if clipping, reduce volume
     }
-
+    if ( ! localStorage.getItem("vad_run") ) {
+      localStorage.setItem("vad_run", 'true');
+    } 
+    
     var view_parms = {
       displayWaveform: true,
       displayVisualizer: true,
@@ -108,7 +112,7 @@ var view;  // needs to be global so can be accessible to index.html
       numPrompt2SubmittForRecordInfo: 5,
     }
 
-    // FF on (all platforms) can record 32-bit float, but cannot play back 32-bit 
+    // FireFox on (all platforms) can record 32-bit float, but cannot play back 32-bit 
     // float; therefore only us 16bit bitdepth on all version of Firefox
     if ( platform.name.includes("Firefox") ) { 
       audio_parms.bitDepth = 16;
@@ -166,6 +170,9 @@ var view;  // needs to be global so can be accessible to index.html
 
     prompts.init();
     view.init();
+    if ( localStorage.getItem("vad_run") === 'true') {
+      view.enableVoiceActivityDetection();
+    }
     audio.init();
     uploader.init();
     controller.start();
@@ -180,6 +187,3 @@ window.addEventListener('appinstalled', (evt) => {
 if (window.matchMedia('(display-mode: standalone)').matches) {
   console.log('display-mode is standalone');
 }
-
-
-
