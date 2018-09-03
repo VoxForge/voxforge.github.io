@@ -248,8 +248,6 @@ Controller.prototype.start = function () {
           recordAudio(); 
         },
 
-        // TODO why was this async??? 
-        //onRecordinglast: async function() {
         onRecordinglast: function() {
           self.view.disableDeleteButtons();
           self.view.hideAudioPlayer();

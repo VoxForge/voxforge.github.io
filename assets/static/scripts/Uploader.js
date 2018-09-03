@@ -382,17 +382,19 @@ Uploader.prototype.upload = function ( prompts,
     } // uploadZippedSubmission
 
     // #######################################################################
-
+    
     return new Promise(function (resolve, reject) {
-      processAudio()
-      .then(callWorker2createZipFile)
-      .then(uploadZippedSubmission)
-//      .then(resolve("upload done")) //this caused the outer promise to resolve immediately... 
-      .catch(function (err) {
-        console.log(err.message);
-        console.log(err.stack);
-      });
-    });
+      
+        processAudio()
+        .then(callWorker2createZipFile)
+        .then(uploadZippedSubmission)
+        .then(resolve) // resolve needs to be passed as a reference... therefore no parms
+        .catch(function (err) {
+          console.log(err.message);
+          console.log(err.stack);
+        });
+        
+    }); // Promise
 }
 
 /**
