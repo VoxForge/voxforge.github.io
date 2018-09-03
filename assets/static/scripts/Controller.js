@@ -280,6 +280,9 @@ Controller.prototype.start = function () {
           // recordings...
           Promise.all(promise_list)
           .then( function() {
+              // start of promise chain with multiple parameters needs to be
+              // within function; cannot be passed as function reference after
+              // Promise.all.
               self.uploader.upload(self.prompts,
                                    self.profile,
                                    self.appversion,
