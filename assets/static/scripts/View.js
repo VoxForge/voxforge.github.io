@@ -635,7 +635,7 @@ View.prototype.debugChecked = function () {
 * get recording information value
 */
 View.prototype.displayRecordingInfoChecked = function () {
-    return $('#recording_info').is(":checked");
+    return $('#display_record_info').is(":checked");
 }
 
 /**

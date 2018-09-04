@@ -21,9 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * ### Contructor ##############################################
 */
 
-function Uploader(alert_message) {
+function Uploader(parms,
+                  alert_message)
+{
     var self = this;
 
+    this.maxMinutesSinceLastSubmission = parms.maxMinutesSinceLastSubmission;
     this.alert_message = alert_message;
 
     // TODO keep track of names of uploaded submissions... and allow user to display
@@ -414,10 +417,21 @@ Uploader.prototype.getNumberOfSubmissions = function () {
 /**
 * 
 */
+Uploader.prototype.minutesSinceLastSubmission = function () {
+    var millis = 0;
+    if ( localStorage.getItem('timeOfLastSubmission') ) {
+      millis = Date.now() - localStorage.getItem('timeOfLastSubmission');
+    } 
+    var mins = (millis / 1000) / 60;
+
+    return Math.round(mins);
+}
+
+/**
+* 
+*/
 Uploader.prototype.askUserToConfirmSameRecordingInfo = function () {
-  var millisecondsSinceLastSubmission = Date.Now() - localStorage.getItem('timeOfLastSubmission') || 0;
-  var hoursSinceLastSubmission = millisecondsSinceLastSubmission * 1000 * 60 * 60;
-  if (hoursSinceLastSubmission > 2) {
+  if (this.minutesSinceLastSubmission() > this.maxMinutesSinceLastSubmission) {
     return true;
   } else {
     return false;

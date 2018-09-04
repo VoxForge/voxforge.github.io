@@ -97,11 +97,14 @@ var view;  // needs to be global so can be accessible to index.html
       gain_max_increment_factor: 2.0, // no speech detected, assume volume set really low, double volume
       gain_decrement_factor: 0.75, // if clipping, reduce volume
     }
-
     
     var view_parms = {
       displayWaveform: true,
       displayVisualizer: true,
+    }
+
+    var uploader_parms = {
+      maxMinutesSinceLastSubmission: 120,
     }
 
     var controller_parms = {
@@ -119,10 +122,11 @@ var view;  // needs to be global so can be accessible to index.html
     // TODO debug
     if ( ! (window.location.origin === 'https://voxforge.github.io') ) { 
         prompt_parms.num_prompts_to_trigger_upload = 3;
-        controller_parms.numPrompt2SubmittForRecordInfo = 1;
+        // controller_parms.numPrompt2SubmittForRecordInfo = 1;
     } 
 
-    // ### localstorage defaults ###############################################
+    // ### set localstorage defaults ###########################################
+    
     if ( ! localStorage.getItem("vad_run") ) {
       localStorage.setItem("vad_run", 'true');
     } 
@@ -169,7 +173,8 @@ var view;  // needs to be global so can be accessible to index.html
                     pageVariables); 
     var audio = new Audio(audio_parms,
                           pageVariables);
-    var uploader = new Uploader(pageVariables.alert_message);
+    var uploader = new Uploader(uploader_parms,
+                                pageVariables.alert_message);
     var controller =  new Controller(prompts, 
                                      profile, 
                                      view, 

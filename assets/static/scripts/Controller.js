@@ -194,17 +194,26 @@ Controller.prototype.start = function () {
               localStorage.getItem("recording_asked_user") !== 'true'
               )
           {
-            // only ask the user once if they want to activate the Recording Information section
-            localStorage.setItem("recording_asked_user", true); 
-            self.view.recordingInformationButtonDisplay();
-            // TODO translate
-            window.alert('More than ' + self.parms.numPrompt2SubmittForRecordInfo + ' ' +
-                         'submissions recorded, "Recording Information" section activated ' +
-                         '(can be disabled in Settings)');
-          } 
+              // only ask the user once if they want to activate the Recording Information section
+              localStorage.setItem("recording_asked_user", true); 
+              self.view.recordingInformationButtonDisplay();
+              // TODO translate
+              window.alert('More than ' + self.parms.numPrompt2SubmittForRecordInfo + ' ' +
+                           'submissions recorded, "Recording Information" section activated ' +
+                           '(can be disabled in Settings)');
+          }
         },
 
         onFirstpromptrecorded: function() {
+          if ( self.view.displayRecordingInfoChecked()  &&
+              self.uploader.askUserToConfirmSameRecordingInfo() )
+          {
+              window.alert('Its been longer than ' + self.uploader.minutesSinceLastSubmission() +
+                            ' minutes since your last submission.  ' +
+                            'Please review your Recording Information settings and' +
+                            ', if necessary, update your Location and Noise Levels.');
+          }
+
           self.view.enableDeleteButtons();
           self.view.showPlayButtons();
           if (self.audio.parms.blockDisplayOfRecordButton) {
@@ -234,7 +243,7 @@ Controller.prototype.start = function () {
         },
 
         // at maximum selected prompts, cannot record anymore, must upload to 
-        // continue, or delete then upload
+        // continue, or delete then record
         onMaxpromptsrecorded: function() { 
           self.view.enableDeleteButtons();
           self.view.showAudioPlayer();
@@ -244,8 +253,8 @@ Controller.prototype.start = function () {
 
         // #####################################################################
         // Action States
-        onRecordingfirst: function() { 
-          self.view.setRSButtonDisplay(false, true);  
+        onRecordingfirst: function() {
+          self.view.setRSButtonDisplay(false, true);
           recordAudio();
         },
 
