@@ -93,12 +93,12 @@ var view;  // needs to be global so can be accessible to index.html
                           pageVariables);
     var uploader = new Uploader(parms.uploader,
                                 pageVariables.alert_message);
-    var controller =  new Controller(prompts, 
+    var controller =  new Controller(parms.controller,
+                                     prompts, 
                                      profile, 
                                      view, 
                                      audio,
                                      uploader,
-                                     parms.controller,
                                      appversion,
                                      pageVariables);
 

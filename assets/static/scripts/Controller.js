@@ -22,12 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // submission upload message; used in upload function
 var promise_list = [];
 
-function Controller(prompts, 
+function Controller(parms,
+                    prompts, 
                     profile,
                     view, 
                     audio,
                     uploader,
-                    parms,
                     appversion,
                     pageVariables)
 {
