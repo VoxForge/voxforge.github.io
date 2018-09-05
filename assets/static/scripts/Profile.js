@@ -25,8 +25,6 @@ function Profile (appversion,
 {
   this.appversion = appversion;
  
-  this.debug = {};
-
   this.suffix = Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
   this.randomDigits = Profile.makeRandString (10,'1234567890');
 
@@ -35,8 +33,6 @@ function Profile (appversion,
   this.language = pageVariables.language;
   this.localized_anonymous = pageVariables.anonymous;
   this.license = pageVariables.license;
-
-  this.internal = {};
 }
 
 /**
@@ -123,9 +119,6 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
       this.sample_rate = parsedLocalStorageObject.sample_rate;
       this.bit_depth = parsedLocalStorageObject.bit_depth;
       this.channels = parsedLocalStorageObject.channels;
-      
-      // TODO does nto make sense to cache debug info, it should be newly generated with each submission....
-      this.debug = parsedLocalStorageObject.debug;
 
       return parsedLocalStorageObject;
   } else {
@@ -152,37 +145,17 @@ Profile.prototype.toHash = function () {
     profile_hash["bit_depth"] = this.bit_depth;
     profile_hash["channels"] = this.channels;
 
-    profile_hash["debug"] = this.debug;
-
     return profile_hash;
 };
 
 /**
 * Convert profile object to JSON string, with line feeds after every key 
-* value lines
-*
-* used for saving state between submissions.
-*/
-Profile.prototype.toJsonStringAll = function () {
-   return JSON.stringify(this.toHash() ,null ,"  ");
-}
-
-/**
-* Convert profile object to JSON string, with line feeds after every key 
 * value line
 *
-* ignores any 'internal' keys - used to create profile.json file
+* used to create profile.json file, and saving state between submissions.
 */
 Profile.prototype.toJsonString = function () {
-    var hash = this.toHash();
-    var filtered_hash = {};
-    for (var key in hash) {
-      if (key != "internal") {
-        filtered_hash[key] = hash[key];
-      }
-    }
-
-    return JSON.stringify(filtered_hash ,null ,"  ");
+    return JSON.stringify(this.toHash() ,null ,"  ");
 }
 
 /**
@@ -288,7 +261,7 @@ Profile.prototype.toArray = function () {
 * add profile information to local storage
 */
 Profile.prototype.addProfile2LocalStorage = function () {
-   localStorage.setItem(this.language, this.toJsonStringAll());
+   localStorage.setItem(this.language, this.toJsonString());
 };
 
 
@@ -348,26 +321,6 @@ Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
         this[prop] = obj[prop];
       }
     } 
-}
-
-/**
-* values used in debugging app on other devices
-*
-* updates:
-      this.debug 
-*/
-Profile.prototype.setDebugValues = function (obj) {
-    for (const prop in obj) {
-      if (obj.hasOwnProperty(prop)) {
-        this.debug[prop] = obj[prop];
-      }
-    } 
-}
-
-/**
-*/
-Profile.prototype.clearDebugValues = function () {
-    this.debug = {};
 }
 
 /**

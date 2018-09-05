@@ -58,6 +58,7 @@ function createZipFile(self, data) {
   zip.file("license.txt", data.license_blob);
   zip.file("profile.json", data.profile_json_blob);
   zip.file("prompts.json", data.prompts_json_blob);
+  zip.file("debug.json", data.debug_json_blob);
 
   for (var i = 0; i < data.audio.length; i++) {
     var filename = data.audio[i].filename;

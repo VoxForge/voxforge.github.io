@@ -174,11 +174,12 @@ Uploader.prototype.init = function () {
 * that calls web worker that actually creates the zip file for download
 * to VoxForge server
 */
-Uploader.prototype.upload = function ( prompts, 
-                                       profile, 
-                                       speechSubmissionAppVersion, 
+Uploader.prototype.upload = function ( prompts,
+                                       profile,
+                                       debug,
+                                       speechSubmissionAppVersion,
                                        allClips,
-                                       language ) 
+                                       language )
 {
     var self = this;
 
@@ -267,6 +268,7 @@ Uploader.prototype.upload = function ( prompts,
           profile_json_blob: new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
           prompts_json_blob: new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
           audio: audioArray,
+          debug_json_blob: new Blob([debug.toJsonString()], {type: "text/plain;charset=utf-8"}),
         });
 
         /**

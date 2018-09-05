@@ -28,6 +28,7 @@ function Controller(parms,
                     view, 
                     audio,
                     uploader,
+                    debug,
                     appversion,
                     pageVariables)
 {
@@ -35,7 +36,8 @@ function Controller(parms,
     this.profile = profile; 
     this.view = view; 
     this.audio = audio; 
-    this.uploader = uploader; 
+    this.uploader = uploader;
+    this.debug = debug;
     this.parms = parms; 
     this.appversion = appversion; 
     this.pageVariables = pageVariables;
@@ -288,9 +290,9 @@ Controller.prototype.start = function () {
           // user may change debug setting just before upload, so only
           // get audio debug values at last recorded audio prompt
           if ( view.debugChecked() ) {
-              self.profile.setDebugValues( self.audio.getDebugValues() );
+              self.debug.setValues( 'audio', self.audio.getDebugValues() );
           } else {
-              self.profile.clearDebugValues();
+              self.debug = new Debug();
           }
 
           // make sure all promises complete before trying to gather audio
@@ -303,6 +305,7 @@ Controller.prototype.start = function () {
               // Promise.all.
               self.uploader.upload(self.prompts,
                                    self.profile,
+                                   self.debug,
                                    self.appversion,
                                    document.querySelectorAll('.clip'), // all clips
                                    self.pageVariables.language)

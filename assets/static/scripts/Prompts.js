@@ -482,10 +482,11 @@ Prompts.prototype.toJsonString = function () {
     {
       var prompt_line = arr[i].split(/\s+/);
       var prompt_id = prompt_line.shift();
-
+      prompt_line = prompt_line.join(' ').replace(/\s+$/, "");
+      
       // join array back together into a string and remove trailing space
       obj[prompt_id] = {
-        sentence : prompt_line.join(' ').replace(/\s+$/, ""), 
+        sentence : prompt_line, 
         audio: this.audio_characteristics[prompt_id],
       }
     }
