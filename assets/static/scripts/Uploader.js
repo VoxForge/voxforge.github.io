@@ -179,7 +179,8 @@ Uploader.prototype.upload = function ( prompts,
                                        debug,
                                        speechSubmissionAppVersion,
                                        allClips,
-                                       language )
+                                       language,
+                                       debugChecked )
 {
     var self = this;
 
@@ -247,6 +248,12 @@ Uploader.prototype.upload = function ( prompts,
     * call web worker to create zip file and upload to VoxForge server
     */
     function callWorker2createZipFile(audioArray) {
+      if ( debugChecked ) {
+          debug.setValues( 'prompts', prompts.getDebugValues() );
+      } else {
+          debug.clearValues('prompts');
+      }
+      
       return new Promise(function (resolve, reject) {
 
         // need to copy to blobs here (rather than in web worker) because if pass 

@@ -485,13 +485,33 @@ Prompts.prototype.toJsonString = function () {
       prompt_line = prompt_line.join(' ').replace(/\s+$/, "");
       
       // join array back together into a string and remove trailing space
+      obj[prompt_id] = prompt_line;
+    }
+
+    return JSON.stringify(obj,null,"  ");
+}
+
+/**
+* return debug values as obj
+*/
+Prompts.prototype.getDebugValues = function () {
+    var arr = this.prompts_recorded.sort();
+    var obj = {};
+
+    for (var i = 0 ; i < arr.length ; i++)
+    {
+      var prompt_line = arr[i].split(/\s+/);
+      var prompt_id = prompt_line.shift();
+      prompt_line = prompt_line.join(' ').replace(/\s+$/, "");
+      
+      // join array back together into a string and remove trailing space
       obj[prompt_id] = {
         sentence : prompt_line, 
         audio: this.audio_characteristics[prompt_id],
       }
     }
 
-    return JSON.stringify(obj,null,"  ");
+    return obj;
 }
 
 /**

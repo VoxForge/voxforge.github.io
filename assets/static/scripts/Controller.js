@@ -289,10 +289,10 @@ Controller.prototype.start = function () {
 
           // user may change debug setting just before upload, so only
           // get audio debug values at last recorded audio prompt
-          if ( view.debugChecked() ) {
+          if ( self.view.debugChecked() ) {
               self.debug.setValues( 'audio', self.audio.getDebugValues() );
           } else {
-              self.debug = new Debug();
+              self.debug.clearValues('audio');
           }
 
           // make sure all promises complete before trying to gather audio
@@ -308,7 +308,8 @@ Controller.prototype.start = function () {
                                    self.debug,
                                    self.appversion,
                                    document.querySelectorAll('.clip'), // all clips
-                                   self.pageVariables.language)
+                                   self.pageVariables.language,
+                                   view.debugChecked())
               .then(saveProfileAndReset)
               .catch(function (err) {
                   console.log(err.message);
