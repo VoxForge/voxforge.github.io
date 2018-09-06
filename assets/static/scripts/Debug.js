@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Class definition
 */
-function Debug (pageVariables) 
+function Debug () 
 {
   this.audio = {};
   this.prompts = {};
@@ -33,11 +33,16 @@ function Debug (pageVariables)
 * cannot pick up XHR upload attempts since zip package already created...
 *
 *see: https://stackoverflow.com/questions/13815640/a-proper-wrapper-for-console-log-with-correct-line-number/32928812#32928812
+  https://stackoverflow.com/questions/11403107/capturing-javascript-console-log
 * currently only providing class level debug in View... no other classes or service workers
 * TODO: get service workers to pass back logs of what they did for inclusion in log file
 *
 *
 * https://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server
+* 
+ *https://stackoverflow.com/questions/13815640/a-proper-wrapper-for-console-log-with-correct-line-number/32928812#32928812
+ *
+ * http://tobyho.com/2012/07/27/taking-over-console-log/
 */
 Debug.prototype.addToLog = function (message) {
     this.log.push(message);
@@ -72,7 +77,6 @@ Debug.prototype.toHash = function () {
 
     profile_hash["audio"] = this.audio;
     profile_hash["prompts"] = this.prompts;
-    profile_hash["log"] = this.log;
     
     return profile_hash;
 };

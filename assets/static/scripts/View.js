@@ -20,15 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function View (parms,
                prompts,
                profile,
-               debug,
-               pageVariables)
+               pageVariables,
+               debug)
 {
     this.parms = parms;
     this.prompts = prompts;
     this.profile = profile;
     
     this.debug = debug;
-    this.oldLog = console.log; // to capture log for debugging
 
     this.displayVisualizer = parms.displayVisualizer;
     this.displayWaveform = parms.displayWaveform;
@@ -390,17 +389,11 @@ View.prototype.init = function () {
 */
 View.prototype.initSettingsPopup = function (message) {
    var self = this;
-  
+
    if ( localStorage.getItem("debug") === 'true') { // string
       $('#debug').attr('checked', true);  // boolean
-      // capture console output
-      console.log = function (message) {
-          self.debug.addToLog(message);
-          self.oldLog.apply(console, arguments);
-      };
     } else {
       $('#debug').attr('checked', false);
-      console.log = self.oldLog;
     }
 
     if ( localStorage.getItem("ua_string") === 'true') {
@@ -428,14 +421,8 @@ View.prototype.initSettingsPopup = function (message) {
     $('#debug').change(function () {
       if (this.checked) {
         localStorage.setItem("debug", 'true');
-        // capture console output
-        console.log = function (message) {
-            self.debug.addToLog(message);
-            self.oldLog.apply(console, arguments);
-        };
       } else {
         localStorage.setItem("debug", 'false');
-        console.log = self.oldLog;
       }
     });
 

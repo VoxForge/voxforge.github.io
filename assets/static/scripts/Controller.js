@@ -28,9 +28,9 @@ function Controller(parms,
                     view, 
                     audio,
                     uploader,
-                    debug,
                     appversion,
-                    pageVariables)
+                    pageVariables,
+                    debug)
 {
     this.prompts = prompts; 
     this.profile = profile; 

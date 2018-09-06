@@ -81,17 +81,17 @@ var view;  // needs to be global so can be accessible to index.html
     const appversion = "0.2";
 
     var parms = new Parms(); 
-
+    var debug = new Debug();
+    
     var prompts = new Prompts(parms.prompt, pageVariables); 
     var profile = new Profile(appversion, pageVariables);
 
-    var debug = new Debug(); 
     // 'view' needs to be global so can be accessed by index.html
     view = new View(parms.view,
                     prompts,
                     profile,
-                    debug,
-                    pageVariables); 
+                    pageVariables,
+                    debug); 
 
     var audio = new Audio(parms.audio,
                           pageVariables);
@@ -104,9 +104,9 @@ var view;  // needs to be global so can be accessible to index.html
                                      view, 
                                      audio,
                                      uploader,
-                                     debug,
                                      appversion,
-                                     pageVariables);
+                                     pageVariables,
+                                     debug);
 
     prompts.init();
     view.init();
