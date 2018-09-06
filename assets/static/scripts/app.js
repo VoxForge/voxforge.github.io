@@ -84,16 +84,20 @@ var view;  // needs to be global so can be accessible to index.html
 
     var prompts = new Prompts(parms.prompt, pageVariables); 
     var profile = new Profile(appversion, pageVariables);
+
+    var debug = new Debug(); 
     // 'view' needs to be global so can be accessed by index.html
     view = new View(parms.view,
                     prompts,
                     profile,
+                    debug,
                     pageVariables); 
+
     var audio = new Audio(parms.audio,
                           pageVariables);
     var uploader = new Uploader(parms.uploader,
                                 pageVariables.alert_message);
-    var debug = new Debug(); 
+
     var controller =  new Controller(parms.controller,
                                      prompts, 
                                      profile, 

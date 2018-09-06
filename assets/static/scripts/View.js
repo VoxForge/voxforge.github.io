@@ -20,15 +20,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function View (parms,
                prompts,
                profile,
+               debug,
                pageVariables)
 {
     this.parms = parms;
     this.prompts = prompts;
     this.profile = profile;
+    
+    this.debug = debug;
+    this.oldLog = console.log; // to capture log for debugging
 
     this.displayVisualizer = parms.displayVisualizer;
     this.displayWaveform = parms.displayWaveform;
-
 
     // buttons
     this.record = document.querySelector('.record');
@@ -221,73 +224,7 @@ View.getUserName = function() {
   return $('#username').val();
 }
 
-/**
-* settings pop up
-* Note: localstorage only stores strings
-*/
-View.initSettingsPopup = function() {
-   if ( localStorage.getItem("debug") === 'true') { // string
-      $('#debug').attr('checked', true);  // boolean
-    } else {
-      $('#debug').attr('checked', false);
-    }
 
-    if ( localStorage.getItem("ua_string") === 'true') {
-      $('#ua_string').attr('checked', true); 
-    } else {
-      $('#ua_string').attr('checked', false);
-    }
-    
-    if ( localStorage.getItem("recording_information_button_display") === 'true') {
-      $('#display_record_info').attr('checked', true); 
-      $('#recording_information_button_display').show();
-    } else {
-      $('#display_record_info').attr('checked', false);
-      $('#recording_information_button_display').hide();
-    }
-
-    if ( localStorage.getItem("vad_run") === 'true') {
-      $('#vad_run').attr('checked', true); 
-    } else {
-      $('#vad_run').attr('checked', false);
-    }
-
-    // handlers
-  
-    $('#debug').change(function () { 
-      if (this.checked) {
-        localStorage.setItem("debug", 'true');
-      } else {
-        localStorage.setItem("debug", 'false');
-      }
-    });
-
-    $('#ua_string').change(function () { 
-      if (this.checked) {
-        localStorage.setItem("ua_string", 'true');
-      } else {
-        localStorage.setItem("ua_string", 'false');
-      }
-    });
-        
-    $('#display_record_info').change(function () { 
-      if (this.checked) {
-        $("#recording_information_button_display").show();
-        localStorage.setItem("recording_information_button_display", 'true');
-      } else {
-        $("#recording_information_button_display").hide();
-        localStorage.setItem("recording_information_button_display", 'false');
-      }
-    });
-    
-    $('#vad_run').change(function () { 
-      if (this.checked) {
-        localStorage.setItem("vad_run", 'true');
-      } else {
-        localStorage.setItem("vad_run", 'false');
-      }
-    });
-}
 
 // ### METHODS #################################################################
 
@@ -432,7 +369,7 @@ View.prototype.init = function () {
       self.updateProgress();
     });
 
-    View.initSettingsPopup();
+    this.initSettingsPopup();
 
     // ########################################################################
 
@@ -446,6 +383,89 @@ View.prototype.init = function () {
         resolve("OK");  // TODO not waiting for updateView
     }); // promise
 }
+
+/**
+* settings pop up
+* Note: localstorage only stores strings
+*/
+View.prototype.initSettingsPopup = function (message) {
+   var self = this;
+  
+   if ( localStorage.getItem("debug") === 'true') { // string
+      $('#debug').attr('checked', true);  // boolean
+      // capture console output
+      console.log = function (message) {
+          self.debug.addToLog(message);
+          self.oldLog.apply(console, arguments);
+      };
+    } else {
+      $('#debug').attr('checked', false);
+      console.log = self.oldLog;
+    }
+
+    if ( localStorage.getItem("ua_string") === 'true') {
+      $('#ua_string').attr('checked', true); 
+    } else {
+      $('#ua_string').attr('checked', false);
+    }
+    
+    if ( localStorage.getItem("recording_information_button_display") === 'true') {
+      $('#display_record_info').attr('checked', true); 
+      $('#recording_information_button_display').show();
+    } else {
+      $('#display_record_info').attr('checked', false);
+      $('#recording_information_button_display').hide();
+    }
+
+    if ( localStorage.getItem("vad_run") === 'true') {
+      $('#vad_run').attr('checked', true); 
+    } else {
+      $('#vad_run').attr('checked', false);
+    }
+
+    // handlers
+
+    $('#debug').change(function () {
+      if (this.checked) {
+        localStorage.setItem("debug", 'true');
+        // capture console output
+        console.log = function (message) {
+            self.debug.addToLog(message);
+            self.oldLog.apply(console, arguments);
+        };
+      } else {
+        localStorage.setItem("debug", 'false');
+        console.log = self.oldLog;
+      }
+    });
+
+    $('#ua_string').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("ua_string", 'true');
+      } else {
+        localStorage.setItem("ua_string", 'false');
+      }
+    });
+        
+    $('#display_record_info').change(function () { 
+      if (this.checked) {
+        $("#recording_information_button_display").show();
+        localStorage.setItem("recording_information_button_display", 'true');
+      } else {
+        $("#recording_information_button_display").hide();
+        localStorage.setItem("recording_information_button_display", 'false');
+      }
+    });
+    
+    $('#vad_run').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("vad_run", 'true');
+      } else {
+        localStorage.setItem("vad_run", 'false');
+      }
+    });
+}
+
 
 /** 
 * display upload to VoxForge server status to user
