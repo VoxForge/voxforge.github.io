@@ -24,13 +24,14 @@ function Debug ()
 {
   this.audio = {};
   this.prompts = {};
-  this.log = [];
 }
 
 // ### Methods #################################################################
 /**
 * does not pick up service worker logs...
 * cannot pick up XHR upload attempts since zip package already created...
+* need to override console.log etc for every class...
+* TODO: remove unneeded console.log entries
 *
 *see: https://stackoverflow.com/questions/13815640/a-proper-wrapper-for-console-log-with-correct-line-number/32928812#32928812
   https://stackoverflow.com/questions/11403107/capturing-javascript-console-log

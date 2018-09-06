@@ -113,9 +113,14 @@ var view;  // needs to be global so can be accessible to index.html
     if ( localStorage.getItem("vad_run") === 'true') {
       view.enableVoiceActivityDetection();
     }
-    audio.init();
+    //audio.init();
     uploader.init();
-    controller.start();
+    //controller.start();
+
+    // wait for user to accept permission for use of microphone (call to
+    // getUserMedia) before starting controller
+    audio.init() 
+    .then(controller.start.bind(controller));
 
 })(); // function context
 

@@ -370,6 +370,9 @@ View.prototype.init = function () {
 
     this.initSettingsPopup();
 
+    // leave all buttons off until user accepts permission to use Microphone (getUserMedia request)
+    this.setRSUButtonDisplay(false, false, false); 
+
     // ########################################################################
 
     return new Promise(function (resolve, reject) {
@@ -377,7 +380,6 @@ View.prototype.init = function () {
         if (json_object) {
           View.updateView(json_object, self.localized_yes, self.localized_other);  
         } 
-
 
         resolve("OK");  // TODO not waiting for updateView
     }); // promise

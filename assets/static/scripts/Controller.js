@@ -372,8 +372,5 @@ Controller.prototype.start = function () {
       } 
     }
 
-    // ### Main ################################################################/
-
-    self.view.setRSUButtonDisplay(true, false, false); 
 }
 

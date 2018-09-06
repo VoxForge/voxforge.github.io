@@ -128,7 +128,7 @@ Prompts.save2BrowserStorage = function(local_prompt_file_name,
     .then(function (value) {
       console.info('saved promptfile to localforage browser storage: ' + local_prompt_file_name);
     }).catch(function(err) {
-        console.error('save of promptfile to localforage browser storage failed!', err);
+      console.error('save of promptfile to localforage browser storage failed!', err);
     });
 }
 
