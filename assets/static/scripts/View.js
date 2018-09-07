@@ -166,7 +166,7 @@ View.getUserProfileInfo = function(localized_yes, localized_other, localized_ano
         profile_hash["microphone_other"] = Profile.cleanUserInput( $("#microphone_other").val() );
     }
 
-    profile_hash["recording_location"] = $("#recording_location").val() ;
+    profile_hash["recording_location"] = $("#recording_location").val();
     if ($('#recording_location').val() !== localized_other) {
         profile_hash["recording_location_other"] = "";
     } else {
@@ -174,7 +174,7 @@ View.getUserProfileInfo = function(localized_yes, localized_other, localized_ano
     }
 
     profile_hash["background_noise"] = $("#background_noise").val() ;
-    profile_hash["noise_volume"] = $("#noise_volume").val() ;
+    profile_hash["noise_volume"] = $("#noise_volume").val();
 
     profile_hash["noise_type"] = $("#noise_type").val();
     if ($('#noise_type').val() !== localized_other) {
@@ -435,7 +435,7 @@ View.prototype.initSettingsPopup = function (message) {
         localStorage.setItem("ua_string", 'false');
       }
     });
-        
+
     $('#display_record_info').change(function () { 
       if (this.checked) {
         $("#recording_information_button_display").show();
@@ -443,6 +443,22 @@ View.prototype.initSettingsPopup = function (message) {
       } else {
         $("#recording_information_button_display").hide();
         localStorage.setItem("recording_information_button_display", 'false');
+
+        $('#recording_location').val($("select option:first").val());
+        $('#recording_location').change();
+        $('#recording_location_other').val("");
+        $('#recording_location_other').change();
+
+        $('#background_noise').val($("select option:first").val());
+        $('#background_noise').change(); // triggers event on element
+
+        $('#noise_volume').val($("select option:first").val());
+        $('#noise_volume').change();
+
+        $('#noise_type').val($("select option:first").val());
+        $('#noise_type').change();
+        $('#noise_type_other').val("");
+        $('#noise_type_other').change();
       }
     });
     
