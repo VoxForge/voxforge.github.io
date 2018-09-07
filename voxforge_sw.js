@@ -41,6 +41,8 @@ var urlsToCache = [
   PATH + 'scripts/Audio.js',
   PATH + 'scripts/AudioWorker.js',
   PATH + 'scripts/Controller.js',
+  PATH + 'scripts/Debug.js',
+  PATH + 'scripts/Parms.js',
   PATH + 'scripts/processSavedSubmissions.js',
   PATH + 'scripts/Profile.js',
   PATH + 'scripts/Prompts.js',
@@ -65,6 +67,9 @@ var urlsToCache = [
   '/en/read',
   '/fr/read',
   '/es/read',
+//  '/en/read/', // TODO debug with Apache2 and self signed SSL certificate
+
+  // TODO also cache links to outside websites for definitions, elaboration, etc...
 
   // cache at least one prompt file for each language
   '/en/prompts/001.html',
