@@ -444,6 +444,7 @@ View.prototype.initSettingsPopup = function (message) {
         $("#recording_information_button_display").hide();
         localStorage.setItem("recording_information_button_display", 'false');
 
+        // clear certain field entries when user clicks display_record_info off
         $('#recording_location').val($("select option:first").val());
         $('#recording_location').change();
         $('#recording_location_other').val("");
