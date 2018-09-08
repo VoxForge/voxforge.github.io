@@ -28,14 +28,14 @@
           {{ page.ua_string.label | default: default.ua_string.label}}
       </a>
       -->
-      <p>Include in Submission:</p>
+      <p>{{ page.settings.include_heading | default: default.settings.include_heading }}</p>
       <input type="checkbox" name="ua_string" id="ua_string">
       <label for="ua_string">{{ page.settings.ua_string | default: default.settings.ua_string }}</label>
 
       <input type="checkbox" name="debug" id="debug">
-      <label for="debug">{{ page.settings.ua_string | default: default.settings.ua_string }}</label>
+      <label for="debug">{{ page.settings.debug | default: default.settings.debug }}</label>
 
-      <p>Other:</p>
+      <p>{{ page.settings.other_heading | default: default.settings.other_heading }}</p>
       <input type="checkbox" name="display_record_info" id="display_record_info">
       <label for="display_record_info">{{ page.settings.uadisplay_record_info_string | default: default.settings.display_record_info }}</label>
 

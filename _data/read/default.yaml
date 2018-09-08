@@ -236,31 +236,6 @@ license:
         - You should have received a copy of the GNU General Public License
       text_last: along with this program.  If not, see
 
-# TODO no longer used
-ua_string:
-  label: User Agent String
-  link: http://www.useragentstring.com
-  hover_text:  > 
-    When your web browser makes a request to a website, it also sends a User 
-    Agent string.  This string contains information about your browser name, 
-    operating system, device type, etc.
-    The VoxForge app collects this information to help troubleshoot and
-    determine which devices work best with this app.
-  popup:
-    title: Collect User Agent String Information
-    link: http://www.useragentstring.com
-    hover_text: >
-      Include User Agent string with submission
-    text:  > 
-      When your web browser makes a request to a website, it also sends a User 
-      Agent string.  This string contains information about your browser name, 
-      operating system, device type, etc.<br>
-      The VoxForge app collects this information to help troubleshoot and
-      determine which devices work best with this app.<br>
-  selection_default: { value: 'Yes',  item: 'Yes' }
-  selection:
-    - { value: 'No',  option: 'No' }
-
 num_prompts:
   label: Number of prompts to read
 
@@ -360,9 +335,35 @@ alert_message:
     Your device does not support the HTML5 API needed to record audio
 
 settings:
+  include_heading: Include in Submission:
   ua_string: User Agent String
   debug: Debug Information
+  other_heading: Other:
   display_record_info: display Recording Information section (helps with classifying submissions)
   vad_run: VAD enabled (Voice Activity Detection)
 
 
+# TODO no longer used
+ua_string:
+  label: User Agent String
+  link: http://www.useragentstring.com
+  hover_text:  > 
+    When your web browser makes a request to a website, it also sends a User 
+    Agent string.  This string contains information about your browser name, 
+    operating system, device type, etc.
+    The VoxForge app collects this information to help troubleshoot and
+    determine which devices work best with this app.
+  popup:
+    title: Collect User Agent String Information
+    link: http://www.useragentstring.com
+    hover_text: >
+      Include User Agent string with submission
+    text:  > 
+      When your web browser makes a request to a website, it also sends a User 
+      Agent string.  This string contains information about your browser name, 
+      operating system, device type, etc.<br>
+      The VoxForge app collects this information to help troubleshoot and
+      determine which devices work best with this app.<br>
+  selection_default: { value: 'Yes',  item: 'Yes' }
+  selection:
+    - { value: 'No',  option: 'No' }
