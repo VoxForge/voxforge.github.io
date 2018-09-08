@@ -29,24 +29,19 @@
       </a>
       -->
       <p>Include in Submission:</p>
-      <!-- TODO translate  -->
       <input type="checkbox" name="ua_string" id="ua_string">
-      <label for="ua_string">User Agent String</label>
+      <label for="ua_string">{{ page.settings.ua_string | default: default.settings.ua_string }}</label>
 
-      <!-- TODO translate  -->
       <input type="checkbox" name="debug" id="debug">
-      <label for="debug">Debug Information</label>
+      <label for="debug">{{ page.settings.ua_string | default: default.settings.ua_string }}</label>
 
       <p>Other:</p>
-      <!-- TODO translate  -->
       <input type="checkbox" name="display_record_info" id="display_record_info">
-      <label for="display_record_info">display Recording Information section (helps with classifying submissions)</label>
+      <label for="display_record_info">{{ page.settings.uadisplay_record_info_string | default: default.settings.display_record_info }}</label>
 
-      <!-- TODO translate  -->
       <input type="checkbox" name="vad_run" id="vad_run">
-      <label for="vad_run">VAD enabled (Voice Activity Detection)</label>
+      <label for="vad_run">{{ page.settings.vad_run | default: default.settings.vad_run }}</label>
 
-      <!-- TODO translate  -->
       {{ page.license.label | default: default.license.label }}
       <select type="text" id="license">
         <option selected value="{{ page.license.selection_default.value | default: default.license.selection_default.value}}">

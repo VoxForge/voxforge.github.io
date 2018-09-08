@@ -359,7 +359,10 @@ alert_message:
   notHtml5_error: >
     Your device does not support the HTML5 API needed to record audio
 
-
-
+settings:
+  ua_string: User Agent String
+  debug: Debug Information
+  display_record_info: display Recording Information section (helps with classifying submissions)
+  vad_run: VAD enabled (Voice Activity Detection)
 
 
