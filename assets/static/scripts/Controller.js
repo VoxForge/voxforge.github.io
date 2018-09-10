@@ -30,6 +30,7 @@ function Controller(parms,
                     uploader,
                     appversion,
                     pageVariables,
+                    alert_message,
                     debug)
 {
     this.prompts = prompts; 
@@ -41,6 +42,7 @@ function Controller(parms,
     this.parms = parms; 
     this.appversion = appversion; 
     this.pageVariables = pageVariables;
+    this.alert_message = alert_message;
 
     //  recording timeout object
     this.rec_timeout_obj;
@@ -199,10 +201,9 @@ Controller.prototype.start = function () {
               // only ask the user once if they want to activate the Recording Information section
               localStorage.setItem("recording_asked_user", true); 
               self.view.recordingInformationButtonDisplay();
-              // TODO translate
-              window.alert('More than ' + self.parms.numPrompt2SubmittForRecordInfo + ' ' +
-                           'submissions recorded, "Recording Information" section activated ' +
-                           '(can be disabled in Settings)');
+              // TODO when this gets sent, Recording information sectio should display to user rather
+              // than being buried under Profile Info
+              window.alert(self.alert_message.rec_info_activated);
           }
         },
 
@@ -210,10 +211,10 @@ Controller.prototype.start = function () {
           if ( self.view.displayRecordingInfoChecked()  &&
               self.uploader.askUserToConfirmSameRecordingInfo() )
           {
-              window.alert('Its been longer than ' + self.uploader.minutesSinceLastSubmission() +
-                            ' minutes since your last submission.  ' +
-                            'Please review your Recording Information settings and' +
-                            ', if necessary, update your Location and Noise Levels.');
+              // TODO translate
+              window.alert(self.alert_message.time_limit.intro + ' ' +
+                           self.uploader.minutesSinceLastSubmission() + ' ' +
+                           self.alert_message.time_limit.text);
           }
 
           self.view.enableDeleteButtons();

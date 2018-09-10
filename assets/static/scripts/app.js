@@ -106,6 +106,7 @@ var view;  // needs to be global so can be accessible to index.html
                                      uploader,
                                      appversion,
                                      pageVariables,
+                                     pageVariables.alert_message,
                                      debug);
 
     prompts.init();

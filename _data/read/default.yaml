@@ -333,15 +333,23 @@ alert_message:
     computer.  Your browser is giving this error message:
   notHtml5_error: >
     Your device does not support the HTML5 API needed to record audio
-
+  rec_info_activated: >
+    "Recording Information" section activated under "Profile Info"
+    (can be disabled in Settings).
+  time_limit:
+    intro: Its been longer than
+    text: >
+      minutes since your last submission.
+      Please review your Recording Information settings and
+      , if necessary, update your Location and Noise Levels.
+      
 settings:
-  include_heading: Include in Submission:
+  include_heading: Include in Submission
   ua_string: User Agent String
   debug: Debug Information
-  other_heading: Other:
-  display_record_info: display Recording Information section (helps with classifying submissions)
+  other_heading: Other
+  display_record_info: Recording Information (to better classify submissions)
   vad_run: VAD enabled (Voice Activity Detection)
-
 
 # TODO no longer used
 ua_string:
