@@ -388,6 +388,8 @@ View.prototype.init = function () {
 /**
 * settings pop up
 * Note: localstorage only stores strings
+*
+* see app.js, line 68, for setting of default values
 */
 View.prototype.initSettingsPopup = function (message) {
    var self = this;
@@ -416,6 +418,12 @@ View.prototype.initSettingsPopup = function (message) {
       $('#vad_run').attr('checked', true); 
     } else {
       $('#vad_run').attr('checked', false);
+    }
+
+    if ( localStorage.getItem("chk_recloc_remind") === 'true') {
+      $('#chk_recloc_remind').attr('checked', true); 
+    } else {
+      $('#chk_recloc_remind').attr('checked', false);
     }
 
     // handlers
@@ -470,6 +478,14 @@ View.prototype.initSettingsPopup = function (message) {
         localStorage.setItem("vad_run", 'false');
       }
     });
+
+    $('#chk_recloc_remind').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("chk_recloc_remind", 'true');
+      } else {
+        localStorage.setItem("chk_recloc_remind", 'false');
+      }
+    });    
 }
 
 
@@ -662,6 +678,13 @@ View.prototype.debugChecked = function () {
 */
 View.prototype.displayRecordingInfoChecked = function () {
     return $('#display_record_info').is(":checked");
+}
+
+/**
+* get recording Reminder value
+*/
+View.prototype.checkRelocationReminder = function () {
+    return $('#chk_recloc_remind').is(":checked");
 }
 
 /**

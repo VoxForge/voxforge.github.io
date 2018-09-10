@@ -7,10 +7,10 @@
      data-rel="popup" 
      data-transition="pop"
      data-inline="true"
-     title="Settings">
+     title={{ page.settings.title | default: default.settings.title }}>
 
      <!-- https://commons.wikimedia.org/wiki/File:Gear_icon-72a7cf.svg  -->
-     <img border="0" alt="settings" 
+     <img border="0" alt="{{ page.settings.title | default: default.settings.title }}" 
           src="/images/Gear_icon-72a7cf.png" 
           width="25" 
           height="25">
@@ -20,14 +20,8 @@
        data-role="popup" 
        style="padding:10px 20px;">
     <fieldset data-role="controlgroup">
-      <legend>Settings:</legend>
-      <!-- 
-      <a href="{{ page.ua_string.link | default: default.ua_string.link}}"
-         title="{{ page.ua_string.hover_text | default: default.ua_string.hover_text}}"> 
+      <legend>{{ page.settings.title | default: default.settings.title }}</legend>
 
-          {{ page.ua_string.label | default: default.ua_string.label}}
-      </a>
-      -->
       <p>{{ page.settings.include_heading | default: default.settings.include_heading }}:</p>
       <input type="checkbox" name="ua_string" id="ua_string">
       <label for="ua_string">{{ page.settings.ua_string | default: default.settings.ua_string }}</label>
@@ -42,6 +36,10 @@
 
       <input type="checkbox" name="vad_run" id="vad_run">
       <label for="vad_run">{{ page.settings.vad_run | default: default.settings.vad_run }}</label>
+
+      <input type="checkbox" name="chk_recloc_remind" id="chk_recloc_remind">
+      <label for="chk_recloc_remind">{{ page.settings.chk_recloc_remind | default: default.settings.chk_recloc_remind }}</label>
+
 
       {{ page.license.label | default: default.license.label }}
       <select type="text" id="license">

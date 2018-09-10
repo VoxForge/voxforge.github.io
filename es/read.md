@@ -238,6 +238,28 @@ alert_message:
     computadora. Su navegador está dando este mensaje de error:
   notHtml5_error: >
     Su dispositivo no es compatible con la API HTML5 necesaria para grabar audio
+  rec_info_activated: >
+    La sección "Información de grabación" se activó en "Información del perfil"
+    (se puede deshabilitar en Configuración).
+  time_limit:
+    intro: Por favor revise la configuración de Información de grabación y
+      , si es necesario, actualice su Ubicación y Niveles de ruido.
+      (Ha sido más largo que
+    text: >
+      minutos desde su última sumisión).
+
+settings:
+  title: Configuraciones
+  include_heading: Incluir en la sumisión
+  ua_string: Agente de usuario Cadena
+  debug: Información de depuración
+  other_heading: Otro
+  display_record_info: >
+    Información de grabación (necesita actualizarse cada vez
+    que cambia la ubicación o las características del ruido)
+  vad_run: VAD habilitado (detección de actividad de voz)
+  chk_recloc_remind: Recordatorio de cambio de ubicación de grabación
+  
 
 #TODO no longer used
 ua_string:

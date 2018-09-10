@@ -76,6 +76,10 @@ var view;  // needs to be global so can be accessible to index.html
     if ( ! localStorage.getItem("ua_string") ) {
       localStorage.setItem("ua_string", 'true');
     }
+
+    if ( ! localStorage.getItem("chk_recloc_remind") ) {
+      localStorage.setItem("chk_recloc_remind", 'true');
+    }    
     
     // #############################################################################
     const appversion = "0.2";

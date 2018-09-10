@@ -208,10 +208,10 @@ Controller.prototype.start = function () {
         },
 
         onFirstpromptrecorded: function() {
-          if ( self.view.displayRecordingInfoChecked()  &&
-              self.uploader.askUserToConfirmSameRecordingInfo() )
+          if ( self.view.displayRecordingInfoChecked() &&
+               self.view.checkRelocationReminder() &&
+               self.uploader.askUserToConfirmSameRecordingInfo() )
           {
-              // TODO translate
               window.alert(self.alert_message.time_limit.intro + ' ' +
                            self.uploader.minutesSinceLastSubmission() + ' ' +
                            self.alert_message.time_limit.text);

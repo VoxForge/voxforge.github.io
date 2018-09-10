@@ -254,12 +254,32 @@ alert_message:
     est connecté à votre ordinateur.  <br> Votre navigateur donne ce message d'erreur:
   notHtml5_error: >
     Votre appareil ne supporte pas l'API HTML5 nécessaire à l'enregistrement d'audio
-
-
+  rec_info_activated: >
+    La section "Informations d'enregistrement" activée sous "Profil"
+    (peut être désactivé dans paramètres).
+  time_limit:
+    intro: >
+      S'il vous plaît examiner vos paramètres d'enregistrement et
+      Si nécessaire, mettez à jour votre localisation et le niveau de bruit.
+      (Il a été plus long que
+    text: >
+      minutes depuis votre dernière soumission).
+      
+settings:
+  title: Paramètres
+  include_heading: Inclure dans la soumission
+  ua_string: Agent d'utilisateur
+  debug: Informations de débogage
+  other_heading: Autre
+  display_record_info: >
+    Enregistrement d'informations (doit être mis à jour chaque fois
+    que votre location ou les caractéristiques de bruit changent)
+  vad_run: VAD activé (Détection d'activité vocale)
+  chk_recloc_remind: Rappel de changement de lieu d'enregistrement
 
 #TODO no longer used
 ua_string:
-  label: inclure l'agent utilisateur
+  label: inclure l'agent d'utilisateur
   popup:
     title: Collecter les informations de l'agent utilisateur
     link: https://www.whatismybrowser.com/detect/what-is-my-user-agent
