@@ -837,7 +837,7 @@ View.prototype.displayAudioPlayer = function (obj)
       if (self.displayWaveform) {
         clipContainer.appendChild(createWaveformElement()); // updates audio_warning
       }
-      if (audio_warning) {
+      if (audio_warning) { // only include small audio player if there is an audio warning
         clipContainer.appendChild(createAudioPlayer());
       } 
       self.soundClips.insertBefore(clipContainer, self.soundClips.children[0]);
