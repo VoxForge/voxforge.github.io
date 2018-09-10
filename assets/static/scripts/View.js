@@ -713,6 +713,8 @@ View.prototype.displayAudioPlayer = function (obj)
     clipContainer.classList.add('clip');
     var prompt_id = document.querySelector('.prompt_id').innerText;
 
+    var audio_warning = false;
+
     /**
     * displays the speech recording's transcription
     */
@@ -802,20 +804,24 @@ View.prototype.displayAudioPlayer = function (obj)
         waveformElement.setAttribute("style", "background: #ff4500");
         var no_speech_message = obj.app_auto_gain ? self.alert_message.no_speech_autogain : self.alert_message.no_speech;
         waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
+        audio_warning = true;
       } else if (obj.no_trailing_silence) {
         waveformElement.setAttribute("style", "background: #ffA500");
         waveformElement.innerHTML = "<h4>" + self.alert_message.no_trailing_silence + "</h4>";
+        audio_warning = true;
       //TODO need confidence level for clipping
       } else if (obj.clipping) {
         // TODO should not be able to upload if too loud
         waveformElement.setAttribute("style", "background: #ff4500");
         var audio_too_loud_message = obj.app_auto_gain ? self.alert_message.audio_too_loud_autogain : self.alert_message.audio_too_loud;
         waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
+        audio_warning = true;
       //TODO need confidence level for soft speaker
       } else if (obj.too_soft) {
         waveformElement.setAttribute("style", "background: #ff4500");
         var audio_too_soft_message = obj.app_auto_gain ? self.alert_message.audio_too_soft_autogain : self.alert_message.audio_too_soft;
         waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
+        audio_warning = true;
       }
 
       console.log("clip_id: " + self.clip_id);
@@ -829,10 +835,11 @@ View.prototype.displayAudioPlayer = function (obj)
       clipContainer.appendChild(createClipLabel());
       clipContainer.appendChild(createDeleteButton());
       if (self.displayWaveform) {
-        clipContainer.appendChild(createWaveformElement());
+        clipContainer.appendChild(createWaveformElement()); // updates audio_warning
       }
-      clipContainer.appendChild(createAudioPlayer());
-
+      if (audio_warning) {
+        clipContainer.appendChild(createAudioPlayer());
+      } 
       self.soundClips.insertBefore(clipContainer, self.soundClips.children[0]);
 
       // might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
