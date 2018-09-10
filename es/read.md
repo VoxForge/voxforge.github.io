@@ -156,23 +156,6 @@ license:
     - { value: 'CC_BY-SA',  option: 'CC BY-SA 4.0 - Creative Commons Reconocimiento-Compartir por igual' }
     - { value: 'GPLv3',     option: 'GPLv3 - Licencia pública general de GNU' }
 
-ua_string:
-  label: Agente de usuario Cadena
-  popup:
-    title: Recopilar información de cadena de agente de usuario
-    link: http://www.useragentstring.com
-    hover_text: >
-      Incluir cadena de agente de usuario con grabación
-    text:  > 
-      Cuando su navegador web realiza una solicitud a un sitio web, también envía un usuario
-      Cadena del agente Esta cadena contiene información sobre el nombre de su navegador,
-      sistema operativo, tipo de dispositivo, etc. <br>
-      La aplicación VoxForge recopila esta información para ayudar a solucionar problemas y
-      determinar qué dispositivos funcionan mejor con esta aplicación. <br>
-  selection_default: { value: 'Sí',  item: 'Sí' }
-  selection:
-    - { value: 'No',  option: 'No' }
-
 num_prompts:
   label: Número de indicaciones para leer
 
@@ -255,6 +238,27 @@ alert_message:
     computadora. Su navegador está dando este mensaje de error:
   notHtml5_error: >
     Su dispositivo no es compatible con la API HTML5 necesaria para grabar audio
+
+#TODO no longer used
+ua_string:
+  label: Agente de usuario Cadena
+  popup:
+    title: Recopilar información de cadena de agente de usuario
+    link: http://www.useragentstring.com
+    hover_text: >
+      Incluir cadena de agente de usuario con grabación
+    text:  > 
+      Cuando su navegador web realiza una solicitud a un sitio web, también envía un usuario
+      Cadena del agente Esta cadena contiene información sobre el nombre de su navegador,
+      sistema operativo, tipo de dispositivo, etc. <br>
+      La aplicación VoxForge recopila esta información para ayudar a solucionar problemas y
+      determinar qué dispositivos funcionan mejor con esta aplicación. <br>
+  selection_default: { value: 'Sí',  item: 'Sí' }
+  selection:
+    - { value: 'No',  option: 'No' }
+
+
+
 
 ---
 

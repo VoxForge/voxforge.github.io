@@ -175,23 +175,6 @@ license:
     - { value: 'CC_BY-SA',  option: 'CC BY-SA -  Creative Commons - Attribution - Partage dans les Mêmes Conditions' }
     - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License' }
 
-ua_string:
-  label: inclure l'agent utilisateur
-  popup:
-    title: Collecter les informations de l'agent utilisateur
-    link: https://www.whatismybrowser.com/detect/what-is-my-user-agent
-    hover_text: >
-      Inclure l'agent utilisateur avec votre soumission
-    text:  > 
-      L'agent d'utilisateur de votre navigateur indique quelque chose de 
-      particulier a propos de votre système. <br>
-      VoxForge peut collecter la chaîne de l'agent utilisateur de votre navigateur
-      pour dépanner et aider à déterminer quels appareils fonctionnent le mieux avec
-      Application d'enregistrement VoxForge
-  selection_default: { value: 'Oui',  item: 'Oui' }
-  selection:
-    - { value: 'Non',  option: 'Non' }
-
 num_prompts:
   label: Nombre de phrases à lire
 
@@ -271,6 +254,26 @@ alert_message:
     est connecté à votre ordinateur.  <br> Votre navigateur donne ce message d'erreur:
   notHtml5_error: >
     Votre appareil ne supporte pas l'API HTML5 nécessaire à l'enregistrement d'audio
+
+
+
+#TODO no longer used
+ua_string:
+  label: inclure l'agent utilisateur
+  popup:
+    title: Collecter les informations de l'agent utilisateur
+    link: https://www.whatismybrowser.com/detect/what-is-my-user-agent
+    hover_text: >
+      Inclure l'agent utilisateur avec votre soumission
+    text:  > 
+      L'agent d'utilisateur de votre navigateur indique quelque chose de 
+      particulier a propos de votre système. <br>
+      VoxForge peut collecter la chaîne de l'agent utilisateur de votre navigateur
+      pour dépanner et aider à déterminer quels appareils fonctionnent le mieux avec
+      Application d'enregistrement VoxForge
+  selection_default: { value: 'Oui',  item: 'Oui' }
+  selection:
+    - { value: 'Non',  option: 'Non' }
 
 ---
 
