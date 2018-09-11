@@ -54,6 +54,9 @@ function View (parms,
     this.please_select = pageVariables.please_select;
     this.default_value = pageVariables.default_value;
     this.alert_message = pageVariables.alert_message;
+
+    this.playbuttontext = pageVariables.playbuttontext;
+    this.stopbuttontext = pageVariables.stopbuttontext;
 }
 
 
@@ -222,8 +225,6 @@ View.getLicenseID = function() {
 View.getUserName = function() {
   return $('#username').val();
 }
-
-
 
 // ### METHODS #################################################################
 
@@ -491,6 +492,8 @@ View.prototype.initSettingsPopup = function (message) {
 
 /** 
 * display upload to VoxForge server status to user
+*
+* TODO no longer used
 */
 View.prototype.showUploadStatus = function (message) {
     $('#upload_status_display').show();
@@ -785,7 +788,6 @@ View.prototype.displayAudioPlayer = function (obj)
       var style = document.createElement('div');
       style.setAttribute("style", "text-align: center");
 
-
       if (obj.no_speech) {
         waveformElement.setAttribute("style", "background: #ff4500");
         var no_speech_message = obj.app_auto_gain ? self.alert_message.no_speech_autogain : self.alert_message.no_speech;
@@ -810,8 +812,10 @@ View.prototype.displayAudioPlayer = function (obj)
       var display_id = "button_" + prompt_id;
       var button = document.createElement(display_id);
       button.className = "play btn btn-primary";
-      button.textContent = 'Play'; 
+      // not sure how to toggle Play/Pause text
+      button.textContent = self.playbuttontext; 
       button.setAttribute("onclick", "wavesurfer[" + self.clip_id + "].playPause()");
+      
       style.appendChild(button);
       waveformElement.appendChild(style);
 
@@ -826,7 +830,7 @@ View.prototype.displayAudioPlayer = function (obj)
       clipContainer.appendChild(createClipLabel());
       clipContainer.appendChild(createDeleteButton());
       if (self.displayWaveform) {
-        clipContainer.appendChild(createWaveformElement()); // updates audio_warning
+        clipContainer.appendChild(createWaveformElement());
       }
       
       // not longer need small audio player if there is an audio warning

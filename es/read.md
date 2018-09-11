@@ -171,6 +171,7 @@ controls:
   record: Grabar
   stop: Parar
   upload: Reproducir
+  play: Jugar
 
 browser_support:
   no_worker_message: >

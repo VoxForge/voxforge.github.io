@@ -190,6 +190,7 @@ controls:
   record: Enregistrer
   stop: Arrêter
   upload: Télécharger
+  play: Jouer
 
 browser_support:
   no_worker_message: >

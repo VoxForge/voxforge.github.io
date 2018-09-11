@@ -265,6 +265,7 @@ controls:
   record: Record
   stop: Stop
   upload: Upload
+  play: Play
 
 browser_support:
   no_worker_message: >

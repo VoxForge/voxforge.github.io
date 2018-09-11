@@ -139,7 +139,9 @@
         this.please_select = "{{ page.please_select | default: default.please_select }}";
         this.anonymous = "{{ page.anonymous | default: default.anonymous }}";
         this.default_value = "{{ page.default_value | default: default.default_value }}";
-
+        this.playbuttontext = "{{ page.controls.play | default: default.controls.play }}";
+        this.stopbuttontext = "{{ page.controls.stop | default: default.controls.stop }}";
+        
         /**
         * confirm that all default properties exist in page property, and if not
         * add default property to page property
