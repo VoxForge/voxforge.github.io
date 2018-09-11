@@ -246,7 +246,7 @@ Audio.prototype.record = function (prompt_id, vad_run) {
       audioworker.postMessage({ 
         command: 'record', 
         event_buffer: floatArray_time_domain,
-     });
+      });
     };
 
     /**
