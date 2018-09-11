@@ -684,10 +684,40 @@ View.prototype.displayRecordingInfoChecked = function () {
 }
 
 /**
-* get recording Reminder value
+* get recording Reminder value; assumption being that if they
+* have not recorded in a while, then they may have changed locations...
+*
+* TODO use chrome geolocation api... should be ok since not saving info
+* and only using to check for changes in location
 */
 View.prototype.checkRelocationReminder = function () {
     return $('#chk_recloc_remind').is(":checked");
+}
+
+/**
+* if noise volume is low, still do VAD - user has option to disable themselves
+* if noise moderateor higher, need to disable VAD, because it will not work
+* 
+* TODO create user override for this
+*/
+View.prototype.noiseTurnOffVad = function () {
+    if (  $('#background_noise').val() === this.localized_yes ) {
+      var options = document.getElementById('noise_volume').options;
+      var values = [];
+      var i = 0, len = options.length;
+
+      while (i < len)
+      {
+        values.push(options[i++].value);
+      }
+
+      // assumes first two values are always low background noise
+      if ( $('#noise_volume').val() !== values[1] &&
+           $('#noise_volume').val() !== values[2] )
+      {
+        return true;
+      }
+    }
 }
 
 /**

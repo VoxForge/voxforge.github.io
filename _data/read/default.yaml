@@ -96,6 +96,9 @@ background_noise:
     - "Yes"
     - "No"
 
+# first two elements must be low volume;
+# View.prototype.noiseTurnOffVad() assumes this in determining whether to disable VAD
+# when there's too much noise
 noise_volume:
   label: Noise Volume
   selection:

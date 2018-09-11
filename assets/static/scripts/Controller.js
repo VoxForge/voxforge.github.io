@@ -78,7 +78,10 @@ Controller.prototype.start = function () {
         }, self.parms.recording_timeout);
 
         var vad_run;
-        if ( localStorage.getItem("vad_run") === 'true') {
+        if ( self.view.noiseTurnOffVad() ) {
+            vad_run = false;
+            console.log("overriding user settings: disabling VAD, background noise present");
+        } else if ( localStorage.getItem("vad_run") === 'true') {
             vad_run = true;
         } else {
             vad_run = false;
