@@ -104,11 +104,12 @@ self.onmessage = function(event) {
           status: 'finished',
           obj : { 
             prompt_id: prompt_id,
-            blob: encoder.finish(), // convert audio from float to int16 or 32-bit float
+            blob: encoder.finish(), // convert audio from float to wav int16 or 32-bit float
             no_trailing_silence: no_trailing_silence,
             no_speech: no_speech,
             clipping: clipping,
             too_soft: too_soft,
+            vad_run: vad_run,
           }
       });
 

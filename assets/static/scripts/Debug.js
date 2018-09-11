@@ -64,14 +64,14 @@ Debug.prototype.setValues = function (attribute, obj) {
 }
 
 /**
-*
+* clear specified debug entries
 */
 Debug.prototype.clearValues = function (attribute) {
     this[attribute] = {};
 }
 
 /**
-* 
+* return debug info as a hash
 */
 Debug.prototype.toHash = function () {
     var profile_hash = {};

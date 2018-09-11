@@ -80,7 +80,7 @@ Controller.prototype.start = function () {
         var vad_run;
         if ( self.view.noiseTurnOffVad() ) {
             vad_run = false;
-            console.log("overriding user settings: disabling VAD, background noise present");
+            console.log("Overriding user settings: disabling VAD, background noise present");
         } else if ( localStorage.getItem("vad_run") === 'true') {
             vad_run = true;
         } else {

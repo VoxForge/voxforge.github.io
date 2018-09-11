@@ -527,6 +527,7 @@ Prompts.prototype.setAudioCharacteristics = function (obj) {
         clipping : obj.clipping,
         too_soft : obj.too_soft,
         gain : obj.gain,
+        vad_run : obj.vad_run,
     };
     resolve(obj);
   });//promise
