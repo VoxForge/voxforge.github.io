@@ -758,16 +758,12 @@ View.prototype.displayAudioPlayer = function (obj)
 
     var audioURL = window.URL.createObjectURL(blob);
     /**
-    * TODO This creates an additional audio player that may not be really required given
-    * that Wavesurfer now works correctly.  Still usefull to let user adjust volume
+    * create easier to access audio links in DOM
+    * TODO need to figure out how to get audio links from Wavedurfer...
     */
-    function createAudioPlayer() {
+    function createAudioContainer() {
       var audioPlayer = document.createElement('audio');
-      audioPlayer.classList.add('audio_player');
-      audioPlayer.setAttribute('controls', '');
-      audioPlayer.controls = true;
       audioPlayer.src = audioURL;
-      console.log(prompt_id + " recorder stopped; audio: " + audioURL);
 
       return audioPlayer;
     }
@@ -833,8 +829,7 @@ View.prototype.displayAudioPlayer = function (obj)
         clipContainer.appendChild(createWaveformElement());
       }
       
-      // not longer need small audio player if there is an audio warning
-      // clipContainer.appendChild(createAudioPlayer());
+      clipContainer.appendChild(createAudioContainer());
 
       self.soundClips.insertBefore(clipContainer, self.soundClips.children[0]);
 
