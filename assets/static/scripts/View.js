@@ -759,7 +759,10 @@ View.prototype.displayAudioPlayer = function (obj)
     var audioURL = window.URL.createObjectURL(blob);
     /**
     * create easier to access audio links in DOM
-    * TODO need to figure out how to get audio links from Wavedurfer...
+    * TODO need to figure out how to get audio links from Wavesurfer...
+    * TODO Firefox records audio in 32-bit float, but cannot play it back....
+    * this could be used to store 32bit float audio in Firefox, while
+    * 16bit wav could be sent to WaveSurfer
     */
     function createAudioContainer() {
       var audioPlayer = document.createElement('audio');
