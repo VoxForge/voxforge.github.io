@@ -57,6 +57,13 @@ function View (parms,
 
     this.playbuttontext = pageVariables.playbuttontext;
     this.stopbuttontext = pageVariables.stopbuttontext;
+
+    this.uploadedSubmissions = localforage.createInstance({
+      name: "uploadedSubmissions"
+    });
+    this.submissionCache = localforage.createInstance({
+      name: "submissionCache"
+    });
 }
 
 
@@ -486,9 +493,282 @@ View.prototype.initSettingsPopup = function (message) {
       } else {
         localStorage.setItem("chk_recloc_remind", 'false');
       }
-    });    
+    });
+
+
+    /**
+     * returns Array containing list of submissions that were uploaded to
+     * Voxforge server
+     */
+    function getUploadedSubmissionList() {
+      return new Promise(function (resolve, reject) {
+              
+        self.uploadedSubmissions.length()
+        .then(function(numberOfKeys) {
+          if (numberOfKeys <= 0) {
+            console.log('no uploaded submissions');
+            resolve("");
+          }
+        })
+        .catch(function(err) {
+            console.log(err);
+            reject(err);
+        });
+
+        self.uploadedSubmissions.keys().then(function(keys) {
+            // An array of all the key names.
+            if (keys.length > 0) {
+              console.log('uploaded submissions' + keys);
+              resolve(keys);
+            }
+        }).catch(function(err) {
+            // This code runs if there were any errors
+            console.log(err);
+            reject(err);
+        });
+
+      });   
+    }
+
+
+    /**
+     * get list of submissions stored in browser cache
+     *
+     */
+    function getSavedSubmissionList(uploadedSubmissionList) {
+      return new Promise(function (resolve, reject) {
+              
+        self.submissionCache.length()
+        .then(function(numberOfKeys) {
+          if (numberOfKeys <= 0) {
+            console.log('no saved submissions');
+            resolve([uploadedSubmissionList, ""]);
+          }
+        })
+        .catch(function(err) {
+            console.log(err);
+            reject(err);
+        });
+
+        self.submissionCache.keys().then(function(keys) {
+            // An array of all the key names.
+            if (keys.length > 0) {
+              console.log('saved submissions' + keys);
+              resolve([uploadedSubmissionList, keys]);
+            } 
+        }).catch(function(err) {
+            // This code runs if there were any errors
+            console.log(err);
+            reject(err);
+        });
+
+      });   
+    }
+
+
+    // cannot call one popup from another; therefore open second one
+    // after first one closes
+    // see: http://api.jquerymobile.com/popup/
+    // chaining of popups
+    $( document ).on( "pageinit", function() {
+        $("#popupSettings").on({
+            popupafterclose: function() {
+
+                var uploaded = getUploadedSubmissionList()
+                .then(getSavedSubmissionList)
+                .then(function (submissionArray) {
+                    $('#submission-list').popup(); // initialize popup before open
+                    var uploadedHTML = "";
+                    var savedHTML = "";
+                    var count = 1;
+                    if (submissionArray[0]) {
+                        uploadedHTML = '<h3>Uploaded Submissions</h3>' +
+                                       '<ul><li>' + 
+                                       //submissionArray[0].join('</li>' + '<li>' + count++ + '. ') +
+                                       jQuery.map( submissionArray[0], function( element ) {
+                                          return ( '<li>' + count++ + '. ' + element + '</li>'  );
+                                       }).join('');
+                                       '</li></ul>';
+                    }
+                    count = 1;
+                    if (submissionArray[1]) {
+                        savedHTML = '<h3>Saved Submissions</h3>' +
+                                       '<ul><li>' +
+                                       //submissionArray[1].join('</li>' + '<li>' + count++ + '. ') +
+                                       jQuery.map( submissionArray[1], function( element ) {
+                                          return ( '<li>' + count++ + '. ' + element + '</li>'  );
+                                       }).join('');
+                                       '</li></ul>';
+                    }
+                    $("#submission-list").html(uploadedHTML + savedHTML);
+                    setTimeout(function() { $("#submission-list").popup( "open" ) }, 100 );
+                })
+                .catch(function(err) {
+                    console.log(err);
+                });
+            }
+        });
+    });
 }
 
+
+/**
+* run after worker completes audio recording; creates a waveform display of 
+* recorded audio and displays text of associated prompt line.  User can
+* then review and if needed delete an erroneous recording, which can then be
+* re-recorded
+*/
+View.prototype.displayAudioPlayer = function (obj) 
+{
+    //var prompt_id = obj.prompt_id; // TODO not used yet...
+    var blob = obj.blob;
+
+    // 'self' used to save the current context when calling function
+    var self = this;
+
+    var clipContainer = document.createElement('article');
+    clipContainer.classList.add('clip');
+    var prompt_id = document.querySelector('.prompt_id').innerText;
+
+    /**
+    * displays the speech recording's transcription
+    */
+    function createClipLabel() {
+      var prompt_sentence = document.querySelector('.info-display').innerText;
+      var clipLabel = document.createElement('prompt');
+      clipLabel.classList.add('clip-label');
+      clipLabel.textContent = prompt_id + " " + prompt_sentence;
+    
+      return clipLabel;
+    }
+
+    /**
+    * create button to allow user to delete a prompt line
+    */
+    function createDeleteButton() {
+      var deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.className = 'delete';
+
+      //deleteButton.disabled = 'true';
+
+      /**
+      * delete a recorded prompt; which is then saved in prompt_stack so user
+      * can re-record
+      */
+      deleteButton.onclick = function(e) {
+        var evtTgt = e.target;
+        var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
+        
+        self.prompts.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
+        evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+        console.log("prompt deleted: " + prompt_id);
+
+        $('#delete_clicked').click();
+      }
+
+      return deleteButton;
+    }
+
+    var audioURL = window.URL.createObjectURL(blob);
+    /**
+    * create easier to access audio links in DOM
+    * TODO need to figure out how to get audio links from Wavesurfer...
+    * TODO Firefox records audio in 32-bit float, but cannot play it back....
+    * this could be used to store 32bit float audio in Firefox, while
+    * 16bit wav could be sent to WaveSurfer
+    */
+    function createAudioContainer() {
+      var audioPlayer = document.createElement('audio');
+      audioPlayer.src = audioURL;
+
+      return audioPlayer;
+    }
+
+    var waveformdisplay_id = "waveformContainer_" + prompt_id;
+    /**
+    * this creates the container (i.e. element in the shadow DOM) to be used
+    * by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
+    * to exist before being called, so this creates the it...
+    */
+    function createWaveformElement() {
+      var waveformElement = document.createElement('div');
+      // hook for wavesurfer
+      waveformElement.setAttribute("id", waveformdisplay_id);
+      // TODO move this to css
+      waveformElement.setAttribute("style", 
+        "border-style: solid; min-width:100px; ");
+      var style = document.createElement('div');
+      style.setAttribute("style", "text-align: center");
+
+      if (obj.no_speech) {
+        waveformElement.setAttribute("style", "background: #ff4500");
+        var no_speech_message = obj.app_auto_gain ? self.alert_message.no_speech_autogain : self.alert_message.no_speech;
+        waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
+      } else if (obj.no_trailing_silence) {
+        waveformElement.setAttribute("style", "background: #ffA500");
+        waveformElement.innerHTML = "<h4>" + self.alert_message.no_trailing_silence + "</h4>";
+      //TODO need confidence level for clipping
+      } else if (obj.clipping) {
+        // TODO should not be able to upload if too loud
+        waveformElement.setAttribute("style", "background: #ff4500");
+        var audio_too_loud_message = obj.app_auto_gain ? self.alert_message.audio_too_loud_autogain : self.alert_message.audio_too_loud;
+        waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
+      //TODO need confidence level for soft speaker
+      } else if (obj.too_soft) {
+        waveformElement.setAttribute("style", "background: #ff4500");
+        var audio_too_soft_message = obj.app_auto_gain ? self.alert_message.audio_too_soft_autogain : self.alert_message.audio_too_soft;
+        waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
+      }
+
+      // playbutton inside wavesurfer display
+      var display_id = "button_" + prompt_id;
+      var button = document.createElement(display_id);
+      button.className = "play btn btn-primary";
+      // not sure how to toggle Play/Pause text
+      button.textContent = self.playbuttontext; 
+      button.setAttribute("onclick", "wavesurfer[" + self.clip_id + "].playPause()");
+      
+      style.appendChild(button);
+      waveformElement.appendChild(style);
+
+      console.log("clip_id: " + self.clip_id);
+
+      return waveformElement;
+    }
+
+    // #########################################################################
+    return new Promise(function (resolve, reject) {
+
+      clipContainer.appendChild(createClipLabel());
+      clipContainer.appendChild(createDeleteButton());
+      if (self.displayWaveform) {
+        clipContainer.appendChild(createWaveformElement());
+      }
+      clipContainer.appendChild(createAudioContainer());
+
+      self.soundClips.insertBefore(clipContainer, self.soundClips.children[0]);
+
+      // might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
+      // add waveform to waveformElement
+      // see http://wavesurfer-js.org/docs/
+      if (self.displayWaveform) {
+        wavesurfer[self.clip_id] = WaveSurfer.create({
+          container: '#' + waveformdisplay_id,
+          scrollParent: true,
+          waveColor : 'OliveDrab',
+          minPxPerSec: 200,
+        });
+        wavesurfer[self.clip_id].load(audioURL);
+
+        wavesurfer[self.clip_id].on('ready', function () {
+          resolve(obj); // return value on completion
+        });
+      }
+      self.clip_id++;
+      
+    });//promise
+}
 
 /** 
 * display upload to VoxForge server status to user
@@ -726,165 +1006,6 @@ View.prototype.noiseTurnOffVad = function () {
 View.prototype.displayPrompt = function (promptId, promptSentence) {
     document.querySelector('.prompt_id').innerText = promptId;
     document.querySelector('.info-display').innerText = promptSentence;
-}
-
-/**
-* run after worker completes audio recording; creates a waveform display of 
-* recorded audio and displays text of associated prompt line.  User can
-* then review and if needed delete an erroneous recording, which can then be
-* re-recorded
-*/
-View.prototype.displayAudioPlayer = function (obj) 
-{
-    //var prompt_id = obj.prompt_id; // TODO not used yet...
-    var blob = obj.blob;
-
-    // 'self' used to save the current context when calling function
-    var self = this;
-
-    var clipContainer = document.createElement('article');
-    clipContainer.classList.add('clip');
-    var prompt_id = document.querySelector('.prompt_id').innerText;
-
-    /**
-    * displays the speech recording's transcription
-    */
-    function createClipLabel() {
-      var prompt_sentence = document.querySelector('.info-display').innerText;
-      var clipLabel = document.createElement('prompt');
-      clipLabel.classList.add('clip-label');
-      clipLabel.textContent = prompt_id + " " + prompt_sentence;
-    
-      return clipLabel;
-    }
-
-    /**
-    * create button to allow user to delete a prompt line
-    */
-    function createDeleteButton() {
-      var deleteButton = document.createElement('button');
-      deleteButton.textContent = 'Delete';
-      deleteButton.className = 'delete';
-
-      //deleteButton.disabled = 'true';
-
-      /**
-      * delete a recorded prompt; which is then saved in prompt_stack so user
-      * can re-record
-      */
-      deleteButton.onclick = function(e) {
-        var evtTgt = e.target;
-        var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
-        
-        self.prompts.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
-        evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
-        console.log("prompt deleted: " + prompt_id);
-
-        $('#delete_clicked').click();
-      }
-
-      return deleteButton;
-    }
-
-    var audioURL = window.URL.createObjectURL(blob);
-    /**
-    * create easier to access audio links in DOM
-    * TODO need to figure out how to get audio links from Wavesurfer...
-    * TODO Firefox records audio in 32-bit float, but cannot play it back....
-    * this could be used to store 32bit float audio in Firefox, while
-    * 16bit wav could be sent to WaveSurfer
-    */
-    function createAudioContainer() {
-      var audioPlayer = document.createElement('audio');
-      audioPlayer.src = audioURL;
-
-      return audioPlayer;
-    }
-
-    var waveformdisplay_id = "waveformContainer_" + prompt_id;
-    /**
-    * this creates the container (i.e. element in the shadow DOM) to be used
-    * by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
-    * to exist before being called, so this creates the it...
-    */
-    function createWaveformElement() {
-      var waveformElement = document.createElement('div');
-      // hook for wavesurfer
-      waveformElement.setAttribute("id", waveformdisplay_id);
-      // TODO move this to css
-      waveformElement.setAttribute("style", 
-        "border-style: solid; min-width:100px; ");
-      var style = document.createElement('div');
-      style.setAttribute("style", "text-align: center");
-
-      if (obj.no_speech) {
-        waveformElement.setAttribute("style", "background: #ff4500");
-        var no_speech_message = obj.app_auto_gain ? self.alert_message.no_speech_autogain : self.alert_message.no_speech;
-        waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
-      } else if (obj.no_trailing_silence) {
-        waveformElement.setAttribute("style", "background: #ffA500");
-        waveformElement.innerHTML = "<h4>" + self.alert_message.no_trailing_silence + "</h4>";
-      //TODO need confidence level for clipping
-      } else if (obj.clipping) {
-        // TODO should not be able to upload if too loud
-        waveformElement.setAttribute("style", "background: #ff4500");
-        var audio_too_loud_message = obj.app_auto_gain ? self.alert_message.audio_too_loud_autogain : self.alert_message.audio_too_loud;
-        waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
-      //TODO need confidence level for soft speaker
-      } else if (obj.too_soft) {
-        waveformElement.setAttribute("style", "background: #ff4500");
-        var audio_too_soft_message = obj.app_auto_gain ? self.alert_message.audio_too_soft_autogain : self.alert_message.audio_too_soft;
-        waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
-      }
-
-      // playbutton inside wavesurfer display
-      var display_id = "button_" + prompt_id;
-      var button = document.createElement(display_id);
-      button.className = "play btn btn-primary";
-      // not sure how to toggle Play/Pause text
-      button.textContent = self.playbuttontext; 
-      button.setAttribute("onclick", "wavesurfer[" + self.clip_id + "].playPause()");
-      
-      style.appendChild(button);
-      waveformElement.appendChild(style);
-
-      console.log("clip_id: " + self.clip_id);
-
-      return waveformElement;
-    }
-
-    // #########################################################################
-    return new Promise(function (resolve, reject) {
-
-      clipContainer.appendChild(createClipLabel());
-      clipContainer.appendChild(createDeleteButton());
-      if (self.displayWaveform) {
-        clipContainer.appendChild(createWaveformElement());
-      }
-      
-      clipContainer.appendChild(createAudioContainer());
-
-      self.soundClips.insertBefore(clipContainer, self.soundClips.children[0]);
-
-      // might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
-      // add waveform to waveformElement
-      // see http://wavesurfer-js.org/docs/
-      if (self.displayWaveform) {
-        wavesurfer[self.clip_id] = WaveSurfer.create({
-          container: '#' + waveformdisplay_id,
-          scrollParent: true,
-          waveColor : 'OliveDrab',
-          minPxPerSec: 200,
-        });
-        wavesurfer[self.clip_id].load(audioURL);
-
-        wavesurfer[self.clip_id].on('ready', function () {
-          resolve(obj); // return value on completion
-        });
-      }
-      self.clip_id++;
-      
-    });//promise
 }
 
 /**

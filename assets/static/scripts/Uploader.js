@@ -55,6 +55,10 @@ function Uploader(parms,
       self.zip_worker.terminate();
       self.upload_worker.terminate();
     });
+
+    this.uploadedSubmissions = localforage.createInstance({
+      name: "uploadedSubmissions"
+    });
 }
 
 /**
@@ -65,6 +69,24 @@ function Uploader(parms,
 */
 Uploader.prototype.init = function () {
     var self = this;
+
+    /** 
+    * process messages from service worker or web worker
+    */
+    function saveSubmissionsToList(filesUploaded) {
+        for (let fileName of filesUploaded) {
+            var jsonOnject = {};
+            if (!Date.now) { // UTC timestamp in milliseconds;
+                Date.now = function() { return new Date().getTime(); }
+            }
+            jsonOnject['timestamp'] = Date.now();
+            
+            self.uploadedSubmissions.setItem(fileName, jsonOnject)
+            .catch(function(err) {
+              console.error('save of uploaded submission name to localforage browser storage failed!', err);
+            });
+        }
+    }
 
     /** 
     * process messages from service worker or web worker
@@ -93,7 +115,9 @@ Uploader.prototype.init = function () {
         switch (returnObj.status) {
           case 'AllUploaded':
             var filesUploaded = returnObj.filesUploaded;
-
+            
+            saveSubmissionsToList(filesUploaded);
+            
             var numberOfUploadedSubmissions = self.getNumberOfUploadedSubmissions() + filesUploaded.length;
             localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
 
