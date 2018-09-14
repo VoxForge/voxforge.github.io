@@ -20,14 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function View (parms,
                prompts,
                profile,
-               pageVariables,
-               debug)
+               pageVariables)
 {
     this.parms = parms;
     this.prompts = prompts;
     this.profile = profile;
-    
-    this.debug = debug;
 
     this.displayVisualizer = parms.displayVisualizer;
     this.displayWaveform = parms.displayWaveform;

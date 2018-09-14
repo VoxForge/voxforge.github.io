@@ -94,8 +94,7 @@ var view;  // needs to be global so can be accessible to index.html
     view = new View(parms.view,
                     prompts,
                     profile,
-                    pageVariables,
-                    debug); 
+                    pageVariables); 
 
     var audio = new Audio(parms.audio,
                           pageVariables);
