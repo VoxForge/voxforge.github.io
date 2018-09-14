@@ -101,15 +101,16 @@ var view;  // needs to be global so can be accessible to index.html
                           pageVariables);
     var uploader = new Uploader(parms.uploader,
                                 pageVariables.alert_message);
-
+    
     var controller =  new Controller(parms.controller,
                                      prompts, 
                                      profile, 
                                      view, 
                                      audio,
                                      uploader,
+                                     location,
                                      appversion,
-                                     pageVariables,
+                                     pageVariables, // TODO should only pass in what is required...
                                      pageVariables.alert_message,
                                      debug);
 
@@ -118,9 +119,7 @@ var view;  // needs to be global so can be accessible to index.html
     if ( localStorage.getItem("vad_run") === 'true') {
       view.enableVoiceActivityDetection();
     }
-    //audio.init();
     uploader.init();
-    //controller.start();
 
     // wait for user to accept permission for use of microphone (call to
     // getUserMedia) before starting controller

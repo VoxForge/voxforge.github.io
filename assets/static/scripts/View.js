@@ -566,7 +566,7 @@ View.prototype.submissionsLog = function ()
     function getSavedSubmissionList(uploadedSubmissionList) {
       return new Promise(function (resolve, reject) {
         
-          getDatabaseKeys(self.submissionCache, 'uploaded submissions')
+          getDatabaseKeys(self.submissionCache, 'saved submissions')
           .then(function (savedSubmissionList) {
               if (savedSubmissionList) {
                   resolve([uploadedSubmissionList, savedSubmissionList]);
@@ -601,23 +601,23 @@ View.prototype.submissionsLog = function ()
     // chaining of popups
     $( document ).on( "pageinit", function() {
         $("#popupSettings").on({
-            popupafterclose: function() {
-                getUploadedSubmissionList()
-                .then(getSavedSubmissionList)
-                .then(function (submissionArray) {
-                    $('#submission-list').popup(); // initialize popup before open
+          popupafterclose: function() {
+              getUploadedSubmissionList()
+              .then(getSavedSubmissionList)
+              .then(function (submissionArray) {
+                  $('#submission-list').popup(); // initialize popup before open
 
-                    // TODO translate
-                    var uploadedHTML = makeHTMLlist(submissionArray[0], 'Uploaded Submissions');
-                    var savedHTML = makeHTMLlist(submissionArray[1], 'Saved Submissions');                 
+                  // TODO translate
+                  var uploadedHTML = makeHTMLlist(submissionArray[0], 'Uploaded Submissions');
+                  var savedHTML = makeHTMLlist(submissionArray[1], 'Saved Submissions');                 
 
-                    $("#submission-list").html(uploadedHTML + savedHTML);
-                    setTimeout(function() { $("#submission-list").popup( "open" ) }, 100 );
-                })
-                .catch(function(err) {
-                    console.log(err);
-                });
-            }
+                  $("#submission-list").html(uploadedHTML + savedHTML);
+                  setTimeout(function() { $("#submission-list").popup( "open" ) }, 100 );
+              })
+              .catch(function(err) {
+                  console.log(err);
+              });
+          } // popupafterclose
         });
     });
 }
