@@ -377,6 +377,7 @@ View.prototype.init = function () {
     });
 
     this.initSettingsPopup();
+    this.submissionsLog();
 
     // leave all buttons off until user accepts permission to use Microphone (getUserMedia request)
     this.setRSUButtonDisplay(false, false, false); 
@@ -495,8 +496,18 @@ View.prototype.initSettingsPopup = function (message) {
       }
     });
 
+
+}
+
+/**
+* display log of uploaded and saved submissions
+* 
+* TODO how to deal with n>25 submissions... only show 25 most recent submissions?
+*/
+View.prototype.submissionsLog = function () 
+{
     /**
-     * returns Array containing list of submissions 
+     * returns Array of submissions 
      */
     function getDatabaseKeys(database, message) {
       return new Promise(function (resolve, reject) {
@@ -526,24 +537,6 @@ View.prototype.initSettingsPopup = function (message) {
         });
 
       });
-    }
-   
-    /**
-    * helper function to wrap array in html
-    *
-    */
-    function makeHTMLlist (array, heading) {
-        var count = 1;
-        if (array) {
-            return '<h3>' + heading + '</h3>' +
-                   '<ul><li>' + 
-                   jQuery.map( array, function( element ) {
-                      return ( '<li>' + count++ + '. ' + element + '</li>'  );
-                   }).join(''); // returns as a string
-                   '</li></ul>';
-        } else {
-           return "";
-        }
     }
 
     /**
@@ -581,6 +574,24 @@ View.prototype.initSettingsPopup = function (message) {
           });
       });
     }
+   
+    /**
+    * helper function to wrap array in html
+    *
+    */
+    function makeHTMLlist (array, heading) {
+        var count = 1;
+        if (array) {
+            return '<h3>' + heading + '</h3>' +
+                   '<ul><li>' + 
+                   jQuery.map( array, function( element ) {
+                      return ( '<li>' + count++ + '. ' + element + '</li>'  );
+                   }).join(''); // returns as a string
+                   '</li></ul>';
+        } else {
+           return "";
+        }
+    }
 
     // cannot call one popup from another; therefore open second one
     // after first one closes
@@ -607,7 +618,6 @@ View.prototype.initSettingsPopup = function (message) {
         });
     });
 }
-
 
 /**
 * run after worker completes audio recording; creates a waveform display of 
