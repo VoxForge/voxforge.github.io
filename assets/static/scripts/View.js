@@ -495,6 +495,56 @@ View.prototype.initSettingsPopup = function (message) {
       }
     });
 
+    /**
+     * returns Array containing list of submissions 
+     */
+    function getDatabaseKeys(database, message) {
+      return new Promise(function (resolve, reject) {
+        
+        database.length()
+        .then(function(numberOfKeys) {
+          if (numberOfKeys <= 0) {
+            console.log('no ' + message);
+            resolve("");
+          }
+        })
+        .catch(function(err) {
+            console.log(err);
+            resolve("");
+        });
+
+        database.keys().then(function(keys) {
+            // An array of all the key names.
+            if (keys.length > 0) {
+              console.log(message + ' ' + keys);
+              resolve(keys);
+            }
+        }).catch(function(err) {
+            // This code runs if there were any errors
+            console.log(err);
+            resolve("");
+        });
+
+      });
+    }
+   
+    /**
+    * helper function to wrap array in html
+    *
+    */
+    function makeHTMLlist (array, heading) {
+        var count = 1;
+        if (array) {
+            return '<h3>' + heading + '</h3>' +
+                   '<ul><li>' + 
+                   jQuery.map( array, function( element ) {
+                      return ( '<li>' + count++ + '. ' + element + '</li>'  );
+                   }).join(''); // returns as a string
+                   '</li></ul>';
+        } else {
+           return "";
+        }
+    }
 
     /**
      * returns Array containing list of submissions that were uploaded to
@@ -502,69 +552,35 @@ View.prototype.initSettingsPopup = function (message) {
      */
     function getUploadedSubmissionList() {
       return new Promise(function (resolve, reject) {
-              
-        self.uploadedSubmissions.length()
-        .then(function(numberOfKeys) {
-          if (numberOfKeys <= 0) {
-            console.log('no uploaded submissions');
-            resolve("");
-          }
-        })
-        .catch(function(err) {
-            console.log(err);
-            reject(err);
-        });
-
-        self.uploadedSubmissions.keys().then(function(keys) {
-            // An array of all the key names.
-            if (keys.length > 0) {
-              console.log('uploaded submissions' + keys);
-              resolve(keys);
-            }
-        }).catch(function(err) {
-            // This code runs if there were any errors
-            console.log(err);
-            reject(err);
-        });
-
-      });   
+        
+          getDatabaseKeys(self.uploadedSubmissions, 'uploaded submissions')
+          .then(function (uploadedSubmissionList) {
+              if (uploadedSubmissionList) {
+                  resolve(uploadedSubmissionList);
+              } else {
+                  resolve("");
+              }
+          });
+          
+      });
     }
-
 
     /**
      * get list of submissions stored in browser cache
-     *
      */
     function getSavedSubmissionList(uploadedSubmissionList) {
       return new Promise(function (resolve, reject) {
-              
-        self.submissionCache.length()
-        .then(function(numberOfKeys) {
-          if (numberOfKeys <= 0) {
-            console.log('no saved submissions');
-            resolve([uploadedSubmissionList, ""]);
-          }
-        })
-        .catch(function(err) {
-            console.log(err);
-            reject(err);
-        });
-
-        self.submissionCache.keys().then(function(keys) {
-            // An array of all the key names.
-            if (keys.length > 0) {
-              console.log('saved submissions' + keys);
-              resolve([uploadedSubmissionList, keys]);
-            } 
-        }).catch(function(err) {
-            // This code runs if there were any errors
-            console.log(err);
-            reject(err);
-        });
-
-      });   
+        
+          getDatabaseKeys(self.submissionCache, 'uploaded submissions')
+          .then(function (savedSubmissionList) {
+              if (savedSubmissionList) {
+                  resolve([uploadedSubmissionList, savedSubmissionList]);
+              } else {
+                  resolve([uploadedSubmissionList, ""]);
+              }
+          });
+      });
     }
-
 
     // cannot call one popup from another; therefore open second one
     // after first one closes
@@ -573,26 +589,11 @@ View.prototype.initSettingsPopup = function (message) {
     $( document ).on( "pageinit", function() {
         $("#popupSettings").on({
             popupafterclose: function() {
-
-                var uploaded = getUploadedSubmissionList()
+                getUploadedSubmissionList()
                 .then(getSavedSubmissionList)
                 .then(function (submissionArray) {
                     $('#submission-list').popup(); // initialize popup before open
 
-                    // helper function to wrap array in html
-                    function makeHTMLlist (array, heading) {
-                        var count = 1;
-                        if (array) {
-                            return '<h3>' + heading + '</h3>' +
-                                   '<ul><li>' + 
-                                   jQuery.map( array, function( element ) {
-                                      return ( '<li>' + count++ + '. ' + element + '</li>'  );
-                                   }).join('');
-                                   '</li></ul>';
-                        } else {
-                           return "";
-                        }
-                    }
                     var uploadedHTML = makeHTMLlist(submissionArray[0], 'Uploaded Submissions');
                     var savedHTML = makeHTMLlist(submissionArray[1], 'Saved Submissions');                 
 
