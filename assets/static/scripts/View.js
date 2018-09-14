@@ -578,28 +578,24 @@ View.prototype.initSettingsPopup = function (message) {
                 .then(getSavedSubmissionList)
                 .then(function (submissionArray) {
                     $('#submission-list').popup(); // initialize popup before open
-                    var uploadedHTML = "";
-                    var savedHTML = "";
-                    var count = 1;
-                    if (submissionArray[0]) {
-                        uploadedHTML = '<h3>Uploaded Submissions</h3>' +
-                                       '<ul><li>' + 
-                                       //submissionArray[0].join('</li>' + '<li>' + count++ + '. ') +
-                                       jQuery.map( submissionArray[0], function( element ) {
-                                          return ( '<li>' + count++ + '. ' + element + '</li>'  );
-                                       }).join('');
-                                       '</li></ul>';
+
+                    // helper function to wrap array in html
+                    function makeHTMLlist (array, heading) {
+                        var count = 1;
+                        if (array) {
+                            return '<h3>' + heading + '</h3>' +
+                                   '<ul><li>' + 
+                                   jQuery.map( array, function( element ) {
+                                      return ( '<li>' + count++ + '. ' + element + '</li>'  );
+                                   }).join('');
+                                   '</li></ul>';
+                        } else {
+                           return "";
+                        }
                     }
-                    count = 1;
-                    if (submissionArray[1]) {
-                        savedHTML = '<h3>Saved Submissions</h3>' +
-                                       '<ul><li>' +
-                                       //submissionArray[1].join('</li>' + '<li>' + count++ + '. ') +
-                                       jQuery.map( submissionArray[1], function( element ) {
-                                          return ( '<li>' + count++ + '. ' + element + '</li>'  );
-                                       }).join('');
-                                       '</li></ul>';
-                    }
+                    var uploadedHTML = makeHTMLlist(submissionArray[0], 'Uploaded Submissions');
+                    var savedHTML = makeHTMLlist(submissionArray[1], 'Saved Submissions');                 
+
                     $("#submission-list").html(uploadedHTML + savedHTML);
                     setTimeout(function() { $("#submission-list").popup( "open" ) }, 100 );
                 })
