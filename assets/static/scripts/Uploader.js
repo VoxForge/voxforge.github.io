@@ -459,14 +459,3 @@ Uploader.prototype.minutesSinceLastSubmission = function () {
 
     return Math.round(mins);
 }
-
-/**
-* 
-*/
-Uploader.prototype.askUserToConfirmSameRecordingInfo = function () {
-  if (this.minutesSinceLastSubmission() > this.maxMinutesSinceLastSubmission) {
-    return true;
-  } else {
-    return false;
-  }
-}

@@ -213,12 +213,14 @@ Controller.prototype.start = function () {
 
         onFirstpromptrecorded: function() {
           if ( self.view.displayRecordingInfoChecked() &&
-               self.view.checkRelocationReminder() &&
-               self.uploader.askUserToConfirmSameRecordingInfo() )
-          {
-              window.alert(self.alert_message.time_limit.intro + ' ' +
-                           self.uploader.minutesSinceLastSubmission() + ' ' +
-                           self.alert_message.time_limit.text);
+               self.view.checkRelocationReminder() ) {
+                 
+              if (self.askUserToConfirmSameRecordingInfo() ) {
+                  window.alert(self.alert_message.time_limit.intro + ' ' +
+                               self.uploader.minutesSinceLastSubmission() + ' ' +
+                               self.alert_message.time_limit.text);
+              }
+              
           }
 
           self.view.enableDeleteButtons();
@@ -379,3 +381,15 @@ Controller.prototype.start = function () {
 
 }
 
+/**
+* TODO use time and/or geolocation to determine if user should be asked to
+* update recording location information
+* TODO user should be able to disable in settings
+*/
+Controller.prototype.askUserToConfirmSameRecordingInfo = function () {
+  if (this.uploader.minutesSinceLastSubmission() > this.uploader.maxMinutesSinceLastSubmission) {
+    return true;
+  } else {
+    return false;
+  }
+}
