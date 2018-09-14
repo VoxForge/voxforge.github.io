@@ -506,6 +506,8 @@ View.prototype.initSettingsPopup = function (message) {
 */
 View.prototype.submissionsLog = function () 
 {
+    var self = this;
+  
     /**
      * returns Array of submissions 
      */
@@ -583,11 +585,11 @@ View.prototype.submissionsLog = function ()
         var count = 1;
         if (array) {
             return '<h3>' + heading + '</h3>' +
-                   '<ul><li>' + 
+                   '<ul>' + 
                    jQuery.map( array, function( element ) {
                       return ( '<li>' + count++ + '. ' + element + '</li>'  );
-                   }).join(''); // returns as a string
-                   '</li></ul>';
+                   }).join('') + // returns as a string
+                   '</ul>';
         } else {
            return "";
         }
@@ -605,6 +607,7 @@ View.prototype.submissionsLog = function ()
                 .then(function (submissionArray) {
                     $('#submission-list').popup(); // initialize popup before open
 
+                    // TODO translate
                     var uploadedHTML = makeHTMLlist(submissionArray[0], 'Uploaded Submissions');
                     var savedHTML = makeHTMLlist(submissionArray[1], 'Saved Submissions');                 
 
