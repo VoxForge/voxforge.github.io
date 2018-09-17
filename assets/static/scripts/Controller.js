@@ -117,6 +117,13 @@ Controller.prototype.start = function () {
 
       self.profile.updateRandomStrings();
 
+      if ( self.view.displayRecordingInfoChecked() ) {
+          self.getLocation()
+          .then( function(location) {
+               localStorage.setItem( 'current_location', location );
+          });
+      }
+
       fsm.donesubmission();
     }
 
@@ -379,6 +386,38 @@ Controller.prototype.start = function () {
       } 
     }
 
+}
+
+/**
+* ask device for current location: long and lat as string
+*/
+Controller.prototype.getLocation = function () {
+  return new Promise(function (resolve, reject) {
+
+      if (!navigator.geolocation){
+        console.warn("Geolocation is not supported by your browser");
+        resolve(null);
+      }
+
+      function success(position) {
+        var longitude = position.coords.longitude;
+        var latitude  = position.coords.latitude;
+        console.log('Latitude is ' + latitude + '° Longitude is ' + longitude + '°');
+
+        var location = {};
+        location.longitude = longitude;
+        location.latitude = latitude;
+        resolve( JSON.stringify(location) );
+      }
+
+      function error() {
+        console.log('Unable to retrieve your location');
+        resolve(null);
+      }
+
+      navigator.geolocation.getCurrentPosition(success, error);
+
+  });
 }
 
 /**
