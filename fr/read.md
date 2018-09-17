@@ -276,7 +276,7 @@ settings:
     Enregistrement d'informations (doit être mis à jour chaque fois
     que votre location ou les caractéristiques de bruit changent)
   vad_run: VAD activé (Détection d'activité vocale)
-  chk_recloc_remind: Rappel de changement de lieu d'enregistrement
+  check_recording_location_reminder: Rappel de changement de lieu d'enregistrement
 
 #TODO no longer used
 ua_string:

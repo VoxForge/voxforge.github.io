@@ -77,8 +77,8 @@ var view;  // needs to be global so can be accessible to index.html
       localStorage.setItem("ua_string", 'true');
     }
 
-    if ( ! localStorage.getItem("chk_recloc_remind") ) {
-      localStorage.setItem("chk_recloc_remind", 'true');
+    if ( ! localStorage.getItem("check_recording_location_reminder") ) {
+      localStorage.setItem("check_recording_location_reminder", 'true');
     }    
     
     // #############################################################################
