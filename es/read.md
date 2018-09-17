@@ -259,7 +259,7 @@ settings:
     Información de grabación (necesita actualizarse cada vez
     que cambia la ubicación o las características del ruido)
   vad_run: VAD habilitado (detección de actividad de voz)
-  check_recording_location_reminder: Recordatorio de cambio de ubicación de grabación
+  recording_location_reminder: Recordatorio de cambio de ubicación de grabación
   
 
 #TODO no longer used
