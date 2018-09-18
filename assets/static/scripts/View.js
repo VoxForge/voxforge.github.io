@@ -400,7 +400,35 @@ View.prototype.init = function () {
 View.prototype.initSettingsPopup = function (message) {
    var self = this;
 
-   if ( localStorage.getItem("debug") === 'true') { // string
+   /*
+    * if location not already set, then get current location and save
+    * to local storage
+   */
+   function setCurrentLocation() {
+      if (   self.displayRecordingInfoChecked() &&
+             self.checkRelocationReminder () &&
+           ! localStorage.getItem("current_location") ) {
+
+          self.getLocationString()
+          .then( function(location) {
+             localStorage.setItem( 'current_location', location );
+          });
+
+      } else {
+          localStorage.setItem( 'current_location', '' );
+      }
+   }
+
+   /*
+    * clear current_location in local storage
+   */
+   function clearCurrentLocation() {
+      localStorage.setItem( 'current_location', '' );
+   }
+
+   // ##########################################################################
+
+    if ( localStorage.getItem("debug") === 'true') { // string
       $('#debug').attr('checked', true);  // boolean
     } else {
       $('#debug').attr('checked', false);
@@ -411,13 +439,15 @@ View.prototype.initSettingsPopup = function (message) {
     } else {
       $('#ua_string').attr('checked', false);
     }
-    
+
     if ( localStorage.getItem("recording_information_button_display") === 'true') {
       $('#display_record_info').attr('checked', true); 
       $('#recording_information_button_display').show();
+      setCurrentLocation();
     } else {
       $('#display_record_info').attr('checked', false);
       $('#recording_information_button_display').hide();
+      clearCurrentLocation();
     }
 
     if ( localStorage.getItem("vad_run") === 'true') {
@@ -426,10 +456,12 @@ View.prototype.initSettingsPopup = function (message) {
       $('#vad_run').attr('checked', false);
     }
 
-    if ( localStorage.getItem("chk_recloc_remind") === 'true') {
-      $('#chk_recloc_remind').attr('checked', true); 
+    if ( localStorage.getItem("recording_location_reminder") === 'true') {
+      $('#recording_location_reminder').attr('checked', true);
+      setCurrentLocation();
     } else {
-      $('#chk_recloc_remind').attr('checked', false);
+      $('#recording_location_reminder').attr('checked', false);
+      clearCurrentLocation();
     }
 
     // handlers
@@ -454,10 +486,12 @@ View.prototype.initSettingsPopup = function (message) {
       if (this.checked) {
         $("#recording_information_button_display").show();
         localStorage.setItem("recording_information_button_display", 'true');
+        setCurrentLocation();
       } else {
         $("#recording_information_button_display").hide();
         localStorage.setItem("recording_information_button_display", 'false');
-
+        clearCurrentLocation();
+        
         // clear certain field entries when user clicks display_record_info off
         $('#recording_location').val($("select option:first").val());
         $('#recording_location').change();
@@ -485,15 +519,47 @@ View.prototype.initSettingsPopup = function (message) {
       }
     });
 
-    $('#chk_recloc_remind').change(function () { 
+    $('#recording_location_reminder').change(function () { 
       if (this.checked) {
-        localStorage.setItem("chk_recloc_remind", 'true');
+          localStorage.setItem("recording_location_reminder", 'true');
+          setCurrentLocation();
       } else {
-        localStorage.setItem("chk_recloc_remind", 'false');
+          localStorage.setItem("recording_location_reminder", 'false');
+          clearCurrentLocation();
       }
     });
+}
 
+/**
+* ask device for current location: long and lat as string
+*/
+View.prototype.getLocationString = function () {
+ return new Promise(function (resolve, reject) {
 
+    if (!navigator.geolocation){
+      console.warn("Geolocation is not supported by your browser");
+      resolve("");
+    }
+
+    function success(position) {
+      var longitude = position.coords.longitude;
+      var latitude  = position.coords.latitude;
+      console.log('Latitude is ' + latitude + '° Longitude is ' + longitude + '°');
+
+      var location = {};
+      location.longitude = longitude;
+      location.latitude = latitude;
+      resolve( JSON.stringify(location) );
+    }
+
+    function error() {
+      console.log('Unable to retrieve your location');
+      resolve("");
+    }
+
+    navigator.geolocation.getCurrentPosition(success, error);
+
+ });
 }
 
 /**
@@ -978,7 +1044,7 @@ View.prototype.displayRecordingInfoChecked = function () {
 * and only using to check for changes in location
 */
 View.prototype.checkRelocationReminder = function () {
-    return $('#chk_recloc_remind').is(":checked");
+    return $('#recording_location_reminder').is(":checked");
 }
 
 /**

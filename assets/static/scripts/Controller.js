@@ -117,13 +117,6 @@ Controller.prototype.start = function () {
 
       self.profile.updateRandomStrings();
 
-      if ( self.view.displayRecordingInfoChecked() ) {
-          self.getLocation()
-          .then( function(location) {
-               localStorage.setItem( 'current_location', location );
-          });
-      }
-
       fsm.donesubmission();
     }
 
@@ -182,20 +175,20 @@ Controller.prototype.start = function () {
       methods: {
         // #####################################################################
         // Transitions: user initiated
-        onStopclicked: function() { 
+        onStopclicked: function() {
           self.audio.endRecording();
         },
 
-        onDeleteclickedoneleft: function() { 
+        onDeleteclickedoneleft: function() {
           self.view.updateProgress();
         },
 
-        onDeleteclicked: function() { 
+        onDeleteclicked: function() {
           self.view.updateProgress();
         },
 
         // Transition Actions: system initiated
-        onRecordingtimeout: function() { 
+        onRecordingtimeout: function() {
           self.audio.endRecording();
         },
 
@@ -203,7 +196,7 @@ Controller.prototype.start = function () {
         // Static States
         onNopromptsrecorded: function() {
           self.view.setRSUButtonDisplay(true, false, false);
-          
+
           if (! self.view.displayRecordingInfoChecked()  && 
               self.uploader.getNumberOfSubmissions() > self.parms.numPrompt2SubmittForRecordInfo &&
               localStorage.getItem("recording_asked_user") !== 'true'
@@ -389,46 +382,28 @@ Controller.prototype.start = function () {
 }
 
 /**
-* ask device for current location: long and lat as string
-*/
-Controller.prototype.getLocation = function () {
-  return new Promise(function (resolve, reject) {
-
-      if (!navigator.geolocation){
-        console.warn("Geolocation is not supported by your browser");
-        resolve(null);
-      }
-
-      function success(position) {
-        var longitude = position.coords.longitude;
-        var latitude  = position.coords.latitude;
-        console.log('Latitude is ' + latitude + '° Longitude is ' + longitude + '°');
-
-        var location = {};
-        location.longitude = longitude;
-        location.latitude = latitude;
-        resolve( JSON.stringify(location) );
-      }
-
-      function error() {
-        console.log('Unable to retrieve your location');
-        resolve(null);
-      }
-
-      navigator.geolocation.getCurrentPosition(success, error);
-
-  });
-}
-
-/**
 * TODO use time and/or geolocation to determine if user should be asked to
 * update recording location information
 * TODO user should be able to disable in settings
 */
 Controller.prototype.askUserToConfirmSameRecordingInfo = function () {
-  if (this.uploader.minutesSinceLastSubmission() > this.uploader.maxMinutesSinceLastSubmission) {
-    return true;
-  } else {
-    return false;
-  }
+    var oldlocation = localStorage.getItem("current_location");
+    if (oldlocation) {
+        this.view.getLocationString()
+        .then( function(current_location) {
+            current_location = JSON.parse(current_location);
+            if (current_location.longitude != oldlocation.longitude ||
+                current_location.latitude != oldlocation.latitude ) {
+                  return true;
+            } else {
+              return false
+            }
+         });
+    } else {
+        if (this.uploader.minutesSinceLastSubmission() > this.uploader.maxMinutesSinceLastSubmission) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

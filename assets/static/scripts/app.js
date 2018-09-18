@@ -80,7 +80,10 @@ var view;  // needs to be global so can be accessible to index.html
     if ( ! localStorage.getItem("recording_location_reminder") ) {
       localStorage.setItem("recording_location_reminder", 'true');
     }    
-    
+
+    if ( ! localStorage.getItem("recording_information_button_display") ) {
+      localStorage.setItem("recording_information_button_display", 'false');
+    }   
     // #############################################################################
     const appversion = "0.2";
 
