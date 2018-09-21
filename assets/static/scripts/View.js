@@ -431,7 +431,7 @@ View.prototype.initSettingsPopup = function (message) {
       $('#vad_run').prop('checked', false);
     }
 
-    if ( localStorage.getItem("recording_information_button_display") === 'true') {
+    if ( localStorage.getItem("display_record_info") === 'true') {
       $('#display_record_info').prop('checked', true); 
       $('#recording_information_button_display').show();
     } else {
@@ -439,20 +439,13 @@ View.prototype.initSettingsPopup = function (message) {
       $('#recording_information_button_display').hide();
     }
 
-    //if ( localStorage.getItem("recording_location_reminder") === 'true') {
-    //  $('#recording_location_reminder').prop('checked', true);
-    //} else {
-    //  $('#recording_location_reminder').prop('checked', false);
-    //}
-
-    if ( localStorage.getItem("recording_information_button_display") === 'true' &&
-         localStorage.getItem("recording_location_reminder") === 'true' ) {
-          self.location.init();
+    if ( localStorage.getItem("recording_location_reminder") === 'true') {
+      $('#recording_location_reminder').prop('checked', true); 
     } else {
-          self.location.reset();
+      $('#recording_location_reminder').prop('checked', false);
     }
 
-    // handlers
+    // post page load handlers
 
     $('#debug').change(function () {
       if (this.checked) {
@@ -497,56 +490,26 @@ View.prototype.initSettingsPopup = function (message) {
         $('#noise_type_other').change();
     }
 
-
-// TODO WTF cant get change in display_record_info to trigger recording_location_reminder
-
-/*
- * https://javascript.info/dom-attributes-and-properties
- * When the browser loads the page, it “reads” (another word: “parses”) HTML
- * text and generates DOM objects from it. For element nodes most standard
- * HTML attributes automatically become properties of DOM objects.
- *          //$('#recording_location_reminder').trigger( "change" );
-          //$('#recording_location_reminder').prop('disabled', false);
-          //$('#recording_location_reminder').attr('checked', false).trigger("change");
-          //$('#recording_location_reminder').prop('checked', true).change();
-          //$('#recording_location_reminder').prop('checked', true);
-          //$('#recording_location_reminder').attr('checked', true);
-          //$('#recording_location_reminder').change(); // same as .trigger( "change" )
-          
-  * the most important concept to remember about the checked attribute is that it does
-  * not correspond to the checked property. The attribute actually corresponds to the
-  * defaultChecked property and should be used only to set the initial value of the
-  * checkbox. The checked attribute value does not change with the state of the checkbox,
-  * while the checked property does
- */
-
     $('#display_record_info').change(function () {
       if (this.checked) {
           $("#recording_information_button_display").show();
           localStorage.setItem("recording_information_button_display", 'true');
-          $('#recording_location_reminder').prop('checked', true);
-          //$('#recording_location_reminder').prop( "disabled", false ).change();
       } else {
           $("#recording_information_button_display").hide();
           localStorage.setItem("recording_information_button_display", 'false');
-          $('#recording_location_reminder').prop('checked', false);
-          //$('#recording_location_reminder').prop( "disabled", true ).change();
           clearRecordingLocationInfo();
       }
     });
 
-    //$('#recording_location_reminder').change(function () { 
-    //  if (this.checked) {
+    $('#recording_location_reminder').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("recording_location_reminder", 'true');
+      } else {
+        localStorage.setItem("recording_location_reminder", 'false');
+      }
+    });
 
-    //      localStorage.setItem("recording_location_reminder", 'true');
-    //      if ( localStorage.getItem("recording_information_button_display") === 'true') {
-    //         self.location.init(); 
-    //      }
-    //  } else {
-    //      localStorage.setItem("recording_location_reminder", 'false');
-    //      self.location.reset();     
-    //  }
-    //});
+
 }
 
 /**
@@ -1043,13 +1006,6 @@ View.prototype.locationSelected = function () {
 }
 
 /**
-* get recording information value
-*/
-View.prototype.displayRecordingInfoChecked = function () {
-    return $('#display_record_info').is(":checked");
-}
-
-/**
 * get recording Reminder value; assumption being that if they
 * have not recorded in a while, then they may have changed locations...
 *
@@ -1059,6 +1015,15 @@ View.prototype.displayRecordingInfoChecked = function () {
 View.prototype.checkRelocationReminder = function () {
     return $('#recording_location_reminder').is(":checked");
 }
+
+
+/**
+* get recording information value
+*/
+View.prototype.displayRecordingInfoChecked = function () {
+    return $('#display_record_info').is(":checked");
+}
+
 
 /**
 * if noise volume is low, still do VAD - user has option to disable themselves
