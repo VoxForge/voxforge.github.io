@@ -20,11 +20,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function View (parms,
                prompts,
                profile,
+               location,               
                pageVariables)
 {
+
+  
+// ######## convert View class from JQUERY to vanilla JS; keep jQuery mobile css
+
+  
     this.parms = parms;
     this.prompts = prompts;
     this.profile = profile;
+    this.location = location;
 
     this.displayVisualizer = parms.displayVisualizer;
     this.displayWaveform = parms.displayWaveform;
@@ -396,72 +403,53 @@ View.prototype.init = function () {
 * Note: localstorage only stores strings
 *
 * see app.js, line 68, for setting of default values
+*
+* see: http://jq4you.blogspot.com/2013/04/jquery-attr-vs-prop-difference.html
+* Notes: an element’s property can be changed, because it is in the DOM and dynamic.
+* But element’s attribute is in HTML text and can not be changed! comes in name=”value” pairs
 */
 View.prototype.initSettingsPopup = function (message) {
-   var self = this;
+    var self = this;
 
-   /*
-    * if location not already set, then get current location and save
-    * to local storage
-   */
-   function setCurrentLocation() {
-      if (   self.displayRecordingInfoChecked() &&
-             self.checkRelocationReminder () &&
-           ! localStorage.getItem("current_location") ) {
-
-          self.getLocationString()
-          .then( function(location) {
-             localStorage.setItem( 'current_location', location );
-          });
-
-      } else {
-          localStorage.setItem( 'current_location', '' );
-      }
-   }
-
-   /*
-    * clear current_location in local storage
-   */
-   function clearCurrentLocation() {
-      localStorage.setItem( 'current_location', '' );
-   }
-
-   // ##########################################################################
+    // at startup; get settings from browser storage
 
     if ( localStorage.getItem("debug") === 'true') { // string
-      $('#debug').attr('checked', true);  // boolean
+      $('#debug').prop('checked', true);  // boolean
     } else {
-      $('#debug').attr('checked', false);
+      $('#debug').prop('checked', false);
     }
 
     if ( localStorage.getItem("ua_string") === 'true') {
-      $('#ua_string').attr('checked', true); 
+      $('#ua_string').prop('checked', true); 
     } else {
-      $('#ua_string').attr('checked', false);
-    }
-
-    if ( localStorage.getItem("recording_information_button_display") === 'true') {
-      $('#display_record_info').attr('checked', true); 
-      $('#recording_information_button_display').show();
-      setCurrentLocation();
-    } else {
-      $('#display_record_info').attr('checked', false);
-      $('#recording_information_button_display').hide();
-      clearCurrentLocation();
+      $('#ua_string').prop('checked', false);
     }
 
     if ( localStorage.getItem("vad_run") === 'true') {
-      $('#vad_run').attr('checked', true); 
+      $('#vad_run').prop('checked', true); 
     } else {
-      $('#vad_run').attr('checked', false);
+      $('#vad_run').prop('checked', false);
     }
 
-    if ( localStorage.getItem("recording_location_reminder") === 'true') {
-      $('#recording_location_reminder').attr('checked', true);
-      setCurrentLocation();
+    if ( localStorage.getItem("recording_information_button_display") === 'true') {
+      $('#display_record_info').prop('checked', true); 
+      $('#recording_information_button_display').show();
     } else {
-      $('#recording_location_reminder').attr('checked', false);
-      clearCurrentLocation();
+      $('#display_record_info').prop('checked', false);
+      $('#recording_information_button_display').hide();
+    }
+
+    //if ( localStorage.getItem("recording_location_reminder") === 'true') {
+    //  $('#recording_location_reminder').prop('checked', true);
+    //} else {
+    //  $('#recording_location_reminder').prop('checked', false);
+    //}
+
+    if ( localStorage.getItem("recording_information_button_display") === 'true' &&
+         localStorage.getItem("recording_location_reminder") === 'true' ) {
+          self.location.init();
+    } else {
+          self.location.reset();
     }
 
     // handlers
@@ -481,17 +469,16 @@ View.prototype.initSettingsPopup = function (message) {
         localStorage.setItem("ua_string", 'false');
       }
     });
-
-    $('#display_record_info').change(function () { 
+    
+    $('#vad_run').change(function () { 
       if (this.checked) {
-        $("#recording_information_button_display").show();
-        localStorage.setItem("recording_information_button_display", 'true');
-        setCurrentLocation();
+        localStorage.setItem("vad_run", 'true');
       } else {
-        $("#recording_information_button_display").hide();
-        localStorage.setItem("recording_information_button_display", 'false');
-        clearCurrentLocation();
-        
+        localStorage.setItem("vad_run", 'false');
+      }
+    });
+
+    function clearRecordingLocationInfo() {
         // clear certain field entries when user clicks display_record_info off
         $('#recording_location').val($("select option:first").val());
         $('#recording_location').change();
@@ -508,58 +495,58 @@ View.prototype.initSettingsPopup = function (message) {
         $('#noise_type').change();
         $('#noise_type_other').val("");
         $('#noise_type_other').change();
-      }
-    });
-    
-    $('#vad_run').change(function () { 
+    }
+
+
+// TODO WTF cant get change in display_record_info to trigger recording_location_reminder
+
+/*
+ * https://javascript.info/dom-attributes-and-properties
+ * When the browser loads the page, it “reads” (another word: “parses”) HTML
+ * text and generates DOM objects from it. For element nodes most standard
+ * HTML attributes automatically become properties of DOM objects.
+ *          //$('#recording_location_reminder').trigger( "change" );
+          //$('#recording_location_reminder').prop('disabled', false);
+          //$('#recording_location_reminder').attr('checked', false).trigger("change");
+          //$('#recording_location_reminder').prop('checked', true).change();
+          //$('#recording_location_reminder').prop('checked', true);
+          //$('#recording_location_reminder').attr('checked', true);
+          //$('#recording_location_reminder').change(); // same as .trigger( "change" )
+          
+  * the most important concept to remember about the checked attribute is that it does
+  * not correspond to the checked property. The attribute actually corresponds to the
+  * defaultChecked property and should be used only to set the initial value of the
+  * checkbox. The checked attribute value does not change with the state of the checkbox,
+  * while the checked property does
+ */
+
+    $('#display_record_info').change(function () {
       if (this.checked) {
-        localStorage.setItem("vad_run", 'true');
+          $("#recording_information_button_display").show();
+          localStorage.setItem("recording_information_button_display", 'true');
+          $('#recording_location_reminder').prop('checked', true);
+          //$('#recording_location_reminder').prop( "disabled", false ).change();
       } else {
-        localStorage.setItem("vad_run", 'false');
+          $("#recording_information_button_display").hide();
+          localStorage.setItem("recording_information_button_display", 'false');
+          $('#recording_location_reminder').prop('checked', false);
+          //$('#recording_location_reminder').prop( "disabled", true ).change();
+          clearRecordingLocationInfo();
       }
     });
 
-    $('#recording_location_reminder').change(function () { 
-      if (this.checked) {
-          localStorage.setItem("recording_location_reminder", 'true');
-          setCurrentLocation();
-      } else {
-          localStorage.setItem("recording_location_reminder", 'false');
-          clearCurrentLocation();
-      }
-    });
-}
+    //$('#recording_location_reminder').change(function () { 
+    //  if (this.checked) {
 
-/**
-* ask device for current location: long and lat as string
-*/
-View.prototype.getLocationString = function () {
- return new Promise(function (resolve, reject) {
-
-    if (!navigator.geolocation){
-      console.warn("Geolocation is not supported by your browser");
-      resolve("");
-    }
-
-    function success(position) {
-      var longitude = position.coords.longitude;
-      var latitude  = position.coords.latitude;
-      console.log('Latitude is ' + latitude + '° Longitude is ' + longitude + '°');
-
-      var location = {};
-      location.longitude = longitude;
-      location.latitude = latitude;
-      resolve( JSON.stringify(location) );
-    }
-
-    function error() {
-      console.log('Unable to retrieve your location');
-      resolve("");
-    }
-
-    navigator.geolocation.getCurrentPosition(success, error);
-
- });
+    //      localStorage.setItem("recording_location_reminder", 'true');
+    //      if ( localStorage.getItem("recording_information_button_display") === 'true') {
+    //         self.location.init(); 
+    //      }
+    //  } else {
+    //      localStorage.setItem("recording_location_reminder", 'false');
+    //      self.location.reset();     
+    //  }
+    //});
 }
 
 /**
@@ -957,7 +944,7 @@ View.prototype.enableDeleteButtons = function () {
 * 
 */
 View.prototype.enableVoiceActivityDetection = function () {
-    $('#vad_run').attr('checked', true); 
+    $('#vad_run').prop('checked', true); 
 }
       
 /**
@@ -1027,6 +1014,32 @@ View.prototype.clearSoundClips = function () {
 */
 View.prototype.debugChecked = function () {
     return $('#debug').is(":checked");
+}
+
+/**
+* location Selected; need both display record info and recording location
+* to be checked in order for system to get geolocation info.
+*
+* User could have Record Info selected, but not Recording Location
+* selected if they do not want their location tracked, even though its only
+* withing the browser (never gets sent to server).  Then only time since
+* last submission would trigger a reminder to check that Recoridng Information
+* is still valid.
+* -or-
+* User could have Recording Location reminder on and Recording Info off,
+* but that would not make much sense because the reminder is for user to
+* remember to check that recording information is still valid (did they
+* change location...); it would be asking user to update recording information
+* even though it is not checked.
+*
+* TODO maybe if Recording Information checked, then can select or deselect
+* Recording location, but if Recording Information no checked, then gray out
+* Recording Location change reminder (if it gets annoying...
+* TODO Maybe set timer for 30 minuts and then it goes back on automatically...
+*/
+View.prototype.locationSelected = function () {
+    return $('#display_record_info').is(":checked") &&
+           $('#recording_location_reminder').is(":checked");
 }
 
 /**
