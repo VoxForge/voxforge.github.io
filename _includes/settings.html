@@ -40,11 +40,11 @@
       <input type="checkbox" name="recording_location_reminder" id="recording_location_reminder">
       <label for="recording_location_reminder">{{ page.settings.recording_location_reminder | default: default.settings.recording_location_reminder }}</label>
 
-
       {{ page.license.label | default: default.license.label }}
       <select type="text" id="license">
         <option selected value="{{ page.license.selection_default.value | default: default.license.selection_default.value}}">
-              {{ page.license.selection_default.item | default: default.license.selection_default.item}}</option>
+            {{ page.license.selection_default.item | default: default.license.selection_default.item}}
+        </option>
         {% if page.license.selection %}
           {% assign license_list = page.license.selection %} 
         {% else %}

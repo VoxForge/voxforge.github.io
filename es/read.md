@@ -243,11 +243,9 @@ alert_message:
     La sección "Información de grabación" se activó en "Información del perfil"
     (se puede deshabilitar en Configuración).
   time_limit:
-    intro: Por favor revise la configuración de Información de grabación y
-      , si es necesario, actualice su Ubicación y Niveles de ruido.
-      (Ha sido más largo que
     text: >
-      minutos desde su última sumisión).
+      Por favor revise la configuración de Información de grabación y,
+      si es necesario, actualice su Ubicación y Niveles de ruido.
 
 settings:
   title: Configuraciones

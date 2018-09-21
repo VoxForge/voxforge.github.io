@@ -341,12 +341,9 @@ alert_message:
     "Recording Information" section activated under "Profile Info"
     (can be disabled in Settings).
   time_limit:
-    intro: >
-      Please review your Recording Information settings and
-      , if necessary, update your Location and Noise Levels.
-      (It has been longer than
     text: >
-      minutes since your last submission).
+      Please review your Recording Information settings and,
+      if necessary, update your Location and Noise Levels.
       
 settings:
   title: Settings
@@ -358,7 +355,7 @@ settings:
     Recording Information (needs to be updated each time location or
     noise characteristics change)
   vad_run: VAD enabled (Voice Activity Detection)
-  recording_location_reminder: Recording Location change reminder
+  recording_location_reminder: Recording Location reminder (uses geolocation or time since last submission)
 
 # TODO no longer used
 ua_string:

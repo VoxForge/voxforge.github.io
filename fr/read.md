@@ -259,12 +259,9 @@ alert_message:
     La section "Informations d'enregistrement" activée sous "Profil"
     (peut être désactivé dans paramètres).
   time_limit:
-    intro: >
+    text: >
       S'il vous plaît examiner vos paramètres d'enregistrement et
       Si nécessaire, mettez à jour votre localisation et le niveau de bruit.
-      (Il a été plus long que
-    text: >
-      minutes depuis votre dernière soumission).
       
 settings:
   title: Paramètres
