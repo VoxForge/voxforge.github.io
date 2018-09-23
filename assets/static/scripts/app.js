@@ -77,13 +77,14 @@ var view;  // needs to be global so can be accessible to index.html
       localStorage.setItem("ua_string", 'true');
     }
 
-    if ( ! localStorage.getItem("recording_location_reminder") ) {
-      localStorage.setItem("recording_location_reminder", 'true');
-    }    
-
     if ( ! localStorage.getItem("recording_information_button_display") ) {
       localStorage.setItem("recording_information_button_display", 'false');
-    }   
+    }
+
+    if ( ! localStorage.getItem("recording_location_reminder") ) {
+      localStorage.setItem("recording_location_reminder", 'false');
+      //$('#recording_location_reminder').prop( "disabled", true );
+    }    
     // #############################################################################
     const appversion = "0.2";
 
@@ -92,17 +93,20 @@ var view;  // needs to be global so can be accessible to index.html
     
     var prompts = new Prompts(parms.prompt, pageVariables); 
     var profile = new Profile(appversion, pageVariables);
+    var location = new Location();
 
     // 'view' needs to be global so can be accessed by index.html
     view = new View(parms.view,
                     prompts,
                     profile,
+                    location,                    
                     pageVariables); 
 
     var audio = new Audio(parms.audio,
                           pageVariables);
     var uploader = new Uploader(parms.uploader,
                                 pageVariables.alert_message);
+
     
     var controller =  new Controller(parms.controller,
                                      prompts, 

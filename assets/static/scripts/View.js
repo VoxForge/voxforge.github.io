@@ -491,6 +491,9 @@ View.prototype.initSettingsPopup = function (message) {
     }
 
     $('#display_record_info').change(function () {
+      // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
+      $('#recording_location_reminder').prop( "disabled", ! this.checked );
+      $('#recording_location_reminder').prop('checked', this.checked).checkboxradio("refresh"); 
       if (this.checked) {
           $("#recording_information_button_display").show();
           localStorage.setItem("recording_information_button_display", 'true');

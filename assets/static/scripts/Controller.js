@@ -39,6 +39,7 @@ function Controller(parms,
     this.view = view; 
     this.audio = audio; 
     this.uploader = uploader;
+    this.location = location;
     this.debug = debug;
     this.parms = parms; 
     this.appversion = appversion; 
@@ -116,7 +117,8 @@ Controller.prototype.start = function () {
       self.promise_index=0;
 
       self.profile.updateRandomStrings();
-
+      self.location.saveToLocalStorage();
+      
       fsm.donesubmission();
     }
 
@@ -216,9 +218,7 @@ Controller.prototype.start = function () {
                self.view.checkRelocationReminder() ) {
                  
               if (self.askUserToConfirmSameRecordingInfo() ) {
-                  window.alert(self.alert_message.time_limit.intro + ' ' +
-                               self.uploader.minutesSinceLastSubmission() + ' ' +
-                               self.alert_message.time_limit.text);
+                  window.alert(self.alert_message.time_limit.text);
               }
               
           }
@@ -378,27 +378,23 @@ Controller.prototype.start = function () {
          fsm.deleteclicked();
       } 
     }
-
 }
 
 /**
-* TODO use time and/or geolocation to determine if user should be asked to
-* update recording location information
-* TODO user should be able to disable in settings
+* use geolocation or time since last submission to determine if user should be
+* asked to update recording location information
 */
 Controller.prototype.askUserToConfirmSameRecordingInfo = function () {
-    var oldlocation = localStorage.getItem("current_location");
-    if (oldlocation) {
-        this.view.getLocationString()
-        .then( function(current_location) {
-            current_location = JSON.parse(current_location);
-            if (current_location.longitude != oldlocation.longitude ||
-                current_location.latitude != oldlocation.latitude ) {
-                  return true;
-            } else {
-              return false
-            }
-         });
+    var old = localStorage.getItem("last_submission_coords");
+
+    if (old) {
+        var cur = this.location.coords;
+        if (cur.longitude != old.longitude ||
+            cur.latitude != old.latitude ) {
+              return true;
+        } else {
+          return false;
+        }
     } else {
         if (this.uploader.minutesSinceLastSubmission() > this.uploader.maxMinutesSinceLastSubmission) {
             return true;

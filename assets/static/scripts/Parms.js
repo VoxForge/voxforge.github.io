@@ -78,8 +78,8 @@ function Parms() {
     // TODO for debugging
     if ( ! (window.location.origin === 'https://voxforge.github.io') ) { 
         this.prompt.num_prompts_to_trigger_upload = 3;
-        this.controller.numPrompt2SubmittForRecordInfo = 1;
-        this.uploader.maxMinutesSinceLastSubmission = 1; // only relevant if recording information is included with submission
+        this.controller.numPrompt2SubmittForRecordInfo = 5;
+        this.uploader.maxMinutesSinceLastSubmission = 30; // only relevant if recording information is included with submission
     } 
 
     // ### ANDROID #############################################################

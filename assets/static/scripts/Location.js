@@ -26,7 +26,7 @@ function Location ()
     this.coords.longitude = null;   
     this.coords.latitude = null;
 
-    this.initialized = false;
+    this.watchID;
 }
 
 /** 
@@ -43,6 +43,13 @@ function Location ()
 *
 * TODO how to monitor difference between actual change of location and
 * improvement in accuracy data change???
+*
+* Note: Watching for changes to a geolocation is not a free operation.
+* while you're watching a position, you are engaging the device in a lot of extra processing.
+*
+* After you no longer need to track the user's position, call clearWatch to turn off the geolocation systems.
+*
+* test geolocation in Chrome console, sensors...
 */
 Location.prototype.init = function () {
     var self = this;
@@ -52,68 +59,69 @@ Location.prototype.init = function () {
         return('');
     }
 
-    // change of location event monitor
-    // this way, self.coords always contains most current coordinates
-    navigator.geolocation.watchPosition(
-        function(position) { // success
-            self.coords.latitude = position.coords.latitude;
-            self.coords.longitude = position.coords.longitude;
-        },
-        function(err) { // error
-            console.warn('ERROR(' + err.code + '): ' + err.message);
-        },
 
-    );
+    // IP based geoloaction? https://stackoverflow.com/questions/15017854/geolocation-without-requesting-permission
+    // see: https://developers.google.com/web/fundamentals/native-hardware/user-location/
+    // Use the maximumAge optional property to tell the browser to use a
+    // recently obtained geolocation result.
+    // Unless you set a timeout, your request for the current position might never return.
+    var options = {
+        maximumAge: 5 * 60 * 1000,
+        timeout: 10 * 1000,
+    }
 
-    // initial location determination
-    return new Promise(function (resolve, reject) {
+    function success(position) { // success
+        self.coords.latitude = position.coords.latitude;
+        self.coords.longitude = position.coords.longitude;
+        console.log('Latitude is ' + self.coords.latitude +
+                    '° Longitude is ' + self.coords.longitude + '°');
+    }
 
-      function success(position) {
-          self.coords.latitude  = position.coords.latitude;
-          self.coords.longitude = position.coords.longitude;
+    function error(err) { // error
+        console.warn('ERROR(' + err.code + '): ' + err.message);
+        // error.code can be:
+        //   0: unknown error
+        //   1: permission denied
+        //   2: position unavailable (error response from location provider)
+        //   3: timed out
+    }
+            
+    if (! self.watchID) {
+        navigator.geolocation.getCurrentPosition(success, error, options);
+        // change of location event monitor
+        // this way, self.coords always contains most current coordinates
+        self.watchID = navigator.geolocation.watchPosition(success, error);
+    }
+}
 
-          console.log('Latitude is ' + self.coords.latitude +
-                      '° Longitude is ' + self.coords.longitude + '°');
-
-          self.initialized = true;
-          resolve( self.coords );
-      }
-      function error() {
-          console.log('Unable to retrieve your location');
-          resolve('');
-      }
-
-      navigator.geolocation.getCurrentPosition(success, error);
-
-    }); // promise
+/**
+* reset geolocation state and properties
+*/
+Location.prototype.reset = function () {
+    navigator.geolocation.clearWatch(this.watchID);
+    this.coords.longitude = null;   
+    this.coords.latitude = null;
 }
 
 /**
 * return current location values (long & lat)
 */
 Location.prototype.getLocation = function () {
-    return( self.coords );
+    return( this.coords );
 }
 
 /**
 * return current location values (long & lat)
 */
 Location.prototype.getLocationString = function () {
-    return( JSON.stringify( self.getLocation() ) );
-}
-
-/**
-* 
-*/
-Location.prototype.clearproperties = function () {
-    this.coords.longitude = null;   
-    this.coords.latitude = null;
+    return( JSON.stringify( this.getLocation() ) );
 }
 
 /**
 * 
 */
 Location.prototype.saveToLocalStorage = function () {
-    localStorage.setItem( 'last_submission_coords', this.getLocationString() );
+    var coords = JSON.stringify(this.coords);
+    localStorage.setItem( 'last_submission_coords',  coords);
 }
 
