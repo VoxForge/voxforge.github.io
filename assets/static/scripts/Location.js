@@ -26,7 +26,7 @@ function Location ()
     this.coords.longitude = -1;   
     this.coords.latitude = -1;
 
-    this.watchID;
+    this.requestdenied = false;
 }
 
 /** 
@@ -52,8 +52,10 @@ function Location ()
 * test geolocation in Chrome console, sensors...
 */
 Location.prototype.init = function () {
-    var self = this;
+  var self = this;
 
+  return new Promise(function (resolve, reject) {
+    
     if (!navigator.geolocation){
         console.warn("Geolocation is not supported by your browser");
         return('');
@@ -64,54 +66,46 @@ Location.prototype.init = function () {
     // Use the maximumAge optional property to tell the browser to use a
     // recently obtained geolocation result.
     // Unless you set a timeout, your request for the current position might never return.
-    //var options = {
-    //    maximumAge: 5 * 60 * 1000,
-    //timeout: 10 * 1000,
-    //}
-    var options = {}
+    var options = {
+        //maximumAge: 5 * 60 * 1000,
+        timeout: 10 * 1000,
+    }
+
     function success(position) { // success
         self.coords.latitude = position.coords.latitude;
         self.coords.longitude = position.coords.longitude;
         console.log('Latitude is ' + self.coords.latitude +
                     '° Longitude is ' + self.coords.longitude + '°');
 
-        if ( ! localStorage.getItem("last_submission_coords") ) {
-          self.saveToLocalStorage();
-        }
+        self.saveToLocalStorage();
+        
+        resolve(self.coords);
     }
 
     function error(err) { // error
       switch(err.code) {
         case err.PERMISSION_DENIED:
-          console.log("User denied the request for Geolocation.");
+          console.warn("User denied the request for Geolocation.");
+          self.requestdenied = true;
           break;
         case err.POSITION_UNAVAILABLE:
-          console.log("Location information is unavailable.");
+          console.warn("Location information is unavailable.");
           break;
         case err.TIMEOUT:
-          console.log("The request to get user location timed out.");
+          console.warn("The request to get user location timed out.");
           break;
         case err.UNKNOWN_ERROR:
-          console.log("An unknown error occurred.");
+          console.warn("An unknown error occurred.");
           break;
       }
     }
             
-    //if (! self.watchID) {
     navigator.geolocation.getCurrentPosition(success, error, options);
-        // change of location event monitor
-        // this way, self.coords always contains most current coordinates
-        //self.watchID = navigator.geolocation.watchPosition(success, error);
-    //} 
-}
+    // change of location event monitor (uses more battery...)
+    // this way, self.coords always contains most current coordinates
+    //self.watchID = navigator.geolocation.watchPosition(success, error);
 
-/**
-* reset geolocation state and properties
-*/
-Location.prototype.reset = function () {
-//    navigator.geolocation.clearWatch(this.watchID);
-    this.coords.longitude = -1;
-    this.coords.latitude = -1;
+  }); // promise
 }
 
 /**
@@ -133,6 +127,34 @@ Location.prototype.getLocationString = function () {
 */
 Location.prototype.saveToLocalStorage = function () {
     var coords = JSON.stringify(this.coords);
-    localStorage.setItem( 'last_submission_coords',  coords);
+    if ( ! this.requestdenied ) {
+        localStorage.setItem( 'last_submission_coords',  coords);
+    }
 }
 
+/**
+* use location change to determine if user should be
+* asked to update recording location information
+*/
+Location.prototype.changed = function () {
+    if (this.requestdenied) {
+      return false;
+    }
+    
+    var old = localStorage.getItem("last_submission_coords");
+    if (old) {
+      old = JSON.parse(old);
+      
+      if (old.longitude && old.latitude) {
+          var cur = this.coords;
+          if (cur.longitude != old.longitude ||
+              cur.latitude != old.latitude ) {
+                return true;
+          } else {
+                return false;
+          }
+      }
+    } else {
+        return false;
+    }
+}

@@ -451,11 +451,13 @@ Uploader.prototype.getNumberOfSubmissions = function () {
 * 
 */
 Uploader.prototype.minutesSinceLastSubmission = function () {
-    var millis = 0;
-    if ( localStorage.getItem('timeOfLastSubmission') ) {
-      millis = Date.now() - localStorage.getItem('timeOfLastSubmission');
-    } 
-    var mins = (millis / 1000) / 60;
+    var timeOfLastSubmission = localStorage.getItem('timeOfLastSubmission');
+    if ( timeOfLastSubmission ) {
+      var millis = Date.now() - timeOfLastSubmission;
+      var mins = (millis / 1000) / 60;
+      return Math.round(mins);
+    } else {
+      return 0;
+    }
 
-    return Math.round(mins);
 }

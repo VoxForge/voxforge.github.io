@@ -17,9 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-/**
-* ### Contructor ##############################################
-*/
 function Parms() {
     this.prompt = {
       // corresponds to the maximum number of prompts that a user can select from the 

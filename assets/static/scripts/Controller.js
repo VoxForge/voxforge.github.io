@@ -117,7 +117,9 @@ Controller.prototype.start = function () {
       self.promise_index=0;
 
       self.profile.updateRandomStrings();
-      self.location.saveToLocalStorage();
+      if (self.view.checkRelocationReminder() ) {
+          self.location.saveToLocalStorage();
+      }
       
       fsm.donesubmission();
     }
@@ -217,12 +219,14 @@ Controller.prototype.start = function () {
           if ( self.view.displayRecordingInfoChecked() &&
                self.view.checkRelocationReminder() ) {
 
-              self.location.init();
-              if (self.locationChange() ) {
-                  window.alert(self.alert_message.location_change);
-              } else if (self.timeSinceLastSubmission()) {
-                  window.alert(self.alert_message.time_limit);
-              }
+              self.location.init() // long running function that may or may not return successfully
+              .then( function (coords) {
+                  if (self.location.changed() ) {
+                      window.alert(self.alert_message.location_change);
+                  } else if (self.timeSinceLastSubmission()) {
+                      window.alert(self.alert_message.time_limit);
+                  }
+              });
           }
 
           self.view.enableDeleteButtons();
@@ -403,25 +407,6 @@ Controller.prototype.askUserToConfirmSameRecordingInfo = function () {
             return true;
         } else {
             return false;
-        }
-    }
-}
-
-/**
-* use location change to determine if user should be
-* asked to update recording location information
-*/
-Controller.prototype.locationChange = function () {
-    var old = localStorage.getItem("last_submission_coords");
-    old = JSON.parse(old);
-    
-    if (old.longitude && old.latitude) {
-        var cur = this.location.coords;
-        if (cur.longitude != old.longitude ||
-            cur.latitude != old.latitude ) {
-              return true;
-        } else {
-          return false;
         }
     }
 }

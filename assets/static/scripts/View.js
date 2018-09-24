@@ -491,28 +491,29 @@ View.prototype.initSettingsPopup = function (message) {
     }
 
     $('#display_record_info').change(function () {
-      // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
-      $('#recording_location_reminder').prop( "disabled", ! this.checked );
-      $('#recording_location_reminder').prop('checked', this.checked).checkboxradio("refresh");
-      $('#recording_location_reminder').change();
-      if (this.checked) {
-          $("#recording_information_button_display").show();
-          localStorage.setItem("recording_information_button_display", 'true');
-      } else {
-          $("#recording_information_button_display").hide();
-          localStorage.setItem("recording_information_button_display", 'false');
-          clearRecordingLocationInfo();
-      }
+        // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
+        $('#recording_location_reminder').prop( "disabled", ! this.checked );
+        $('#recording_location_reminder').prop('checked', this.checked).checkboxradio("refresh");
+        
+        $('#recording_location_reminder').change();
+        if (this.checked) {
+            $("#recording_information_button_display").show();
+            localStorage.setItem("recording_information_button_display", 'true');
+        } else {
+            $("#recording_information_button_display").hide();
+            localStorage.setItem("recording_information_button_display", 'false');
+            clearRecordingLocationInfo();
+        }
     });
 
     $('#recording_location_reminder').change(function () {
-      $('#recording_location_reminder').prop('checked', this.checked).checkboxradio("refresh"); 
-      if (this.checked) {
-        self.location.init();
-        localStorage.setItem("recording_location_reminder", 'true');
-      } else {
-        localStorage.setItem("recording_location_reminder", 'false');
-      }
+        $('#recording_location_reminder').prop('checked', this.checked).checkboxradio("refresh");
+        
+        if (this.checked) {
+          localStorage.setItem("recording_location_reminder", 'true');
+        } else {
+          localStorage.setItem("recording_location_reminder", 'false');
+        }
     });
 }
 
