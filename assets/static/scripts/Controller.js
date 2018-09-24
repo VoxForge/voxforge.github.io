@@ -204,7 +204,7 @@ Controller.prototype.start = function () {
               // only ask the user once if they want to activate the Recording Information section
               localStorage.setItem("recording_asked_user", true); 
               self.view.recordingInformationButtonDisplay();
-              // TODO when this gets sent, Recording information sectio should display to user rather
+              // TODO when this gets sent, Recording information section should display to user rather
               // than being buried under Profile Info
               window.alert(self.alert_message.rec_info_activated);
           }

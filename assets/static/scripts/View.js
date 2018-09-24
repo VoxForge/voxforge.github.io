@@ -493,12 +493,16 @@ View.prototype.initSettingsPopup = function (message) {
         // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
         $('#recording_location_reminder').prop( "disabled", ! this.checked );
         $('#recording_location_reminder').prop('checked', this.checked).checkboxradio("refresh");
-        
-        $('#recording_location_reminder').change();
+        $('#recording_location_reminder').change(); // tirggers change function below
+
         if (this.checked) {
+            localStorage.setItem("display_record_info", 'true');
+
             $("#recording_information_button_display").show();
             localStorage.setItem("recording_information_button_display", 'true');
         } else {
+            localStorage.setItem("display_record_info", 'false');
+            
             $("#recording_information_button_display").hide();
             localStorage.setItem("recording_information_button_display", 'false');
             clearRecordingLocationInfo();
@@ -840,11 +844,6 @@ View.prototype.recordingInformation = function () {
 * toggle to display recording info button
 */
 View.prototype.recordingInformationButtonDisplay = function () {
-    //$("#recording_information_button_display").show(); 
-    //$('#display_record_info').attr('checked', true);
-
-    //localStorage.setItem("recording_information_button_display", true);
-    //$('#display_record_info').attr('checked', true);
     $('#display_record_info').trigger( "click" );
 }
 
@@ -984,32 +983,6 @@ View.prototype.debugChecked = function () {
 }
 
 /**
-* location Selected; need both display record info and recording location
-* to be checked in order for system to get geolocation info.
-*
-* User could have Record Info selected, but not Recording Location
-* selected if they do not want their location tracked, even though its only
-* withing the browser (never gets sent to server).  Then only time since
-* last submission would trigger a reminder to check that Recoridng Information
-* is still valid.
-* -or-
-* User could have Recording Location reminder on and Recording Info off,
-* but that would not make much sense because the reminder is for user to
-* remember to check that recording information is still valid (did they
-* change location...); it would be asking user to update recording information
-* even though it is not checked.
-*
-* TODO maybe if Recording Information checked, then can select or deselect
-* Recording location, but if Recording Information no checked, then gray out
-* Recording Location change reminder (if it gets annoying...
-* TODO Maybe set timer for 30 minuts and then it goes back on automatically...
-*/
-View.prototype.locationSelected = function () {
-    return $('#display_record_info').is(":checked") &&
-           $('#recording_location_reminder').is(":checked");
-}
-
-/**
 * get recording Reminder value; assumption being that if they
 * have not recorded in a while, then they may have changed locations...
 *
@@ -1019,7 +992,6 @@ View.prototype.locationSelected = function () {
 View.prototype.checkRelocationReminder = function () {
     return $('#recording_location_reminder').is(":checked");
 }
-
 
 /**
 * get recording information value
