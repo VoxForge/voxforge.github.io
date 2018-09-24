@@ -42,6 +42,7 @@ var urlsToCache = [
   PATH + 'scripts/AudioWorker.js',
   PATH + 'scripts/Controller.js',
   PATH + 'scripts/Debug.js',
+  PATH + 'scripts/location.js',
   PATH + 'scripts/Parms.js',
   PATH + 'scripts/processSavedSubmissions.js',
   PATH + 'scripts/Profile.js',
@@ -67,7 +68,8 @@ var urlsToCache = [
   '/en/read',
   '/fr/read',
   '/es/read',
-//  '/en/read/', // TODO debug with Apache2 and self signed SSL certificate
+  
+  //'/en/read/', // TODO debug with Apache2 and self signed SSL certificate
 
   // TODO also cache links to outside websites for definitions, elaboration, etc...
 
