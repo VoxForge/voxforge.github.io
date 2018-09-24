@@ -83,7 +83,7 @@ var view;  // needs to be global so can be accessible to index.html
 
     if ( ! localStorage.getItem("recording_location_reminder") ) {
       localStorage.setItem("recording_location_reminder", 'false');
-      //$('#recording_location_reminder').prop( "disabled", true );
+      $('#recording_location_reminder').prop( "disabled", true );
     }    
     // #############################################################################
     const appversion = "0.2";
