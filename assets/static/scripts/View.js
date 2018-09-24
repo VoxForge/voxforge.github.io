@@ -508,6 +508,7 @@ View.prototype.initSettingsPopup = function (message) {
     $('#recording_location_reminder').change(function () {
       $('#recording_location_reminder').prop('checked', this.checked).checkboxradio("refresh"); 
       if (this.checked) {
+        self.location.init();
         localStorage.setItem("recording_location_reminder", 'true');
       } else {
         localStorage.setItem("recording_location_reminder", 'false');

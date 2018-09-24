@@ -258,11 +258,14 @@ alert_message:
   rec_info_activated: >
     La section "Informations d'enregistrement" activée sous "Profil"
     (peut être désactivé dans paramètres).
-  time_limit:
-    text: >
-      S'il vous plaît examiner vos paramètres d'enregistrement et
-      Si nécessaire, mettez à jour votre localisation et le niveau de bruit.
-      
+  time_limit: >
+    Cela fait un certain temps depuis votre dernière soumission:  S'il vous
+    plaît examiner vos paramètres d'enregistrement et si nécessaire, mettez
+    à jour votre localisation et le niveau de bruit.
+  location_change: >
+    Changement de lieu: S'il vous plaît examiner vos paramètres d'enregistrement
+    et Si nécessaire, mettez à jour votre localisation et le niveau de bruit.
+          
 settings:
   title: Paramètres
   include_heading: Inclure dans la soumission

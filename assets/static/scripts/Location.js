@@ -23,8 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function Location () 
 {
     this.coords = {}
-    this.coords.longitude = null;   
-    this.coords.latitude = null;
+    this.coords.longitude = -1;   
+    this.coords.latitude = -1;
 
     this.watchID;
 }
@@ -59,48 +59,59 @@ Location.prototype.init = function () {
         return('');
     }
 
-
     // IP based geoloaction? https://stackoverflow.com/questions/15017854/geolocation-without-requesting-permission
     // see: https://developers.google.com/web/fundamentals/native-hardware/user-location/
     // Use the maximumAge optional property to tell the browser to use a
     // recently obtained geolocation result.
     // Unless you set a timeout, your request for the current position might never return.
-    var options = {
-        maximumAge: 5 * 60 * 1000,
-        timeout: 10 * 1000,
-    }
-
+    //var options = {
+    //    maximumAge: 5 * 60 * 1000,
+    //timeout: 10 * 1000,
+    //}
+    var options = {}
     function success(position) { // success
         self.coords.latitude = position.coords.latitude;
         self.coords.longitude = position.coords.longitude;
         console.log('Latitude is ' + self.coords.latitude +
                     '° Longitude is ' + self.coords.longitude + '°');
+
+        if ( ! localStorage.getItem("last_submission_coords") ) {
+          self.saveToLocalStorage();
+        }
     }
 
     function error(err) { // error
-        console.warn('ERROR(' + err.code + '): ' + err.message);
-        // error.code can be:
-        //   0: unknown error
-        //   1: permission denied
-        //   2: position unavailable (error response from location provider)
-        //   3: timed out
+      switch(err.code) {
+        case err.PERMISSION_DENIED:
+          console.log("User denied the request for Geolocation.");
+          break;
+        case err.POSITION_UNAVAILABLE:
+          console.log("Location information is unavailable.");
+          break;
+        case err.TIMEOUT:
+          console.log("The request to get user location timed out.");
+          break;
+        case err.UNKNOWN_ERROR:
+          console.log("An unknown error occurred.");
+          break;
+      }
     }
             
-    if (! self.watchID) {
-        navigator.geolocation.getCurrentPosition(success, error, options);
+    //if (! self.watchID) {
+    navigator.geolocation.getCurrentPosition(success, error, options);
         // change of location event monitor
         // this way, self.coords always contains most current coordinates
-        self.watchID = navigator.geolocation.watchPosition(success, error);
-    }
+        //self.watchID = navigator.geolocation.watchPosition(success, error);
+    //} 
 }
 
 /**
 * reset geolocation state and properties
 */
 Location.prototype.reset = function () {
-    navigator.geolocation.clearWatch(this.watchID);
-    this.coords.longitude = null;   
-    this.coords.latitude = null;
+//    navigator.geolocation.clearWatch(this.watchID);
+    this.coords.longitude = -1;
+    this.coords.latitude = -1;
 }
 
 /**
@@ -118,7 +129,7 @@ Location.prototype.getLocationString = function () {
 }
 
 /**
-* 
+* save geolocation to browser storage
 */
 Location.prototype.saveToLocalStorage = function () {
     var coords = JSON.stringify(this.coords);

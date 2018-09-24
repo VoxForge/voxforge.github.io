@@ -216,11 +216,13 @@ Controller.prototype.start = function () {
         onFirstpromptrecorded: function() {
           if ( self.view.displayRecordingInfoChecked() &&
                self.view.checkRelocationReminder() ) {
-                 
-              if (self.askUserToConfirmSameRecordingInfo() ) {
-                  window.alert(self.alert_message.time_limit.text);
+
+              self.location.init();
+              if (self.locationChange() ) {
+                  window.alert(self.alert_message.location_change);
+              } else if (self.timeSinceLastSubmission()) {
+                  window.alert(self.alert_message.time_limit);
               }
-              
           }
 
           self.view.enableDeleteButtons();
@@ -386,8 +388,9 @@ Controller.prototype.start = function () {
 */
 Controller.prototype.askUserToConfirmSameRecordingInfo = function () {
     var old = localStorage.getItem("last_submission_coords");
-
-    if (old) {
+    old = JSON.parse(old);
+    
+    if (old.longitude && old.latitude) {
         var cur = this.location.coords;
         if (cur.longitude != old.longitude ||
             cur.latitude != old.latitude ) {
@@ -401,5 +404,36 @@ Controller.prototype.askUserToConfirmSameRecordingInfo = function () {
         } else {
             return false;
         }
+    }
+}
+
+/**
+* use location change to determine if user should be
+* asked to update recording location information
+*/
+Controller.prototype.locationChange = function () {
+    var old = localStorage.getItem("last_submission_coords");
+    old = JSON.parse(old);
+    
+    if (old.longitude && old.latitude) {
+        var cur = this.location.coords;
+        if (cur.longitude != old.longitude ||
+            cur.latitude != old.latitude ) {
+              return true;
+        } else {
+          return false;
+        }
+    }
+}
+
+/**
+* use time since last submission to determine if user should be
+* asked to update recording location information
+*/
+Controller.prototype.timeSinceLastSubmission = function () {
+    if (this.uploader.minutesSinceLastSubmission() > this.uploader.maxMinutesSinceLastSubmission) {
+        return true;
+    } else {
+        return false;
     }
 }

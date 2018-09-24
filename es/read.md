@@ -242,10 +242,13 @@ alert_message:
   rec_info_activated: >
     La sección "Información de grabación" se activó en "Información del perfil"
     (se puede deshabilitar en Configuración).
-  time_limit:
-    text: >
-      Por favor revise la configuración de Información de grabación y,
-      si es necesario, actualice su Ubicación y Niveles de ruido.
+  time_limit: >
+    Ha pasado un tiempo desde la última vez que lo envió: Por favor revise
+    la configuración de Información de grabación y, si es necesario,
+    actualice su Ubicación y Niveles de ruido.
+  location_change: >
+    Cambio de ubicación: Por favor revise la configuración de Información
+    de grabación y, si es necesario, actualice su Ubicación y Niveles de ruido.
 
 settings:
   title: Configuraciones

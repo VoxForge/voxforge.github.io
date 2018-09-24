@@ -340,11 +340,14 @@ alert_message:
   rec_info_activated: >
     "Recording Information" section activated under "Profile Info"
     (can be disabled in Settings).
-  time_limit:
-    text: >
-      Please review your Recording Information settings and,
-      if necessary, update your Location and Noise Levels.
-      
+  time_limit: >
+    It's been a while since last your submission: please review your
+    Recording Information settings and, if necessary, update your
+    Location and Noise Levels.
+  location_change: >
+    Location Change: please review your Recording Information settings and,
+    if necessary, update your Location and Noise Levels.
+    
 settings:
   title: Settings
   include_heading: Include in Submission
