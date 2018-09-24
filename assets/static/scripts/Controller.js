@@ -225,6 +225,9 @@ Controller.prototype.start = function () {
               })
               .catch( function (err) {
                   console.warn("can't get location: " + err);
+                  if (self.timeSinceLastSubmission()) {
+                      window.alert(self.alert_message.time_limit);
+                  }
               });
 
           }
