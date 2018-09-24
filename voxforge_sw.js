@@ -69,7 +69,7 @@ var urlsToCache = [
   '/fr/read',
   '/es/read',
   
-  //'/en/read/', // TODO debug with Apache2 and self signed SSL certificate
+//  '/en/read/', // TODO debug with Apache2 and self signed SSL certificate
 
   // TODO also cache links to outside websites for definitions, elaboration, etc...
 
