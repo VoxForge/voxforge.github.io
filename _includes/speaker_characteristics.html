@@ -30,7 +30,7 @@
         {% assign age_list = default.age.selection %}
       {% endif %}
       {% for item in age_list %}
-        <option old_value="{{ item.old_value }}" value="{{ item.value }}">{{ item.value }}</option> 
+        <option old_value="{{ item.old_value }}" value="{{ item.value }}">{{ item.value }}  ({{ item.desc }})</option> 
       {% endfor %}
 
     </select>

@@ -43,15 +43,14 @@ gender:
 age:
   label: Rango de Edad
   selection:
-    - { value: '< 20', old_value: 'Niño' }
-    - { value: '20 - 29', old_value: 'Adulto' }
-    - { value: '30 - 39', old_value: 'Adulto' }
-    - { value: '40 - 49', old_value: 'Adulto' }
-    - { value: '50 - 59', old_value: 'Adulto' }
-    - { value: '60 - 69', old_value: 'Adulto' }
-    - { value: '70 - 79', old_value: 'Tercera Edad' }
-    - { value: '80 - 89', old_value: 'Tercera Edad' }
-    - { value: '> 89', old_value: 'Tercera Edad' }
+    - { value: '13 -17', old_value: 'Niño', desc: 'Niño - Permiso de los padres requerido'  }
+    - { value: '18 - 29', old_value: 'Adulto', desc: 'Adulto' }
+    - { value: '30 - 39', old_value: 'Adulto', desc: 'Adulto' }
+    - { value: '40 - 49', old_value: 'Adulto', desc: 'Adulto' }
+    - { value: '50 - 59', old_value: 'Adulto', desc: 'Adulto' }
+    - { value: '60 - 64', old_value: 'Adulto', desc: 'Adulto' }
+    - { value: '65 - 74', old_value: 'Tercera Edad', desc: 'Tercera Edad' }
+    - { value: '> 75', old_value: 'Tercera Edad', desc: 'Tercera Edad' }
 
 # - leave a blank line between groupings of hash/objects; otherwise liquid does 
 # not parse properly
