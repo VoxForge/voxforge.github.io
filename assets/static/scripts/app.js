@@ -93,13 +93,11 @@ var view;  // needs to be global so can be accessible to index.html
     
     var prompts = new Prompts(parms.prompt, pageVariables); 
     var profile = new Profile(appversion, pageVariables);
-    var location = new Location();
 
     // 'view' needs to be global so can be accessed by index.html
     view = new View(parms.view,
                     prompts,
                     profile,
-                    location,                    
                     pageVariables); 
 
     var audio = new Audio(parms.audio,
@@ -114,7 +112,6 @@ var view;  // needs to be global so can be accessible to index.html
                                      view, 
                                      audio,
                                      uploader,
-                                     location,
                                      appversion,
                                      pageVariables, // TODO should only pass in what is required...
                                      pageVariables.alert_message,

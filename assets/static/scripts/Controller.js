@@ -28,7 +28,6 @@ function Controller(parms,
                     view, 
                     audio,
                     uploader,
-                    location,
                     appversion,
                     pageVariables,
                     alert_message,
@@ -39,7 +38,6 @@ function Controller(parms,
     this.view = view; 
     this.audio = audio; 
     this.uploader = uploader;
-    this.location = location;
     this.debug = debug;
     this.parms = parms; 
     this.appversion = appversion; 
@@ -117,9 +115,6 @@ Controller.prototype.start = function () {
       self.promise_index=0;
 
       self.profile.updateRandomStrings();
-      if (self.view.checkRelocationReminder() ) {
-          self.location.saveToLocalStorage();
-      }
       
       fsm.donesubmission();
     }
@@ -219,14 +214,19 @@ Controller.prototype.start = function () {
           if ( self.view.displayRecordingInfoChecked() &&
                self.view.checkRelocationReminder() ) {
 
-              self.location.init() // long running function that may or may not return successfully
+              location.getCurrentPosition() // long running function that may or may not return successfully
               .then( function (coords) {
-                  if (self.location.changed() ) {
+                  if (location.changed(coords) ) {
                       window.alert(self.alert_message.location_change);
+                      location.saveToLocalStorage(coords);
                   } else if (self.timeSinceLastSubmission()) {
                       window.alert(self.alert_message.time_limit);
                   }
+              })
+              .catch( function (err) {
+                  console.warn("can't get location: " + err);
               });
+
           }
 
           self.view.enableDeleteButtons();
@@ -383,31 +383,6 @@ Controller.prototype.start = function () {
       } else {
          fsm.deleteclicked();
       } 
-    }
-}
-
-/**
-* use geolocation or time since last submission to determine if user should be
-* asked to update recording location information
-*/
-Controller.prototype.askUserToConfirmSameRecordingInfo = function () {
-    var old = localStorage.getItem("last_submission_coords");
-    old = JSON.parse(old);
-    
-    if (old.longitude && old.latitude) {
-        var cur = this.location.coords;
-        if (cur.longitude != old.longitude ||
-            cur.latitude != old.latitude ) {
-              return true;
-        } else {
-          return false;
-        }
-    } else {
-        if (this.uploader.minutesSinceLastSubmission() > this.uploader.maxMinutesSinceLastSubmission) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }
 

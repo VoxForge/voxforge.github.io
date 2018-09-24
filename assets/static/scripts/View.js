@@ -20,12 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function View (parms,
                prompts,
                profile,
-               location,               
                pageVariables)
 {
 
   
-// ######## convert View class from JQUERY to vanilla JS; keep jQuery mobile css
+// ######## TODO convert View class from JQUERY to vanilla JS; keep jQuery mobile css
 
   
     this.parms = parms;
