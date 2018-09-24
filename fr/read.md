@@ -43,7 +43,7 @@ gender:
 age:
   label: Tranche d'âge
   selection:
-    - { value: '13 -17', old_value: 'Jeune', desc: 'Jeune - Autorisation parentale requise'  }
+    - { value: '13 -17', old_value: 'Jeune', desc: 'Jeune - Autorisation parentale requise' }
     - { value: '18 - 29', old_value: 'Adulte', desc: 'Adulte' }
     - { value: '30 - 39', old_value: 'Adulte', desc: 'Adulte' }
     - { value: '40 - 49', old_value: 'Adulte', desc: 'Adulte' }

@@ -29,7 +29,7 @@ gender:
 age:
   label: Age
   selection:
-    - { value: '13 -17', old_value: 'Youth', desc: 'Youth - Parental permission required'  }
+    - { value: '13 -17', old_value: 'Youth', desc: 'Youth - Parental permission required' }
     - { value: '18 - 29', old_value: 'Adult', desc: 'Adult' }
     - { value: '30 - 39', old_value: 'Adult', desc: 'Adult' }
     - { value: '40 - 49', old_value: 'Adult', desc: 'Adult' }
