@@ -338,8 +338,10 @@ alert_message:
   notHtml5_error: >
     Your device does not support the HTML5 API needed to record audio
   rec_info_activated: >
-    "Recording Information" section activated under "Profile Info"
-    (can be disabled in Settings).
+    "Recording Information" section activated under "Profile Info".  This uses
+    your browser's Geolocation service by default to remind you to check your
+    Recording Information if your location has changed.  The use of Geolocation can
+    be disabled in Settings.
   time_limit: >
     It's been a while since last your submission: please review your
     Recording Information settings and, if necessary, update your

@@ -240,8 +240,10 @@ alert_message:
   notHtml5_error: >
     Su dispositivo no es compatible con la API HTML5 necesaria para grabar audio
   rec_info_activated: >
-    La sección "Información de grabación" se activó en "Información del perfil"
-    (se puede deshabilitar en Configuración).
+    La sección "Información de grabación" se activó en "Información del perfil". Esto usa
+    el servicio de geolocalización de su navegador por defecto para recordarle que verifique su
+    Información de grabación si su ubicación ha cambiado. El uso de la geolocalización puede
+    estar deshabilitado en Configuración.
   time_limit: >
     Ha pasado un tiempo desde la última vez que lo envió: Por favor revise
     la configuración de Información de grabación y, si es necesario,

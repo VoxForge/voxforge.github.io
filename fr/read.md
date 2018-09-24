@@ -256,8 +256,11 @@ alert_message:
   notHtml5_error: >
     Votre appareil ne supporte pas l'API HTML5 nécessaire à l'enregistrement d'audio
   rec_info_activated: >
-    La section "Informations d'enregistrement" activée sous "Profil"
-    (peut être désactivé dans paramètres).
+    La section "Informations d'enregistrement" est activée sous "Profil".
+    Cette section utilise le service de géolocalisation
+    de votre navigateur par défaut pour vous rappeler de vérifier vos Informations
+    d'enregistrement si votre position a changé. L'utilisation de ce service de
+    géolocalisation peut être désactivé dans les paramètres.
   time_limit: >
     Cela fait un certain temps depuis votre dernière soumission:  S'il vous
     plaît examiner vos paramètres d'enregistrement et si nécessaire, mettez
