@@ -312,10 +312,9 @@ alert_message:
     Please increase your microphone volume, 
     then delete this prompt recording and re-record it.
   no_trailing_silence: >
-    Not enough trailing silence - you clicked 'stop' too early! <br>
-    You did not leave enough silence at the end of your recording, or you
-    cut-off the end of your recording<br>
-    Please delete and re-record this prompt.
+    App thinks you did not enough leave trailing silence - you may have clicked
+    'stop' too early! <br>
+    Please review this prompt recording, and delete and re-record if necessary.
   no_speech: >
     No Speech or recording volume too low<br>
     Please increase your microphone volume,
@@ -354,7 +353,7 @@ settings:
   title: Settings
   include_heading: Include in Submission
   ua_string: User Agent String
-  debug: Debug Information
+  debug: System Information (used for debugging)
   other_heading: Other
   display_record_info: >
     Recording Information (needs to be updated each time location or

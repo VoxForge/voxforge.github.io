@@ -214,10 +214,9 @@ alert_message:
     Por favor, aumente el volumen de su micrófono, <br>
     luego borre esta grabación y vuelva a grabarla.
   no_trailing_silence: >
-    No hay suficiente silencio final: has hecho clic en "detener" demasiado pronto. <br>
-    No dejaste suficiente silencio al final de tu grabación, o
-    cortar el final de su grabación <br>
-    Por favor borre esta grabación y vuelva a grabarla.
+    La aplicación cree que no has dejado suficiente silencio. Es posible que hayas hecho clic
+    'para' demasiado temprano! <br>
+    Revise esta grabación rápida y elimine y vuelva a grabar si es necesario.
   no_speech: >
     No hay volumen de voz o grabación demasiado bajo <br>
     Por favor, aumente el volumen de su micrófono,<br>
@@ -256,7 +255,7 @@ settings:
   title: Configuraciones
   include_heading: Incluir en la sumisión
   ua_string: Agente de usuario Cadena
-  debug: Información de depuración
+  debug: Información del sistema (utilizada para la depuración)
   other_heading: Otro
   display_record_info: >
     Información de grabación (necesita actualizarse cada vez

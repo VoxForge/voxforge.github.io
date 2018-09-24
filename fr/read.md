@@ -234,8 +234,9 @@ alert_message:
     le system a augmente le volume automatiquement<br>
     Veuillez réenregistrer.
   no_trailing_silence: >
-    Vous avez couper votre enregistrement (vous avez cliqué trop tôt) <br> 
-    Veuillez ré-enregistrer.
+    Le systeme pense que avez couper votre enregistrement (vous avez cliqué
+    trop tôt)<br>
+    Veuillez examiner cet enregistrement, et supprimer et réenregistrer si nécessaire.
   no_speech: >
     Pas d'audio vocal enregistré! <br> Veuillez supprimer et réenregistrer.
   audio_too_loud_autogain: >
@@ -273,7 +274,7 @@ settings:
   title: Paramètres
   include_heading: Inclure dans la soumission
   ua_string: Agent d'utilisateur
-  debug: Informations de débogage
+  debug: Informations du système (utilisées pour le débogage)
   other_heading: Autre
   display_record_info: >
     Enregistrement d'informations (doit être mis à jour chaque fois
