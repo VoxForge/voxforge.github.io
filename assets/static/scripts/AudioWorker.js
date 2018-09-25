@@ -88,11 +88,10 @@ self.onmessage = function(event) {
       var clipping = false;
       var too_soft = false;
       if ( vad_run ) {
-        // need test for trailing and leading noise detection...
         [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
             vad.getSpeech(buffers);
         while (speech_array.length > 0) {
-          encoder.encode(speech_array.shift(), );
+          encoder.encode(speech_array.shift());
         }
       } else {
         while (buffers.length > 0) {
@@ -114,6 +113,7 @@ self.onmessage = function(event) {
       });
 
       encoder = undefined;
+      buffers = [];
       break;
 
     case 'cancel':

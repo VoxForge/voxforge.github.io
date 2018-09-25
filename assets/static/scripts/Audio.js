@@ -46,7 +46,7 @@ function Audio (parms,
     this.parms = parms;
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphone = null;
-    this.processor = undefined;  
+    this.processor = null;  
     this.mediaStreamOutput = null;
     this.analyser = null;
     this.gain_minValue = -3.4; // most-negative-single-float	Approximately -3.4028235e38
@@ -60,6 +60,8 @@ function Audio (parms,
             autoGainControl: false
           }
     };
+
+    this.gotProfileAudioProperties = false;
 
     this.alert_message = pageVariables.alert_message;
 }
@@ -79,15 +81,17 @@ Audio.prototype.init = function () {
     */
     function setupAudioNodes(stream) {
       return new Promise(function (resolve, reject) {
+        self.stream = stream;
 
-        // using 'self' because setupAudioNodes is being called as a parameter to 
-        // getUserMedia, which means it is a reference, and therefore loses 'this'
-        // context...
         self.microphone = self.audioCtx.createMediaStreamSource(stream);
 
-
         self.gainNode = self.audioCtx.createGain();
+
+        //https://stackoverflow.com/questions/17648819/how-can-i-stop-a-web-audio-script-processor-and-clear-the-buffer
+        // throw a gain node into the path and just mute it on-demand.
+        // could reduce the bufferSize to cut down the amount of overhang after you null out onaudioprocess
         self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize , 1, 1);
+
         self.analyser = self.audioCtx.createAnalyser();
         self.mediaStreamOutput = self.audioCtx.destination;
 
@@ -99,42 +103,6 @@ Audio.prototype.init = function () {
 
         resolve(stream);
       }); // promise
-    }
-
-    /**
-    *
-    */
-    function setProfileAudioProperties(track) {
-          self.audioPropertiesAndContraints = {
-            'sample_rate' : self.audioCtx.sampleRate,
-            'bit_depth' : self.parms.bitDepth,
-            'channels' : self.mediaStreamOutput.channelCount,
-          };
-
-          var c = navigator.mediaDevices.getSupportedConstraints();
-          let s = track.getSettings();
-
-          self.debugValues = {
-            'browser_supports_echoCancellation' : (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation,
-            'browser_supports_noiseSuppression' : (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression,
-            'browser_supports_autoGain' : (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported,
-
-            'autoGainControl' : (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl,
-            'echoCancellation' : (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation,
-            'noiseSuppression' : (typeof s.noiseSuppression == 'undefined') ? 'undefined' : s.noiseSuppression,
-
-            'channelCount' : (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount,
-            'latency' : (typeof s.latency == 'undefined') ? 'undefined' : s.latency,
-            'volume' : (typeof s.volume == 'undefined') ? 'undefined' : s.volume,
-
-            'vad_maxsilence' :  self.parms.vad.maxsilence,
-            'vad_minvoice' : self.parms.vad.minvoice,
-            'vad_bufferSize' : self.parms.vad.buffersize,
-            'audioNode_bufferSize' : self.parms.audioNodebufferSize || 'undefined',
-            'device_event_buffer_size' : self.device_event_buffer_size || 'undefined',
-          };
-
-          console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
     }
 
     // #########################################################################
@@ -183,7 +151,9 @@ Audio.prototype.init = function () {
         navigator.mediaDevices.getUserMedia(self.constraints)
         .then(setupAudioNodes)
         .then(function(stream) {
-          setProfileAudioProperties(stream.getAudioTracks()[0]);
+          if ( ! self.gotProfileAudioProperties ) {
+              self.setProfileAudioProperties(stream.getAudioTracks()[0]);
+          }
           resolve("OK");
         })
         .catch(function(err) {
@@ -194,6 +164,46 @@ Audio.prototype.init = function () {
         });
 
     }); // promise
+}
+
+/**
+*
+*/
+Audio.prototype.setProfileAudioProperties = function (track) {
+      var self = this;
+  
+      self.audioPropertiesAndContraints = {
+        'sample_rate' : self.audioCtx.sampleRate,
+        'bit_depth' : self.parms.bitDepth,
+        'channels' : self.mediaStreamOutput.channelCount,
+      };
+
+      var c = navigator.mediaDevices.getSupportedConstraints();
+      let s = track.getSettings();
+
+      self.debugValues = {
+        'browser_supports_echoCancellation' : (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation,
+        'browser_supports_noiseSuppression' : (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression,
+        'browser_supports_autoGain' : (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported,
+
+        'autoGainControl' : (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl,
+        'echoCancellation' : (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation,
+        'noiseSuppression' : (typeof s.noiseSuppression == 'undefined') ? 'undefined' : s.noiseSuppression,
+
+        'channelCount' : (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount,
+        'latency' : (typeof s.latency == 'undefined') ? 'undefined' : s.latency,
+        'volume' : (typeof s.volume == 'undefined') ? 'undefined' : s.volume,
+
+        'vad_maxsilence' :  self.parms.vad.maxsilence,
+        'vad_minvoice' : self.parms.vad.minvoice,
+        'vad_bufferSize' : self.parms.vad.buffersize,
+        'audioNode_bufferSize' : self.parms.audioNodebufferSize || 'undefined',
+        'device_event_buffer_size' : self.device_event_buffer_size || 'undefined',
+      };
+
+      console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
+
+      this.gotProfileAudioProperties = true;
 }
 
 /**
@@ -216,11 +226,10 @@ Audio.prototype.getDebugValues = function () {
 Audio.prototype.record = function (prompt_id, vad_run) {
     var self = this; // save context when calling inner functions
 
-    var got_buffer_size = false;
-
-    this.microphone.connect(this.gainNode); 
+    this.microphone.connect(this.gainNode);    
     this.gainNode.connect(this.processor); 
-    this.gainNode.connect(this.analyser); 
+    this.gainNode.connect(this.analyser);
+    //this.gainNode.gain.setValueAtTime(1, this.audioCtx.currentTime); // unmute
     this.processor.connect(this.audioCtx.destination);
 
     // clears out audio buffer 
@@ -239,9 +248,7 @@ Audio.prototype.record = function (prompt_id, vad_run) {
       // only record left channel (mono)
       var floatArray_time_domain = event.inputBuffer.getChannelData(0);
 
-      if ( ! got_buffer_size ) {
-        self.debugValues.device_event_buffer_size = floatArray_time_domain.length;
-      }
+      self.debugValues.device_event_buffer_size = floatArray_time_domain.length;
 
       audioworker.postMessage({ 
         command: 'record', 
@@ -320,24 +327,32 @@ Audio.prototype.record = function (prompt_id, vad_run) {
                 console.error(m);
                 reject(m);
           }
-      }; 
+      };
 
     }); // promise
 }
 
 /**
 * disconnect audio nodes; send message to audio worker to stop recording
+*
+* see: https://stackoverflow.com/questions/17648819/how-can-i-stop-a-web-audio-script-processor-and-clear-the-buffer
 */
 Audio.prototype.endRecording = function () {
-    // trying to clear buffer because second recording sometimes includes end 
-    // of previous recording
-    this.processor.onaudioprocess=null;
-    this.processor.disconnect();
-
-    this.microphone.disconnect();
+    var self = this;
 
     audioworker.postMessage({ 
       command: 'finish' 
     });
+    
+    //this.processor.onaudioprocess=null;
+    
+    self.microphone.disconnect();
+    self.gainNode.disconnect();
+    self.processor.disconnect();
+    self.analyser.disconnect();
+    
+    // only way to clear audio buffer because second recording includes end 
+    // of previous recording
+    this.init();
 }
 
