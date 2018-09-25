@@ -61,8 +61,6 @@ function Audio (parms,
           }
     };
 
-    this.gotProfileAudioProperties = false;
-
     this.alert_message = pageVariables.alert_message;
 }
 
@@ -98,6 +96,11 @@ Audio.prototype.init = function () {
         self.processor.channelCount = 1;
         self.analyser.channelCount = 1;
         self.mediaStreamOutput.channelCount = 1;
+
+        self.microphone.connect(self.gainNode);    
+        self.gainNode.connect(self.processor);
+        self.processor.connect(self.audioCtx.destination);
+        self.gainNode.connect(self.analyser);        
 
         resolve(stream);
       }); // promise
@@ -150,9 +153,8 @@ Audio.prototype.init = function () {
         .then(setupAudioNodes)
         .then(function(stream) {
           self.stream = stream;
-          if ( ! self.gotProfileAudioProperties ) {
-              self.setProfileAudioProperties(stream.getAudioTracks()[0]);
-          }
+          self.setProfileAudioProperties(stream.getAudioTracks()[0]);
+
           resolve("OK");
         })
         .catch(function(err) {
@@ -201,8 +203,6 @@ Audio.prototype.setProfileAudioProperties = function (track) {
       };
 
       console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
-
-      this.gotProfileAudioProperties = true;
 }
 
 /**
@@ -224,11 +224,6 @@ Audio.prototype.getDebugValues = function () {
 */
 Audio.prototype.record = function (prompt_id, vad_run) {
     var self = this; // save context when calling inner functions
-    
-    this.microphone.connect(this.gainNode);    
-    this.gainNode.connect(this.processor);
-    this.processor.connect(this.audioCtx.destination);
-    this.gainNode.connect(this.analyser);
 
     // clears out audio buffer 
     audioworker.postMessage({
