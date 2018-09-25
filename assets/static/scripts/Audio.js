@@ -81,8 +81,6 @@ Audio.prototype.init = function () {
     */
     function setupAudioNodes(stream) {
       return new Promise(function (resolve, reject) {
-        self.stream = stream;
-
         self.microphone = self.audioCtx.createMediaStreamSource(stream);
 
         self.gainNode = self.audioCtx.createGain();
@@ -90,14 +88,14 @@ Audio.prototype.init = function () {
         //https://stackoverflow.com/questions/17648819/how-can-i-stop-a-web-audio-script-processor-and-clear-the-buffer
         // throw a gain node into the path and just mute it on-demand.
         // could reduce the bufferSize to cut down the amount of overhang after you null out onaudioprocess
-        self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize , 1, 1);
+        self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize, 1, 1);
 
         self.analyser = self.audioCtx.createAnalyser();
         self.mediaStreamOutput = self.audioCtx.destination;
 
+        self.microphone.channelCount = 1;
         self.gainNode.channelCount = 1;
         self.processor.channelCount = 1;
-        self.microphone.channelCount = 1;
         self.analyser.channelCount = 1;
         self.mediaStreamOutput.channelCount = 1;
 
@@ -151,6 +149,7 @@ Audio.prototype.init = function () {
         navigator.mediaDevices.getUserMedia(self.constraints)
         .then(setupAudioNodes)
         .then(function(stream) {
+          self.stream = stream;
           if ( ! self.gotProfileAudioProperties ) {
               self.setProfileAudioProperties(stream.getAudioTracks()[0]);
           }
@@ -225,12 +224,11 @@ Audio.prototype.getDebugValues = function () {
 */
 Audio.prototype.record = function (prompt_id, vad_run) {
     var self = this; // save context when calling inner functions
-
+    
     this.microphone.connect(this.gainNode);    
-    this.gainNode.connect(this.processor); 
-    this.gainNode.connect(this.analyser);
-    //this.gainNode.gain.setValueAtTime(1, this.audioCtx.currentTime); // unmute
+    this.gainNode.connect(this.processor);
     this.processor.connect(this.audioCtx.destination);
+    this.gainNode.connect(this.analyser);
 
     // clears out audio buffer 
     audioworker.postMessage({
@@ -343,16 +341,16 @@ Audio.prototype.endRecording = function () {
     audioworker.postMessage({ 
       command: 'finish' 
     });
+
+    // disconnecting AudioNodes leaves audio data somewhere in audio chain
+    // (likely in microphone Audio node - MediaStreamSource buffer) that gets added
+    // to next recording... therefore do not disconnect Audio Nodes
+    //self.microphone.disconnect(); // all outgoing connections are disconnected.
+    //self.gainNode.disconnect();
+    //self.processor.disconnect();
     
-    //this.processor.onaudioprocess=null;
-    
-    self.microphone.disconnect();
-    self.gainNode.disconnect();
-    self.processor.disconnect();
-    self.analyser.disconnect();
-    
-    // only way to clear audio buffer because second recording includes end 
-    // of previous recording
-    this.init();
+    // but audio is still being collected by Audio Nodes, and sent to AudioWorker???
+    // Therefore remove function that sends audio to AudioWorker
+    this.processor.onaudioprocess = null;
 }
 
