@@ -69,7 +69,7 @@ var urlsToCache = [
   '/fr/read',
   '/es/read',
   
-//  '/en/read/', // TODO debug with Apache2 and self signed SSL certificate
+  //'/en/read/', // TODO debug with Apache2 and self signed SSL certificate
 
   // TODO also cache links to outside websites for definitions, elaboration, etc...
 
@@ -88,6 +88,7 @@ var urlsToCache = [
   '/images/voxforge-logo-2.png',
   '/images/search.jpg',
   '/images/faq-icon.jpg',
+  '/images/Gear_icon-72a7cf.png',
 ];
 
 //var uploadURL;

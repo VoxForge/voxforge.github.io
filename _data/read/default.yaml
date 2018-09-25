@@ -311,7 +311,7 @@ alert_message:
     Please increase your microphone volume, 
     then delete this prompt recording and re-record it.
   no_trailing_silence: >
-    App thinks you did not enough leave trailing silence - you may have clicked
+    App thinks you did not leave enough trailing silence - you may have clicked
     'stop' too early! <br>
     Please review this prompt recording, and delete and re-record if necessary.
   no_speech: >
