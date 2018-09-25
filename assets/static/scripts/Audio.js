@@ -349,7 +349,7 @@ Audio.prototype.endRecording = function () {
     //self.gainNode.disconnect();
     //self.processor.disconnect();
     
-    // but audio is still being collected by Audio Nodes, and sent to AudioWorker???
+    // but if don't disconnect, audio will be collected by Audio Nodes, and sent to AudioWorker.
     // Therefore remove function that sends audio to AudioWorker
     this.processor.onaudioprocess = null;
 }
