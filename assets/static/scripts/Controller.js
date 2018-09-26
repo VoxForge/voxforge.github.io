@@ -91,11 +91,13 @@ Controller.prototype.start = function () {
           promise_list[self.promise_index++] = 
                 self.audio.record( self.prompts.getPromptId(), vad_run )
                 .then( self.view.displayAudioPlayer.bind(self.view) )
-                .then( self.prompts.setAudioCharacteristics.bind(self.prompts) );
+                .then( self.prompts.setAudioCharacteristics.bind(self.prompts) )
+                .catch((err) => { console.log(err) });
         } else {
           promise_list[self.promise_index++] = 
                 self.audio.record( self.prompts.getPromptId(), vad_run )
-                .then( self.view.displayAudioPlayer.bind(self.view) );
+                .then( self.view.displayAudioPlayer.bind(self.view) )
+                .catch((err) => { console.log(err) });
 
           self.prompts.clearAudioCharacteristics.bind(self.prompts);
         }
@@ -239,7 +241,8 @@ Controller.prototype.start = function () {
               Promise.all(promise_list)
               .then(function() {
                  self.view.setRSButtonDisplay(true, false);
-              });
+              })
+              .catch((err) => { console.log(err) });
           } else { // allows recording even though waveform display not completed
               self.view.setRSButtonDisplay(true, false); 
           }
@@ -254,7 +257,8 @@ Controller.prototype.start = function () {
               Promise.all(promise_list)
               .then(function() {
                  self.view.setRSButtonDisplay(true, false);   
-              });
+              })
+              .catch((err) => { console.log(err) });
           } else { // allows recording even though waveform display not completed
              self.view.setRSButtonDisplay(true, false); 
           }
@@ -331,7 +335,8 @@ Controller.prototype.start = function () {
                   console.log(err.message);
                   console.log(err.stack);
               });
-          });
+          })
+          .catch((err) => { console.log(err) });
         },
       }
     });

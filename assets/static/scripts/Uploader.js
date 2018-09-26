@@ -35,12 +35,14 @@ function Uploader(parms,
       window.addEventListener('load', function() {
         const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
         navigator.serviceWorker.register(swUrl)
-        .then(function(reg) {
-          console.log('ServiceWorker registration successful with scope: ', reg.scope);
-        }, function(err) {
-          console.warn('ServiceWorker registration failed: ', err);
-          window.alert('Error: no SSL certificate installed on device - VoxForge uploads will fail silently');
-        })
+        .then(
+            function(reg) {
+              console.log('ServiceWorker registration successful with scope: ', reg.scope);
+            }, function(err) {
+              console.warn('ServiceWorker registration failed: ', err);
+              window.alert('Error: no SSL certificate installed on device - VoxForge uploads will fail silently');
+            })
+        .catch((err) => { console.log(err) });
       });
     }
 
@@ -109,7 +111,8 @@ Uploader.prototype.init = function () {
             Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
             .then(function() {
               window.alert(m);
-            });
+            })
+            .catch((err) => { console.log(err) });            
         }
 
         switch (returnObj.status) {
@@ -348,11 +351,13 @@ Uploader.prototype.upload = function ( prompts,
         // for processing of return values from service worker, see 
         // service worker event above (i.e. navigator.serviceWorker.addEventListener... )
         swRegistration.sync.register('voxforgeSync')
-        .then(function() {
-          console.info('service worker background sync event called - submission will be uploaded shortly');
-         }, function() {
-          console.error('service worker background sync failed, will retry later');
-        });
+        .then(
+            function() {
+              console.info('service worker background sync event called - submission will be uploaded shortly');
+             }, function() {
+              console.error('service worker background sync failed, will retry later');
+            })
+        .catch((err) => { console.log(err) });
       }
 
       /** 
@@ -403,7 +408,8 @@ Uploader.prototype.upload = function ( prompts,
                   console.warn('service worker does not support background sync... using web worker');
                   webWorkerUpload(); // background sync not supported
                 }
-              });
+              })
+              .catch((err) => { console.log(err) });
           } else { // service workers not supported
             if( !! window.Worker ) { // web workers supported
                 webWorkerUpload();

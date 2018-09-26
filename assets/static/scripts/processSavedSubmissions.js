@@ -116,7 +116,8 @@ function processSavedSubmissions(uploadURL, workertype) {
     function removeSubmission(saved_submission_name) {
       return new Promise(function (resolve, reject) {
         // only remove saved submission if upload completed successfully
-        submissionCache.removeItem(saved_submission_name).then(function() {
+        submissionCache.removeItem(saved_submission_name)
+        .then(function() {
           console.log('Backup submission removed from browser: ' + saved_submission_name);
 
           resolve(saved_submission_name);

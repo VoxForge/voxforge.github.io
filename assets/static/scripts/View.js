@@ -553,7 +553,8 @@ View.prototype.submissionsLog = function ()
               console.log(message + ' ' + keys);
               resolve(keys);
             }
-        }).catch(function(err) {
+        })
+        .catch(function(err) {
             // This code runs if there were any errors
             console.log(err);
             resolve("");
@@ -576,7 +577,8 @@ View.prototype.submissionsLog = function ()
               } else {
                   resolve("");
               }
-          });
+          })
+          .catch((err) => { console.log(err) });
           
       });
     }
@@ -594,7 +596,9 @@ View.prototype.submissionsLog = function ()
               } else {
                   resolve([uploadedSubmissionList, ""]);
               }
-          });
+          })
+          .catch((err) => { console.log(err) });
+
       });
     }
    
@@ -635,9 +639,7 @@ View.prototype.submissionsLog = function ()
                   $("#submission-list").html(uploadedHTML + savedHTML);
                   setTimeout(function() { $("#submission-list").popup( "open" ) }, 100 );
               })
-              .catch(function(err) {
-                  console.log(err);
-              });
+              .catch(function(err) { console.log(err) });
           } // popupafterclose
         });
     });

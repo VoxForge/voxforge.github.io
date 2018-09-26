@@ -127,7 +127,8 @@ Prompts.save2BrowserStorage = function(local_prompt_file_name,
     promptCache.setItem(local_prompt_file_name, jsonOnject)
     .then(function (value) {
       console.info('saved promptfile to localforage browser storage: ' + local_prompt_file_name);
-    }).catch(function(err) {
+    })
+    .catch(function(err) {
       console.error('save of promptfile to localforage browser storage failed!', err);
     });
 }
@@ -357,7 +358,8 @@ Prompts.prototype.init = function () {
                 });
 
 
-            });
+            })
+            .catch((err) => { console.log(err) });            
         }
 
         // #####################################################################
@@ -391,7 +393,8 @@ Prompts.prototype.init = function () {
             } else { 
                 getPromptsFileFromBrowserStorage(prompt_file_index);
             }
-        });
+        })
+        .catch((err) => { console.log(err) });
     }); // promise
 }
 
