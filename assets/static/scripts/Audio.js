@@ -236,6 +236,8 @@ Audio.prototype.record = function (prompt_id, vad_run) {
       bitDepth: self.parms.bitDepth,
     });
 
+    self.gainNode.connect(self.analyser);
+
     // start recording
     this.processor.onaudioprocess = function(event) {
       // only record left channel (mono)
@@ -343,9 +345,13 @@ Audio.prototype.endRecording = function () {
     //self.microphone.disconnect(); // all outgoing connections are disconnected.
     //self.gainNode.disconnect();
     //self.processor.disconnect();
-    
+
     // but if don't disconnect, audio will be collected by Audio Nodes, and sent to AudioWorker.
     // Therefore remove function that sends audio to AudioWorker
     this.processor.onaudioprocess = null;
+
+    // need to cue user when recording has stopped and started.  Disconnecting
+    // the analyser node and reconnecting on record should do this...
+    self.gainNode.disconnect(self.analyser);
 }
 
