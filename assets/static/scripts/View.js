@@ -315,27 +315,26 @@ View.prototype.init = function () {
     * .html() in #subdialect:
     */
     function setDependentSelect($independent, $dependent) {
-      //var $independent = $( '#dialect' );
-      //var $dependent = $( '#sub_dialect' );
-      var $optgroup = $dependent.find( 'optgroup' );
-      var $selected = $dependent.find( ':selected' );
-      var $result = $optgroup.add( $selected );
+        var $optgroup = $dependent.find( 'optgroup' );
+        var $selected = $dependent.find( ':selected' );
+        var $result = $optgroup.add( $selected );
 
-      $independent.on( 'change', function() {
-          var filter =  $result.filter( '[name="' + this.value + '"]' );
+        $independent.on( 'change', function() {
+            var filter =  $result.filter( '[name="' + this.value + '"]' );
 
-          if ( filter.length ) {
-            $("#sub_dialect_display").show();
-            $dependent.html( filter );
-          }
-          else
-          {
-            $("#sub_dialect_display").hide();
-          }
-          $dependent.prop('defaultSelected');
-      } ).trigger( 'change' );
+            if ( filter.length ) {
+              $("#sub_dialect_display").show();
+              $dependent.html( filter );
+            }
+            else
+            {
+              $("#sub_dialect_display").hide();
+            }
+            $dependent.prop('defaultSelected');
+        } ).trigger( 'change' );
     }
     
+    $( '#sub_dialect select' ).val( self.default_value );
     setDependentSelect( $('#dialect'), $('#sub_dialect') );
 
     /**
