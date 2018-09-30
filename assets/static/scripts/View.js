@@ -300,12 +300,12 @@ View.prototype.init = function () {
     */
 
     /**
-    * This function changes the contents of a second select list based on the
-    * contents of a first select list.  This is used to set the 
-    * contents of the sub-dialect selection list based on the value the dialect
-    * selection list.
+    * This function changes the contents of a dependent select list based on the
+    * contents of a independent select list.  This is used to set the 
+    * contents of the dependent sub-dialect selection list based on the value
+    * the independent dialect selection list.
     *
-    * Read.md contains the entire list of possbile subdialects for a language,
+    * Read.md contains the entire list of possible subdialects for a language,
     * this function filters those contents based on what is contained in dialect
     * so that user only sees filtered results
     *
@@ -314,27 +314,29 @@ View.prototype.init = function () {
     * to the value of the chosen option in #dialect, and set them using 
     * .html() in #subdialect:
     */
-    var $select1 = $( '#dialect' );
-    $( '#sub_dialect select' ).val( self.default_value );
-    var $select2 = $( '#sub_dialect' );
-    var $optgroup = $select2.find( 'optgroup' );
-    var $selected = $select2.find( ':selected' );
-    var $result = $optgroup.add( $selected );
+    function setDependentSelect($independent, $dependent) {
+      //var $independent = $( '#dialect' );
+      //var $dependent = $( '#sub_dialect' );
+      var $optgroup = $dependent.find( 'optgroup' );
+      var $selected = $dependent.find( ':selected' );
+      var $result = $optgroup.add( $selected );
 
-    $select1.on( 'change', function() {
-        var filter =  $result.filter( '[name="' + this.value + '"]' );
-        //filter.add ( $result.filter( 'selected value' ) );
-        var temp = filter.val();
-        if ( filter.length ) {
-          $("#sub_dialect_display").show();
-      	  $select2.html( filter );
-        }
-        else
-        {
-          $("#sub_dialect_display").hide();
-        }
-        $select2.prop('defaultSelected');
-    } ).trigger( 'change' );
+      $independent.on( 'change', function() {
+          var filter =  $result.filter( '[name="' + this.value + '"]' );
+
+          if ( filter.length ) {
+            $("#sub_dialect_display").show();
+            $dependent.html( filter );
+          }
+          else
+          {
+            $("#sub_dialect_display").hide();
+          }
+          $dependent.prop('defaultSelected');
+      } ).trigger( 'change' );
+    }
+    
+    setDependentSelect( $('#dialect'), $('#sub_dialect') );
 
     /**
     * fill other languages select list with stringified array the names of most 
