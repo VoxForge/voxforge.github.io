@@ -261,7 +261,7 @@ View.prototype.init = function () {
           $(dependent_div).show();
         } else {
           $(dependent_div).hide();
-    //      if (value === self.localized_other) { // trying to clear text in other field if user unselects
+    //      if (value === self.localized_other) { // trying to clear text in 'other' field if user unselects
     //         $(dependent_div).empty();
     //      }
         }
@@ -287,13 +287,23 @@ View.prototype.init = function () {
     showDivBasedonValue('#native_speaker', self.localized_yes, '#dialect_display', false);
     showDivBasedonValue('#first_language', self.localized_other, '#first_language_other_display', false);
     // true means hide if there is something in the username field
-    showDivBasedonValue('#username', true, '#anonymous_instructions_display', false); 
+    showDivBasedonValue('#username', true, '#anonymous_instructions_display', false);
     showDivBasedonValue('#microphone', self.localized_other, '#microphone_other_display', false);
     showDivBasedonValue('#dialect', self.localized_other, '#dialect_other_display', false);
     showDivBasedonValue('#recording_location', self.localized_other, '#recording_location_other_display', false);
     showDivBasedonValue('#background_noise', self.localized_yes, '#background_noise_display', false);
     showDivBasedonValue('#noise_type', self.localized_other, '#noise_type_other_display', false);
 
+    // if user says that they are native speaker, and select dialect with subdialect, and then
+    // change mind, and says no to native speaker, need to hide subdialect
+    if ( $('#native_speaker').val() === self.localized_no ) {
+        $('#sub_dialect_display').hide();
+    }
+    $('#native_speaker').change(function () {
+      if ( $('#native_speaker').val() === self.localized_no ) {
+          $('#sub_dialect_display').hide();
+      }
+    });
     /**
     *
     * see: https://stackoverflow.com/questions/7694501/class-vs-static-method-in-javascript
@@ -314,7 +324,7 @@ View.prototype.init = function () {
     * to the value of the chosen option in #dialect, and set them using 
     * .html() in #subdialect:
     */
-    function setDependentSelect($independent, $dependent) {
+    function setDependentSelect($independent, $dependent, $dependent_display) {
         var $optgroup = $dependent.find( 'optgroup' );
         var $selected = $dependent.find( ':selected' );
         var $result = $optgroup.add( $selected );
@@ -323,19 +333,19 @@ View.prototype.init = function () {
             var filter =  $result.filter( '[name="' + this.value + '"]' );
 
             if ( filter.length ) {
-              $("#sub_dialect_display").show();
+              $dependent_display.show();
               $dependent.html( filter );
             }
             else
             {
-              $("#sub_dialect_display").hide();
+              $dependent_display.hide();
             }
             $dependent.prop('defaultSelected');
         } ).trigger( 'change' );
     }
-    
-    $( '#sub_dialect select' ).val( self.default_value );
-    setDependentSelect( $('#dialect'), $('#sub_dialect') );
+
+    //$( '#sub_dialect select' ).val( self.default_value );
+    setDependentSelect( $('#dialect'), $('#sub_dialect'), $("#sub_dialect_display") );
 
     /**
     * fill other languages select list with stringified array the names of most 
@@ -347,7 +357,7 @@ View.prototype.init = function () {
     for (var i=1;i<langscodes.length;i++){
        option += '<option value="'+ langscodes[i] + '">' +
        languages.getLanguageInfo(langscodes[i]).name + " (" +
-       languages.getLanguageInfo(langscodes[i]).nativeName + ")" +  
+       languages.getLanguageInfo(langscodes[i]).nativeName + ")" +
        '</option>';
     }
     option += '<option value="' + self.localized_other + '">' + self.localized_other + '</option>'; 
