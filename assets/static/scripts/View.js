@@ -547,7 +547,8 @@ View.prototype.submissionsLog = function ()
             resolve("");
         });
 
-        database.keys().then(function(keys) {
+        database.keys()
+        .then(function(keys) {
             // An array of all the key names.
             if (keys.length > 0) {
               console.log(message + ' ' + keys);
