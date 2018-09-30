@@ -164,6 +164,7 @@ function processSavedSubmissions(uploadURL, workertype) {
               getSavedSubmission( saved_submission_name )
               .then(uploadSubmission)
               .then(removeSubmission)
+              //catch at Promise.all
             )
           }
 
@@ -213,6 +214,7 @@ function processSavedSubmissions(uploadURL, workertype) {
           });
 
       })
+      .catch(function(err) { console.log(err) });
     });
 }
 
