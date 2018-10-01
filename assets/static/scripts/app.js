@@ -88,7 +88,16 @@ var view;  // needs to be global so can be accessible to index.html
     // #############################################################################
     const appversion = "0.2";
 
-    var parms = new Parms(); 
+    var parms = new Parms();
+
+    
+    // TODO testing 
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.log('display-mode is standalone');
+    }
+
+
+
     var debug = new Debug();
     
     var prompts = new Prompts(parms.prompt, pageVariables); 
@@ -137,6 +146,4 @@ window.addEventListener('appinstalled', (evt) => {
   console.log('a2hs installed');
 });
 
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  console.log('display-mode is standalone');
-}
+
