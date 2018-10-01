@@ -360,7 +360,7 @@ settings:
     Recording Information (needs to be updated each time location or
     noise characteristics change)
   vad_run: VAD enabled (Voice Activity Detection)
-  recording_location_reminder: Recording Location reminder (uses geolocation or time since last submission)
+  recording_location_reminder: Recording Location Change reminder (uses geolocation; or time since last submission)
 
 # TODO no longer used
 ua_string:
