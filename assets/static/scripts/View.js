@@ -633,9 +633,12 @@ View.prototype.submissionsLog = function ()
         if (array) {
             return '<h3>' + heading + '</h3>' +
                    '<ul>' + 
-                   jQuery.map( array, function( element ) {
-                      return ( '<li>' + count++ + '. ' + element + '</li>'  );
-                   }).join('') + // returns as a string
+                   jQuery.map( array,
+                               function( element ) {
+                                  return ( '<li>' + count++ + '. ' + element + '</li>'  );
+                               }
+                   )
+                   .join('') + // returns as a string
                    '</ul>';
         } else {
            return "";
