@@ -81,6 +81,7 @@ Debug.prototype.toHash = function () {
 
     profile_hash["audio"] = this.audio;
     profile_hash["prompts"] = this.prompts;
+    profile_hash["app"] = this.app;
     
     return profile_hash;
 };
