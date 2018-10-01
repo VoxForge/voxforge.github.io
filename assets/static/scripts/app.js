@@ -90,15 +90,13 @@ var view;  // needs to be global so can be accessible to index.html
 
     var parms = new Parms();
 
-    
-    // TODO testing 
+    var standalone = false;
     if (window.matchMedia('(display-mode: standalone)').matches) {
       console.log('display-mode is standalone');
+      standalone = true;
     }
 
-
-
-    var debug = new Debug();
+    var debug = new Debug(standalone);
     
     var prompts = new Prompts(parms.prompt, pageVariables); 
     var profile = new Profile(appversion, pageVariables);
