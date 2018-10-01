@@ -280,21 +280,9 @@ View.prototype.init = function () {
       }
     }
 
-    showDivBasedonValue('#native_speaker', self.localized_no, '#first_language_display', false);
-    showDivBasedonValue('#native_speaker', self.localized_yes, '#dialect_display', false);
-    showDivBasedonValue('#native_speaker', self.localized_yes, '#sub_dialect_display', false);
-    showDivBasedonValue('#first_language', self.localized_other, '#first_language_other_display', false);
-    // true means hide if there is something in the username field
-    showDivBasedonValue('#username', true, '#anonymous_instructions_display', false);
-    showDivBasedonValue('#microphone', self.localized_other, '#microphone_other_display', false);
-    showDivBasedonValue('#dialect', self.localized_other, '#dialect_other_display', false);
-    showDivBasedonValue('#recording_location', self.localized_other, '#recording_location_other_display', false);
-    showDivBasedonValue('#background_noise', self.localized_yes, '#background_noise_display', false);
-    showDivBasedonValue('#noise_type', self.localized_other, '#noise_type_other_display', false);
-
     /*
-     * if user says that they are native speaker, and select dialect with subdialect, and then
-     * change mind, and says no to native speaker, need to hide subdialect
+     * compare value of independent div with passed in value and if equal, reset
+     * selection option to default in dependent div
      */
     function setDefault(independent_div, value, dependent_div, handler_already_created) {
        if ( $(independent_div).val() === value ) {
@@ -309,10 +297,22 @@ View.prototype.init = function () {
       }       
     }
 
+    showDivBasedonValue('#native_speaker', self.localized_no, '#first_language_display', false);
+    showDivBasedonValue('#native_speaker', self.localized_yes, '#dialect_display', false);
+    showDivBasedonValue('#native_speaker', self.localized_yes, '#sub_dialect_display', false);
     setDefault('#native_speaker', self.localized_yes, '#first_language', false);
     setDefault('#native_speaker', self.localized_no, '#dialect', false);
     setDefault('#native_speaker', self.localized_no, '#sub_dialect', false);
     
+    showDivBasedonValue('#first_language', self.localized_other, '#first_language_other_display', false);
+    // true means hide if there is something in the username field
+    showDivBasedonValue('#username', true, '#anonymous_instructions_display', false);
+    showDivBasedonValue('#microphone', self.localized_other, '#microphone_other_display', false);
+    showDivBasedonValue('#dialect', self.localized_other, '#dialect_other_display', false);
+    showDivBasedonValue('#recording_location', self.localized_other, '#recording_location_other_display', false);
+    showDivBasedonValue('#background_noise', self.localized_yes, '#background_noise_display', false);
+    showDivBasedonValue('#noise_type', self.localized_other, '#noise_type_other_display', false);
+
     /**
     *
     * see: https://stackoverflow.com/questions/7694501/class-vs-static-method-in-javascript
