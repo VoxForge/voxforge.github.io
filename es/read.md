@@ -43,7 +43,7 @@ gender:
 age:
   label: Rango de Edad
   selection:
-    - { value: '13 - 17', old_value: 'Niño', desc: 'Niño - Permiso de los padres requerido' }
+    - { value: '13 - 17', old_value: 'Niño', desc: 'Niño' }
     - { value: '18 - 29', old_value: 'Adulto', desc: 'Adulto' }
     - { value: '30 - 39', old_value: 'Adulto', desc: 'Adulto' }
     - { value: '40 - 49', old_value: 'Adulto', desc: 'Adulto' }
