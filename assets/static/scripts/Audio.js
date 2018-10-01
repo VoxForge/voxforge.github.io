@@ -52,14 +52,16 @@ function Audio (parms,
     this.gain_minValue = -3.4; // most-negative-single-float	Approximately -3.4028235e38
     this.gain_maxValue = 3.4; // 	most-positive-single-float	Approximately 3.4028235e38
 
-    //var constraints = { audio: true };
-    this.constraints = { 
-          audio: {
-            echoCancellation: false,
-            noiseSuppression: false,
-            autoGainControl: false
-          }
-    };
+    // rule is to collect speech audio that best reflects the user's environment, therefore
+    // take whatever defaults user's device supports
+    this.constraints = { audio: true };
+    //this.constraints = { 
+    //      audio: {
+    //        echoCancellation: false,
+    //        noiseSuppression: false,
+    //        autoGainControl: false
+    //      }
+    //};
 
     this.alert_message = pageVariables.alert_message;
 }
@@ -141,6 +143,8 @@ Audio.prototype.init = function () {
         });
       }
     }
+
+    this.autoGainSupported = navigator.mediaDevices.getSupportedConstraints().autoGainSupported;
     
     return new Promise(function (resolve, reject) {
         /**
@@ -267,8 +271,7 @@ Audio.prototype.record = function (prompt_id, vad_run) {
 
     */
     function adjustVolume(obj) {
-        // TODO use constant for 3.4
-        if (Math.abs(obj.gain) < 3.4 ) {
+        if (Math.abs(obj.gain) < self.gain_maxValue ) {
             var newgain;
             if (obj.clipping) {
               // reduce volume
@@ -310,7 +313,10 @@ Audio.prototype.record = function (prompt_id, vad_run) {
               case 'finished':
                 obj.gain = self.gainNode.gain.value;
                 obj.app_auto_gain = self.parms.app_auto_gain;
-                if (obj.app_auto_gain) {
+
+                // some phones have their own (hardware/software?) auto gain implemented.
+                // Where device has own auto gain, do not use adjustVolume() function
+                if (obj.app_auto_gain && ! this.autoGainSupported) {
                   adjustVolume(obj); 
                 }
 

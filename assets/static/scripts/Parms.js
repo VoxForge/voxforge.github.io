@@ -45,7 +45,8 @@ function Parms() {
       },
 
       blockDisplayOfRecordButton: false, // on slower devices, allowing user to record while display is still working can cause dropout/scratches
-      app_auto_gain: false, // only needed for smartphones where you cannot adjust volume
+      app_auto_gain: false, // only needed for smartphones where you cannot adjust volume; desktops allow you to adjust recording volume
+      //app_auto_gain: true, // debug
       gain_increment_factor: 1.25, // speech detected, but volume too low, use this factor to increase volume
       gain_max_increment_factor: 2.0, // no speech detected, assume volume set really low, double volume
       gain_decrement_factor: 0.75, // if clipping, reduce volume
@@ -85,7 +86,7 @@ function Parms() {
         this.audio.vad.maxsilence = 650; // detect longer silence period on Android
         this.audio.vad.minvoice = 75; // use shorter min voice threshold period on Android
         this.audio.blockDisplayOfRecordButton = true;
-        this.audio.app_auto_gain = true;
+        this.audio.app_auto_gain = true; // Android does not allow you to manually adjust the recroding volume on your phone;
         this.controller.recording_stop_delay = 750;
 
         if (platform.os.version) {
