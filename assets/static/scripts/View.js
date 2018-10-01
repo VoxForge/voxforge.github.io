@@ -261,9 +261,6 @@ View.prototype.init = function () {
           $(dependent_div).show();
         } else {
           $(dependent_div).hide();
-    //      if (value === self.localized_other) { // trying to clear text in 'other' field if user unselects
-    //         $(dependent_div).empty();
-    //      }
         }
       }
 
@@ -285,6 +282,7 @@ View.prototype.init = function () {
 
     showDivBasedonValue('#native_speaker', self.localized_no, '#first_language_display', false);
     showDivBasedonValue('#native_speaker', self.localized_yes, '#dialect_display', false);
+    showDivBasedonValue('#native_speaker', self.localized_yes, '#sub_dialect_display', false);
     showDivBasedonValue('#first_language', self.localized_other, '#first_language_other_display', false);
     // true means hide if there is something in the username field
     showDivBasedonValue('#username', true, '#anonymous_instructions_display', false);
@@ -294,23 +292,27 @@ View.prototype.init = function () {
     showDivBasedonValue('#background_noise', self.localized_yes, '#background_noise_display', false);
     showDivBasedonValue('#noise_type', self.localized_other, '#noise_type_other_display', false);
 
-    // if user says that they are native speaker, and select dialect with subdialect, and then
-    // change mind, and says no to native speaker, need to hide subdialect
-    function hideDialects() {
-        $('#sub_dialect_display').hide();
-        $('#dialect').val($("select option:first").val()).change();
-        // TODO sub_dialect now shows null in submission profile.json?????
-        $('#sub_dialect').val($("select option:first").val()).change();  
+    /*
+     * if user says that they are native speaker, and select dialect with subdialect, and then
+     * change mind, and says no to native speaker, need to hide subdialect
+     */
+    function setDefault(independent_div, value, dependent_div, handler_already_created) {
+       if ( $(independent_div).val() === value ) {
+           $(dependent_div).val($("select option:first").val()).change();
+       }
+      // only need to create event handler on first call to this function
+      if ( ! handler_already_created ) 
+      {
+        $(independent_div).change(function () { // creates an event handler
+            setDefault(independent_div, value, dependent_div, true); 
+        } );
+      }       
     }
 
-    if ( $('#native_speaker').val() === self.localized_no ) {
-        hideDialects();
-    }
-    $('#native_speaker').change(function () {
-      if ( $('#native_speaker').val() === self.localized_no ) {
-          hideDialects();
-      }
-    });
+    setDefault('#native_speaker', self.localized_yes, '#first_language', false);
+    setDefault('#native_speaker', self.localized_no, '#dialect', false);
+    setDefault('#native_speaker', self.localized_no, '#sub_dialect', false);
+    
     /**
     *
     * see: https://stackoverflow.com/questions/7694501/class-vs-static-method-in-javascript
