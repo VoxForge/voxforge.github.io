@@ -299,7 +299,8 @@ View.prototype.init = function () {
 
     showDivBasedonValue('#native_speaker', self.localized_no, '#first_language_display', false);
     showDivBasedonValue('#native_speaker', self.localized_yes, '#dialect_display', false);
-    showDivBasedonValue('#native_speaker', self.localized_yes, '#sub_dialect_display', false);
+    // causes sub-dialect to display immediately rather than when Canadian or American dialect selected
+    //showDivBasedonValue('#native_speaker', self.localized_yes, '#sub_dialect_display', false);
     setDefault('#native_speaker', self.localized_yes, '#first_language', false);
     setDefault('#native_speaker', self.localized_no, '#dialect', false);
     setDefault('#native_speaker', self.localized_no, '#sub_dialect', false);
