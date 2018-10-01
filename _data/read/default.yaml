@@ -361,6 +361,8 @@ settings:
     noise characteristics change)
   vad_run: VAD enabled (Voice Activity Detection)
   recording_location_reminder: Recording Location Change reminder (uses geolocation; or time since last submission)
+  saved_submissions: Saved Submissions
+  uploaded_submissions: Uploaded Submissions
 
 # TODO no longer used
 ua_string:

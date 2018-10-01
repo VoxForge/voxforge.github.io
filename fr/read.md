@@ -280,6 +280,8 @@ settings:
     que votre location ou les caractéristiques de bruit changent)
   vad_run: VAD activé (Détection d'activité vocale)
   recording_location_reminder: Rappel de changement de lieu d'enregistrement
+  saved_submissions: Soumissions sauvegardé
+  uploaded_submissions: Soumissions téléchargées  
 
 #TODO no longer used
 ua_string:

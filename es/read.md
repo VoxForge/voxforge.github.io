@@ -261,7 +261,8 @@ settings:
     que cambia la ubicación o las características del ruido)
   vad_run: VAD habilitado (detección de actividad de voz)
   recording_location_reminder: Recordatorio de cambio de ubicación de grabación
-  
+  saved_submissions: Sumisiones salvados
+  uploaded_submissions: Sumisiones cargados
 
 #TODO no longer used
 ua_string:

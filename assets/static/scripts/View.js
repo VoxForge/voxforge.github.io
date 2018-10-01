@@ -61,6 +61,9 @@ function View (parms,
     this.playbuttontext = pageVariables.playbuttontext;
     this.stopbuttontext = pageVariables.stopbuttontext;
 
+    this.saved_submissions = pageVariables.saved_submissions;
+    this.uploaded_submissions = pageVariables.uploaded_submissions;
+    
     this.uploadedSubmissions = localforage.createInstance({
       name: "uploadedSubmissions"
     });
@@ -658,11 +661,12 @@ View.prototype.submissionsLog = function ()
                   $('#popupSubmissionList').popup(); // initialize popup before open
 
                   // TODO translate
-                  var uploadedHTML = makeHTMLlist(submissionArray[0], 'Uploaded Submissions');
-                  var savedHTML = makeHTMLlist(submissionArray[1], 'Saved Submissions');                 
-
-                  $("#submission-list").html(uploadedHTML + savedHTML);
-                  setTimeout(function() { $("#popupSubmissionList").popup( "open" ) }, 100 );
+                  var uploadedHTML = makeHTMLlist(submissionArray[0], self.uploaded_submissions);
+                  var savedHTML = makeHTMLlist(submissionArray[1], self.saved_submissions);                 
+                  if (submissionArray[0] || submissionArray[1]) {
+                    $("#submission-list").html(uploadedHTML + savedHTML);
+                    setTimeout(function() { $("#popupSubmissionList").popup( "open" ) }, 100 );
+                  }
               })
               .catch(function(err) { console.log(err) });
           } // popupafterclose
