@@ -655,14 +655,14 @@ View.prototype.submissionsLog = function ()
               getUploadedSubmissionList()
               .then(getSavedSubmissionList)
               .then(function (submissionArray) {
-                  $('#submission-list').popup(); // initialize popup before open
+                  $('#popupSubmissionList').popup(); // initialize popup before open
 
                   // TODO translate
                   var uploadedHTML = makeHTMLlist(submissionArray[0], 'Uploaded Submissions');
                   var savedHTML = makeHTMLlist(submissionArray[1], 'Saved Submissions');                 
 
                   $("#submission-list").html(uploadedHTML + savedHTML);
-                  setTimeout(function() { $("#submission-list").popup( "open" ) }, 100 );
+                  setTimeout(function() { $("#popupSubmissionList").popup( "open" ) }, 100 );
               })
               .catch(function(err) { console.log(err) });
           } // popupafterclose
