@@ -296,12 +296,19 @@ View.prototype.init = function () {
 
     // if user says that they are native speaker, and select dialect with subdialect, and then
     // change mind, and says no to native speaker, need to hide subdialect
-    if ( $('#native_speaker').val() === self.localized_no ) {
+    function hideDialects() {
         $('#sub_dialect_display').hide();
+        $('#dialect').val($("select option:first").val()).change();
+        // TODO sub_dialect now shows null in submission profile.json?????
+        $('#sub_dialect').val($("select option:first").val()).change();  
+    }
+
+    if ( $('#native_speaker').val() === self.localized_no ) {
+        hideDialects();
     }
     $('#native_speaker').change(function () {
       if ( $('#native_speaker').val() === self.localized_no ) {
-          $('#sub_dialect_display').hide();
+          hideDialects();
       }
     });
     /**
