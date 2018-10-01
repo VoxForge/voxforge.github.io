@@ -334,12 +334,12 @@ View.prototype.init = function () {
     function setDependentSelect($independent, $dependent, $dependent_display) {
         var $optgroup = $dependent.find( 'optgroup' );
         var $selected = $dependent.find( ':selected' );
-        var $result = $optgroup.add( $selected );
 
         $independent.on( 'change', function() {
-            var filter =  $result.filter( '[name="' + this.value + '"]' );
+            var filter =  $optgroup.filter( '[name="' + this.value + '"]' );
 
             if ( filter.length ) {
+              filter = filter.add( $selected );
               $dependent_display.show();
               $dependent.html( filter );
             }
