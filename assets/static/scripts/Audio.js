@@ -55,13 +55,6 @@ function Audio (parms,
     // rule is to collect speech audio that best reflects the user's environment, therefore
     // take whatever defaults user's device supports
     this.constraints = { audio: true };
-    //this.constraints = { 
-    //      audio: {
-    //        echoCancellation: false,
-    //        noiseSuppression: false,
-    //        autoGainControl: false
-    //      }
-    //};
 
     this.alert_message = pageVariables.alert_message;
 }
@@ -84,12 +77,7 @@ Audio.prototype.init = function () {
         self.microphone = self.audioCtx.createMediaStreamSource(stream);
 
         self.gainNode = self.audioCtx.createGain();
-
-        //https://stackoverflow.com/questions/17648819/how-can-i-stop-a-web-audio-script-processor-and-clear-the-buffer
-        // throw a gain node into the path and just mute it on-demand.
-        // could reduce the bufferSize to cut down the amount of overhang after you null out onaudioprocess
         self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize, 1, 1);
-
         self.analyser = self.audioCtx.createAnalyser();
         self.mediaStreamOutput = self.audioCtx.destination;
 
@@ -247,12 +235,12 @@ Audio.prototype.record = function (prompt_id, vad_run) {
       // only record left channel (mono)
       var floatArray_time_domain = event.inputBuffer.getChannelData(0);
 
-      self.debugValues.device_event_buffer_size = floatArray_time_domain.length;
-
       audioworker.postMessage({ 
         command: 'record', 
         event_buffer: floatArray_time_domain,
       });
+
+      self.debugValues.device_event_buffer_size = floatArray_time_domain.length;
     };
 
     /**
@@ -357,7 +345,7 @@ Audio.prototype.endRecording = function () {
     this.processor.onaudioprocess = null;
 
     // need to cue user when recording has stopped and started.  Disconnecting
-    // the analyser node and reconnecting on record should do this...
+    // the analyser node and reconnecting on record can do this...
     self.gainNode.disconnect(self.analyser);
 }
 

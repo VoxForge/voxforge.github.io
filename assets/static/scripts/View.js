@@ -434,26 +434,49 @@ View.prototype.init = function () {
 View.prototype.initSettingsPopup = function (message) {
     var self = this;
 
-    // at startup; get settings from browser storage
-
+    // debug
     if ( localStorage.getItem("debug") === 'true') { // string
       $('#debug').prop('checked', true);  // boolean
     } else {
       $('#debug').prop('checked', false);
     }
+    $('#debug').change(function () {
+      if (this.checked) {
+        localStorage.setItem("debug", 'true');
+      } else {
+        localStorage.setItem("debug", 'false');
+      }
+    });
 
+    // ua_string
     if ( localStorage.getItem("ua_string") === 'true') {
       $('#ua_string').prop('checked', true); 
     } else {
       $('#ua_string').prop('checked', false);
     }
+    $('#ua_string').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("ua_string", 'true');
+      } else {
+        localStorage.setItem("ua_string", 'false');
+      }
+    });
 
+    // VAD
     if ( localStorage.getItem("vad_run") === 'true') {
       $('#vad_run').prop('checked', true); 
     } else {
       $('#vad_run').prop('checked', false);
     }
+    $('#vad_run').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("vad_run", 'true');
+      } else {
+        localStorage.setItem("vad_run", 'false');
+      }
+    });    
 
+    // Recording Information
     if ( localStorage.getItem("display_record_info") === 'true') {
       $('#display_record_info').prop('checked', true); 
       $('#recording_information_button_display').show();
@@ -467,32 +490,6 @@ View.prototype.initSettingsPopup = function (message) {
     } else {
       $('#recording_location_reminder').prop('checked', false);
     }
-
-    // post page load handlers
-
-    $('#debug').change(function () {
-      if (this.checked) {
-        localStorage.setItem("debug", 'true');
-      } else {
-        localStorage.setItem("debug", 'false');
-      }
-    });
-
-    $('#ua_string').change(function () { 
-      if (this.checked) {
-        localStorage.setItem("ua_string", 'true');
-      } else {
-        localStorage.setItem("ua_string", 'false');
-      }
-    });
-    
-    $('#vad_run').change(function () { 
-      if (this.checked) {
-        localStorage.setItem("vad_run", 'true');
-      } else {
-        localStorage.setItem("vad_run", 'false');
-      }
-    });
 
     function clearRecordingLocationInfo() {
         // clear certain field entries when user clicks display_record_info off

@@ -53,10 +53,10 @@ see: https://github.com/higuma/wav-audio-encoder-js
 
       var offset = 0;
       for (var i = 0; i < len; ++i) {
-          // TODO use mozilla min/max approach to calculating 16bit sample - mre efficient than ternary conditional
+          // TODO use mozilla min/max approach to calculating 16bit sample - more efficient than ternary conditional
           var x = buffer[i] * 0x7fff; // 0x7fff = 32767
           // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
-          // trying to see if no min max causing scratichin and pops...
+          // trying to see if no min max causing scratches and pops...
           var sample16bit =  x < 0 ? max(x, -0x8000) : min(x, 0x7fff);
           view.setInt16(offset, sample16bit, true);
           offset += 2;
@@ -112,7 +112,7 @@ see: https://github.com/higuma/wav-audio-encoder-js
       /* bits per sample */
       view.setUint16(34, 32, true); // 32 bits per sample
     }
-  /* data chunk identifier */
+    /* data chunk identifier */
     setString(view, 36, 'data');
     /* data chunk length */
     view.setUint32(40, dataSize, true);
