@@ -457,6 +457,19 @@ View.prototype.initSettingsPopup = function (message) {
     }
 
     // Recording Information
+    if ( ! localStorage.getItem("recording_information_button_display") ) {
+      localStorage.setItem("recording_information_button_display", 'false');
+      $('#display_record_info').prop('checked', false);
+      $('#recording_information_button_display').hide();      
+    } else {    
+      if ( localStorage.getItem("display_record_info") === 'true') {
+        $('#display_record_info').prop('checked', true); 
+        $('#recording_information_button_display').show();
+      } else {
+        $('#display_record_info').prop('checked', false);
+        $('#recording_information_button_display').hide();
+      }
+    }
     $('#display_record_info').change(function () {
         // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
         $('#recording_geolocation_reminder').prop( "disabled", ! this.checked );
@@ -481,11 +494,16 @@ View.prototype.initSettingsPopup = function (message) {
         }
     });
     // time elapsed Recording Information check reminder
-    if ( localStorage.getItem("recording_time_reminder") === 'true') {
-      $('#recording_time_reminder').prop('checked', true); 
+    if ( ! localStorage.getItem("recording_time_reminder") ) {
+      localStorage.setItem("recording_time_reminder", 'false');
+      $('#recording_time_reminder').prop( "disabled", true ); // disabled by default
     } else {
-      $('#recording_time_reminder').prop('checked', false);
-    }    
+      if ( localStorage.getItem("recording_time_reminder") === 'true') {
+        $('#recording_time_reminder').prop('checked', true); 
+      } else {
+        $('#recording_time_reminder').prop('checked', false);
+      }
+    }
     $('#recording_time_reminder').change(function () {
         // if checkbox is being set based on contents of another chekcbox, then
         // need to use checkboxradio("refresh") so that it will display correctly
@@ -501,10 +519,15 @@ View.prototype.initSettingsPopup = function (message) {
       
     // Resource Intensive Functions
     // VAD
-    if ( localStorage.getItem("vad_run") === 'true') {
-      $('#vad_run').prop('checked', true); 
+    if ( ! localStorage.getItem("vad_run") ) {
+      localStorage.setItem("vad_run", 'true');
+      $('#vad_run').prop('checked', true);       
     } else {
-      $('#vad_run').prop('checked', false);
+      if ( localStorage.getItem("vad_run") === 'true') {
+        $('#vad_run').prop('checked', true); 
+      } else {
+        $('#vad_run').prop('checked', false);
+      }
     }
     $('#vad_run').change(function () { 
       if (this.checked) {
@@ -515,11 +538,16 @@ View.prototype.initSettingsPopup = function (message) {
     });    
 
     // geolocation based Recording Information check reminder
-    if ( localStorage.getItem("recording_geolocation_reminder") === 'true') {
-      $('#recording_geolocation_reminder').prop('checked', true); 
-    } else {
-      $('#recording_geolocation_reminder').prop('checked', false);
-    }    
+    if ( ! localStorage.getItem("recording_geolocation_reminder") ) {
+      localStorage.setItem("recording_geolocation_reminder", 'false');
+      $('#recording_geolocation_reminder').prop( "disabled", true ); // disabled by default
+    } else {    
+      if ( localStorage.getItem("recording_geolocation_reminder") === 'true') {
+        $('#recording_geolocation_reminder').prop('checked', true); 
+      } else {
+        $('#recording_geolocation_reminder').prop('checked', false);
+      }
+    }
     $('#recording_geolocation_reminder').change(function () {
         // if checkbox is being set based on contents of another chekcbox, then
         // need to use checkboxradio("refresh") so that it will display correctly
@@ -534,10 +562,15 @@ View.prototype.initSettingsPopup = function (message) {
 
 
     // Audio Meter - realtime
-    if ( localStorage.getItem("audio_meter") === 'true') {
-      $('#audio_meter').prop('checked', true); 
-    } else {
-      $('#audio_meter').prop('checked', false);
+    if ( ! localStorage.getItem("audio_meter") ) {
+      localStorage.setItem("audio_meter", 'true');
+      $('#audio_meter').prop('checked', true);       
+    } else {    
+      if ( localStorage.getItem("audio_meter") === 'true') {
+        $('#audio_meter').prop('checked', true); 
+      } else {
+        $('#audio_meter').prop('checked', false);
+      }
     }
     $('#audio_meter').change(function () { 
       if (this.checked) {
@@ -548,10 +581,15 @@ View.prototype.initSettingsPopup = function (message) {
     });   
 
     // Waveform display for each prompt - generated in thread
-    if ( localStorage.getItem("waveform_display") === 'true') {
-      $('#waveform_display').prop('checked', true); 
-    } else {
-      $('#waveform_display').prop('checked', false);
+    if ( ! localStorage.getItem("waveform_display") ) {
+      localStorage.setItem("waveform_display", 'true');
+      $('#waveform_display').prop('checked', true);      
+    } else {    
+      if ( localStorage.getItem("waveform_display") === 'true') {
+        $('#waveform_display').prop('checked', true); 
+      } else {
+        $('#waveform_display').prop('checked', false);
+      }
     }
     $('#waveform_display').change(function () { 
       if (this.checked) {
@@ -564,10 +602,15 @@ View.prototype.initSettingsPopup = function (message) {
 
     // System Information
     // ua_string
-    if ( localStorage.getItem("ua_string") === 'true') {
-      $('#ua_string').prop('checked', true); 
-    } else {
-      $('#ua_string').prop('checked', false);
+    if ( ! localStorage.getItem("ua_string") ) {
+      localStorage.setItem("ua_string", 'true');
+      $('#ua_string').prop('checked', true);      
+    } else {    
+      if ( localStorage.getItem("ua_string") === 'true') {
+        $('#ua_string').prop('checked', true); 
+      } else {
+        $('#ua_string').prop('checked', false);
+      }
     }
     $('#ua_string').change(function () { 
       if (this.checked) {
@@ -578,10 +621,15 @@ View.prototype.initSettingsPopup = function (message) {
     });
 
     // debug
-    if ( localStorage.getItem("debug") === 'true') { // string
-      $('#debug').prop('checked', true);  // boolean
-    } else {
-      $('#debug').prop('checked', false);
+    if ( ! localStorage.getItem("debug") ) {
+      localStorage.setItem("debug", 'true');
+      $('#debug').prop('checked', true);      
+    } else {    
+      if ( localStorage.getItem("debug") === 'true') {
+        $('#debug').prop('checked', true); 
+      } else {
+        $('#debug').prop('checked', false);
+      }
     }
     $('#debug').change(function () {
       if (this.checked) {
@@ -590,19 +638,6 @@ View.prototype.initSettingsPopup = function (message) {
         localStorage.setItem("debug", 'false');
       }
     });
-
-    // Recording Information
-    if ( localStorage.getItem("display_record_info") === 'true') {
-      $('#display_record_info').prop('checked', true); 
-      $('#recording_information_button_display').show();
-    } else {
-      $('#display_record_info').prop('checked', false);
-      $('#recording_information_button_display').hide();
-    }
-
-
-
-
 }
 
 /**
