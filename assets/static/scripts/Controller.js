@@ -214,7 +214,7 @@ Controller.prototype.start = function () {
 
         onFirstpromptrecorded: function() {
           if ( self.view.displayRecordingInfoChecked() &&
-               self.view.checkRelocationReminder() ) {
+               self.view.checkGeolocationReminder() ) {
 
               location.getCurrentPosition() // long running function that may or may not return successfully
               .then( function (coords) {

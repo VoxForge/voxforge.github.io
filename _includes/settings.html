@@ -22,24 +22,37 @@
     <fieldset data-role="controlgroup">
       <legend>{{ page.settings.title | default: default.settings.title }}</legend>
 
-      <p>{{ page.settings.include_heading | default: default.settings.include_heading }}:</p>
+      <p>{{ page.settings.recording_information_text | default: default.settings.recording_information_text }}:</p>
+      <input type="checkbox" name="display_record_info" id="display_record_info">
+      <label for="display_record_info">{{ page.settings.display_record_info | default: default.settings.display_record_info }}</label>
+
+      <input type="checkbox" name="recording_time_reminder" id="recording_time_reminder">
+      <label for="recording_time_reminder">{{ page.settings.recording_time_reminder | default: default.settings.recording_time_reminder }}</label>
+
+
+      <p>{{ page.settings.resource_intensive_text | default: default.settings.resource_intensive_text }}:</p>
+      <input type="checkbox" name="vad_run" id="vad_run">
+      <label for="vad_run">{{ page.settings.vad_run | default: default.settings.vad_run }}</label>
+
+      <input type="checkbox" name="recording_geolocation_reminder" id="recording_geolocation_reminder">
+      <label for="recording_geolocation_reminder">{{ page.settings.recording_geolocation_reminder | default: default.settings.recording_geolocation_reminder }}</label>
+
+      <input type="checkbox" name="audio_meter" id="audio_meter">
+      <label for="audio_meter">{{ page.settings.audio_meter | default: default.settings.audio_meter }}</label>
+
+      <input type="checkbox" name="waveform_display" id="waveform_display">
+      <label for="waveform_display">{{ page.settings.waveform_display | default: default.settings.waveform_display }}</label>
+
+
+      <p>{{ page.settings.system_information_text | default: default.settings.system_information_text }}:</p>
       <input type="checkbox" name="ua_string" id="ua_string">
       <label for="ua_string">{{ page.settings.ua_string | default: default.settings.ua_string }}</label>
 
       <input type="checkbox" name="debug" id="debug">
-      <label for="debug">{{ page.settings.debug | default: default.settings.debug }}</label>
+      <label for="debug">{{ page.settings.debug_text | default: default.settings.debug_text }}</label>
 
-      <input type="checkbox" name="display_record_info" id="display_record_info">
-      <label for="display_record_info">{{ page.settings.display_record_info | default: default.settings.display_record_info }}</label>
 
       <p>{{ page.settings.other_heading | default: default.settings.other_heading }}:</p>
-
-      <input type="checkbox" name="vad_run" id="vad_run">
-      <label for="vad_run">{{ page.settings.vad_run | default: default.settings.vad_run }}</label>
-
-      <input type="checkbox" name="recording_location_reminder" id="recording_location_reminder">
-      <label for="recording_location_reminder">{{ page.settings.recording_location_reminder | default: default.settings.recording_location_reminder }}</label>
-
       {{ page.license.label | default: default.license.label }}
       <select type="text" id="license">
         <option selected value="{{ page.license.selection_default.value | default: default.license.selection_default.value}}">

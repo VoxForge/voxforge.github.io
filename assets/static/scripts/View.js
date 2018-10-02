@@ -430,69 +430,15 @@ View.prototype.init = function () {
 * see: http://jq4you.blogspot.com/2013/04/jquery-attr-vs-prop-difference.html
 * Notes: an element’s property can be changed, because it is in the DOM and dynamic.
 * But element’s attribute is in HTML text and can not be changed! comes in name=”value” pairs
+*
+* if adding new setting element, see settings.html for layout;
+* default.yaml for text, app.js for defauls
 */
 View.prototype.initSettingsPopup = function (message) {
     var self = this;
-
-    // debug
-    if ( localStorage.getItem("debug") === 'true') { // string
-      $('#debug').prop('checked', true);  // boolean
-    } else {
-      $('#debug').prop('checked', false);
-    }
-    $('#debug').change(function () {
-      if (this.checked) {
-        localStorage.setItem("debug", 'true');
-      } else {
-        localStorage.setItem("debug", 'false');
-      }
-    });
-
-    // ua_string
-    if ( localStorage.getItem("ua_string") === 'true') {
-      $('#ua_string').prop('checked', true); 
-    } else {
-      $('#ua_string').prop('checked', false);
-    }
-    $('#ua_string').change(function () { 
-      if (this.checked) {
-        localStorage.setItem("ua_string", 'true');
-      } else {
-        localStorage.setItem("ua_string", 'false');
-      }
-    });
-
-    // VAD
-    if ( localStorage.getItem("vad_run") === 'true') {
-      $('#vad_run').prop('checked', true); 
-    } else {
-      $('#vad_run').prop('checked', false);
-    }
-    $('#vad_run').change(function () { 
-      if (this.checked) {
-        localStorage.setItem("vad_run", 'true');
-      } else {
-        localStorage.setItem("vad_run", 'false');
-      }
-    });    
-
-    // Recording Information
-    if ( localStorage.getItem("display_record_info") === 'true') {
-      $('#display_record_info').prop('checked', true); 
-      $('#recording_information_button_display').show();
-    } else {
-      $('#display_record_info').prop('checked', false);
-      $('#recording_information_button_display').hide();
-    }
-
-    if ( localStorage.getItem("recording_location_reminder") === 'true') {
-      $('#recording_location_reminder').prop('checked', true); 
-    } else {
-      $('#recording_location_reminder').prop('checked', false);
-    }
-
+    
+    // clear certain field entries when user clicks display_record_info off
     function clearRecordingLocationInfo() {
-        // clear certain field entries when user clicks display_record_info off
         $('#recording_location').val($("select option:first").val());
         $('#recording_location').change();
         $('#recording_location_other').val("");
@@ -510,11 +456,16 @@ View.prototype.initSettingsPopup = function (message) {
         $('#noise_type_other').change();
     }
 
+    // Recording Information
     $('#display_record_info').change(function () {
         // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
-        $('#recording_location_reminder').prop( "disabled", ! this.checked );
-        $('#recording_location_reminder').prop('checked', this.checked).checkboxradio("refresh");
-        $('#recording_location_reminder').change(); // tirggers change function below
+        $('#recording_geolocation_reminder').prop( "disabled", ! this.checked );
+        $('#recording_geolocation_reminder').prop('checked', this.checked).checkboxradio("refresh");
+        $('#recording_geolocation_reminder').change(); // triggers change function
+
+        $('#recording_time_reminder').prop( "disabled", ! this.checked );
+        $('#recording_time_reminder').prop('checked', this.checked).checkboxradio("refresh");
+        $('#recording_time_reminder').change(); // triggers change function
 
         if (this.checked) {
             localStorage.setItem("display_record_info", 'true');
@@ -529,16 +480,129 @@ View.prototype.initSettingsPopup = function (message) {
             clearRecordingLocationInfo();
         }
     });
-
-    $('#recording_location_reminder').change(function () {
-        $('#recording_location_reminder').prop('checked', this.checked).checkboxradio("refresh");
-        
+    // time elapsed Recording Information check reminder
+    if ( localStorage.getItem("recording_time_reminder") === 'true') {
+      $('#recording_time_reminder').prop('checked', true); 
+    } else {
+      $('#recording_time_reminder').prop('checked', false);
+    }    
+    $('#recording_time_reminder').change(function () {
+        // if checkbox is being set based on contents of another chekcbox, then
+        // need to use checkboxradio("refresh") so that it will display correctly
+        // in jQuery Mobile
+        $('#recording_time_reminder').checkboxradio("refresh");
         if (this.checked) {
-          localStorage.setItem("recording_location_reminder", 'true');
+          localStorage.setItem("recording_time_reminder", 'true');
         } else {
-          localStorage.setItem("recording_location_reminder", 'false');
+          localStorage.setItem("recording_time_reminder", 'false');
         }
     });
+
+      
+    // Resource Intensive Functions
+    // VAD
+    if ( localStorage.getItem("vad_run") === 'true') {
+      $('#vad_run').prop('checked', true); 
+    } else {
+      $('#vad_run').prop('checked', false);
+    }
+    $('#vad_run').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("vad_run", 'true');
+      } else {
+        localStorage.setItem("vad_run", 'false');
+      }
+    });    
+
+    // geolocation based Recording Information check reminder
+    if ( localStorage.getItem("recording_geolocation_reminder") === 'true') {
+      $('#recording_geolocation_reminder').prop('checked', true); 
+    } else {
+      $('#recording_geolocation_reminder').prop('checked', false);
+    }    
+    $('#recording_geolocation_reminder').change(function () {
+        // if checkbox is being set based on contents of another chekcbox, then
+        // need to use checkboxradio("refresh") so that it will display correctly
+        // in jQuery Mobile
+        $('#recording_geolocation_reminder').checkboxradio("refresh"); 
+        if (this.checked) {
+          localStorage.setItem("recording_geolocation_reminder", 'true');
+        } else {
+          localStorage.setItem("recording_geolocation_reminder", 'false');
+        }
+    });
+
+
+    // Audio Meter - realtime
+    if ( localStorage.getItem("audio_meter") === 'true') {
+      $('#audio_meter').prop('checked', true); 
+    } else {
+      $('#audio_meter').prop('checked', false);
+    }
+    $('#audio_meter').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("audio_meter", 'true');
+      } else {
+        localStorage.setItem("audio_meter", 'false');
+      }
+    });   
+
+    // Waveform display for each prompt - generated in thread
+    if ( localStorage.getItem("waveform_display") === 'true') {
+      $('#waveform_display').prop('checked', true); 
+    } else {
+      $('#waveform_display').prop('checked', false);
+    }
+    $('#waveform_display').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("waveform_display", 'true');
+      } else {
+        localStorage.setItem("waveform_display", 'false');
+      }
+    });   
+
+
+    // System Information
+    // ua_string
+    if ( localStorage.getItem("ua_string") === 'true') {
+      $('#ua_string').prop('checked', true); 
+    } else {
+      $('#ua_string').prop('checked', false);
+    }
+    $('#ua_string').change(function () { 
+      if (this.checked) {
+        localStorage.setItem("ua_string", 'true');
+      } else {
+        localStorage.setItem("ua_string", 'false');
+      }
+    });
+
+    // debug
+    if ( localStorage.getItem("debug") === 'true') { // string
+      $('#debug').prop('checked', true);  // boolean
+    } else {
+      $('#debug').prop('checked', false);
+    }
+    $('#debug').change(function () {
+      if (this.checked) {
+        localStorage.setItem("debug", 'true');
+      } else {
+        localStorage.setItem("debug", 'false');
+      }
+    });
+
+    // Recording Information
+    if ( localStorage.getItem("display_record_info") === 'true') {
+      $('#display_record_info').prop('checked', true); 
+      $('#recording_information_button_display').show();
+    } else {
+      $('#display_record_info').prop('checked', false);
+      $('#recording_information_button_display').hide();
+    }
+
+
+
+
 }
 
 /**
@@ -940,16 +1004,24 @@ View.prototype.enableDeleteButtons = function () {
 View.prototype.enableVoiceActivityDetection = function () {
     $('#vad_run').prop('checked', true); 
 }
-      
+
 /**
 * 
-
-the following do not work:
-$('.audio_player').hide(); 
-document.querySelector('.audio_player').hide();
-$('.audio_player').prop('hidden', true);
-
 */
+View.prototype.enableAudioMeterDisplay = function () {
+    $('#audio_meter').prop('checked', true); 
+}
+
+/**
+* 
+*/
+View.prototype.enableWaveformDisplay = function () {
+    $('#waveform_display').prop('checked', true); 
+}
+    
+/*
+ *
+ */
 View.prototype.hideAudioPlayer = function () {
     //only hides the first instance of audio_player, even though it is a class
     //document.querySelector('.audio_player').controls = false;
@@ -1017,8 +1089,8 @@ View.prototype.debugChecked = function () {
 * TODO use chrome geolocation api... should be ok since not saving info
 * and only using to check for changes in location
 */
-View.prototype.checkRelocationReminder = function () {
-    return $('#recording_location_reminder').is(":checked");
+View.prototype.checkGeolocationReminder = function () {
+    return $('#recording_geolocation_reminder').is(":checked");
 }
 
 /**

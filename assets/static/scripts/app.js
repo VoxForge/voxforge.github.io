@@ -64,27 +64,41 @@ var view;  // needs to be global so can be accessible to index.html
     }
 
     // ### set localstorage defaults ###########################################
+    // TODO should this go in View class as part of constructor?
     
+    // recording information
+    if ( ! localStorage.getItem("recording_time_reminder") ) {
+      localStorage.setItem("recording_time_reminder", 'false');
+      $('#recording_time_reminder').prop( "disabled", true ); // disabled by default
+    } 
+
+    // resource intensive functions
     if ( ! localStorage.getItem("vad_run") ) {
       localStorage.setItem("vad_run", 'true');
     } 
+    if ( ! localStorage.getItem("recording_geolocation_reminder") ) {
+      localStorage.setItem("recording_geolocation_reminder", 'false');
+      $('#recording_geolocation_reminder').prop( "disabled", true ); // disabled by default
+    } 
+    if ( ! localStorage.getItem("audio_meter") ) {
+      localStorage.setItem("audio_meter", 'true');
+    } 
+    if ( ! localStorage.getItem("waveform_display") ) {
+      localStorage.setItem("waveform_display", 'true');
+    }
 
+
+    // system information defaults
     if ( ! localStorage.getItem("debug") ) {
       localStorage.setItem("debug", 'true');
     } 
-
     if ( ! localStorage.getItem("ua_string") ) {
       localStorage.setItem("ua_string", 'true');
     }
-
     if ( ! localStorage.getItem("recording_information_button_display") ) {
       localStorage.setItem("recording_information_button_display", 'false');
     }
 
-    if ( ! localStorage.getItem("recording_location_reminder") ) {
-      localStorage.setItem("recording_location_reminder", 'false');
-      $('#recording_location_reminder').prop( "disabled", true );
-    }    
     // #############################################################################
     const appversion = "0.2";
 

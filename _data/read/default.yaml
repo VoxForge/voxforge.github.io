@@ -353,18 +353,23 @@ alert_message:
     if necessary, update your Location and Noise Levels.
     
 settings:
-  title: Settings
-  include_heading: Include in Submission
-  ua_string: User Agent String
-  debug: System Information (used for debugging)
-  other_heading: Other
+  title: Settings (click box to enable)
   display_record_info: >
     Recording Information (needs to be updated each time location or
     noise characteristics change)
-  vad_run: VAD enabled (Voice Activity Detection)
-  recording_location_reminder: Recording Location Change reminder (uses geolocation; or time since last submission)
+  resource_intensive_text: Resource Intensive Functions
+  vad_run: Voice Activity Detection (VAD)
+  recording_geolocation_reminder: Check Recording Information reminder using geolocation.
+  recording_time_reminder: Check Recording Information reminder using time since last submission.
+  audio_meter: Audio Meter
+  waveform_display: Waveform Display for each recording  
   saved_submissions: Saved Submissions
   uploaded_submissions: Uploaded Submissions
+  system_information_text: System Information included in submission
+  ua_string: User Agent String
+  debug_text: Browser Audio Settings  
+  recording_information_text: Recording Information - settings
+  other_heading: General  
 
 # TODO no longer used
 ua_string:
