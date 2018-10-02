@@ -248,9 +248,11 @@ instructions:
   label: Instructions
   lines:
     - 1. Click <b>Record</b> to start, saying only the words that appear in the box below.
-    - 2. Click <b>Stop</b> when completed.
+    - 2. When done speaking, <b>wait</b> a moment, then click <b>Stop</b>.
+    - 3. <b>Review</b> any recordings with warnings.    
   lastline: >
-    3. When done, click <b>Upload</b> to send your recordings to VoxForge server.
+    4. When all prompts are completed, click <b>Upload</b> to either upload to server or
+    save to browser storage for later uploading.
 
 
 # TODO not supporting Edge yet... Edge needs to support FormData
