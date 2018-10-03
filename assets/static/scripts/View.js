@@ -535,7 +535,7 @@ View.prototype.initSettingsPopup = function (message) {
     setupCheckbox("recording_time_reminder", false);
     
     // Resource Intensive functions
-    setupCheckbox("audio_meter", true); // realtime
+    setupCheckbox("audio_visualizer", true); // realtime
     setupCheckbox("waveform_display", true); //Waveform display for each prompt - generated in thread
     setupCheckbox("vad_run", true);
     setupCheckbox("recording_geolocation_reminder", false);    
@@ -801,14 +801,31 @@ View.prototype.displayAudioPlayer = function (obj)
       return waveformElement;
     }
 
+    /*
+     *
+    */
+    function createAudioPlayer() {
+        var audioPlayer = document.createElement('audio');
+        audioPlayer.classList.add('audio_player');
+        audioPlayer.setAttribute('controls', '');
+        audioPlayer.controls = true;
+        audioPlayer.src = audioURL;
+        console.log(prompt_id + " recorder stopped; audio: " + audioURL);
+
+        return audioPlayer;
+    }
+    
     // #########################################################################
     return new Promise(function (resolve, reject) {
 
       clipContainer.appendChild(createClipLabel());
       clipContainer.appendChild(createDeleteButton());
-      if (self.displayWaveform) {
-        clipContainer.appendChild(createWaveformElement());
-      }
+      //if (self.displayWaveform) {
+      if ( self.waveformDisplayChecked() ) {        
+          clipContainer.appendChild(createWaveformElement());
+      } //else {
+      //    clipContainer.appendChild(createAudioPlayer());
+      //}
       clipContainer.appendChild(createAudioContainer());
 
       self.soundClips.insertBefore(clipContainer, self.soundClips.children[0]);
@@ -816,7 +833,8 @@ View.prototype.displayAudioPlayer = function (obj)
       // might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
       // add waveform to waveformElement
       // see http://wavesurfer-js.org/docs/
-      if (self.displayWaveform) {
+      //if (self.displayWaveform) {
+      if ( self.waveformDisplayChecked() ) {        
         wavesurfer[self.clip_id] = WaveSurfer.create({
           container: '#' + waveformdisplay_id,
           scrollParent: true,
@@ -946,20 +964,7 @@ View.prototype.enableVoiceActivityDetection = function () {
     $('#vad_run').prop('checked', true); 
 }
 
-/**
-* 
-*/
-View.prototype.enableAudioMeterDisplay = function () {
-    $('#audio_meter').prop('checked', true); 
-}
-
-/**
-* 
-*/
-View.prototype.enableWaveformDisplay = function () {
-    $('#waveform_display').prop('checked', true); 
-}
-    
+   
 /*
  *
  */
@@ -1021,6 +1026,29 @@ View.prototype.clearSoundClips = function () {
 */
 View.prototype.debugChecked = function () {
     return $('#debug').is(":checked");
+}
+
+/**
+* 
+*/
+View.prototype.audioVisualizerChecked = function () {
+    return $('#audio_visualizer').is(":checked");  
+}
+
+/**
+*  removes all canvas elements on page
+*
+* see: https://stackoverflow.com/questions/15598360/how-to-completely-remove-the-canvas-element-with-jquery-javascript
+*/
+View.prototype.removaAllCanvasElements = function () {
+    $('canvas').remove();  
+}
+
+/**
+* 
+*/
+View.prototype.waveformDisplayChecked = function () {
+    return $('#waveform_display').is(":checked");  
 }
 
 /**

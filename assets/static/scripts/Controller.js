@@ -69,8 +69,11 @@ Controller.prototype.start = function () {
         // silence...
         self.view.displayPrompt(self.prompts.getPromptId(), self.prompts.getPromptSentence());
 
-        if (self.view.displayVisualizer) {
+        // TODO needs a restart to diable this?
+        if ( self.view.audioVisualizerChecked() ) {
           visualize(view, self.audio.analyser);
+        } else {
+          self.view.removaAllCanvasElements();
         }
 
         self.rec_timeout_obj = setTimeout(function(){
