@@ -46,8 +46,8 @@ function View (parms,
     // where audio files will be displayed in HTML
     this.soundClips = document.querySelector('.sound-clips');
     // where audio visualiser (vue meter) will be displayed in HTML
-    this.canvas = document.querySelector('.visualizer');
-
+    this.visualizer = document.querySelector('.visualizer');
+    
     // unique id for wavesurfer objects in DOM
     this.clip_id = 0;
 
@@ -490,32 +490,37 @@ View.prototype.initSettingsPopup = function (message) {
         });
     }
     
-   /*
-    * Set up defaults for checkbox and generate an event so that any user changes
-    * are saved to localstorage
+    /*
+     * Set up defaults for checkbox and generate an event so that any user changes
+     * are saved to localstorage
     */
-    function setupCheckbox(element, default_bool) {
+    function setupCheckbox(element, default_bool, func_if_true, func_if_false) {
       var $element = $('#' + element);
-
-      var default_string;
-      if (default_bool) {
-          default_string = 'true';
-      } else {
-          default_string = 'false';
-      }
       
       if ( ! localStorage.getItem(element) ) {
+          var default_string;
+          if (default_bool) {
+              default_string = 'true';
+              if (func_if_true) { func_if_true() }              
+          } else {
+              default_string = 'false';
+              if (func_if_false) { func_if_false() }                
+          }        
           // set defaults
           localStorage.setItem(element, default_string); 
           $element.prop('checked', default_bool);
-          $element.prop( "disabled", ! default_bool );        
+          $element.prop( "disabled", ! default_bool );
+               
       } else {    
           if ( localStorage.getItem(element) === 'true') {
-             $element.prop('checked', true); 
+             $element.prop('checked', true);
+             if (func_if_true) { func_if_true() }
           } else {
              $element.prop('checked', false);
+             if (func_if_false) { func_if_false() }             
           }
       }
+      
       $element.change(function () {
         // if checkbox is being set based on contents of another chekcbox, then
         // need to use checkboxradio("refresh") so that it will display correctly
@@ -524,21 +529,25 @@ View.prototype.initSettingsPopup = function (message) {
                 
         if (this.checked) {
           localStorage.setItem(element, 'true');
+          if (func_if_true) { func_if_true() }          
         } else {
           localStorage.setItem(element, 'false');
+          if (func_if_false) { func_if_false() }             
         }
       });
     }
 
     // Recording Information
     recording_information_button_display();
-    setupCheckbox("recording_time_reminder", false);
+    setupCheckbox("recording_time_reminder", false, null, null);
     
     // Resource Intensive functions
-    setupCheckbox("audio_visualizer", true); // realtime
-    setupCheckbox("waveform_display", true); //Waveform display for each prompt - generated in thread
-    setupCheckbox("vad_run", true);
-    setupCheckbox("recording_geolocation_reminder", false);    
+    setupCheckbox("audio_visualizer", true, null, null); // realtime
+    
+    setupCheckbox("waveform_display", true, this.enableVisualizer.bind(this), this.clearVisualizer.bind(this)); //Waveform display for each prompt - generated in thread
+
+    setupCheckbox("vad_run", true, null, null);
+    setupCheckbox("recording_geolocation_reminder", false, null, null);    
 
     // System Information    
     setupCheckbox("debug", true);
@@ -1036,12 +1045,37 @@ View.prototype.audioVisualizerChecked = function () {
 }
 
 /**
-*  removes all canvas elements on page
-*
-* see: https://stackoverflow.com/questions/15598360/how-to-completely-remove-the-canvas-element-with-jquery-javascript
+*     // container oholding visualizer, and buttons
+
 */
-View.prototype.removaAllCanvasElements = function () {
-    $('canvas').remove();  
+View.prototype.visualize = function (analyser) {
+    if (this.audioVisualizerChecked) {
+        visualize(this.visualizer, analyser, false);
+    }
+}
+
+/**
+*
+*/
+View.prototype.enableVisualizer = function () {
+    var vu_meter = document.querySelector('#vu-meter');
+      
+    this.visualizer = document.createElement('canvas');
+    this.visualizer.classList.add('visualizer');
+
+    vu_meter.appendChild(this.visualizer);        
+}
+
+/**
+* see: https://dzone.com/articles/how-you-clear-your-html5
+*/
+View.prototype.clearVisualizer = function () {
+    if ( this.visualizer ) {
+        this.visualizer.width = this.visualizer.width;
+         
+        this.visualizer.parentNode.removeChild(this.visualizer); // remove from DOM
+        this.visualizer = null; // remove from javascript
+    }
 }
 
 /**
