@@ -54,7 +54,6 @@ function Parms() {
     
     this.view = {
       displayWaveform: true,
-      displayVisualizer: true,
     }
 
     this.uploader = {

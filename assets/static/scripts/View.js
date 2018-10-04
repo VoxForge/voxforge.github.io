@@ -32,7 +32,6 @@ function View (parms,
     this.profile = profile;
     this.location = location;
 
-    this.displayVisualizer = parms.displayVisualizer;
     this.displayWaveform = parms.displayWaveform;
 
     // buttons
