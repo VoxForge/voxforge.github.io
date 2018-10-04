@@ -434,82 +434,6 @@ View.prototype.init = function () {
 View.prototype.initSettingsPopup = function (message) {
     var self = this;
 
-    // clear certain field entries when user clicks display_record_info off
-    function clearRecordingLocationInfo() {
-        $('#recording_location').val($("select option:first").val()).change();
-        $('#recording_location_other').val("").change();
-        $('#background_noise').val($("select option:first").val()).change();
-        $('#noise_volume').val($("select option:first").val()).change();
-        $('#noise_type').val($("select option:first").val()).change();
-        $('#noise_type_other').val("").change();
-        
-        setProperties(false);
-    }
-
-    // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
-    function setProperties(checked) {
-      for (let id of ['#recording_geolocation_reminder', '#recording_time_reminder']) {
-          $(id).prop( "disabled", ! checked );
-          $(id).prop('checked', checked).checkboxradio("refresh");
-          $(id).change(); // triggers change function
-      }
-    }
-    function setPropertiesTrue() { setProperties(true) };
-    
-    function display_record_info(checkbox_element,
-                                 dependent_element,
-                                 default_bool,
-                                 func_if_true,
-                                 func_if_false)
-    {
-        var $checkbox_element = $('#' +checkbox_element);
-        var $dependent_element = $('#' + dependent_element);
-              
-        if ( ! localStorage.getItem(dependent_element) ) {
-          var default_string;
-          if (default_bool) { default_string = 'true' }
-          else { default_string = 'false' }
-          
-          localStorage.setItem(dependent_element, default_string);
-          $checkbox_element.prop('checked', default_bool);
-          $dependent_element.hide();      
-        } else {    
-          if ( localStorage.getItem(checkbox_element) === 'true') {
-            $checkbox_element.prop('checked', true); 
-            $dependent_element.show();
-          } else {
-            $checkbox_element.prop('checked', false);
-            $dependent_element.hide();
-          }
-        }
-        
-        $checkbox_element.change(function () {
-            //setProperties('#recording_geolocation_reminder', this.checked);
-            //setProperties('#recording_time_reminder', this.checked);
-
-            if (this.checked) {
-                localStorage.setItem(checkbox_element, 'true');
-
-                $dependent_element.show();
-                localStorage.setItem(dependent_element, 'true');
-                if (func_if_true) { func_if_true() }   
-            } else {
-                localStorage.setItem(checkbox_element, 'false');
-                
-                $dependent_element.hide();
-                localStorage.setItem(dependent_element, 'false');
-                //clearRecordingLocationInfo();
-                if (func_if_false) { func_if_false() }  
-            }
-        });
-    }
-
-    display_record_info("display_record_info",
-                        "recording_information_button_display",
-                        false,
-                        setPropertiesTrue,
-                        clearRecordingLocationInfo);
-    
     /*
      * Set up defaults for checkbox and generate an event so that any user changes
      * are saved to localstorage
@@ -541,20 +465,21 @@ View.prototype.initSettingsPopup = function (message) {
       }
 
       $element.change( function() {
-            // if checkbox is being set based on contents of another checkbox, then
-            // need to use checkboxradio("refresh") so that it will display correctly
-            // in jQuery Mobile
-            $element.checkboxradio('refresh');
-                    
-            if (this.checked) {
-              localStorage.setItem(element, 'true');
-              if (func_if_true) { func_if_true() }          
-            } else {
-              localStorage.setItem(element, 'false');
-              if (func_if_false) { func_if_false() }             
-            }
-        });
-      }
+          // if checkbox is being set based on contents of another checkbox, then
+          // need to use checkboxradio('refresh') so that it will display correctly
+          // in jQuery Mobile
+          // see: https://demos.jquerymobile.com/1.2.0/docs/forms/checkboxes/methods.html
+          $element.checkboxradio('refresh');
+                  
+          if (this.checked) {
+            localStorage.setItem(element, 'true');
+            if (func_if_true) { func_if_true() }          
+          } else {
+            localStorage.setItem(element, 'false');
+            if (func_if_false) { func_if_false() }             
+          }
+      });
+    }
 
     /**
     * enable use of canvas visualizer
@@ -596,6 +521,88 @@ View.prototype.initSettingsPopup = function (message) {
     // System Information    
     setupCheckbox("debug", true, null, null);
     setupCheckbox("ua_string", true, null, null);
+
+
+
+    // clear certain field entries when user clicks display_record_info off
+    function clearRecordingLocationInfo() {
+        $('#recording_location').val($("select option:first").val()).change();
+        $('#recording_location_other').val("").change();
+        $('#background_noise').val($("select option:first").val()).change();
+        $('#noise_volume').val($("select option:first").val()).change();
+        $('#noise_type').val($("select option:first").val()).change();
+        $('#noise_type_other').val("").change();
+        
+        setProperties(false);
+    }
+
+    // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
+    function setProperties(checked) {
+      for (let id of ['#recording_geolocation_reminder', // these must be declared before call to set Properties
+                      '#recording_time_reminder'])
+      {
+          $(id).prop( "disabled", ! checked );
+          $(id).prop('checked', checked).checkboxradio("refresh");
+          // TODO does change work with jQuery Mobile?
+          $(id).change(); // triggers change function 
+      }
+    }
+    function setPropertiesTrue() { setProperties(true) };
+    
+    function setupDisplayRecordInfo(checkbox_element,
+                                    dependent_element,
+                                    default_bool,
+                                    func_if_true,
+                                    func_if_false)
+    {
+        var $checkbox_element = $('#' +checkbox_element);
+        var $dependent_element = $('#' + dependent_element);
+              
+        if ( ! localStorage.getItem(dependent_element) ) {
+          var default_string;
+          if (default_bool) {
+              default_string = 'true';
+          } else {
+              default_string = 'false';
+          }
+          localStorage.setItem(dependent_element, default_string);
+          $dependent_element.hide();
+
+          $checkbox_element.prop('checked', default_bool).change();
+        } else {    
+          if ( localStorage.getItem(checkbox_element) === 'true') {
+            $dependent_element.show();
+            $checkbox_element.prop('checked', true);
+          } else {
+            $dependent_element.hide();            
+            $checkbox_element.prop('checked', false);
+          }
+        }
+        
+        $checkbox_element.change(function () {
+            if (this.checked) {
+                localStorage.setItem(checkbox_element, 'true');
+
+                $dependent_element.show();
+                localStorage.setItem(dependent_element, 'true');
+                if (func_if_true) { func_if_true() }   
+            } else {
+                localStorage.setItem(checkbox_element, 'false');
+                
+                $dependent_element.hide();
+                localStorage.setItem(dependent_element, 'false');
+                if (func_if_false) { func_if_false() }  
+            }
+        });
+    }
+
+    setupDisplayRecordInfo("display_record_info",
+                           "recording_information_button_display",
+                           false,
+                           setPropertiesTrue,
+                           clearRecordingLocationInfo);
+    
+    
 }
 
 /**
