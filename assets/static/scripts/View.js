@@ -433,9 +433,7 @@ View.prototype.init = function () {
 */
 View.prototype.initSettingsPopup = function (message) {
     var self = this;
-    
-    function recording_information_button_display(){
-      
+
        // clear certain field entries when user clicks display_record_info off
         function clearRecordingLocationInfo() {
             $('#recording_location').val($("select option:first").val()).change();
@@ -452,18 +450,21 @@ View.prototype.initSettingsPopup = function (message) {
             $(id).prop('checked', checked).checkboxradio("refresh");
             $(id).change(); // triggers change function
         }
-              
-        if ( ! localStorage.getItem("recording_information_button_display") ) {
-          localStorage.setItem("recording_information_button_display", 'false');
+    
+    function recording_information_button_display(element){
+        var $element = $('#' + element);
+      
+        if ( ! localStorage.getItem(element) ) {
+          localStorage.setItem(element, 'false');
           $('#display_record_info').prop('checked', false);
-          $('#recording_information_button_display').hide();      
+          $element.hide();      
         } else {    
           if ( localStorage.getItem("display_record_info") === 'true') {
             $('#display_record_info').prop('checked', true); 
-            $('#recording_information_button_display').show();
+            $element.show();
           } else {
             $('#display_record_info').prop('checked', false);
-            $('#recording_information_button_display').hide();
+            $element.hide();
           }
         }
         
@@ -474,17 +475,21 @@ View.prototype.initSettingsPopup = function (message) {
             if (this.checked) {
                 localStorage.setItem("display_record_info", 'true');
 
-                $("#recording_information_button_display").show();
-                localStorage.setItem("recording_information_button_display", 'true');
+                $element.show();
+                localStorage.setItem(element, 'true');
             } else {
                 localStorage.setItem("display_record_info", 'false');
                 
-                $("#recording_information_button_display").hide();
-                localStorage.setItem("recording_information_button_display", 'false');
+                $element.hide();
+                localStorage.setItem(element, 'false');
                 clearRecordingLocationInfo();
             }
         });
     }
+    
+    recording_information_button_display("recording_information_button_display", false, null, null);
+
+
     
     /*
      * Set up defaults for checkbox and generate an event so that any user changes
@@ -557,7 +562,8 @@ View.prototype.initSettingsPopup = function (message) {
     }
 
     // Recording Information
-    recording_information_button_display();
+
+
     setupCheckbox("recording_time_reminder", false, null, null);
 
     // Resource Intensive functions
