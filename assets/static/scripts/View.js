@@ -882,9 +882,9 @@ View.prototype.displayAudioPlayer = function (obj)
       //if (self.displayWaveform) {
       if ( self.waveformDisplayChecked() ) {        
           clipContainer.appendChild(createWaveformElement());
-      } //else {
-      //    clipContainer.appendChild(createAudioPlayer());
-      //}
+      } else {
+          clipContainer.appendChild(createAudioPlayer());
+      }
       clipContainer.appendChild(createAudioContainer());
 
       self.soundClips.insertBefore(clipContainer, self.soundClips.children[0]);
@@ -905,6 +905,8 @@ View.prototype.displayAudioPlayer = function (obj)
         wavesurfer[self.clip_id].on('ready', function () {
           resolve(obj); // return value on completion
         });
+      } else {
+          resolve(obj); // return value on completion
       }
       self.clip_id++;
       
