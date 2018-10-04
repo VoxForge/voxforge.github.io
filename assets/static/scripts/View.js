@@ -434,62 +434,81 @@ View.prototype.init = function () {
 View.prototype.initSettingsPopup = function (message) {
     var self = this;
 
-       // clear certain field entries when user clicks display_record_info off
-        function clearRecordingLocationInfo() {
-            $('#recording_location').val($("select option:first").val()).change();
-            $('#recording_location_other').val("").change();
-            $('#background_noise').val($("select option:first").val()).change();
-            $('#noise_volume').val($("select option:first").val()).change();
-            $('#noise_type').val($("select option:first").val()).change();
-            $('#noise_type_other').val("").change();
-        }
+    // clear certain field entries when user clicks display_record_info off
+    function clearRecordingLocationInfo() {
+        $('#recording_location').val($("select option:first").val()).change();
+        $('#recording_location_other').val("").change();
+        $('#background_noise').val($("select option:first").val()).change();
+        $('#noise_volume').val($("select option:first").val()).change();
+        $('#noise_type').val($("select option:first").val()).change();
+        $('#noise_type_other').val("").change();
+        
+        setProperties(false);
+    }
 
-        // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
-        function setProperties(id, checked) {
-            $(id).prop( "disabled", ! checked );
-            $(id).prop('checked', checked).checkboxradio("refresh");
-            $(id).change(); // triggers change function
-        }
+    // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
+    function setProperties(checked) {
+      for (let id of ['#recording_geolocation_reminder', '#recording_time_reminder']) {
+          $(id).prop( "disabled", ! checked );
+          $(id).prop('checked', checked).checkboxradio("refresh");
+          $(id).change(); // triggers change function
+      }
+    }
+    function setPropertiesTrue() { setProperties(true) };
     
-    function recording_information_button_display(element){
-        var $element = $('#' + element);
-      
-        if ( ! localStorage.getItem(element) ) {
-          localStorage.setItem(element, 'false');
-          $('#display_record_info').prop('checked', false);
-          $element.hide();      
+    function display_record_info(checkbox_element,
+                                 dependent_element,
+                                 default_bool,
+                                 func_if_true,
+                                 func_if_false)
+    {
+        var $checkbox_element = $('#' +checkbox_element);
+        var $dependent_element = $('#' + dependent_element);
+              
+        if ( ! localStorage.getItem(dependent_element) ) {
+          var default_string;
+          if (default_bool) { default_string = 'true' }
+          else { default_string = 'false' }
+          
+          localStorage.setItem(dependent_element, default_string);
+          $checkbox_element.prop('checked', default_bool);
+          $dependent_element.hide();      
         } else {    
-          if ( localStorage.getItem("display_record_info") === 'true') {
-            $('#display_record_info').prop('checked', true); 
-            $element.show();
+          if ( localStorage.getItem(checkbox_element) === 'true') {
+            $checkbox_element.prop('checked', true); 
+            $dependent_element.show();
           } else {
-            $('#display_record_info').prop('checked', false);
-            $element.hide();
+            $checkbox_element.prop('checked', false);
+            $dependent_element.hide();
           }
         }
         
-        $('#display_record_info').change(function () {
-            setProperties('#recording_geolocation_reminder', this.checked);
-            setProperties('#recording_time_reminder', this.checked);
-            
-            if (this.checked) {
-                localStorage.setItem("display_record_info", 'true');
+        $checkbox_element.change(function () {
+            //setProperties('#recording_geolocation_reminder', this.checked);
+            //setProperties('#recording_time_reminder', this.checked);
 
-                $element.show();
-                localStorage.setItem(element, 'true');
+            if (this.checked) {
+                localStorage.setItem(checkbox_element, 'true');
+
+                $dependent_element.show();
+                localStorage.setItem(dependent_element, 'true');
+                if (func_if_true) { func_if_true() }   
             } else {
-                localStorage.setItem("display_record_info", 'false');
+                localStorage.setItem(checkbox_element, 'false');
                 
-                $element.hide();
-                localStorage.setItem(element, 'false');
-                clearRecordingLocationInfo();
+                $dependent_element.hide();
+                localStorage.setItem(dependent_element, 'false');
+                //clearRecordingLocationInfo();
+                if (func_if_false) { func_if_false() }  
             }
         });
     }
-    
-    recording_information_button_display("recording_information_button_display", false, null, null);
 
-
+    display_record_info("display_record_info",
+                        "recording_information_button_display",
+                        false,
+                        setPropertiesTrue,
+                        clearRecordingLocationInfo);
     
     /*
      * Set up defaults for checkbox and generate an event so that any user changes
