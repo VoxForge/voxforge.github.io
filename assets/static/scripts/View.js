@@ -45,8 +45,6 @@ function View (parms,
 
     // where audio files will be displayed in HTML
     this.soundClips = document.querySelector('.sound-clips');
-    // where audio visualiser (vue meter) will be displayed in HTML
-    this.visualizer = document.querySelector('.visualizer');
     
     // unique id for wavesurfer objects in DOM
     this.clip_id = 0;
@@ -395,7 +393,6 @@ View.prototype.init = function () {
     }
     /**
     * updates the current number of prompts that the user selected from dropdown
-
     */
     //$('#max_num_prompts').click(function () { 
     $('#max_num_prompts').change(function () { 
@@ -455,7 +452,6 @@ View.prototype.initSettingsPopup = function (message) {
             $(id).prop('checked', checked).checkboxradio("refresh");
             $(id).change(); // triggers change function
         }
-
               
         if ( ! localStorage.getItem("recording_information_button_display") ) {
           localStorage.setItem("recording_information_button_display", 'false');
@@ -509,8 +505,7 @@ View.prototype.initSettingsPopup = function (message) {
           // set defaults
           localStorage.setItem(element, default_string); 
           $element.prop('checked', default_bool);
-          $element.prop( "disabled", ! default_bool );
-               
+          $element.prop( 'disabled', ! default_bool );
       } else {    
           if ( localStorage.getItem(element) === 'true') {
              $element.prop('checked', true);
@@ -520,38 +515,62 @@ View.prototype.initSettingsPopup = function (message) {
              if (func_if_false) { func_if_false() }             
           }
       }
-      
-      $element.change(function () {
-        // if checkbox is being set based on contents of another chekcbox, then
-        // need to use checkboxradio("refresh") so that it will display correctly
-        // in jQuery Mobile
-        $element.checkboxradio("refresh");
-                
-        if (this.checked) {
-          localStorage.setItem(element, 'true');
-          if (func_if_true) { func_if_true() }          
-        } else {
-          localStorage.setItem(element, 'false');
-          if (func_if_false) { func_if_false() }             
-        }
-      });
-    }
+
+      $element.change( function() {
+            // if checkbox is being set based on contents of another checkbox, then
+            // need to use checkboxradio("refresh") so that it will display correctly
+            // in jQuery Mobile
+            $element.checkboxradio('refresh');
+                    
+            if (this.checked) {
+              localStorage.setItem(element, 'true');
+              if (func_if_true) { func_if_true() }          
+            } else {
+              localStorage.setItem(element, 'false');
+              if (func_if_false) { func_if_false() }             
+            }
+        });
+      }
+
+      /**
+      * enable use of canvas visualizer
+      *
+      * user can disable on low resource devices
+      */
+      var addVisualizer = function () {
+          var vu_meter = document.querySelector('#vu-meter');
+          var visualizer = document.createElement('canvas');
+          visualizer.classList.add('visualizer');
+          vu_meter.appendChild(visualizer);        
+      }
+
+      /**
+      * see: https://dzone.com/articles/how-you-clear-your-html5
+      */
+      var removeVisualizer = function () {
+          var visualizer = document.querySelector('.visualizer');
+          
+          if ( visualizer ) {
+              visualizer.width = visualizer.width; // clear canvas
+              visualizer.parentNode.removeChild(visualizer); // remove from DOM
+          }
+      }
 
     // Recording Information
     recording_information_button_display();
     setupCheckbox("recording_time_reminder", false, null, null);
-    
+
     // Resource Intensive functions
-    setupCheckbox("audio_visualizer", true, null, null); // realtime
-    
-    setupCheckbox("waveform_display", true, this.enableVisualizer.bind(this), this.clearVisualizer.bind(this)); //Waveform display for each prompt - generated in thread
+    setupCheckbox("audio_visualizer", true, addVisualizer, removeVisualizer);// realtime
+
+    setupCheckbox("waveform_display", true, null, null); //Waveform display for each prompt - generated in thread
 
     setupCheckbox("vad_run", true, null, null);
-    setupCheckbox("recording_geolocation_reminder", false, null, null);    
+    setupCheckbox("recording_geolocation_reminder", null, null);
 
     // System Information    
-    setupCheckbox("debug", true);
-    setupCheckbox("ua_string", true);
+    setupCheckbox("debug", true, null, null);
+    setupCheckbox("ua_string", true, null, null);
 }
 
 /**
@@ -1044,39 +1063,20 @@ View.prototype.audioVisualizerChecked = function () {
     return $('#audio_visualizer').is(":checked");  
 }
 
+
 /**
 *     // container oholding visualizer, and buttons
 
 */
 View.prototype.visualize = function (analyser) {
-    if (this.audioVisualizerChecked) {
-        visualize(this.visualizer, analyser, false);
+    var visualizer = document.querySelector('.visualizer');
+
+    if ( this.audioVisualizerChecked() ) {
+        visualize(visualizer, analyser, false);
     }
 }
 
-/**
-*
-*/
-View.prototype.enableVisualizer = function () {
-    var vu_meter = document.querySelector('#vu-meter');
-      
-    this.visualizer = document.createElement('canvas');
-    this.visualizer.classList.add('visualizer');
 
-    vu_meter.appendChild(this.visualizer);        
-}
-
-/**
-* see: https://dzone.com/articles/how-you-clear-your-html5
-*/
-View.prototype.clearVisualizer = function () {
-    if ( this.visualizer ) {
-        this.visualizer.width = this.visualizer.width;
-         
-        this.visualizer.parentNode.removeChild(this.visualizer); // remove from DOM
-        this.visualizer = null; // remove from javascript
-    }
-}
 
 /**
 * 

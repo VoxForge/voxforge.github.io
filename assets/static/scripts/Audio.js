@@ -214,7 +214,7 @@ Audio.prototype.getDebugValues = function () {
 /**
 * connect nodes; tell worker to start recording audio 
 */
-Audio.prototype.record = function (prompt_id, vad_run) {
+Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked) {
     var self = this; // save context when calling inner functions
 
     // clears out audio buffer 
@@ -228,7 +228,9 @@ Audio.prototype.record = function (prompt_id, vad_run) {
       bitDepth: self.parms.bitDepth,
     });
 
-    self.gainNode.connect(self.analyser);
+    if (audio_visualizer_checked) {
+        self.gainNode.connect(self.analyser);
+    }
 
     // start recording
     this.processor.onaudioprocess = function(event) {
@@ -326,7 +328,7 @@ Audio.prototype.record = function (prompt_id, vad_run) {
 *
 * see: https://stackoverflow.com/questions/17648819/how-can-i-stop-a-web-audio-script-processor-and-clear-the-buffer
 */
-Audio.prototype.endRecording = function () {
+Audio.prototype.endRecording = function (audio_visualizer_checked) {
     var self = this;
 
     audioworker.postMessage({ 
@@ -346,6 +348,7 @@ Audio.prototype.endRecording = function () {
 
     // need to cue user when recording has stopped and started.  Disconnecting
     // the analyser node and reconnecting on record can do this...
-    self.gainNode.disconnect(self.analyser);
+    if (audio_visualizer_checked) {
+        self.gainNode.disconnect(self.analyser);
+    }
 }
-

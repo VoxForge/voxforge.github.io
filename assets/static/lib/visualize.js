@@ -5,14 +5,14 @@
 * see https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getFloatTimeDomainData
 */
 
-function visualize(view, analyser) {
-  var canvasCtx = view.canvas.getContext("2d");
+function visualize(visualizer, analyser) {
+  var canvasCtx = visualizer.getContext("2d");
 
   var bufferLength = analyser.frequencyBinCount;
   var dataArray = new Uint8Array(bufferLength);
 
-  WIDTH = view.canvas.width
-  HEIGHT = view.canvas.height;
+  WIDTH = visualizer.width;
+  HEIGHT = visualizer.height;
   // TODO do we need to limit the number of time visualize refreshes per second
   // so that it can run on Android processors without causing audio to drop?
   function draw() {
@@ -48,7 +48,7 @@ function visualize(view, analyser) {
       x += sliceWidth;
     }
 
-    canvasCtx.lineTo(view.canvas.width, view.canvas.height/2);
+    canvasCtx.lineTo(visualizer.width, visualizer.height/2);
     canvasCtx.stroke();
   }
 

@@ -88,7 +88,9 @@
       </section> <!-- top-display -->
 
       <section class="main-controls">
-        <canvas class="visualizer"></canvas>
+        <!-- <canvas class="visualizer"></canvas> created dynamically-->
+        <div id="vu-meter"></div>
+
         <div id="buttons">
           <button class="record">{{ page.controls.record | default: default.controls.record }}</button>
           <button class="stop">{{ page.controls.stop | default: default.controls.stop }}</button>

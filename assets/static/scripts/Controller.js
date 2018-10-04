@@ -69,12 +69,10 @@ Controller.prototype.start = function () {
         // silence...
         self.view.displayPrompt(self.prompts.getPromptId(), self.prompts.getPromptSentence());
 
-        // TODO needs a restart to diable this?
         if ( self.view.audioVisualizerChecked() ) {
-          visualize(view, self.audio.analyser);
-        } else {
-          self.view.removaAllCanvasElements();
-        }
+          //visualize(view, self.audio.analyser); // don't use global view
+          self.view.visualize(self.audio.analyser);          
+        } 
 
         self.rec_timeout_obj = setTimeout(function(){
           fsm.recordingtimeout();
@@ -92,13 +90,13 @@ Controller.prototype.start = function () {
 
         if ( view.debugChecked() ) {
           promise_list[self.promise_index++] = 
-                self.audio.record( self.prompts.getPromptId(), vad_run )
+                self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked() )
                 .then( self.view.displayAudioPlayer.bind(self.view) )
                 .then( self.prompts.setAudioCharacteristics.bind(self.prompts) )
                 .catch((err) => { console.log(err) });
         } else {
           promise_list[self.promise_index++] = 
-                self.audio.record( self.prompts.getPromptId(), vad_run )
+                self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked()  )
                 .then( self.view.displayAudioPlayer.bind(self.view) )
                 .catch((err) => { console.log(err) });
 
@@ -180,7 +178,7 @@ Controller.prototype.start = function () {
         // #####################################################################
         // Transitions: user initiated
         onStopclicked: function() {
-          self.audio.endRecording();
+          self.audio.endRecording( self.view.audioVisualizerChecked() );
         },
 
         onDeleteclickedoneleft: function() {
@@ -193,7 +191,7 @@ Controller.prototype.start = function () {
 
         // Transition Actions: system initiated
         onRecordingtimeout: function() {
-          self.audio.endRecording();
+          self.audio.endRecording( self.view.audioVisualizerChecked() );
         },
 
         // #####################################################################
