@@ -357,13 +357,15 @@ settings:
   display_record_info: >
     Recording Information (needs to be updated each time location or
     noise characteristics change)
-  resource_intensive_text: Resource Intensive Functions (disable these to improve recording quality on low powered devices)
+  resource_intensive_text: >
+    Resource Intensive Functions (disable these to improve recording
+    quality on low powered devices)
   vad_run: Voice Activity Detection (VAD)
-  recording_geolocation_reminder: Check Recording Information reminder using geolocation.
-  recording_time_reminder: Check Recording Information reminder using time since last submission.
+  recording_geolocation_reminder: Geolocation "Check Recording Information" reminder.
+  recording_time_reminder: Time-since-last-submission "Check Recording Information" reminder.
   audio_visualizer: Audio Visualizer
   waveform_display: Waveform Display for each recording  
-  saved_submissions: Saved Submissions
+  saved_submissions: Waiting to upload (saved in browser storage)
   uploaded_submissions: Uploaded Submissions
   system_information_text: System Information included in submission
   ua_string: User Agent String

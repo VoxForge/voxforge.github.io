@@ -271,17 +271,26 @@ alert_message:
           
 settings:
   title: Paramètres
-  include_heading: Inclure dans la soumission
-  ua_string: Agent d'utilisateur
-  debug: Informations du système (utilisées pour le débogage)
-  other_heading: Autre
   display_record_info: >
     Enregistrement d'informations (doit être mis à jour chaque fois
-    que votre location ou les caractéristiques de bruit changent)
-  vad_run: VAD activé (Détection d'activité vocale)
-  recording_location_reminder: Rappel de changement de lieu d'enregistrement
-  saved_submissions: Soumissions sauvegardé
-  uploaded_submissions: Soumissions téléchargées  
+    que votre location ou les caractéristiques de bruit changent)  
+  resource_intensive_text: >
+    Fonctions gourmandes en ressources (désactivez-les pour améliorer
+    la qualité d'enregistrement sur les appareils à faible consommation)
+  vad_run: Détection d'activité vocale (VAD)
+  recording_geolocation_reminder: Rappel de changement de lieu d'enregistrement utilizant géolocalisation
+  recording_time_reminder: >
+    rappel pour "Vérifier les informations d'enregistrement", utilisant temps
+    écoulé depuis la dernière soumission.
+  audio_visualizer: Visualiseur Audio
+  waveform_display: Affichage de forme d'onde pour chaque enregistrement
+  saved_submissions: En attente de téléchargement (enregistré dans la mémoire du navigateur)
+  uploaded_submissions: Soumissions téléchargées
+  system_information_text: Informations système incluses dans la soumission
+  ua_string: Agent d'utilisateur
+  debug_text: Paramètres audio du navigateur  
+  recording_information_text: Informations d'enregistrement - paramètres
+  other_heading: Général
 
 #TODO no longer used
 ua_string:

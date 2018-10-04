@@ -251,18 +251,28 @@ alert_message:
     de grabación y, si es necesario, actualice su Ubicación y Niveles de ruido.
 
 settings:
-  title: Configuraciones
-  include_heading: Incluir en la sumisión
-  ua_string: Agente de usuario Cadena
-  debug: Información del sistema (utilizada para la depuración)
-  other_heading: Otro
+  title: Configuración (haga clic en el cuadro para habilitar)
   display_record_info: >
     Información de grabación (necesita actualizarse cada vez
     que cambia la ubicación o las características del ruido)
-  vad_run: VAD habilitado (detección de actividad de voz)
-  recording_location_reminder: Recordatorio de cambio de ubicación de grabación
-  saved_submissions: Sumisiones salvados
+  resource_intensive_text: >
+    Funciones intensivas de recursos (desactívelas para mejorar la grabación
+    calidad en dispositivos de baja potencia)
+  vad_run: Detección de actividad de voz (VAD)
+  recording_geolocation_reminder: >
+    Geolocalización recordatorio "Verificar información de grabación".
+  recording_time_reminder: >
+    Tiempo transcurrido desde el último envío "Verificación de información de
+    grabación" recordatorio.
+  audio_visualizer: Visualizador de audio
+  waveform_display: Pantalla de forma de onda para cada grabación 
+  saved_submissions: En espera de subir (guardado en el almacenamiento del navegador)
   uploaded_submissions: Sumisiones cargados
+  system_information_text: Información del sistema incluida en la sumisione
+  ua_string: Cadena de agente de usuario
+  debug_text: Configuración de audio del navegador  
+  recording_information_text: Información de grabación - ajustes
+  other_heading: General
 
 #TODO no longer used
 ua_string:
