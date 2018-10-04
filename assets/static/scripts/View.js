@@ -532,29 +532,29 @@ View.prototype.initSettingsPopup = function (message) {
         });
       }
 
-      /**
-      * enable use of canvas visualizer
-      *
-      * user can disable on low resource devices
-      */
-      var addVisualizer = function () {
-          var vu_meter = document.querySelector('#vu-meter');
-          var visualizer = document.createElement('canvas');
-          visualizer.classList.add('visualizer');
-          vu_meter.appendChild(visualizer);        
-      }
+    /**
+    * enable use of canvas visualizer
+    *
+    * user can disable on low resource devices
+    */
+    function addVisualizer () {
+        var vu_meter = document.querySelector('#vu-meter');
+        var visualizer = document.createElement('canvas');
+        visualizer.classList.add('visualizer');
+        vu_meter.appendChild(visualizer);        
+    }
 
-      /**
-      * see: https://dzone.com/articles/how-you-clear-your-html5
-      */
-      var removeVisualizer = function () {
-          var visualizer = document.querySelector('.visualizer');
-          
-          if ( visualizer ) {
-              visualizer.width = visualizer.width; // clear canvas
-              visualizer.parentNode.removeChild(visualizer); // remove from DOM
-          }
-      }
+    /**
+    * see: https://dzone.com/articles/how-you-clear-your-html5
+    */
+    function removeVisualizer () {
+        var visualizer = document.querySelector('.visualizer');
+        
+        if ( visualizer ) {
+            visualizer.width = visualizer.width; // clear canvas
+            visualizer.parentNode.removeChild(visualizer); // remove from DOM
+        }
+    }
 
     // Recording Information
     recording_information_button_display();
