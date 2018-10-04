@@ -489,7 +489,9 @@ View.prototype.initSettingsPopup = function (message) {
         var vu_meter = document.querySelector('#vu-meter');
         var visualizer = document.createElement('canvas');
         visualizer.classList.add('visualizer');
-        vu_meter.appendChild(visualizer);        
+        vu_meter.appendChild(visualizer);
+
+        console.log("audio_visualizer enabled");         
     }
 
     /**
@@ -502,25 +504,43 @@ View.prototype.initSettingsPopup = function (message) {
             visualizer.width = visualizer.width; // clear canvas
             visualizer.parentNode.removeChild(visualizer); // remove from DOM
         }
+
+        console.log("audio_visualizer disabled");            
     }
 
     // Recording Information
 
 
-    setupCheckbox("recording_time_reminder", false, null, null);
+    setupCheckbox("recording_time_reminder",
+                  false,
+                  function(){console.log("recording_time_reminder enabled")},
+                  function(){console.log("recording_time_reminder disabled")},); 
 
     // Resource Intensive functions
-    setupCheckbox("audio_visualizer", true, addVisualizer, removeVisualizer);// realtime
+    setupCheckbox("audio_visualizer", true, addVisualizer, removeVisualizer);
 
-    setupCheckbox("waveform_display", true, null, null); //Waveform display for each prompt - generated in thread
-
-    setupCheckbox("vad_run", true, null, null);
-    setupCheckbox("recording_geolocation_reminder", null, null);
+    setupCheckbox("waveform_display",
+                  true,
+                  function(){console.log("waveform_display enabled")},
+                  function(){console.log("waveform_display disabled")},); 
+    setupCheckbox("vad_run",
+                  true,
+                  function(){console.log("vad_run enabled")},
+                  function(){console.log("vad_run disabled")},); 
+    setupCheckbox("recording_geolocation_reminder",
+                  false,
+                  function(){console.log("recording_geolocation_reminder enabled")},
+                  function(){console.log("recording_geolocation_reminder disabled")},); 
 
     // System Information    
-    setupCheckbox("debug", true, null, null);
-    setupCheckbox("ua_string", true, null, null);
-
+    setupCheckbox("debug",
+                  true,
+                  function(){console.log("debug enabled")},
+                  function(){console.log("debug disabled")},); 
+    setupCheckbox("ua_string",
+                  true,
+                  function(){console.log("ua_string enabled")},
+                  function(){console.log("ua_string disabled")},); 
 
 
     // clear certain field entries when user clicks display_record_info off
@@ -533,6 +553,7 @@ View.prototype.initSettingsPopup = function (message) {
         $('#noise_type_other').val("").change();
         
         setProperties(false);
+        console.log("display_record_info disabled");           
     }
 
     // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
@@ -546,7 +567,10 @@ View.prototype.initSettingsPopup = function (message) {
           $(id).change(); // triggers change function 
       }
     }
-    function setPropertiesTrue() { setProperties(true) };
+    function setPropertiesTrue() {
+      setProperties(true)
+      console.log("display_record_info enabled"); 
+    };
     
     function setupDisplayRecordInfo(checkbox_element,
                                     dependent_element,
