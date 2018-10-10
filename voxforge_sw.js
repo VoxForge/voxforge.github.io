@@ -69,9 +69,11 @@ var urlsToCache = [
   '/en/read',
   '/fr/read',
   '/es/read',
-  
-  //'/en/read/', // TODO debug with Apache2 and self signed SSL certificate
 
+  // !!!!!! Oct 10 - no longer required with local apache server???
+  //'/en/read/', // TODO debug with Apache2 and self signed SSL certificate
+  // !!1111
+  
   // TODO also cache links to outside websites for definitions, elaboration, etc...
 
   // cache at least one prompt file for each language
