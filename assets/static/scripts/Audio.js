@@ -66,8 +66,8 @@ Audio.prototype.init = function () {
 
     /**
     * set up audio nodes that are connected together in a graph so that the 
-    * source microphone input can be captured, and volume node can be created 
-    * (currently not used), an analyzer to create visually display the amplitude
+    * source microphone input can be captured, and volume node can be created,
+    * an analyzer to create visually display the amplitude
     * of the captured audio, a processor to capture the raw audio, and 
     * a destination audiocontext to capture audio
     *
@@ -77,6 +77,7 @@ Audio.prototype.init = function () {
         self.microphone = self.audioCtx.createMediaStreamSource(stream);
 
         self.gainNode = self.audioCtx.createGain();
+        // Create a ScriptProcessorNode with a bufferSize of audioNodebufferSize and a single input and output channel
         self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize, 1, 1);
         self.analyser = self.audioCtx.createAnalyser();
         self.mediaStreamOutput = self.audioCtx.destination;
@@ -366,10 +367,14 @@ Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
 
     // but if don't disconnect, audio will be collected by Audio Nodes, and sent to AudioWorker.
     // Therefore remove function that sends audio to AudioWorker
+    // TODO amazon just sets a 'record' flag that if true sends audio to web
+    //   worker, and doesn't send anything if false
+    //   see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
+    //   see also: https://github.com/mattdiamond/Recorderjs/blob/master/src/recorder.js    
     this.processor.onaudioprocess = null;
 
     // need to cue user when recording has stopped and started.  Disconnecting
-    // the analyser node and reconnecting on record can do this...
+    // the analyser node and reconnecting on record does this...
     if (audio_visualizer_checked) {
         self.gainNode.disconnect(self.analyser);
     }
