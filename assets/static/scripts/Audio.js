@@ -249,15 +249,16 @@ Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked)
      }
     // start recording
     this.processor.onaudioprocess = function(event) {
-      // only record left channel (mono)
-      var floatArray_time_domain = event.inputBuffer.getChannelData(0);
-
+      // event.inputBuffer.getChannelData(0) = left channel (mono)
       audioworker.postMessage({ 
         command: command, 
-        event_buffer: floatArray_time_domain,
+        event_buffer: event.inputBuffer.getChannelData(0),
       });
 
-      self.debugValues.device_event_buffer_size = floatArray_time_domain.length;
+      if (typeof self.debugValues.device_event_buffer_size  == 'undefined') {
+          // event.inputBuffer.getChannelData(0) is a floatArray_time_domain
+          self.debugValues.device_event_buffer_size = event.inputBuffer.getChannelData(0).length;
+      }      
     };
 
     /**
