@@ -178,7 +178,8 @@ Controller.prototype.start = function () {
         // #####################################################################
         // Transitions: user initiated
         onStopclicked: function() {
-          self.audio.endRecording( self.view.audioVisualizerChecked() );
+          self.audio.endRecording( self.view.audioVisualizerChecked(),
+                                   localStorage.getItem("vad_run") === 'true');
         },
 
         onDeleteclickedoneleft: function() {

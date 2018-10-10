@@ -217,28 +217,44 @@ Audio.prototype.getDebugValues = function () {
 Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked) {
     var self = this; // save context when calling inner functions
 
+    if ( ! vad_run ) {
+       console.log('VAD disabled');
+    }
+
+    var bitDepth = self.parms.bitDepth;
+    if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
+      console.warn("invalid bit depth: " + data.bitDepth + "; setting to 16 bit");
+      bitDepth = "32bit-float";
+    } 
+    console.log('bitDepth: ' + bitDepth);
+      
     // clears out audio buffer 
     audioworker.postMessage({
       command: 'start',
       prompt_id: prompt_id,
-      vad_run: vad_run,
       vad_parms: self.parms.vad,
       ssd_parms : self.parms.ssd,
       sampleRate: self.audioCtx.sampleRate,
-      bitDepth: self.parms.bitDepth,
+      bitDepth: bitDepth,
     });
 
     if (audio_visualizer_checked) {
         self.gainNode.connect(self.analyser);
     }
 
+     var command;
+     if (vad_run) {
+         command = 'record_vad';
+     } else {
+         command = 'record';
+     }
     // start recording
     this.processor.onaudioprocess = function(event) {
       // only record left channel (mono)
       var floatArray_time_domain = event.inputBuffer.getChannelData(0);
 
       audioworker.postMessage({ 
-        command: 'record', 
+        command: command, 
         event_buffer: floatArray_time_domain,
       });
 
@@ -328,11 +344,17 @@ Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked)
 *
 * see: https://stackoverflow.com/questions/17648819/how-can-i-stop-a-web-audio-script-processor-and-clear-the-buffer
 */
-Audio.prototype.endRecording = function (audio_visualizer_checked) {
+Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
     var self = this;
-
+    
+    var command;
+    if (vad_run) {
+      command = 'finish_vad';
+    } else {
+      command = 'finish';
+    }
     audioworker.postMessage({ 
-      command: 'finish' 
+      command: command,
     });
 
     // disconnecting AudioNodes leaves audio data somewhere in audio chain
