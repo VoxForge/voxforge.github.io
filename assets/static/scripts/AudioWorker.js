@@ -28,13 +28,22 @@ var prompt_id = undefined;
 var ssd_parms = undefined;
 var starttime = 0;
 
+var dataViews;
+var numSamples;
+var sampleRate;
+var bitDepth;
+
 self.onmessage = function(event) {
   var data = event.data;
 
   switch (data.command) {
     case 'start':
       starttime = Date.now();
-
+      dataViews = [];
+      numSamples = 0;
+      sampleRate = data.sampleRate;
+      bitDepth = data.bitDepth;
+      
       prompt_id = data.prompt_id;
       buffers = [];
       encoder = new WavAudioEncoder(data.sampleRate, data.bitDepth);
@@ -50,12 +59,12 @@ self.onmessage = function(event) {
       // no encoding while collecting audio so as not to tax the device
       // too much while recording
       buffers.push(data.event_buffer); // array of buffer arrays
+      numSamples += data.event_buffer.length;
       break;
 
     case 'record_vad':
       buffers.push(data.event_buffer); // array of buffer arrays
-      // TODO either use this code or remove it!
-      //startSimpleSilenceDetection(buffers.length - 1, data.event_buffer);
+      numSamples += data.event_buffer.length;
 
       //vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
       // split buffer up into smaller chunks that VAD can digest
@@ -75,14 +84,15 @@ self.onmessage = function(event) {
     case 'finish':
         // batch encoding after recording is completed
       while (buffers.length > 0) {
-        encoder.encode(buffers.shift());
+        encoder.float2int16(buffers.shift());
       }
+      var audio_blob = encoder.finish();
 
       self.postMessage({
           status: 'finished',
           obj : { 
             prompt_id: prompt_id,
-            blob: encoder.finish(), // convert audio from float to wav int16 or 32-bit float
+            blob: audio_blob,
             vad_run: false,
           }
       });
@@ -100,14 +110,16 @@ self.onmessage = function(event) {
       [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
           vad.getSpeech(buffers);
       while (speech_array.length > 0) {
-        encoder.encode(speech_array.shift());
+        encoder.float2int16(speech_array.shift());
       }
 
+      var audio_blob = encoder.finish();
+      
       self.postMessage({
           status: 'finished',
           obj : { 
             prompt_id: prompt_id,
-            blob: encoder.finish(), // convert audio from float to wav int16 or 32-bit float
+            blob: audio_blob,
             no_trailing_silence: no_trailing_silence,
             no_speech: no_speech,
             clipping: clipping,

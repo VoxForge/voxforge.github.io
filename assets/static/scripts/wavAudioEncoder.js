@@ -1,5 +1,22 @@
 /*
 
+Copyright 2018 VoxForge
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+################################################################################
+
 The MIT License (MIT)
 
 Copyright (c) 2015 Yuji Miyane
@@ -43,7 +60,7 @@ see: https://github.com/higuma/wav-audio-encoder-js
     this.bitDepth = bitDepth;
   };
 
-  Encoder.prototype.encode = function(buffer) {
+  Encoder.prototype.float2int16 = function(buffer) {
     var len = buffer.length;
 
     if (this.bitDepth == 16) {
