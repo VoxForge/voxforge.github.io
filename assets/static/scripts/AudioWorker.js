@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-importScripts('../lib/WavAudioEncoder.js'); 
+importScripts('../scripts/wavAudioEncoder.js'); 
 importScripts('../scripts/Vad.js'); 
 
 var buffers = undefined;

@@ -51,6 +51,7 @@ var urlsToCache = [
   PATH + 'scripts/UploadWorker.js',
   PATH + 'scripts/Vad.js',
   PATH + 'scripts/View.js',
+  PATH + 'scripts/wavAudioEncoder.js',
   PATH + 'scripts/ZipWorker.js',
 
   PATH + 'styles/app.css',
