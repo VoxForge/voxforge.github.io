@@ -224,9 +224,8 @@ Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked)
     var bitDepth = self.parms.bitDepth;
     if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
       console.warn("invalid bit depth: " + data.bitDepth + "; setting to 16 bit");
-      bitDepth = "32bit-float";
-    } 
-    console.log('bitDepth: ' + bitDepth);
+      bitDepth = 16;
+    }
       
     // clears out audio buffer 
     audioworker.postMessage({
