@@ -89,8 +89,10 @@ self.onmessage = function(event) {
       } else { // 32-bit float - buffer unmodified
           dataViews = buffers;
       }
-      var audio_blob = finish(dataViews, numSamples, bitDepth, sampleRate);
-
+      var header = createWavHeader(numSamples, bitDepth, sampleRate);
+      dataViews.unshift(header);
+      var audio_blob = new Blob(dataViews, { type: 'audio/wav' });
+      
       self.postMessage({
           status: 'finished',
           obj : { 
@@ -112,7 +114,6 @@ self.onmessage = function(event) {
       [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
           vad.getSpeech(buffers);
 
-//!!!!!!      
       if (bitDepth === 16) { // testing FF on Chrome    
         while (speech_array.length > 0) {
           var view = float2int16(speech_array.shift());
@@ -122,9 +123,10 @@ self.onmessage = function(event) {
           dataViews = buffers;
       }
 
-      var audio_blob = finish(dataViews, numSamples, bitDepth, sampleRate);
-      //var audio_blob = finish(dataViews, numSamples, 16, sampleRate);
-//!!!!!!      
+      var header = createWavHeader(numSamples, bitDepth, sampleRate);
+      dataViews.unshift(header);
+      var audio_blob = new Blob(dataViews, { type: 'audio/wav' });
+           
       self.postMessage({
           status: 'finished',
           obj : { 
