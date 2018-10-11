@@ -21,7 +21,6 @@ importScripts('../scripts/wavAudioEncoder.js');
 importScripts('../scripts/Vad.js'); 
 
 var buffers = undefined;
-var encoder = undefined;
 var vad = undefined;
 var vad_parms = undefined;
 var prompt_id = undefined;
@@ -46,7 +45,6 @@ self.onmessage = function(event) {
       
       prompt_id = data.prompt_id;
       buffers = [];
-      encoder = new WavAudioEncoder(data.sampleRate, data.bitDepth);
 
       ssd_parms = data.ssd_parms;
 
@@ -82,11 +80,16 @@ self.onmessage = function(event) {
       break;
 
     case 'finish':
-        // batch encoding after recording is completed
-      while (buffers.length > 0) {
-        encoder.float2int16(buffers.shift());
+      // batch encoding after recording is completed
+      if (bitDepth === 16) { // testing FF on Chrome    
+        while (buffers.length > 0) {
+          var view = float2int16(buffers.shift());
+          dataViews.push(view);
+        }
+      } else { // 32-bit float - buffer unmodified
+          dataViews = buffers;
       }
-      var audio_blob = encoder.finish();
+      var audio_blob = finish(dataViews, numSamples, bitDepth, sampleRate);
 
       self.postMessage({
           status: 'finished',
@@ -97,7 +100,6 @@ self.onmessage = function(event) {
           }
       });
 
-      encoder = undefined;
       buffers = [];
       break;
 
@@ -109,12 +111,20 @@ self.onmessage = function(event) {
       var too_soft = false;
       [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
           vad.getSpeech(buffers);
-      while (speech_array.length > 0) {
-        encoder.float2int16(speech_array.shift());
+
+//!!!!!!      
+      if (bitDepth === 16) { // testing FF on Chrome    
+        while (speech_array.length > 0) {
+          var view = float2int16(speech_array.shift());
+          dataViews.push(view);
+        }
+      } else { // 32-bit float - buffer unmodified
+          dataViews = buffers;
       }
 
-      var audio_blob = encoder.finish();
-      
+      var audio_blob = finish(dataViews, numSamples, bitDepth, sampleRate);
+      //var audio_blob = finish(dataViews, numSamples, 16, sampleRate);
+//!!!!!!      
       self.postMessage({
           status: 'finished',
           obj : { 
@@ -128,13 +138,8 @@ self.onmessage = function(event) {
           }
       });
 
-      encoder = undefined;
       buffers = [];
       break;
-
-    case 'cancel':
-      encoder.cancel();
-      encoder = undefined;
   }
   
 };

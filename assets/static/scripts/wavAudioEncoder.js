@@ -43,55 +43,44 @@ see: https://github.com/higuma/wav-audio-encoder-js
 
 */
 
-(function(self) {
-  var min = Math.min,
-      max = Math.max;
 
-  var setString = function(view, offset, str) {
-    var len = str.length;
-    for (var i = 0; i < len; ++i)
-      view.setUint8(offset + i, str.charCodeAt(i));
-  };
-
-  var Encoder = function(sampleRate, bitDepth) {
-    this.sampleRate = sampleRate;
-    this.numSamples = 0;
-    this.dataViews = [];
-    this.bitDepth = bitDepth;
-  };
-
-  Encoder.prototype.float2int16 = function(buffer) {
+function float2int16(buffer) {
     var len = buffer.length;
 
-    if (this.bitDepth == 16) {
-      // array of twos-complement 16-bit signed integers in the platform byte order.
-      // If control over byte order is needed, use DataView...
-      var view = new DataView(new ArrayBuffer(len * 2));
+    // array of twos-complement 16-bit signed integers in the platform byte order.
+    // If control over byte order is needed, use DataView...
+    var view = new DataView(new ArrayBuffer(len * 2));
 
-      var offset = 0;
-      for (var i = 0; i < len; ++i) {
-          // TODO use mozilla min/max approach to calculating 16bit sample - more efficient than ternary conditional
-          var x = buffer[i] * 0x7fff; // 0x7fff = 32767
-          // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
-          // trying to see if no min max causing scratches and pops...
-          var sample16bit =  x < 0 ? max(x, -0x8000) : min(x, 0x7fff);
-          view.setInt16(offset, sample16bit, true);
-          offset += 2;
-      }
-      this.dataViews.push(view);
-    } else { // 32-bit float
-      this.dataViews.push(buffer);
+    var offset = 0;
+    for (var i = 0; i < len; ++i) {
+        // TODO use mozilla min/max approach to calculating 16bit sample - more efficient than ternary conditional
+        var x = buffer[i] * 0x7fff; // 0x7fff = 32767
+        // TODO why min max in original alg if by definition the 32-bit float only has a [-1,1] range??
+        // trying to see if no min max causing scratches and pops...
+        var sample16bit =  x < 0 ? Math.max(x, -0x8000) : Math.min(x, 0x7fff);
+        view.setInt16(offset, sample16bit, true);
+        offset += 2;
     }
-
-    this.numSamples += len;
+    
+    return view;
   };
 
-  Encoder.prototype.finish = function(mimeType) {
-    //var dataSize = this.numChannels * this.numSamples * 2,
-    if (this.bitDepth == 16) {
-      var dataSize = this.numSamples * 2; // 16 bit
+function finish(dataViews, numSamples, bitDepth, sampleRate) {
+
+    var setString = function(view, offset, str) {
+        var len = str.length;
+        for (var i = 0; i < len; ++i) {
+          view.setUint8(offset + i, str.charCodeAt(i))
+        }
+    };
+
+    // ###############################################################
+    
+    //var dataSize = numChannels * numSamples * 2,
+    if (bitDepth == 16) {
+      var dataSize = numSamples * 2; // 16 bit
     } else { 
-      var dataSize = this.numSamples * 4; // 32-bit float
+      var dataSize = numSamples * 4; // 32-bit float
     }
     view = new DataView(new ArrayBuffer(44));
     /* RIFF identifier */
@@ -105,21 +94,21 @@ see: https://github.com/higuma/wav-audio-encoder-js
     /* format chunk length */
     view.setUint32(16, 16, true);
     /* sample format (raw) */
-    if (this.bitDepth == 16) {
+    if (bitDepth == 16) {
       view.setUint16(20, 1, true); // 0x0001	WAVE_FORMAT_PCM	PCM
     } else {
       view.setUint16(20, 3, true);  // 0x0003	WAVE_FORMAT_IEEE_FLOAT	IEEE float
     }
     /* channel count */
-    //view.setUint16(22, this.numChannels, true);
+    //view.setUint16(22, numChannels, true);
     view.setUint16(22, 1, true);
     /* sample rate */
-    view.setUint32(24, this.sampleRate, true);
+    view.setUint32(24, sampleRate, true);
     /* byte rate (sample rate * block align) */
-    view.setUint32(28, this.sampleRate * 4, true);
-    if (this.bitDepth == 16) {
+    view.setUint32(28, sampleRate * 4, true);
+    if (bitDepth == 16) {
       /* block align (channel count * bytes per sample) */
-      //view.setUint16(32, this.numChannels * 2, true);
+      //view.setUint16(32, numChannels * 2, true);
       view.setUint16(32, 2, true);// 16 bits per sample
       /* bits per sample */
       view.setUint16(34, 16, true); // 16 bits per sample
@@ -134,15 +123,11 @@ see: https://github.com/higuma/wav-audio-encoder-js
     /* data chunk length */
     view.setUint32(40, dataSize, true);
 
-    this.dataViews.unshift(view);
-    var blob = new Blob(this.dataViews, { type: 'audio/wav' });
-    this.cleanup();
+    dataViews.unshift(view);
+    
+    var blob = new Blob(dataViews, { type: 'audio/wav' });
+
     return blob;
   };
 
-  Encoder.prototype.cancel = Encoder.prototype.cleanup = function() {
-    delete this.dataViews;
-  };
 
-  self.WavAudioEncoder = Encoder;
-})(self);
