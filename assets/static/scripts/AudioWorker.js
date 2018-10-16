@@ -121,7 +121,7 @@ self.onmessage = function(event) {
           dataViews.push(view);
         }
       } else { // 32-bit float - buffer unmodified
-          dataViews = buffers;
+          dataViews = speech_array;
       }
 
       var header = createWavHeader(numSamples, bitDepth, sampleRate);
