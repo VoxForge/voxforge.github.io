@@ -54,29 +54,9 @@ self.onmessage = function(event) {
       break;
 
     case 'record':
-      // no encoding while collecting audio so as not to tax the device
-      // too much while recording
+      // no encoding while collecting audio for low powered devices
       buffers.push(data.event_buffer); // array of buffer arrays
       numSamples += data.event_buffer.length;
-      break;
-
-    case 'record_vad':
-      buffers.push(data.event_buffer); // array of buffer arrays
-      numSamples += data.event_buffer.length;
-
-      //vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
-      // split buffer up into smaller chunks that VAD can digest
-      let num_chunks = 4;
-      let cutoff = Math.round(data.event_buffer.length / num_chunks);
-      let buffers_index = buffers.length - 1;
-      for (let i = 0; i < num_chunks; i++) {
-        let chunk_index = i;
-        let start = i * cutoff;
-        let end = (i * cutoff) + cutoff
-        // slice extracts up to but not including end.
-        let chunk = data.event_buffer.slice(start, end);
-        vad.calculateSilenceBoundaries(chunk, buffers_index, chunk_index);
-      }
       break;
 
     case 'finish':
@@ -103,6 +83,27 @@ self.onmessage = function(event) {
       });
 
       buffers = [];
+      break;
+
+    case 'record_vad':
+      buffers.push(data.event_buffer); // array of buffer arrays
+      numSamples += data.event_buffer.length;
+
+      // VAD can only process 16-bit audio, with sampling rates of 8/16/32/48kHz
+      // we are fudging a bit so can process 44.1kHz
+      //vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
+      // split buffer up into smaller chunks that VAD can digest
+      let num_chunks = 4;
+      let cutoff = Math.round(data.event_buffer.length / num_chunks);
+      let buffers_index = buffers.length - 1;
+      for (let i = 0; i < num_chunks; i++) {
+        let chunk_index = i;
+        let start = i * cutoff;
+        let end = (i * cutoff) + cutoff;
+        // slice extracts up to but not including end.
+        let chunk = data.event_buffer.slice(start, end);
+        vad.calculateSilenceBoundaries(chunk, buffers_index, chunk_index);
+      }
       break;
 
     case 'finish_vad':
