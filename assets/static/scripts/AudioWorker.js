@@ -102,7 +102,13 @@ self.onmessage = function(event) {
         let end = (i * cutoff) + cutoff;
         // slice extracts up to but not including end.
         let chunk = data.event_buffer.slice(start, end);
-        vad.calculateSilenceBoundaries(chunk, buffers_index, chunk_index);
+        //vad.calculateSilenceBoundaries(chunk, buffers_index, chunk_index);
+        var [buffer_chunk_int, chunk_energy] = floatTo16BitPCM(chunk);
+
+        vad.calculateSilenceBoundaries(buffer_chunk_int,
+                                       chunk_energy,
+                                       buffers_index,
+                                       chunk_index);
       }
       break;
 
@@ -112,9 +118,12 @@ self.onmessage = function(event) {
       var no_trailing_silence = false; 
       var clipping = false;
       var too_soft = false;
-      [speech_array, no_speech, no_trailing_silence, clipping, too_soft] = 
-          vad.getSpeech(buffers);
-
+      
+      [speech_array,
+       no_speech,
+       no_trailing_silence,
+       clipping,
+       too_soft] = vad.getSpeech(buffers);
       if (bitDepth === 16) { // testing FF on Chrome    
         while (speech_array.length > 0) {
           var view = float2int16(speech_array.shift());

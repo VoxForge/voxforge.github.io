@@ -97,7 +97,12 @@ function Vad(sampleRate, parms) {
 /**
 *
 */
-Vad.prototype.calculateSilenceBoundaries = function(buffer, buffers_index, chunk_index) {
+//Vad.prototype.calculateSilenceBoundaries = function(buffer, buffers_index, chunk_index) {
+Vad.prototype.calculateSilenceBoundaries = function(buffer_pcm,
+                                                    energy,
+                                                    buffers_index,
+                                                    chunk_index) {
+  
     // save reference to current context for use in inner functions
     var self = this;
 
@@ -155,8 +160,6 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, buffers_index, chunk
         self.speechend_index = buffers_index;
       }
       self.voice_stopped = true;
-
-
     }
 
     /**
@@ -234,11 +237,11 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer, buffers_index, chunk
     // ### main ################################################################
 
     if (this.first_buffer) {
-      calculateSilencePadding(buffer.length, this.sampleRate);
+      calculateSilencePadding(buffer_pcm.length, this.sampleRate);
       this.first_buffer = false;
     }
 
-    var [buffer_pcm, energy] = floatTo16BitPCM(buffer);
+    //var [buffer_pcm, energy] = floatTo16BitPCM(buffer);
 
     callWebrtcVad(buffer_pcm);
 
