@@ -31,6 +31,7 @@ var dataViews;
 var numSamples;
 var sampleRate;
 var bitDepth;
+var vad_parms;
 
 self.onmessage = function(event) {
   var data = event.data;
@@ -42,15 +43,21 @@ self.onmessage = function(event) {
       numSamples = 0;
       sampleRate = data.sampleRate;
       bitDepth = data.bitDepth;
+      vad_parms = data.vad_parms;
       
       prompt_id = data.prompt_id;
       buffers = [];
 
       ssd_parms = data.ssd_parms;
 
-      // user can turn on/off VAD at any time... therefore always create VAD object at startup
-      vad = new Vad(data.sampleRate, data.vad_parms);
+      break;
 
+    case 'init_vad':
+      vad = new Vad(sampleRate, vad_parms);
+      break;
+
+    case 'kill_vad':
+      vad = null;
       break;
 
     case 'record':
@@ -85,6 +92,9 @@ self.onmessage = function(event) {
       buffers = [];
       break;
 
+    // TODO VAD currently only works with 16-bit audio.
+    // So no matter what device you are using, if using vad,
+    // there will always be a conversion to 16-bit audio
     case 'record_vad':
       buffers.push(data.event_buffer); // array of buffer arrays
       numSamples += data.event_buffer.length;
@@ -102,9 +112,8 @@ self.onmessage = function(event) {
         let end = (i * cutoff) + cutoff;
         // slice extracts up to but not including end.
         let chunk = data.event_buffer.slice(start, end);
-        //vad.calculateSilenceBoundaries(chunk, buffers_index, chunk_index);
-        var [buffer_chunk_int, chunk_energy] = floatTo16BitPCM(chunk);
 
+        var [buffer_chunk_int, chunk_energy] = floatTo16BitPCM(chunk);
         vad.calculateSilenceBoundaries(buffer_chunk_int,
                                        chunk_energy,
                                        buffers_index,
@@ -124,6 +133,7 @@ self.onmessage = function(event) {
        no_trailing_silence,
        clipping,
        too_soft] = vad.getSpeech(buffers);
+
       if (bitDepth === 16) { // testing FF on Chrome    
         while (speech_array.length > 0) {
           var view = float2int16(speech_array.shift());

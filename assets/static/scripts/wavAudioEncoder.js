@@ -42,7 +42,6 @@ function float2int16(buffer) {
     return view;
 }
 
-
 /**
 *
 */

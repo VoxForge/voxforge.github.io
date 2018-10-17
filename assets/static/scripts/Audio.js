@@ -242,12 +242,18 @@ Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked)
         self.gainNode.connect(self.analyser);
     }
 
-     var command;
-     if (vad_run) {
-         command = 'record_vad';
-     } else {
-         command = 'record';
-     }
+    var command;
+    if (vad_run) {
+       audioworker.postMessage({ 
+          command: 'init_vad',
+       });
+       command = 'record_vad';
+    } else {
+       audioworker.postMessage({ 
+          command: 'kill_vad',
+       });       
+       command = 'record';
+    }
     // start recording
     this.processor.onaudioprocess = function(event) {
       // event.inputBuffer.getChannelData(0) = left channel (mono)

@@ -50,7 +50,6 @@ function Vad(sampleRate, parms) {
     this.sizeBufferVad = parms.buffersize;
 
     this.leftovers = 0;
-    this.buffer_vad = new Int16Array(this.sizeBufferVad);
 
     //const maxsilence = 1500; //  original
     //this.minvoice = 250;//  original
@@ -91,11 +90,11 @@ function Vad(sampleRate, parms) {
 // *                    0 (High quality) - 3 (Highly aggressive)
     var mode = 3;
     var result = setmode(mode);
-    console.log('WebRTC VAD setmode(' + mode + ')=' + result);
+//    console.log('WebRTC VAD setmode(' + mode + ')=' + result);
 }
 
 /**
-*
+* buffer_pcm must be 16-bit
 */
 //Vad.prototype.calculateSilenceBoundaries = function(buffer, buffers_index, chunk_index) {
 Vad.prototype.calculateSilenceBoundaries = function(buffer_pcm,
@@ -163,11 +162,17 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer_pcm,
     }
 
     /**
-    * original Mozilla code segment to call webrtc_vad
+    * original Mozilla code segment to call webrtc_vad,
+    * some variable names changed
     */
     function callWebrtcVad(buffer_pcm) {
         /**
         * calls webrtc VAD code
+        *
+        * converts buffer_pcm 16-bit to 8 bit unsigned integer array
+        * (using javascript buffer array property) for use by Webrtc VAD
+        *
+        * see HEAPF32 function in webrtc_vad
         */
         function isSilence(buffer_pcm){
           // Get data byte size, allocate memory on Emscripten heap, and get pointer
@@ -178,7 +183,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer_pcm,
           let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
           dataHeap.set(new Uint8Array(buffer_pcm.buffer));
 
-          //         int process_data(int16_t  data[], int n_samples, int samplerate, int val0, int val100, int val2000){
+          //         int process_data( int16_t  data[],      int n_samples,  int samplerate,      int val0,      int val100, int val2000){
           let result = process_data(dataHeap.byteOffset, buffer_pcm.length, VAD_SAMPLE_RATE, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
 
           // Free memory
@@ -187,28 +192,31 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer_pcm,
         }
 
         // ###
+        // vad buffer is only size of even buffer
+        let buffer_vad = new Int16Array(self.sizeBufferVad);
+        //let buffer_vad = new Int8Array(self.sizeBufferVad); not working
 
         for (let i = 0; i < Math.ceil(buffer_pcm.length/self.sizeBufferVad); i++) {
           let start = i * self.sizeBufferVad;
           let end = start+self.sizeBufferVad;
           if ((start + self.sizeBufferVad) > buffer_pcm.length) {
             // store to the next
-            self.buffer_vad.set(buffer_pcm.slice(start));
+            buffer_vad.set(buffer_pcm.slice(start));
             self.leftovers =  buffer_pcm.length - start;
           } else {
             if (self.leftovers > 0) {
               // we have leftovers from previous array
               end = end - self.leftovers;
-              self.buffer_vad.set((buffer_pcm.slice(start, end)), self.leftovers);
+              buffer_vad.set((buffer_pcm.slice(start, end)), self.leftovers);
               self.leftovers =  0;
             } else {
               // send for vad
-              self.buffer_vad.set(buffer_pcm.slice(start, end));
+              buffer_vad.set(buffer_pcm.slice(start, end));
             }
 
             // whole vad algorithm comes here
-            let vad = isSilence(self.buffer_vad);
-            self.buffer_vad = new Int16Array(self.sizeBufferVad);
+            let vad = isSilence(buffer_vad);
+            //self.buffer_vad = new Int16Array(self.sizeBufferVad);
             let dtdepois = Date.now();
             if (vad == 0) {
               if (self.touchedvoice) {
