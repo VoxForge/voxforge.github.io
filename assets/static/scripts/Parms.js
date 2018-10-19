@@ -38,12 +38,6 @@ function Parms() {
         buffersize: 480, // don't change; current 'chunking' of of sending audio to VAD assumes this buffeersize
       },
 
-      // TODO not being used
-      ssd: { // simple silence detection parameters
-        duration: 1000, // duration threshhold for silence detection (in milliseconds)
-        amplitude: 0.02, // amplitude threshold for silence detection
-      },
-
       blockDisplayOfRecordButton: false, // on slower devices, allowing user to record while display is still working can cause dropout/scratches
       app_auto_gain: false, // only needed for smartphones where you cannot adjust volume; desktops allow you to adjust recording volume
       //app_auto_gain: true, // debug
@@ -62,12 +56,12 @@ function Parms() {
 
     this.controller = {
       recording_timeout: 20000, // 20 seconds - silence detection should remove leading and trailing silence
-      recording_stop_delay: 500, // time between when stop button is clicks and app actually stops recording
+      recording_stop_delay: 500, // 0.5 seconds between when stop button is clicked and app actually stops recording
       numPrompt2SubmittForRecordInfo: 5,
     }
 
     // FireFox on (all platforms) can record 32-bit float, but cannot play back 32-bit 
-    // float; therefore only us 16bit bitdepth on all version of Firefox
+    // float; therefore only use 16bit bitdepth on all versions of Firefox
     if ( platform.name.includes("Firefox") ) { 
       this.audio.bitDepth = 16;
     } 
@@ -85,7 +79,7 @@ function Parms() {
         this.audio.vad.maxsilence = 650; // detect longer silence period on Android
         this.audio.vad.minvoice = 75; // use shorter min voice threshold period on Android
         this.audio.blockDisplayOfRecordButton = true;
-        this.audio.app_auto_gain = true; // Android does not allow you to manually adjust the recroding volume on your phone;
+        this.audio.app_auto_gain = true; // Android does not allow you to manually adjust the recording volume on your phone;
         this.controller.recording_stop_delay = 750;
 
         if (platform.os.version) {

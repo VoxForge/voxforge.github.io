@@ -202,11 +202,11 @@ Controller.prototype.start = function () {
 
           if (! self.view.displayRecordingInfoChecked()  && 
               self.uploader.getNumberOfSubmissions() > self.parms.numPrompt2SubmittForRecordInfo &&
-              localStorage.getItem("recording_asked_user") !== 'true'
+              localStorage.getItem("recording_info_asked_user") !== 'true'
               )
           {
               // only ask the user once if they want to activate the Recording Information section
-              localStorage.setItem("recording_asked_user", true); 
+              localStorage.setItem("recording_info_asked_user", true); 
               self.view.recordingInformationButtonDisplay();
               // TODO when this gets sent, Recording information section should display to user rather
               // than being buried under Profile Info

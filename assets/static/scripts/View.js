@@ -509,8 +509,6 @@ View.prototype.initSettingsPopup = function (message) {
     }
 
     // Recording Information
-
-
     setupCheckbox("recording_time_reminder",
                   false,
                   function(){console.log("recording_time_reminder enabled")},
@@ -553,19 +551,21 @@ View.prototype.initSettingsPopup = function (message) {
         $('#noise_type_other').val("").change();
         
         setProperties(false);
+        $('#recording_geolocation_reminder').prop('checked', false).checkboxradio("refresh");        
         console.log("display_record_info disabled");           
     }
 
     // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
     function setProperties(checked) {
-      for (let id of ['#recording_geolocation_reminder', // these must be declared before call to set Properties
-                      '#recording_time_reminder'])
-      {
-          $(id).prop( "disabled", ! checked );
-          $(id).prop('checked', checked).checkboxradio("refresh");
-          // TODO does change work with jQuery Mobile?
-          $(id).change(); // triggers change function 
-      }
+      $('#recording_time_reminder').prop( "disabled", ! checked );
+      $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
+      // TODO does change work with jQuery Mobile?
+      $('#recording_time_reminder').change(); // triggers change function
+
+      // only enable geolocation selection when Record Info available
+      $('#recording_geolocation_reminder').prop( "disabled", ! checked );
+      $('#recording_geolocation_reminder').change(); // triggers change function       
+
     }
     function setPropertiesTrue() {
       setProperties(true)
@@ -624,8 +624,6 @@ View.prototype.initSettingsPopup = function (message) {
                            false,
                            setPropertiesTrue,
                            clearRecordingLocationInfo);
-    
-    
 }
 
 /**
