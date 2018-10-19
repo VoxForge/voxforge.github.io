@@ -33,6 +33,7 @@ function Profile (appversion,
   this.language = pageVariables.language;
   this.localized_anonymous = pageVariables.anonymous;
   this.license = pageVariables.license;
+  this.default_value = pageVariables.default_value;  
 }
 
 /**
@@ -132,7 +133,10 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
 Profile.prototype.toHash = function () {
     // TODO View.getUserProfileInfo gets called twice to get same info
     // everytime a user uploads... 
-    var profile_hash = View.getUserProfileInfo(this.localized_yes, this.localized_other, this.localized_anonymous);
+    var profile_hash = View.getUserProfileInfo(this.localized_yes,
+                                               this.localized_other,
+                                               this.localized_anonymous,
+                                               this.default_value);
 
     profile_hash["language"] = this.language;
 
@@ -165,8 +169,10 @@ Profile.prototype.toTextArray = function () {
     // TODO View.getUserProfileInfo gets called twice to get same info
     // everytime a user uploads... cache info somehow...
     // TODO this method assumes that toHash was called before it... 
-    var profile_hash = View.getUserProfileInfo(this.localized_yes, this.localized_other, this.localized_anonymous);
-
+    var profile_hash = View.getUserProfileInfo(this.localized_yes,
+                                               this.localized_other,
+                                               this.localized_anonymous,
+                                               this.default_value);
     var profile_array = [];
     var i=0;
 
@@ -218,7 +224,7 @@ Profile.prototype.toTextArray = function () {
     }
 
     profile_array[i++] = 'Background Noise: ' + profile_hash["background_noise"] + '\n';
-    if (profile_hash["background_noise"] === "Yes") {
+    if (profile_hash["background_noise"] === this.localized_yes) {
       profile_array[i++] = 'Noise Volume: ' + profile_hash["noise_volume"] + '\n';
       if (profile_hash["noise_type"] !== this.localized_other) {
         profile_array[i++] = 'Noise Type: ' + profile_hash["noise_type"]  + '\n';

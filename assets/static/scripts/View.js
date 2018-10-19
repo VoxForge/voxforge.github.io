@@ -140,7 +140,10 @@ View.updateView = function(json_object, localized_yes, localized_other) {
 /**
 * get user entered DOM data
 */
-View.getUserProfileInfo = function(localized_yes, localized_other, localized_anonymous) {
+View.getUserProfileInfo = function(localized_yes,
+                                   localized_other,
+                                   localized_anonymous,
+                                   default_value) {
     var profile_hash = {};
 
     // note, this leaves the contents of Form unchanged, only when user 
@@ -187,15 +190,20 @@ View.getUserProfileInfo = function(localized_yes, localized_other, localized_ano
     }
 
     profile_hash["background_noise"] = $("#background_noise").val() ;
-    profile_hash["noise_volume"] = $("#noise_volume").val();
+    if (profile_hash["background_noise"] === localized_yes) {    
+        profile_hash["noise_volume"] = $("#noise_volume").val();
 
-    profile_hash["noise_type"] = $("#noise_type").val();
-    if ($('#noise_type').val() !== localized_other) {
-        profile_hash["noise_type_other"] = "";
+        profile_hash["noise_type"] = $("#noise_type").val();
+        if ($('#noise_type').val() !== localized_other) {
+            profile_hash["noise_type_other"] = "";
+        } else {
+            profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
+        }
     } else {
-        profile_hash["noise_type_other"] = Profile.cleanUserInput( $("#noise_type_other").val() );
+        profile_hash["noise_volume"] = default_value;
+        profile_hash["noise_type"] = default_value;
+        profile_hash["noise_type_other"] = "";
     }
-
     // see http://www.whatsmyua.info/
     // https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
     if ( $('#ua_string').is(":checked") ) {
