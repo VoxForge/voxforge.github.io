@@ -262,6 +262,8 @@ Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked)
         event_buffer: event.inputBuffer.getChannelData(0),
       });
 
+      // TODO create two onaudioprocess functions, one which gets device_event_buffer_size
+      // and one which does not and have this test outside these calls...
       if (typeof self.debugValues.device_event_buffer_size  == 'undefined') {
           // event.inputBuffer.getChannelData(0) is a floatArray_time_domain
           self.debugValues.device_event_buffer_size = event.inputBuffer.getChannelData(0).length;

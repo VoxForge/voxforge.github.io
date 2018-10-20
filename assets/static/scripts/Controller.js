@@ -79,10 +79,7 @@ Controller.prototype.start = function () {
         }, self.parms.recording_timeout);
 
         var vad_run;
-        if ( self.view.noiseTurnOffVad() ) {
-            vad_run = false;
-            console.log("Overriding user settings: disabling VAD, background noise present");
-        } else if ( localStorage.getItem("vad_run") === 'true') {
+        if ( localStorage.getItem("vad_run") === 'true') {
             vad_run = true;
         } else {
             vad_run = false;
@@ -234,6 +231,12 @@ Controller.prototype.start = function () {
                   }
               });
 
+          }
+
+          if ( self.view.userSaysBackgroundNoise() &&
+               localStorage.getItem("vad_run") === 'true')
+          {
+              window.alert(self.alert_message.noise_Turn_Off_Vad);
           }
 
           self.view.enableDeleteButtons();

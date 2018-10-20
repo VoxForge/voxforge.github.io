@@ -127,7 +127,7 @@ self.onmessage = function(event) {
       var no_trailing_silence = false; 
       var clipping = false;
       var too_soft = false;
-      
+
       [speech_array,
        no_speech,
        no_trailing_silence,
@@ -161,6 +161,7 @@ self.onmessage = function(event) {
       });
 
       buffers = [];
+
       break;
   }
   

@@ -1173,7 +1173,7 @@ View.prototype.displayRecordingInfoChecked = function () {
 * 
 * TODO create user override for this
 */
-View.prototype.noiseTurnOffVad = function () {
+View.prototype.userSaysBackgroundNoise = function () {
     if (  $('#background_noise').val() === this.localized_yes ) {
       var options = document.getElementById('noise_volume').options;
       var values = [];

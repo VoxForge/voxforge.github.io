@@ -315,7 +315,7 @@ alert_message:
     Please increase your microphone volume, 
     then delete this prompt recording and re-record it.
   no_trailing_silence: >
-    App thinks you did not leave enough trailing silence - you may have clicked
+    You did not leave enough trailing silence - you may have clicked
     'stop' too early! <br>
     Please review this prompt recording, and delete and re-record if necessary.
   no_speech: >
@@ -341,8 +341,8 @@ alert_message:
     Your device does not support the HTML5 API needed to record audio
   rec_info_activated: >
     "Recording Information" section activated under "Profile Info".  This uses
-    your browser's Geolocation service by default to remind you to check your
-    Recording Information if your location has changed.  The use of Geolocation can
+    a simple timer since your last submission to remind you to confirm your
+    "Recording Information" settings are still valid.  This can
     be disabled in Settings.
   time_limit: >
     It's been a while since last your submission: please review your
@@ -350,26 +350,29 @@ alert_message:
     Location and Noise Levels.
   location_change: >
     Location Change: please review your Recording Information settings and,
-    if necessary, update your Location and Noise Levels.
+    if necessary, update your Location and Noise Level/Type.
+  noise_Turn_Off_Vad: >
+    Background noise present.  You might need to disable VAD (Voice Activity
+    Detection) in Settings, then delete and re-record your last prompt.
     
 settings:
   title: Settings (click box to enable)
   display_record_info: >
     Recording Information (needs to be reviewed and updated (if needed) each time location or
-    noise characteristics change)
+    noise changes)
   resource_intensive_text: >
-    Resource Intensive Functions (disable these to improve recording
+    Resource intensive functions (disable these to improve recording
     quality on low powered devices)
   vad_run: Voice Activity Detection (VAD)
-  recording_geolocation_reminder: Geolocation "Check Recording Information" reminder
-  recording_time_reminder: Time-since-last-submission "Check Recording Information" reminder
-  audio_visualizer: Audio Visualizer
-  waveform_display: Waveform Display for each recording  
+  recording_geolocation_reminder: use geolocation (Recording Information reminder)
+  recording_time_reminder: use time since last submission (Recording Information reminder)
+  audio_visualizer: Audio visualizer
+  waveform_display: Waveform display for each recording  
   saved_submissions: Waiting to upload (saved in browser storage)
-  uploaded_submissions: Uploaded Submissions
-  system_information_text: System Information included in submission
+  uploaded_submissions: Uploaded submissions
+  system_information_text: System information included in submission
   ua_string: User Agent String
-  debug_text: Browser Audio Settings  
+  debug_text: Browser audio settings
   recording_information_text: Recording Information - settings
   other_heading: General  
 
