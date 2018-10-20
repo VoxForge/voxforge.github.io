@@ -81,7 +81,7 @@ but will be too late for it to display to the user correctly... so user will
 see "Please Select" after a page refresh, even though the select will have
 properties showing that a certain element was selected...
 */
-View.updateView = function(json_object, localized_yes, localized_other) {
+View.updateView = function(json_object, localized_yes, localized_other, default_value) {
     //Speaker Characteristics
     $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
     if (json_object.username) {
@@ -101,13 +101,17 @@ View.updateView = function(json_object, localized_yes, localized_other) {
     }
     $('#first_language').val( json_object.first_language );
     $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
+
     $('#dialect').val( json_object.dialect );
+    $('#sub_dialect').val( json_object.sub_dialect );
+    if ( json_object.sub_dialect !== default_value ) {
+      $("#sub_dialect_display").show();
+    }
     $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
-    if ( json_object.dialect === localized_other )
-    {
+    if ( json_object.dialect === localized_other ) {
       $("#dialect_other_display").show();
     }
-    $('#sub_dialect').val( json_object.dialect_other );
+
     //Recording Information:
     $('#microphone').val( json_object.microphone );
     $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
@@ -418,7 +422,10 @@ View.prototype.init = function () {
     return new Promise(function (resolve, reject) {
         var json_object = self.profile.getProfileFromBrowserStorage();
         if (json_object) {
-          View.updateView(json_object, self.localized_yes, self.localized_other);  
+          View.updateView(json_object,
+                          self.localized_yes,
+                          self.localized_other,
+                          self.default_value);  
         } 
 
         resolve("OK");  // TODO not waiting for updateView
