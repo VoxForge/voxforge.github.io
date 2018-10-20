@@ -78,13 +78,7 @@ Controller.prototype.start = function () {
           fsm.recordingtimeout();
         }, self.parms.recording_timeout);
 
-        var vad_run;
-        if ( localStorage.getItem("vad_run") === 'true') {
-            vad_run = true;
-        } else {
-            vad_run = false;
-        }
-
+        var vad_run = localStorage.getItem("vad_run") === 'true';
         if ( view.debugChecked() ) {
           promise_list[self.promise_index++] = 
                 self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked() )
