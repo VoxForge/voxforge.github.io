@@ -124,7 +124,6 @@ View.updateView = function(json_object, localized_yes, localized_other, default_
        $("#speaker_characteristics_display").hide();
     }
 
-
     //Recording Information:
     $('#microphone').val( json_object.microphone );
     $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
@@ -359,6 +358,8 @@ View.prototype.init = function () {
     * to the value of the chosen option in #dialect, and set them using 
     * .html() in #subdialect:
     */
+    // TODO when only one optgroup, first selection is not immediately selectable
+    // need to select second or third option, then can select first option
     function setDependentSelect($independent, $dependent, $dependent_display) {
         var $optgroup = $dependent.find( 'optgroup' );
         var $selected = $dependent.find( ':selected' );
@@ -379,7 +380,6 @@ View.prototype.init = function () {
         } ).trigger( 'change' );
     }
 
-    //$( '#sub_dialect select' ).val( self.default_value );
     setDependentSelect( $('#dialect'), $('#sub_dialect'), $("#sub_dialect_display") );
 
     /**
