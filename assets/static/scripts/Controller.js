@@ -247,7 +247,7 @@ Controller.prototype.start = function () {
           }
         },
 
-        onMidpromptsrecorded: function() { 
+        onMidpromptsrecorded: function() {
           self.view.enableDeleteButtons();
           self.view.showAudioPlayer();
           self.view.showPlayButtons();
@@ -255,11 +255,11 @@ Controller.prototype.start = function () {
               //block display of record button stays off until after recording is done
               Promise.all(promise_list)
               .then(function() {
-                 self.view.setRSButtonDisplay(true, false);   
+                 self.view.setRSButtonDisplay(true, false);
               })
               .catch((err) => { console.log(err) });
           } else { // allows recording even though waveform display not completed
-             self.view.setRSButtonDisplay(true, false); 
+             self.view.setRSButtonDisplay(true, false);
           }
         },
 
