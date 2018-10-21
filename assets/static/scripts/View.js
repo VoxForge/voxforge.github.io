@@ -112,6 +112,19 @@ View.updateView = function(json_object, localized_yes, localized_other, default_
       $("#dialect_other_display").show();
     }
 
+    // if user has filled in relevant profile information, no need to present
+    // to Speaker Characteristics section to user
+    if ( json_object.gender !== default_value &&
+        json_object.age  !== default_value &&
+        json_object.native_speaker !== default_value &&
+        (json_object.first_language !== default_value ||
+               json_object.dialect  !== default_value)
+      )
+    {
+       $("#speaker_characteristics_display").hide();
+    }
+
+
     //Recording Information:
     $('#microphone').val( json_object.microphone );
     $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
@@ -1145,8 +1158,6 @@ View.prototype.visualize = function (analyser) {
         visualize(visualizer, analyser, false);
     }
 }
-
-
 
 /**
 * 
