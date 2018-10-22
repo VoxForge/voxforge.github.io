@@ -376,8 +376,10 @@ View.prototype.init = function () {
             {
               $dependent_display.hide();
             }
+            $dependent.val(self.default_value);                 
             $dependent.prop('defaultSelected');
-        } ).trigger( 'change' );
+       
+        } ).trigger('change');
     }
 
     setDependentSelect( $('#dialect'), $('#sub_dialect'), $("#sub_dialect_display") );
