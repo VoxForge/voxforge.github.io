@@ -214,19 +214,23 @@ Controller.prototype.start = function () {
           // inner function
           function checkTimeSinceLastSubmission() {
               if (self.view.timeSinceLastSubmissionChecked() &&
-                  self.timeSinceLastSubmission())
+                  self.uploader.timeSinceLastSubmission())
               {
                   window.alert(self.alert_message.time_limit);
+                  self.view.profileInfo();
+                  self.view.recordingInformation();
               }
           }
 
           // ###
-          if ( self.view.displayRecordingInfoChecked() ) {
+          if (self.view.displayRecordingInfoChecked() ) {
             if (self.view.geolocationReminderChecked() ) {
               location.getCurrentPosition() // long running function that may or may not return successfully
               .then( function (coords) {
                   if (location.changed(coords) ) {
                       window.alert(self.alert_message.location_change);
+                      self.view.profileInfo();
+                      self.view.recordingInformation();
                       location.saveToLocalStorage(coords);
                   } else {
                       checkTimeSinceLastSubmission();
@@ -240,7 +244,7 @@ Controller.prototype.start = function () {
                 checkTimeSinceLastSubmission();
             }
           }
-          
+
           if ( self.view.userSaysBackgroundNoise() &&
                localStorage.getItem("vad_run") === 'true')
           {
@@ -404,17 +408,5 @@ Controller.prototype.start = function () {
       } else {
          fsm.deleteclicked();
       } 
-    }
-}
-
-/**
-* use time since last submission to determine if user should be
-* asked to update recording location information
-*/
-Controller.prototype.timeSinceLastSubmission = function () {
-    if (this.uploader.minutesSinceLastSubmission() > this.uploader.maxMinutesSinceLastSubmission) {
-        return true;
-    } else {
-        return false;
     }
 }

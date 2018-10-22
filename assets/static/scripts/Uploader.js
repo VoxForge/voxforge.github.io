@@ -465,5 +465,16 @@ Uploader.prototype.minutesSinceLastSubmission = function () {
     } else {
       return 0;
     }
+}
 
+/**
+* use time since last submission to determine if user should be
+* asked to update recording location information
+*/
+Uploader.prototype.timeSinceLastSubmission = function () {
+    if (this.minutesSinceLastSubmission() > this.maxMinutesSinceLastSubmission) {
+        return true;
+    } else {
+        return false;
+    }
 }
