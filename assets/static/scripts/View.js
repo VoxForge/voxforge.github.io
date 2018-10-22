@@ -1169,23 +1169,30 @@ View.prototype.waveformDisplayChecked = function () {
 }
 
 /**
-* get recording Reminder value; assumption being that if they
-* have not recorded in a while, then they may have changed locations...
-*
-* TODO use chrome geolocation api... should be ok since not saving info
-* and only using to check for changes in location
-*/
-View.prototype.checkGeolocationReminder = function () {
-    return $('#recording_geolocation_reminder').is(":checked");
-}
-
-/**
 * get recording information value
 */
 View.prototype.displayRecordingInfoChecked = function () {
     return $('#display_record_info').is(":checked");
 }
 
+/**
+* get recording information value
+*/
+View.prototype.timeSinceLastSubmissionChecked = function () {
+    return $('#recording_time_reminder').is(":checked");
+}
+
+
+/**
+* get recording Reminder value; assumption being that if they
+* have not recorded in a while, then they may have changed locations...
+*
+* TODO use chrome geolocation api... should be ok since not saving info
+* and only using to check for changes in location
+*/
+View.prototype.geolocationReminderChecked = function () {
+    return $('#recording_geolocation_reminder').is(":checked");
+}
 
 /**
 * if noise volume is low, still do VAD - user has option to disable themselves

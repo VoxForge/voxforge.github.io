@@ -208,28 +208,39 @@ Controller.prototype.start = function () {
           }
         },
 
+        // if location changed, notify user
+        // if no change in location, check time since last submission, if too long notify user
         onFirstpromptrecorded: function() {
-          if ( self.view.displayRecordingInfoChecked() &&
-               self.view.checkGeolocationReminder() ) {
+          // inner function
+          function checkTimeSinceLastSubmission() {
+              if (self.view.timeSinceLastSubmissionChecked() &&
+                  self.timeSinceLastSubmission())
+              {
+                  window.alert(self.alert_message.time_limit);
+              }
+          }
 
+          // ###
+          if ( self.view.displayRecordingInfoChecked() ) {
+            if (self.view.geolocationReminderChecked() ) {
               location.getCurrentPosition() // long running function that may or may not return successfully
               .then( function (coords) {
                   if (location.changed(coords) ) {
                       window.alert(self.alert_message.location_change);
                       location.saveToLocalStorage(coords);
-                  } else if (self.timeSinceLastSubmission()) {
-                      window.alert(self.alert_message.time_limit);
+                  } else {
+                      checkTimeSinceLastSubmission();
                   }
               })
               .catch( function (err) {
                   console.warn("can't get location: " + err);
-                  if (self.timeSinceLastSubmission()) {
-                      window.alert(self.alert_message.time_limit);
-                  }
+                  checkTimeSinceLastSubmission();               
               });
-
+            } else  {
+                checkTimeSinceLastSubmission();
+            }
           }
-
+          
           if ( self.view.userSaysBackgroundNoise() &&
                localStorage.getItem("vad_run") === 'true')
           {
