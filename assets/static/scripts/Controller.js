@@ -183,7 +183,10 @@ Controller.prototype.start = function () {
 
         // Transition Actions: system initiated
         onRecordingtimeout: function() {
-          self.audio.endRecording( self.view.audioVisualizerChecked() );
+          self.view.hidePromptDisplay(); // !!!!!!
+          //self.audio.endRecording( self.view.audioVisualizerChecked() );
+          self.audio.endRecording( self.view.audioVisualizerChecked(),
+                                   localStorage.getItem("vad_run") === 'true');          
         },
 
         // #####################################################################
