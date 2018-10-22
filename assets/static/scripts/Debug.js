@@ -59,6 +59,7 @@ Debug.prototype.addToLog = function (message) {
       this.debug 
 */
 Debug.prototype.setValues = function (attribute, obj) {
+    this.clearValues(attribute);
     for (const prop in obj) {
       if (obj.hasOwnProperty(prop)) { // skip inherited properties
         this[attribute][prop] = obj[prop];
@@ -77,13 +78,13 @@ Debug.prototype.clearValues = function (attribute) {
 * return debug info as a hash
 */
 Debug.prototype.toHash = function () {
-    var profile_hash = {};
+    var debug_hash = {};
 
-    profile_hash["audio"] = this.audio;
-    profile_hash["prompts"] = this.prompts;
-    profile_hash["app"] = this.app;
+    debug_hash["audio"] = this.audio;
+    debug_hash["prompts"] = this.prompts;
+    debug_hash["app"] = this.app;
     
-    return profile_hash;
+    return debug_hash;
 };
 
 /**
