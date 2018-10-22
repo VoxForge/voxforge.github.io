@@ -251,9 +251,8 @@ instructions:
     - 2. When done speaking, <b>wait</b> a moment, then click <b>Stop</b>.
     - 3. <b>Review</b> any recordings with warnings.    
   lastline: >
-    4. When all prompts are completed, click <b>Upload</b> to either upload to server or
-    save to browser storage for later uploading.
-
+    4. When all prompts are completed, click <b>Upload</b> to either
+    upload to VoxForge server or save to browser storage for later uploading.
 
 # TODO not supporting Edge yet... Edge needs to support FormData
 # convert to popup for Edge browsers only...
@@ -356,7 +355,7 @@ alert_message:
     Detection) in Settings, then delete and re-record your last prompt.
     
 settings:
-  title: Settings (click box to enable)
+  title: Settings
   display_record_info: >
     Recording Information (needs to be reviewed and updated (if needed) each time location or
     noise changes)
