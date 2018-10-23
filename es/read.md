@@ -16,7 +16,18 @@ prompt_list_files:
     number_of_prompts: 43
     contains_promptid: false
     prefix: es
-
+  - id: "002"
+    start: 44
+    file_location: /es/prompts/002.html
+    number_of_prompts: 64
+    contains_promptid: false
+    prefix: es
+  - id: "003"
+    start: 109
+    file_location: /es/prompts/003.html
+    number_of_prompts: 167
+    contains_promptid: false
+    prefix: es    
 username_label: Nombre de Usuario
 anonymous: anónimo
 anonymous_submission: (dejar en blanco para enviar anonimamente)
