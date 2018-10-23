@@ -55,7 +55,7 @@ first_language:
   label: First Language
   popup_link: https://en.wikipedia.org/wiki/First_language
   popup_text: language that a person has been exposed to from birth or within the critical period.
-  other_label: Other First Language
+  other_label: Enter first language
 
 dialect:
   label: Pronunciation Dialect
@@ -64,7 +64,7 @@ dialect:
   selection:
 # major geographical region e.g. North American [array containing subdialects e.g. canadian English...]
   - [Other, [Other]]
-  other_label: Other Dialect
+  other_label: Enter dialect
 
 # no default required for sub-dialect
 
@@ -80,7 +80,7 @@ microphone:
     - Tablet
     - Microphone Array/Far Field Mic
     - Other
-  other_label: Other Microphone Type
+  other_label: Enter microphone type
 
 recording_location:
   label: Recording Location
@@ -89,7 +89,7 @@ recording_location:
     - Outdoors
     - Vehicle
     - Other
-  other_label: Other Recording Location
+  other_label: Enter location
 
 background_noise:
   label: Is There Background Noise?
@@ -126,7 +126,7 @@ noise_type:
     - Video
     - Weather Related (wind/rain...)
     - Other
-  other_label: Other Type of Noise
+  other_label: Enter noise type
 
 license:
   label: License
@@ -242,7 +242,6 @@ license:
 
 num_prompts:
   label: Number of prompts to read
-
 
 instructions:
   label: Instructions
@@ -373,28 +372,3 @@ settings:
   debug_text: Browser audio settings
   recording_information_text: Recording Information
   other_heading: General  
-
-# TODO no longer used
-ua_string:
-  label: User Agent String
-  link: http://www.useragentstring.com
-  hover_text:  > 
-    When your web browser makes a request to a website, it also sends a User 
-    Agent string.  This string contains information about your browser name, 
-    operating system, device type, etc.
-    The VoxForge app collects this information to help troubleshoot and
-    determine which devices work best with this app.
-  popup:
-    title: Collect User Agent String Information
-    link: http://www.useragentstring.com
-    hover_text: >
-      Include User Agent string with submission
-    text:  > 
-      When your web browser makes a request to a website, it also sends a User 
-      Agent string.  This string contains information about your browser name, 
-      operating system, device type, etc.<br>
-      The VoxForge app collects this information to help troubleshoot and
-      determine which devices work best with this app.<br>
-  selection_default: { value: 'Yes',  item: 'Yes' }
-  selection:
-    - { value: 'No',  option: 'No' }

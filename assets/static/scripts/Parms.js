@@ -45,7 +45,7 @@ function Parms() {
       gain_max_increment_factor: 2.0, // no speech detected, assume volume set really low, double volume
       gain_decrement_factor: 0.75, // if clipping, reduce volume
     }
-    
+
     this.view = {
       displayWaveform: true,
     }
@@ -61,7 +61,7 @@ function Parms() {
     }
 
     // FireFox on (all platforms) can record 32-bit float, but cannot play back 32-bit 
-    // float; therefore only use 16bit bitdepth on all versions of Firefox
+    // float; therefore only use 16bit bit depth on all versions of Firefox
     if ( platform.name.includes("Firefox") ) { 
       this.audio.bitDepth = 16;
     } 
