@@ -325,7 +325,8 @@ Controller.prototype.start = function () {
           );
 
           // user may change debug setting just before upload, so only
-          // get audio debug values at last recorded audio prompt
+          // get audio debug values when uploading after at last recorded
+          // audio prompt
           if ( self.view.debugChecked() ) {
               self.debug.setValues( 'audio', self.audio.getDebugValues() );
           } else {

@@ -22,20 +22,20 @@
     <fieldset data-role="controlgroup">
       <legend>{{ page.settings.title | default: default.settings.title }}</legend>
 
-      <p>{{ page.settings.recording_information_text | default: default.settings.recording_information_text }}:</p>
       <input type="checkbox" name="display_record_info" id="display_record_info">
       <label for="display_record_info">{{ page.settings.display_record_info | default: default.settings.display_record_info }}</label>
 
+      <p>{{ page.settings.recording_information_text | default: default.settings.recording_information_text }}</p>
       <input type="checkbox" name="recording_time_reminder" id="recording_time_reminder">
       <label for="recording_time_reminder">{{ page.settings.recording_time_reminder | default: default.settings.recording_time_reminder }}</label>
 
-
-      <p>{{ page.settings.resource_intensive_text | default: default.settings.resource_intensive_text }}:</p>
-      <input type="checkbox" name="vad_run" id="vad_run">
-      <label for="vad_run">{{ page.settings.vad_run | default: default.settings.vad_run }}</label>
-
       <input type="checkbox" name="recording_geolocation_reminder" id="recording_geolocation_reminder">
       <label for="recording_geolocation_reminder">{{ page.settings.recording_geolocation_reminder | default: default.settings.recording_geolocation_reminder }}</label>
+
+
+      <p>{{ page.settings.resource_intensive_text | default: default.settings.resource_intensive_text }}</p>
+      <input type="checkbox" name="vad_run" id="vad_run">
+      <label for="vad_run">{{ page.settings.vad_run | default: default.settings.vad_run }}</label>
 
       <input type="checkbox" name="audio_visualizer" id="audio_visualizer">
       <label for="audio_visualizer">{{ page.settings.audio_visualizer | default: default.settings.audio_visualizer }}</label>

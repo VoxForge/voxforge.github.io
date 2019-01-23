@@ -355,14 +355,22 @@ alert_message:
     
 settings:
   title: Settings
+  recording_information_text: >
+    Recording Information reminders - let app remind you to confirm
+    Recording Information is still valid, allowing you to make updates
+    if necessary.
   display_record_info: >
-    Recording Information (needs to be reviewed and updated (if needed) each time location or
-    noise changes)
-  # don't put this on two lines, otherwise the colon (in settings.html) will have space before it???  
-  resource_intensive_text: Resource intensive functions (disable these to improve recording quality on low powered devices)
+    Display Recording Information section.
+  recording_time_reminder: >
+    use the time since your last recording to determine when to remind.
+  recording_geolocation_reminder: >
+    use change in location to determine when to remind (resource intensive).
+
+    
+  resource_intensive_text: >
+    Resource intensive functions (disable these to improve recording
+    quality on low powered devices)
   vad_run: Voice Activity Detection (VAD)
-  recording_geolocation_reminder: use geolocation (Recording Information reminder)
-  recording_time_reminder: use time since last submission (Recording Information reminder)
   audio_visualizer: Audio visualizer
   waveform_display: Waveform display for each recording  
   saved_submissions: Waiting to upload (saved in browser storage)
@@ -370,5 +378,4 @@ settings:
   system_information_text: System information included in submission
   ua_string: User Agent String
   debug_text: Browser audio settings
-  recording_information_text: Recording Information
   other_heading: General  

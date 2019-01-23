@@ -58,7 +58,8 @@ var view;  // needs to be global so can be accessible to index.html
     }
 
     // Edge webworkers do not support FormData, and their web worker debugging is not there yet...
-    if (platform.os.family === "Windows" && (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
+    if (platform.os.family === "Windows" &&
+       (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
     {
       window.alert( pageVariables.browser_support.no_edgeSupport_message );         
     }
@@ -68,13 +69,13 @@ var view;  // needs to be global so can be accessible to index.html
 
     var parms = new Parms();
 
-    var standalone = false;
+    var debug
     if (window.matchMedia('(display-mode: standalone)').matches) {
       console.log('display-mode is standalone');
-      standalone = true;
+      debug = new Debug(true);
+    } else {
+      debug = new Debug(false);
     }
-
-    var debug = new Debug(standalone);
     
     var prompts = new Prompts(parms.prompt, pageVariables); 
     var profile = new Profile(appversion, pageVariables);
