@@ -55,12 +55,12 @@
 	    </div> <!-- profile-display -->
 
       <button id="instructions-button-display" 
-              style="display: none;" 
               style="background: #cedfe8;" 
               onclick="view.directionsInfo()">
                 {{ page.instructions.label | default: default.instructions.label }}
       </button>
-      <div id="instructions-display">
+      <div id="instructions-display"
+        style="display: none;">
         {% if page.instructions.lines %}
           {% assign instructions_lines = page.instructions.lines %} 
         {% else %}
