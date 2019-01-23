@@ -47,7 +47,6 @@ url: "https://voxforge.github.io" # the base hostname & protocol for your site
 # see: https://jekyllrb.com/docs/upgrading/2-to-3/
 
 permalink: /:lang/:ref # required for links to work properly on Github
-
 # add trailing slash to permalinks for debugging with Apache2 and self signed SSL certificate
 # note: messes up manifest path, expects manifest.json at https://jekyll_voxforge.org/en/read/manifest.json
 # when it should be https://jekyll_voxforge.org/en/manifest.json
