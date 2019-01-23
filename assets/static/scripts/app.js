@@ -65,7 +65,7 @@ var view;  // needs to be global so can be accessible to index.html
     }
 
     // #############################################################################
-    const appversion = "0.2";
+    const appversion = "0.2.1";
 
     var parms = new Parms();
 
