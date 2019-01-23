@@ -67,6 +67,13 @@
           <option value="{{ item.value }}">{{ item.option }}</option>
         {% endfor %}
       </select>
+
+      <div id="max_num_prompts-display">
+          <label for="max_num_prompts">{{ page.num_prompts.label | default: default.num_prompts.label }}</label>
+          <select type="text" id="max_num_prompts">
+          </select>
+      </div>
+            
     </fieldset>
   </div> <!-- popupSettings -->
 
