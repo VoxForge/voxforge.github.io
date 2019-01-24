@@ -356,8 +356,8 @@ alert_message:
 settings:
   title: Settings
   recording_information_text: >
-    Recording Information reminders - app reminds you to make sure
-    Recording Information is still valid.
+    Recording Information reminders (remind you to make sure
+    Recording Information is still valid).
   display_record_info: >
     Display Recording Information section.
   recording_time_reminder: >
