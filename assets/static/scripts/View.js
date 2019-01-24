@@ -943,7 +943,7 @@ View.prototype.audioVisualizerChecked = function () {
 
 
 /**
-*     // container oholding visualizer, and buttons
+*     // container holding visualizer, and buttons
 
 */
 View.prototype.visualize = function (analyser) {
@@ -1041,6 +1041,9 @@ View.prototype.updateProgress = function () {
 }
 
 //####################################################################
+/**
+* setup app settings Popup for user to modify
+*/
 function Settings () {}
 
 /**
@@ -1065,7 +1068,7 @@ Settings.prototype.initPopup = function (message) {
     */
     function setupCheckbox(element, default_bool, func_if_true, func_if_false) {
       var $element = $('#' + element);
-      
+
       if ( ! localStorage.getItem(element) ) {
           var default_string;
           if (default_bool) {
@@ -1197,7 +1200,7 @@ Settings.prototype.initPopup = function (message) {
       setProperties(true)
       console.log("display_record_info enabled"); 
     };
-    
+
     function setupDisplayRecordInfo(checkbox_element,
                                     dependent_element,
                                     default_bool,
@@ -1227,7 +1230,7 @@ Settings.prototype.initPopup = function (message) {
             $checkbox_element.prop('checked', false);
           }
         }
-        
+
         $checkbox_element.change(function () {
             if (this.checked) {
                 localStorage.setItem(checkbox_element, 'true');

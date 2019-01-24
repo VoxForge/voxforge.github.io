@@ -356,17 +356,14 @@ alert_message:
 settings:
   title: Settings
   recording_information_text: >
-    Recording Information reminders - let app remind you to confirm
-    Recording Information is still valid, allowing you to make updates
-    if necessary.
+    Recording Information reminders - app reminds you to make sure
+    Recording Information is still valid.
   display_record_info: >
     Display Recording Information section.
   recording_time_reminder: >
     use the time since your last recording to determine when to remind.
   recording_geolocation_reminder: >
     use change in location to determine when to remind (resource intensive).
-
-    
   resource_intensive_text: >
     Resource intensive functions (disable these to improve recording
     quality on low powered devices)
