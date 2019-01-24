@@ -82,13 +82,13 @@ Controller.prototype.start = function () {
         if ( view.debugChecked() ) {
           promise_list[self.promise_index++] = 
                 self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked() )
-                .then( self.view.audioPlayer.display.bind(self.view) )
+                .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
                 .then( self.prompts.setAudioCharacteristics.bind(self.prompts) )
                 .catch((err) => { console.log(err) });
         } else {
           promise_list[self.promise_index++] = 
                 self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked()  )
-                .then( self.view.audioPlayer.display.bind(self.view) )
+                .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
                 .catch((err) => { console.log(err) });
 
           self.prompts.clearAudioCharacteristics.bind(self.prompts);

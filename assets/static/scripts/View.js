@@ -42,12 +42,6 @@ function View (parms,
     // TODO this might work with delete if used class syntax (which should pick up many elements) instead of id synstax (which only pick up one element)
     this.delete_clicked = document.querySelector('#delete_clicked'); // only picks up first instance of in=delete in DOM
 
-    // where audio files will be displayed in HTML
-    this.soundClips = document.querySelector('.sound-clips');
-    
-    // unique id for wavesurfer objects in DOM
-    this.clip_id = 0;
-
     this.localized_yes = pageVariables.localized_yes;
     this.localized_no = pageVariables.localized_no;
     this.localized_other = pageVariables.localized_other;
@@ -63,7 +57,10 @@ function View (parms,
          pageVariables.saved_submissions,
          pageVariables.uploaded_submissions,
     );
-    this.audioPlayer = new AudioPlayer();     
+    this.audioPlayer = new AudioPlayer(
+        prompts,
+        pageVariables,
+    );     
 }
 
 
@@ -606,12 +603,7 @@ View.prototype.hidePromptDisplay = function () {
     $('.info-display').hide();
 }
 
-/**
-* clear sound clips
-*/
-View.prototype.clearSoundClips = function () {
-    $( '.sound-clips' ).empty();
-}
+
 
 /**
 * get debug value
@@ -638,13 +630,6 @@ View.prototype.visualize = function (analyser) {
     if ( this.audioVisualizerChecked() ) {
         visualize(visualizer, analyser, false);
     }
-}
-
-/**
-* 
-*/
-View.prototype.waveformDisplayChecked = function () {
-    return $('#waveform_display').is(":checked");  
 }
 
 /**
@@ -711,10 +696,8 @@ View.prototype.displayPrompt = function (promptId, promptSentence) {
 * reset DOM variables for another submission
 */
 View.prototype.reset = function () {
-    this.clip_id = 0;
-    this.clearSoundClips();
+    this.audioPlayer.reset();
     this.hideProfileInfo();
-
     this.updateProgress();
 }
 
