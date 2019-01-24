@@ -58,17 +58,11 @@ function View (parms,
     this.playbuttontext = pageVariables.playbuttontext;
     this.stopbuttontext = pageVariables.stopbuttontext;
 
-    this.saved_submissions = pageVariables.saved_submissions;
-    this.uploaded_submissions = pageVariables.uploaded_submissions;
-    
-    this.uploadedSubmissions = localforage.createInstance({
-      name: "uploadedSubmissions"
-    });
-    this.submissionCache = localforage.createInstance({
-      name: "submissionCache"
-    });
-
-    this.settings = new Settings(); 
+    this.settings = new Settings();
+    this.submissionsLog = new SubmissionsLog(
+         pageVariables.saved_submissions,
+         pageVariables.uploaded_submissions,
+    );     
 }
 
 
@@ -429,7 +423,7 @@ View.prototype.init = function () {
     });
 
     this.settings.initPopup();
-    this.submissionsLog();
+    this.submissionsLog.setupDisplay();
 
     // leave all buttons off until user accepts permission to use Microphone (getUserMedia request)
     this.setRSUButtonDisplay(false, false, false); 
@@ -449,136 +443,6 @@ View.prototype.init = function () {
     }); // promise
 }
 
-/**
-* display log of uploaded and saved submissions
-* 
-* TODO how to deal with n>25 submissions... only show 25 most recent submissions?
-* TODO this function is really slow on slower mobile devices, need caching
-*/
-View.prototype.submissionsLog = function () 
-{
-    var self = this;
-  
-    /**
-     * returns Array of submissions 
-     */
-    function getDatabaseKeys(database, message) {
-      return new Promise(function (resolve, reject) {
-        
-        database.length()
-        .then(function(numberOfKeys) {
-          if (numberOfKeys <= 0) {
-            console.log('no ' + message);
-            resolve("");
-          }
-        })
-        .catch(function(err) {
-            console.log(err);
-            resolve("");
-        });
-
-        database.keys()
-        .then(function(keys) {
-            // An array of all the key names.
-            if (keys.length > 0) {
-              console.log(message + ' ' + keys);
-              resolve(keys);
-            }
-        })
-        .catch(function(err) {
-            // This code runs if there were any errors
-            console.log(err);
-            resolve("");
-        });
-
-      });
-    }
-
-    /**
-     * returns Array containing list of submissions that were uploaded to
-     * Voxforge server
-     */
-    function getUploadedSubmissionList() {
-      return new Promise(function (resolve, reject) {
-        
-          getDatabaseKeys(self.uploadedSubmissions, 'uploaded submissions')
-          .then(function (uploadedSubmissionList) {
-              if (uploadedSubmissionList) {
-                  resolve(uploadedSubmissionList);
-              } else {
-                  resolve("");
-              }
-          })
-          .catch((err) => { console.log(err) });
-          
-      });
-    }
-
-    /**
-     * get list of submissions stored in browser cache
-     */
-    function getSavedSubmissionList(uploadedSubmissionList) {
-      return new Promise(function (resolve, reject) {
-        
-          getDatabaseKeys(self.submissionCache, 'saved submissions')
-          .then(function (savedSubmissionList) {
-              if (savedSubmissionList) {
-                  resolve([uploadedSubmissionList, savedSubmissionList]);
-              } else {
-                  resolve([uploadedSubmissionList, ""]);
-              }
-          })
-          .catch((err) => { console.log(err) });
-
-      });
-    }
-   
-    /**
-    * helper function to wrap array in html
-    *
-    */
-    function makeHTMLlist (array, heading) {
-        var count = 1;
-        if (array) {
-            return '<h3>' + heading + '</h3>' +
-                   '<ul>' + 
-                   jQuery.map( array,
-                               function( element ) {
-                                  return ( '<li>' + count++ + '. ' + element + '</li>'  );
-                               }
-                   )
-                   .join('') + // returns as a string
-                   '</ul>';
-        } else {
-           return "";
-        }
-    }
-
-    // cannot call one popup from another; therefore open second one
-    // after first one closes
-    // see: http://api.jquerymobile.com/popup/
-    // chaining of popups
-    $( document ).on( "pageinit", function() {
-        $("#popupSettings").on({
-          popupafterclose: function() {
-              getUploadedSubmissionList()
-              .then(getSavedSubmissionList)
-              .then(function (submissionArray) {
-                  $('#popupSubmissionList').popup(); // initialize popup before open
-
-                  // TODO translate
-                  var uploadedHTML = makeHTMLlist(submissionArray[0], self.uploaded_submissions);
-                  var savedHTML = makeHTMLlist(submissionArray[1], self.saved_submissions);                 
-                  if (submissionArray[0] || submissionArray[1]) {
-                    $("#submission-list").html(uploadedHTML + savedHTML);
-                    setTimeout(function() { $("#popupSubmissionList").popup( "open" ) }, 100 );
-                  }
-              })
-              .catch(function(err) { console.log(err) });
-          } // popupafterclose
-        });
-    });
-}
 
 /**
 * run after worker completes audio recording; creates a waveform display of 
