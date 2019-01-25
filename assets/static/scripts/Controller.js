@@ -53,47 +53,49 @@ function Controller(parms,
 /**
 * 
 */
+Controller.prototype._recordAudio = function () {
+    var self = this;
+        
+    self.view.hideProfileInfo();
+
+    self.view.updateProgress();
+
+    // only display prompt when user presses record so that they delay the 
+    // start of reading the prompt and give the recording a bit of a leading
+    // silence...
+    self.view.displayPrompt(self.prompts.getPromptId(), self.prompts.getPromptSentence());
+
+    if ( self.view.audioVisualizerChecked() ) {
+      //visualize(view, self.audio.analyser); // don't use global view
+      self.view.visualize(self.audio.analyser);          
+    } 
+
+    self.rec_timeout_obj = setTimeout(function(){
+      fsm.recordingtimeout();
+    }, self.parms.recording_timeout);
+
+    var vad_run = localStorage.getItem("vad_run") === 'true';
+    if ( view.debugChecked() ) {
+      promise_list[self.promise_index++] = 
+            self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked() )
+            .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
+            .then( self.prompts.setAudioCharacteristics.bind(self.prompts) )
+            .catch((err) => { console.log(err) });
+    } else {
+      promise_list[self.promise_index++] = 
+            self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked()  )
+            .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
+            .catch((err) => { console.log(err) });
+
+      self.prompts.clearAudioCharacteristics.bind(self.prompts);
+    }
+}
+
+/**
+* 
+*/
 Controller.prototype.start = function () {
     var self = this;
-
-    /**
-    * 
-    */
-    function recordAudio() {
-        self.view.hideProfileInfo();
-
-        self.view.updateProgress();
-
-        // only display prompt when user presses record so that they delay the 
-        // start of reading the prompt and give the recording a bit of a leading
-        // silence...
-        self.view.displayPrompt(self.prompts.getPromptId(), self.prompts.getPromptSentence());
-
-        if ( self.view.audioVisualizerChecked() ) {
-          //visualize(view, self.audio.analyser); // don't use global view
-          self.view.visualize(self.audio.analyser);          
-        } 
-
-        self.rec_timeout_obj = setTimeout(function(){
-          fsm.recordingtimeout();
-        }, self.parms.recording_timeout);
-
-        var vad_run = localStorage.getItem("vad_run") === 'true';
-        if ( view.debugChecked() ) {
-          promise_list[self.promise_index++] = 
-                self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked() )
-                .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
-                .then( self.prompts.setAudioCharacteristics.bind(self.prompts) )
-                .catch((err) => { console.log(err) });
-        } else {
-          promise_list[self.promise_index++] = 
-                self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked()  )
-                .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
-                .catch((err) => { console.log(err) });
-
-          self.prompts.clearAudioCharacteristics.bind(self.prompts);
-        }
-    }
 
     /**
     * function to be executed after processsing of shadow DOM
@@ -294,7 +296,7 @@ Controller.prototype.start = function () {
         // Action States
         onRecordingfirst: function() {
           self.view.setRSButtonDisplay(false, true);
-          recordAudio();
+          self._recordAudio();
         },
 
         onRecordingmid: function() { 
@@ -302,7 +304,7 @@ Controller.prototype.start = function () {
           self.view.hideAudioPlayer();
           self.view.hidePlayButtons();
           self.view.setRSButtonDisplay(false, true);  
-          recordAudio(); 
+          self._recordAudio(); 
         },
 
         onRecordinglast: function() {
@@ -310,7 +312,7 @@ Controller.prototype.start = function () {
           self.view.hideAudioPlayer();
           self.view.hidePlayButtons();
           self.view.setRSButtonDisplay(false, true);  
-          recordAudio(); // should be blocking
+          self._recordAudio(); // should be blocking
         },
 
         onUploading: function() { 
