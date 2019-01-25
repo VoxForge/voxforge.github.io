@@ -52,16 +52,6 @@ function Controller(
 /**
 * 
 */
-Controller.prototype._recordAudio = function () {
-    this._updateDisplayForRecording(); 
-    this._startRecordingPromiseChain(); 
-}
-
-
-
-/**
-* 
-*/
 Controller.prototype.start = function () {
     var self = this;
 
@@ -126,13 +116,8 @@ Controller.prototype.start = function () {
             localStorage.getItem("vad_run") === 'true');
         },
 
-        onDeleteclickedoneleft: function() {
-          self.view.updateProgress();
-        },
-
-        onDeleteclicked: function() {
-          self.view.updateProgress();
-        },
+        onDeleteclickedoneleft: self.view.updateProgress.bind(self),
+        onDeleteclicked: self.view.updateProgress.bind(self),
 
         // Transition Actions: system initiated
         onRecordingtimeout: function() {
@@ -313,6 +298,26 @@ Controller.prototype.start = function () {
       }
     });
 
+    this._setUpButtonClicksWithFsmtransitions();
+    this._setMaxPromptsEvenTriger();
+}
+
+Controller.prototype._setMaxPromptsEvenTriger = function () {
+    var self = this;
+    
+    self.view.maxnumpromptschanged.onChange = function() {
+      if ( self.prompts.maxnumpromptsincreased() ) {
+        self.fsm.maxnumpromptsincreased();
+      } else { 
+        if ( self.prompts.recordedmorethancurrentmaxprompts() ) {
+          self.fsm.recordedmorethancurrentmaxprompts();
+        }
+      } 
+    }
+}
+
+Controller.prototype._setUpButtonClicksWithFsmtransitions = function () {
+    var self = this;
     // ### associate user button clicks with fsm transitions ###################
 
     self.view.record.onclick = function() { 
@@ -341,16 +346,6 @@ Controller.prototype.start = function () {
       self.fsm.uploadclicked();
     }
 
-    self.view.maxnumpromptschanged.onChange = function() {
-      if ( self.prompts.maxnumpromptsincreased() ) {
-        self.fsm.maxnumpromptsincreased();
-      } else { 
-        if ( self.prompts.recordedmorethancurrentmaxprompts() ) {
-          self.fsm.recordedmorethancurrentmaxprompts();
-        }
-      } 
-    }
-
     /** 
      * using a dummy 'delete' div that is triggered by clicking 
      * delete button of any one recorded prompt
@@ -363,7 +358,7 @@ Controller.prototype.start = function () {
       } else {
          self.fsm.deleteclicked();
       } 
-    }
+    }    
 }
 
 /*
@@ -387,6 +382,14 @@ Controller.prototype._startRecordingPromiseChain = function () {
               }
         })
         .catch((err) => { console.log(err) });
+}
+
+/**
+* 
+*/
+Controller.prototype._recordAudio = function () {
+    this._updateDisplayForRecording(); 
+    this._startRecordingPromiseChain(); 
 }
 
 /*
