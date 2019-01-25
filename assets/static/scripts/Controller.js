@@ -29,7 +29,7 @@ function Controller(parms,
                     audio,
                     uploader,
                     appversion,
-                    pageVariables,
+                    language,
                     alert_message,
                     debug)
 {
@@ -41,7 +41,7 @@ function Controller(parms,
     this.debug = debug;
     this.parms = parms; 
     this.appversion = appversion; 
-    this.pageVariables = pageVariables;
+    this.language = language;
     this.alert_message = alert_message;
 
     //  recording timeout object
@@ -75,20 +75,17 @@ Controller.prototype._recordAudio = function () {
     }, self.parms.recording_timeout);
 
     var vad_run = localStorage.getItem("vad_run") === 'true';
-    if ( view.debugChecked() ) {
       promise_list[self.promise_index++] = 
             self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked() )
             .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
-            .then( self.prompts.setAudioCharacteristics.bind(self.prompts) )
+            .then( function () {
+                  if ( view.debugChecked() ) {
+                        self.prompts.setAudioCharacteristics.bind(self.prompts);
+                  } else {
+                        self.prompts.clearAudioCharacteristics.bind(self.prompts);
+                  }
+            })
             .catch((err) => { console.log(err) });
-    } else {
-      promise_list[self.promise_index++] = 
-            self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked()  )
-            .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
-            .catch((err) => { console.log(err) });
-
-      self.prompts.clearAudioCharacteristics.bind(self.prompts);
-    }
 }
 
 /**
@@ -352,9 +349,9 @@ Controller.prototype.start = function () {
                                    self.debug,
                                    self.appversion,
                                    document.querySelectorAll('.clip'), // all clips
-                                   self.pageVariables.language,
+                                   self.language,
                                    view.debugChecked())
-              .then(saveProfileAndReset)
+              .then( self._saveProfileAndReset.bind(self) )
               .catch(function (err) {
                   console.log(err.message);
                   console.log(err.stack);
