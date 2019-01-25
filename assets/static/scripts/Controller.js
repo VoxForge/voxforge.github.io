@@ -22,16 +22,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // submission upload message; used in upload function
 var promise_list = [];
 
-function Controller(parms,
-                    prompts, 
-                    profile,
-                    view, 
-                    audio,
-                    uploader,
-                    appversion,
-                    language,
-                    alert_message,
-                    debug)
+function Controller(
+    parms,
+    prompts, 
+    profile,
+    view, 
+    audio,
+    uploader,
+    appversion,
+    language,
+    alert_message,
+    debug)
 {
     this.prompts = prompts; 
     this.profile = profile; 
@@ -44,9 +45,7 @@ function Controller(parms,
     this.language = language;
     this.alert_message = alert_message;
 
-    //  recording timeout object
-    this.rec_timeout_obj;
-
+    this.recording_timeout_obj;
     this.promise_index = 0;
 }
 
@@ -54,38 +53,51 @@ function Controller(parms,
 * 
 */
 Controller.prototype._recordAudio = function () {
+    this._updateDisplayForRecording(); 
+    this._startRecordingPromiseChain(); 
+}
+
+/*
+ *
+ */
+Controller.prototype._startRecordingPromiseChain = function () {
     var self = this;
         
-    self.view.hideProfileInfo();
-
-    self.view.updateProgress();
-
-    // only display prompt when user presses record so that they delay the 
-    // start of reading the prompt and give the recording a bit of a leading
-    // silence...
-    self.view.displayPrompt(self.prompts.getPromptId(), self.prompts.getPromptSentence());
-
-    if ( self.view.audioVisualizerChecked() ) {
-      //visualize(view, self.audio.analyser); // don't use global view
-      self.view.visualize(self.audio.analyser);          
-    } 
-
-    self.rec_timeout_obj = setTimeout(function(){
-      self.fsm.recordingtimeout();
-    }, self.parms.recording_timeout);
-
     var vad_run = localStorage.getItem("vad_run") === 'true';
-      promise_list[self.promise_index++] = 
-            self.audio.record( self.prompts.getPromptId(), vad_run, self.view.audioVisualizerChecked() )
-            .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
-            .then( function () {
-                  if ( view.debugChecked() ) {
-                        self.prompts.setAudioCharacteristics.bind(self.prompts);
-                  } else {
-                        self.prompts.clearAudioCharacteristics.bind(self.prompts);
-                  }
-            })
-            .catch((err) => { console.log(err) });
+    promise_list[self.promise_index++] = 
+        self.audio.record(
+            self.prompts.getPromptId(),
+            vad_run,
+            self.view.audioVisualizerChecked() )
+        .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
+        .then( function () {
+              if ( view.debugChecked() ) {
+                    self.prompts.setAudioCharacteristics.bind(self.prompts);
+              } else {
+                    self.prompts.clearAudioCharacteristics.bind(self.prompts);
+              }
+        })
+        .catch((err) => { console.log(err) });
+}
+
+/*
+ * only display prompt when user presses record so that they delay the 
+ * start of reading the prompt and give the recording a bit of a leading
+ * silence...
+ */
+Controller.prototype._updateDisplayForRecording = function () {
+    var self = this;
+        
+    this.view.hideProfileInfo();
+    this.view.updateProgress();
+
+    this.view.displayPrompt(
+        this.prompts.getPromptId(),
+        this.prompts.getPromptSentence() );
+
+    if ( this.view.audioVisualizerChecked() ) {
+      this.view.visualize(this.audio.analyser);          
+    } 
 }
 
 /**
@@ -113,8 +125,6 @@ Controller.prototype._saveProfileAndReset = function (result) {
 */
 Controller.prototype.start = function () {
     var self = this;
-
-
 
     /**
     * ### Finite State Machine #####################################################
@@ -172,8 +182,9 @@ Controller.prototype.start = function () {
         // #####################################################################
         // Transitions: user initiated
         onStopclicked: function() {
-          self.audio.endRecording( self.view.audioVisualizerChecked(),
-                                   localStorage.getItem("vad_run") === 'true');
+          self.audio.endRecording(
+            self.view.audioVisualizerChecked(),
+            localStorage.getItem("vad_run") === 'true');
         },
 
         onDeleteclickedoneleft: function() {
@@ -188,8 +199,9 @@ Controller.prototype.start = function () {
         onRecordingtimeout: function() {
           self.view.hidePromptDisplay(); // !!!!!!
           //self.audio.endRecording( self.view.audioVisualizerChecked() );
-          self.audio.endRecording( self.view.audioVisualizerChecked(),
-                                   localStorage.getItem("vad_run") === 'true');          
+          self.audio.endRecording(
+            self.view.audioVisualizerChecked(),
+            localStorage.getItem("vad_run") === 'true');          
         },
 
         // #####################################################################
@@ -199,8 +211,7 @@ Controller.prototype.start = function () {
 
           if (! self.view.displayRecordingInfoChecked()  && 
               self.uploader.getNumberOfSubmissions() > self.parms.numPrompt2SubmittForRecordInfo &&
-              localStorage.getItem("recording_info_asked_user") !== 'true'
-              )
+              localStorage.getItem("recording_info_asked_user") !== 'true' )
           {
               // only ask the user once if they want to activate the Recording Information section
               localStorage.setItem("recording_info_asked_user", true); 
@@ -344,18 +355,19 @@ Controller.prototype.start = function () {
               // start of promise chain with multiple parameters needs to be
               // within function; cannot be passed as function reference after
               // Promise.all.
-              self.uploader.upload(self.prompts,
-                                   self.profile,
-                                   self.debug,
-                                   self.appversion,
-                                   document.querySelectorAll('.clip'), // all clips
-                                   self.language,
-                                   view.debugChecked())
-              .then( self._saveProfileAndReset.bind(self) )
-              .catch(function (err) {
-                  console.log(err.message);
-                  console.log(err.stack);
-              });
+            self.uploader.upload(
+                self.prompts,
+                self.profile,
+                self.debug,
+                self.appversion,
+                document.querySelectorAll('.clip'), // all clips
+                self.language,
+                view.debugChecked())
+            .then( self._saveProfileAndReset.bind(self) )
+            .catch(function (err) {
+                console.log(err.message);
+                console.log(err.stack);
+            });
           })
           .catch((err) => { console.log(err) });
         },
@@ -375,7 +387,7 @@ Controller.prototype.start = function () {
     }
 
     self.view.stop.onclick = function() {
-      clearTimeout(self.rec_timeout_obj);
+      clearTimeout(self.recording_timeout_obj);
       var start =  Date.now();
       self.view.hidePromptDisplay();
 
