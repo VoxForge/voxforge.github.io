@@ -84,35 +84,8 @@ View.prototype._instantiateClassDependencies = function () {
 */
 View.prototype.init = function () {
     var self = this;
-    
-    this._showDivBasedonValue('#native_speaker', this.localized_no, '#first_language_display', false);
-    this._showDivBasedonValue('#native_speaker', this.localized_yes, '#dialect_display', false);
-    // causes sub-dialect to display immediately rather than when Canadian or American dialect selected
-    //showDivBasedonValue('#native_speaker', this.localized_yes, '#sub_dialect_display', false);
-    this._setDefault('#native_speaker', this.localized_yes, '#first_language', false);
-    this._setDefault('#native_speaker', this.localized_no, '#dialect', false);
-    this._setDefault('#native_speaker', this.localized_no, '#sub_dialect', false);
-    
-    this._showDivBasedonValue('#first_language', this.localized_other, '#first_language_other_display', false);
-    // true means hide if there is something in the username field
-    this._showDivBasedonValue('#username', true, '#anonymous_instructions_display', false);
-    this._showDivBasedonValue('#microphone', this.localized_other, '#microphone_other_display', false);
-    this._showDivBasedonValue('#dialect', this.localized_other, '#dialect_other_display', false);
-    this._showDivBasedonValue('#recording_location', this.localized_other, '#recording_location_other_display', false);
-    this._showDivBasedonValue('#background_noise', this.localized_yes, '#background_noise_display', false);
-    this._showDivBasedonValue('#noise_type', this.localized_other, '#noise_type_other_display', false);
-
-    this._setDependentSelect( $('#dialect'), $('#sub_dialect'), $("#sub_dialect_display") );
-
-    this._setupLanguages();
-    this._setupPrompts();
-    this.settings.initPopup();
-    this.submissionsLog.setupDisplay();
-
-    // leave all buttons off until user accepts permission to use Microphone (getUserMedia request)
-    this.setRSUButtonDisplay(false, false, false); 
-
-    // ########################################################################
+    this._setupDisplayDefaults();
+    this._turnAllButtonsOff()
 
     return new Promise(function (resolve, reject) {
         var json_object = self.profile.getProfileFromBrowserStorage();
@@ -125,6 +98,48 @@ View.prototype.init = function () {
 
         resolve("OK");  // TODO not waiting for updateView
     }); // promise
+}
+
+View.prototype._setupDisplayDefaults = function () {
+    this._setUpNativeSpeakerDefaults();
+    this._setUpOtherDefaults();   
+
+    this._setupSubDialect();
+    this._setupLanguages();
+
+    this._setupPrompts();
+
+    this.settings.initPopup();
+    this.submissionsLog.setupDisplay();
+}
+
+View.prototype._turnAllButtonsOff = function () {
+    this.setRSUButtonDisplay(false, false, false); 
+}
+
+View.prototype._setupSubDialect = function () {
+    this._setDependentSelect( $('#dialect'), $('#sub_dialect'), $("#sub_dialect_display") );
+}
+
+View.prototype._setUpNativeSpeakerDefaults = function () {
+    this._showDivBasedonValue('#native_speaker', this.localized_no, '#first_language_display', false);
+    this._showDivBasedonValue('#native_speaker', this.localized_yes, '#dialect_display', false);
+    // causes sub-dialect to display immediately rather than when Canadian or American dialect selected
+    //showDivBasedonValue('#native_speaker', this.localized_yes, '#sub_dialect_display', false);
+    this._setDefault('#native_speaker', this.localized_yes, '#first_language', false);
+    this._setDefault('#native_speaker', this.localized_no, '#dialect', false);
+    this._setDefault('#native_speaker', this.localized_no, '#sub_dialect', false);
+}
+
+View.prototype._setUpOtherDefaults = function () {
+    this._showDivBasedonValue('#first_language', this.localized_other, '#first_language_other_display', false);
+    // true means hide if there is something in the username field
+    this._showDivBasedonValue('#username', true, '#anonymous_instructions_display', false);
+    this._showDivBasedonValue('#microphone', this.localized_other, '#microphone_other_display', false);
+    this._showDivBasedonValue('#dialect', this.localized_other, '#dialect_other_display', false);
+    this._showDivBasedonValue('#recording_location', this.localized_other, '#recording_location_other_display', false);
+    this._showDivBasedonValue('#background_noise', this.localized_yes, '#background_noise_display', false);
+    this._showDivBasedonValue('#noise_type', this.localized_other, '#noise_type_other_display', false);
 }
 
 /**
