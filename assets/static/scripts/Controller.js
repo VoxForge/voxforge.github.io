@@ -71,7 +71,7 @@ Controller.prototype._recordAudio = function () {
     } 
 
     self.rec_timeout_obj = setTimeout(function(){
-      fsm.recordingtimeout();
+      self.fsm.recordingtimeout();
     }, self.parms.recording_timeout);
 
     var vad_run = localStorage.getItem("vad_run") === 'true';
@@ -92,28 +92,32 @@ Controller.prototype._recordAudio = function () {
 }
 
 /**
+* function to be executed after processsing of shadow DOM
+* audio elements completed, otherwise submission package will be
+* missing prompt lines and audio files...
+* basically a blocking wait until audio files get converted into
+* blobs for later processing by zipupload web worker.
+*/
+Controller.prototype._saveProfileAndReset = function (result) {
+    var self = this;
+    
+    self.profile.addProfile2LocalStorage();
+    self.prompts.resetIndices();
+    self.view.reset();
+    self.promise_index=0;
+
+    self.profile.updateRandomStrings();
+
+    self.fsm.donesubmission();
+}
+
+/**
 * 
 */
 Controller.prototype.start = function () {
     var self = this;
 
-    /**
-    * function to be executed after processsing of shadow DOM
-    * audio elements completed, otherwise submission package will be
-    * missing prompt lines and audio files...
-    * basically a blocking wait until audio files get converted into
-    * blobs for later processing by zipupload web worker.
-    */
-    function saveProfileAndReset (result) {
-      self.profile.addProfile2LocalStorage();
-      self.prompts.resetIndices();
-      self.view.reset();
-      self.promise_index=0;
 
-      self.profile.updateRandomStrings();
-      
-      fsm.donesubmission();
-    }
 
     /**
     * ### Finite State Machine #####################################################
@@ -127,7 +131,7 @@ Controller.prototype.start = function () {
      onEnter<STATE> - fired when entering a specific STATE
 
     */
-    var fsm = new StateMachine({
+    this.fsm = new StateMachine({
       init: 'nopromptsrecorded',
 
       //  name: TRANSITION              from: STATE                  to: STATE                                        
@@ -367,9 +371,9 @@ Controller.prototype.start = function () {
       self.prompts.getNextPrompt();  // sets current_promptLine and increment prompt_count; discarding return value
 
       if ( self.prompts.lastone() ) {
-        fsm.recordclickedlast(); // record last prompt
+        self.fsm.recordclickedlast(); // record last prompt
       } else {
-        fsm.recordclickedltn(); // ltn = less than n; where n < maxprompts
+        self.fsm.recordclickedltn(); // ltn = less than n; where n < maxprompts
       }
     }
 
@@ -381,20 +385,20 @@ Controller.prototype.start = function () {
       // actual stopping of recording is delayed because some users hit it
       // early and cut off the end of their recording.
       setTimeout( function () {
-        fsm.stopclicked(); 
+        self.fsm.stopclicked(); 
       }, self.parms.recording_stop_delay);
     }
 
     self.view.upload.onclick = function() {
-      fsm.uploadclicked();
+      self.fsm.uploadclicked();
     }
 
     self.view.maxnumpromptschanged.onChange = function() {
       if ( self.prompts.maxnumpromptsincreased() ) {
-        fsm.maxnumpromptsincreased();
+        self.fsm.maxnumpromptsincreased();
       } else { 
         if ( self.prompts.recordedmorethancurrentmaxprompts() ) {
-          fsm.recordedmorethancurrentmaxprompts();
+          self.fsm.recordedmorethancurrentmaxprompts();
         }
       } 
     }
@@ -407,9 +411,9 @@ Controller.prototype.start = function () {
     self.view.delete_clicked.onclick = function() { 
       // prompt_count has already been decremented in view call to prompts.movePrompt2Stack
       if ( self.prompts.oneleft() ) {
-         fsm.deleteclickedoneleft(); // at first prompt which means only one prompt left to delete
+         self.fsm.deleteclickedoneleft(); // at first prompt which means only one prompt left to delete
       } else {
-         fsm.deleteclicked();
+         self.fsm.deleteclicked();
       } 
     }
 }
