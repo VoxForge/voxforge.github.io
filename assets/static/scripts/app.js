@@ -81,27 +81,30 @@ var view;  // needs to be global so can be accessible to index.html
     var profile = new Profile(appversion, pageVariables);
 
     // 'view' needs to be global so can be accessed by index.html
-    view = new View(parms.view,
-                    prompts,
-                    profile,
-                    pageVariables); 
+    view = new View(
+        parms.view,
+        prompts,
+        profile,
+        pageVariables); 
 
-    var audio = new Audio(parms.audio,
-                          pageVariables);
-    var uploader = new Uploader(parms.uploader,
-                                pageVariables.alert_message);
-
+    var audio = new Audio(
+        parms.audio,
+        pageVariables);
+    var uploader = new Uploader(
+        parms.uploader,
+        pageVariables.alert_message);
     
-    var controller =  new Controller(parms.controller,
-                                     prompts, 
-                                     profile, 
-                                     view, 
-                                     audio,
-                                     uploader,
-                                     appversion,
-                                     pageVariables, // TODO should only pass in what is required...
-                                     pageVariables.alert_message,
-                                     debug);
+    var controller =  new Controller(
+        parms.controller,
+        prompts, 
+        profile, 
+        view, 
+        audio,
+        uploader,
+        appversion,
+        pageVariables.language,
+        pageVariables.alert_message,
+        debug);
 
     prompts.init();
     view.init();
