@@ -57,68 +57,7 @@ Controller.prototype._recordAudio = function () {
     this._startRecordingPromiseChain(); 
 }
 
-/*
- *
- */
-Controller.prototype._startRecordingPromiseChain = function () {
-    var self = this;
-        
-    var vad_run = localStorage.getItem("vad_run") === 'true';
-    promise_list[self.promise_index++] = 
-        self.audio.record(
-            self.prompts.getPromptId(),
-            vad_run,
-            self.view.audioVisualizerChecked() )
-        .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
-        .then( function () {
-              if ( view.debugChecked() ) {
-                    self.prompts.setAudioCharacteristics.bind(self.prompts);
-              } else {
-                    self.prompts.clearAudioCharacteristics.bind(self.prompts);
-              }
-        })
-        .catch((err) => { console.log(err) });
-}
 
-/*
- * only display prompt when user presses record so that they delay the 
- * start of reading the prompt and give the recording a bit of a leading
- * silence...
- */
-Controller.prototype._updateDisplayForRecording = function () {
-    var self = this;
-        
-    this.view.hideProfileInfo();
-    this.view.updateProgress();
-
-    this.view.displayPrompt(
-        this.prompts.getPromptId(),
-        this.prompts.getPromptSentence() );
-
-    if ( this.view.audioVisualizerChecked() ) {
-      this.view.visualize(this.audio.analyser);          
-    } 
-}
-
-/**
-* function to be executed after processsing of shadow DOM
-* audio elements completed, otherwise submission package will be
-* missing prompt lines and audio files...
-* basically a blocking wait until audio files get converted into
-* blobs for later processing by zipupload web worker.
-*/
-Controller.prototype._saveProfileAndReset = function (result) {
-    var self = this;
-    
-    self.profile.addProfile2LocalStorage();
-    self.prompts.resetIndices();
-    self.view.reset();
-    self.promise_index=0;
-
-    self.profile.updateRandomStrings();
-
-    self.fsm.donesubmission();
-}
 
 /**
 * 
@@ -425,4 +364,67 @@ Controller.prototype.start = function () {
          self.fsm.deleteclicked();
       } 
     }
+}
+
+/*
+ *
+ */
+Controller.prototype._startRecordingPromiseChain = function () {
+    var self = this;
+        
+    var vad_run = localStorage.getItem("vad_run") === 'true';
+    promise_list[self.promise_index++] = 
+        self.audio.record(
+            self.prompts.getPromptId(),
+            vad_run,
+            self.view.audioVisualizerChecked() )
+        .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
+        .then( function () {
+              if ( view.debugChecked() ) {
+                    self.prompts.setAudioCharacteristics.bind(self.prompts);
+              } else {
+                    self.prompts.clearAudioCharacteristics.bind(self.prompts);
+              }
+        })
+        .catch((err) => { console.log(err) });
+}
+
+/*
+ * only display prompt when user presses record so that they delay the 
+ * start of reading the prompt and give the recording a bit of a leading
+ * silence...
+ */
+Controller.prototype._updateDisplayForRecording = function () {
+    var self = this;
+        
+    this.view.hideProfileInfo();
+    this.view.updateProgress();
+
+    this.view.displayPrompt(
+        this.prompts.getPromptId(),
+        this.prompts.getPromptSentence() );
+
+    if ( this.view.audioVisualizerChecked() ) {
+      this.view.visualize(this.audio.analyser);          
+    } 
+}
+
+/**
+* function to be executed after processsing of shadow DOM
+* audio elements completed, otherwise submission package will be
+* missing prompt lines and audio files...
+* basically a blocking wait until audio files get converted into
+* blobs for later processing by zipupload web worker.
+*/
+Controller.prototype._saveProfileAndReset = function (result) {
+    var self = this;
+    
+    self.profile.addProfile2LocalStorage();
+    self.prompts.resetIndices();
+    self.view.reset();
+    self.promise_index=0;
+
+    self.profile.updateRandomStrings();
+
+    self.fsm.donesubmission();
 }
