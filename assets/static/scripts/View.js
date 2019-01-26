@@ -20,11 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ######## TODO convert View class from JQUERY to vanilla JS; keep jQuery mobile css
  */
-function View (
-    parms,
-    prompts,
-    profile,
-    pageVariables)
+function View (parms,
+               prompts,
+               profile,
+               pageVariables)
 {
     this.parms = parms;
     this.prompts = prompts;
@@ -32,10 +31,10 @@ function View (
     this.pageVariables = pageVariables;
     this.displayWaveform = parms.displayWaveform;
     
-    this._initProperties();
+    this._init();
 }
 
-View.prototype._initProperties = function () {
+View.prototype._init = function () {
     this._setupButtons();
 
     // TODO this might work with delete if used class syntax (which should
@@ -64,9 +63,6 @@ View.prototype._setupTranslations = function () {
     this.stopbuttontext = this.pageVariables.stopbuttontext;
 }
 
-/*
- * See also staticMethods.js - basically a mixin
- */
 View.prototype._instantiateClassDependencies = function () {
     this.settings = new Settings();
     this.submissionsLog = new SubmissionsLog(
@@ -89,20 +85,18 @@ View.prototype._instantiateClassDependencies = function () {
 View.prototype.init = function () {
     var self = this;
     this._setupDisplayDefaults();
-    this._turnAllButtonsOff();
+    this._turnAllButtonsOff()
 
     return new Promise(function (resolve, reject) {
         var json_object = self.profile.getProfileFromBrowserStorage();
         if (json_object) {
-            View.updateView(
-                json_object,
-                self.localized_yes,
-                self.localized_other,
-                self.default_value)
-            .then( resolve("OK") );
-        } else {
-            resolve("OK");
-        }
+          View.updateView(json_object,
+                          self.localized_yes,
+                          self.localized_other,
+                          self.default_value);  
+        } 
+
+        resolve("OK");  // TODO not waiting for updateView
     }); // promise
 }
 
@@ -127,76 +121,25 @@ View.prototype._setupSubDialect = function () {
     this._setDependentSelect( $('#dialect'), $('#sub_dialect'), $("#sub_dialect_display") );
 }
 
-/*
- *  Aside: this causes sub-dialect to display immediately rather than when Canadian or
-    American dialect selected:
-    showDivBasedonValue('#native_speaker', this.localized_yes, '#sub_dialect_display', false);
- */
 View.prototype._setUpNativeSpeakerDefaults = function () {
-    this._showDivBasedonValue(
-        '#native_speaker',
-        this.localized_no,
-        '#first_language_display',
-        false);
-    this._showDivBasedonValue(
-        '#native_speaker',
-        this.localized_yes,
-        '#dialect_display',
-        false);
-    this._setDefault(
-        '#native_speaker',
-        this.localized_yes,
-        '#first_language',
-        false);
-    this._setDefault(
-        '#native_speaker',
-        this.localized_no,
-        '#dialect',
-        false);
-    this._setDefault(
-        '#native_speaker',
-        this.localized_no,
-        '#sub_dialect',
-        false);
+    this._showDivBasedonValue('#native_speaker', this.localized_no, '#first_language_display', false);
+    this._showDivBasedonValue('#native_speaker', this.localized_yes, '#dialect_display', false);
+    // causes sub-dialect to display immediately rather than when Canadian or American dialect selected
+    //showDivBasedonValue('#native_speaker', this.localized_yes, '#sub_dialect_display', false);
+    this._setDefault('#native_speaker', this.localized_yes, '#first_language', false);
+    this._setDefault('#native_speaker', this.localized_no, '#dialect', false);
+    this._setDefault('#native_speaker', this.localized_no, '#sub_dialect', false);
 }
 
 View.prototype._setUpOtherDefaults = function () {
-    this._showDivBasedonValue(
-        '#first_language',
-        this.localized_other,
-        '#first_language_other_display',
-        false);
+    this._showDivBasedonValue('#first_language', this.localized_other, '#first_language_other_display', false);
     // true means hide if there is something in the username field
-    this._showDivBasedonValue(
-        '#username',
-        true,
-        '#anonymous_instructions_display',
-        false);
-    this._showDivBasedonValue(
-        '#microphone',
-        this.localized_other,
-        '#microphone_other_display',
-        false);
-    this._showDivBasedonValue(
-        '#dialect',
-        this.localized_other,
-        '#dialect_other_display',
-        false);
-    this._showDivBasedonValue(
-        '#recording_location',
-        this.localized_other,
-        '#recording_location_other_display',
-        false);
-    this._showDivBasedonValue(
-        '#background_noise',
-        this.localized_yes,
-        '#background_noise_display',
-        false);
-    this._showDivBasedonValue(
-        '#noise_type',
-        this.localized_other,
-        '#noise_type_other_display',
-        false);
+    this._showDivBasedonValue('#username', true, '#anonymous_instructions_display', false);
+    this._showDivBasedonValue('#microphone', this.localized_other, '#microphone_other_display', false);
+    this._showDivBasedonValue('#dialect', this.localized_other, '#dialect_other_display', false);
+    this._showDivBasedonValue('#recording_location', this.localized_other, '#recording_location_other_display', false);
+    this._showDivBasedonValue('#background_noise', this.localized_yes, '#background_noise_display', false);
+    this._showDivBasedonValue('#noise_type', this.localized_other, '#noise_type_other_display', false);
 }
 
 /**
