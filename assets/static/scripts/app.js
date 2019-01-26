@@ -90,6 +90,7 @@ var view;  // needs to be global so can be accessible to index.html
     var audio = new Audio(
         parms.audio,
         pageVariables);
+        
     var uploader = new Uploader(
         parms.uploader,
         pageVariables.alert_message);
