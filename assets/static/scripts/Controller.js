@@ -143,7 +143,6 @@ Controller.prototype._stopclicked = function () {
         localStorage.getItem("vad_run") === 'true');
 }
 
-
 Controller.prototype._recordingtimeout = function () {
     this.view.hidePromptDisplay();
     this.audio.endRecording(
