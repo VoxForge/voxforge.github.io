@@ -50,23 +50,20 @@ function Controller(
 }
 
 /**
-* 
+* ### Finite State Machine #####################################################
+*
+* see: https://github.com/jakesgordon/javascript-state-machine
+
+ on<TRANSITION> - convenience shorthand for onAfter<TRANSITION>
+ onAfter<TRANSITION> - fired after a specific TRANSITION completes
+
+ on<STATE> - convenience shorthand for onEnter<STATE>
+ onEnter<STATE> - fired when entering a specific STATE
+
 */
 Controller.prototype.start = function () {
     var self = this;
 
-    /**
-    * ### Finite State Machine #####################################################
-    *
-    * see: https://github.com/jakesgordon/javascript-state-machine
-
-     on<TRANSITION> - convenience shorthand for onAfter<TRANSITION>
-     onAfter<TRANSITION> - fired after a specific TRANSITION completes
-
-     on<STATE> - convenience shorthand for onEnter<STATE>
-     onEnter<STATE> - fired when entering a specific STATE
-
-    */
     this.fsm = new StateMachine({
       init: 'nopromptsrecorded',
 
@@ -133,8 +130,8 @@ Controller.prototype.start = function () {
       }
     });
 
-    this._setUpButtonClicksWithFsmtransitions();
-    this._setMaxPromptsEvenTriger();
+    this._setUpButtonClicksWithFsmTransitions();
+    this._setMaxPromptsEvenTrigger();
 }
 
 Controller.prototype._stopclicked = function () {
@@ -321,29 +318,18 @@ Controller.prototype._recordingMidLast = function () {
 }
 
 Controller.prototype._uploading = function () {
-    this.view.disableDeleteButtons();
-    this.view.hideAudioPlayer();
-    this.view.hidePlayButtons();
-    this.view.setRSUButtonDisplay(false, false, false);
+    this._setupUploadingButtons();
+    this._captureAudioPropertiesForDebugging();
+    this._dealWithDebugSettings();
+    this._runUploadPromiseChain();
+}
 
-    // audio.device_event_buffer_size only available after first recording
-    this.profile.setAudioPropertiesAndContraints( 
-      this.audio.getAudioPropertiesAndContraints()
-    );
-
-    // user may change debug setting just before upload, so only
-    // get audio debug values when uploading after at last recorded
-    // audio prompt
-    if ( this.view.debugChecked() ) {
-      this.debug.setValues( 'audio', this.audio.getDebugValues() );
-    } else {
-      this.debug.clearValues('audio');
-    }
-
+// make sure all promises complete before trying to gather audio
+// from shadow DOM before upload, otherwise will miss some audio 
+// recordings...
+Controller.prototype._runUploadPromiseChain = function () {
     var self = this;
-    // make sure all promises complete before trying to gather audio
-    // from shadow DOM before upload, otherwise will miss some audio 
-    // recordings...
+
     Promise.all(promise_list)
     .then( function() {
         // start of promise chain with multiple parameters needs to be
@@ -368,52 +354,102 @@ Controller.prototype._uploading = function () {
     });
 }
 
-Controller.prototype._setMaxPromptsEvenTriger = function () {
+// user may change debug setting just before upload, so only
+// get audio debug values when uploading after at last recorded
+// audio prompt
+Controller.prototype._dealWithDebugSettings = function () {
+    if ( this.view.debugChecked() ) {
+      this.debug.setValues( 'audio', this.audio.getDebugValues() );
+    } else {
+      this.debug.clearValues('audio');
+    }
+}
+
+// audio.device_event_buffer_size only available after first recording
+Controller.prototype._captureAudioPropertiesForDebugging = function () {
+    this.profile.setAudioPropertiesAndContraints( 
+        this.audio.getAudioPropertiesAndContraints()
+    );
+}
+
+Controller.prototype._setupUploadingButtons = function () {
+    this.view.disableDeleteButtons();
+    this.view.hideAudioPlayer();
+    this.view.hidePlayButtons();
+    this.view.setRSUButtonDisplay(false, false, false);
+}
+
+Controller.prototype._setMaxPromptsEvenTrigger = function () {
     this.view.maxnumpromptschanged.onChange = function() {
-      if ( this.prompts.maxnumpromptsincreased() ) {
+        this._dealWithChangeInMaxNumPrompts();
+    }
+}
+
+Controller.prototype._dealWithChangeInMaxNumPrompts = function () {
+    if ( this.prompts.maxnumpromptsincreased() ) {
         this.fsm.maxnumpromptsincreased();
-      } else { 
+    } else { 
         if ( this.prompts.recordedmorethancurrentmaxprompts() ) {
-          this.fsm.recordedmorethancurrentmaxprompts();
+            this.fsm.recordedmorethancurrentmaxprompts();
         }
-      } 
     }
 }
 
 // ### associate user button clicks with fsm transitions ###################
-Controller.prototype._setUpButtonClicksWithFsmtransitions = function () {
+Controller.prototype._setUpButtonClicksWithFsmTransitions = function () {
+    this._setUpRecordButtonEventWithFsmTransition();
+    this._setUpStopButtonEventWithFsmTransitionm();
+    this._setUpUploadButtonEventWithFsmTransition();
+    this._setUpDeleteButtonEventWithFsmTransition();
+}
+
+Controller.prototype._setUpRecordButtonEventWithFsmTransition = function () {
     var self = this;
+    
     this.view.record.onclick = function() { 
-      self.prompts.getNextPrompt();  // sets current_promptLine and increment prompt_count; discarding return value
+        self.prompts.getNextPrompt();  // sets current_promptLine and increment prompt_count; discarding return value
 
-      if ( self.prompts.lastone() ) {
-        self.fsm.recordclickedlast(); // record last prompt
-      } else {
-        self.fsm.recordclickedltn(); // ltn = less than n; where n < maxprompts
-      }
+        if ( self.prompts.lastone() ) {
+            self.fsm.recordclickedlast(); // record last prompt
+        } else {
+            self.fsm.recordclickedltn(); // ltn = less than n; where n < maxprompts
+        }
     }
+}
 
+Controller.prototype._setUpStopButtonEventWithFsmTransitionm = function () {
+    var self = this;
+    
     this.view.stop.onclick = function() {
-      clearTimeout(self.recording_timeout_obj);
-      var start =  Date.now();
-      self.view.hidePromptDisplay();
+        clearTimeout(self.recording_timeout_obj);
+        var start =  Date.now();
+        self.view.hidePromptDisplay();
 
-      // actual stopping of recording is delayed because some users hit it
-      // early and cut off the end of their recording.
-      setTimeout( function () {
-        self.fsm.stopclicked(); 
-      }, self.parms.recording_stop_delay);
+        // actual stopping of recording is delayed because some users hit it
+        // early and cut off the end of their recording.
+        setTimeout( function () {
+            self.fsm.stopclicked(); 
+        }, self.parms.recording_stop_delay);
     }
+}
 
+Controller.prototype._setUpUploadButtonEventWithFsmTransition = function () {
+    var self = this;
+    
     this.view.upload.onclick = function() {
       self.fsm.uploadclicked();
     }
+}
 
-    /** 
-     * using a dummy 'delete' div that is triggered by clicking 
-     * delete button of any one recorded prompt
-    */
-    // TODO should we be using an event trigger explicitly rather than a click event?
+/** 
+ * using a dummy 'delete' div that is triggered by clicking 
+ * delete button of any one recorded prompt
+ *
+ * TODO should we be using an event trigger explicitly rather than a click event?
+*/
+Controller.prototype._setUpDeleteButtonEventWithFsmTransition = function () {
+    var self = this;
+
     this.view.delete_clicked.onclick = function() { 
       // prompt_count has already been decremented in view call to prompts.movePrompt2Stack
       if ( self.prompts.oneleft() ) {
@@ -421,32 +457,7 @@ Controller.prototype._setUpButtonClicksWithFsmtransitions = function () {
       } else {
          self.fsm.deleteclicked();
       } 
-    }    
-}
-
-/*
- *
- */
-Controller.prototype._startRecordingPromiseChain = function () {
-    var self = this;
-        
-    var vad_run = localStorage.getItem("vad_run") === 'true';
-    promise_list[self.promise_index++] = 
-        self.audio.record(
-            self.prompts.getPromptId(),
-            vad_run,
-            self.view.audioVisualizerChecked() )
-        .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
-        .then( function () {
-              if ( view.debugChecked() ) {
-                    self.prompts.setAudioCharacteristics.bind(self.prompts);
-              } else {
-                    self.prompts.clearAudioCharacteristics.bind(self.prompts);
-              }
-        })
-        .catch(function (err) {
-            console.log(err)
-        });
+    }   
 }
 
 /**
@@ -471,8 +482,30 @@ Controller.prototype._updateDisplayForRecording = function () {
         this.prompts.getPromptSentence() );
 
     if ( this.view.audioVisualizerChecked() ) {
-      this.view.visualize(this.audio.analyser);          
-    } 
+        this.view.visualize(this.audio.analyser);          
+    }
+}
+
+Controller.prototype._startRecordingPromiseChain = function () {
+    var self = this;
+        
+    var vad_run = localStorage.getItem("vad_run") === 'true';
+    promise_list[self.promise_index++] = 
+        self.audio.record(
+            self.prompts.getPromptId(),
+            vad_run,
+            self.view.audioVisualizerChecked() )
+        .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
+        .then( function () {
+              if ( view.debugChecked() ) {
+                    self.prompts.setAudioCharacteristics.bind(self.prompts);
+              } else {
+                    self.prompts.clearAudioCharacteristics.bind(self.prompts);
+              }
+        })
+        .catch(function (err) {
+            console.log(err)
+        });
 }
 
 /**
