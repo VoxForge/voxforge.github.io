@@ -145,87 +145,9 @@ Controller.prototype.start = function () {
           }
         },
 
-        // if location changed, notify user
-        // if no change in location, check time since last submission, if too long notify user
-        onFirstpromptrecorded: function() {
-          // inner function
-          function checkTimeSinceLastSubmission() {
-              if (self.view.timeSinceLastSubmissionChecked() &&
-                  self.uploader.timeSinceLastSubmission())
-              {
-                  window.alert(self.alert_message.time_limit);
-                  self.view.profileInfo();
-                  self.view.recordingInformation();
-              }
-          }
-
-          // ###
-          if (self.view.displayRecordingInfoChecked() ) {
-            if (self.view.geolocationReminderChecked() ) {
-              location.getCurrentPosition() // long running function that may or may not return successfully
-              .then( function (coords) {
-                  if (location.changed(coords) ) {
-                      window.alert(self.alert_message.location_change);
-                      self.view.profileInfo();
-                      self.view.recordingInformation();
-                      location.saveToLocalStorage(coords);
-                  } else {
-                      checkTimeSinceLastSubmission();
-                  }
-              })
-              .catch( function (err) {
-                  console.warn("can't get location: " + err);
-                  checkTimeSinceLastSubmission();               
-              });
-            } else  {
-                checkTimeSinceLastSubmission();
-            }
-          }
-
-          if ( self.view.userSaysBackgroundNoise() &&
-               localStorage.getItem("vad_run") === 'true')
-          {
-              window.alert(self.alert_message.noise_Turn_Off_Vad);
-          }
-
-          self.view.enableDeleteButtons();
-          self.view.showPlayButtons();
-          if (self.audio.parms.blockDisplayOfRecordButton) {
-              //block display of record button - stays off until after recording is done
-              Promise.all(promise_list)
-              .then(function() {
-                 self.view.setRSButtonDisplay(true, false);
-              })
-              .catch((err) => { console.log(err) });
-          } else { // allows recording even though waveform display not completed
-              self.view.setRSButtonDisplay(true, false); 
-          }
-        },
-
-        onMidpromptsrecorded: function() {
-          self.view.enableDeleteButtons();
-          self.view.showAudioPlayer();
-          self.view.showPlayButtons();
-          if (self.audio.parms.blockDisplayOfRecordButton) {
-              //block display of record button stays off until after recording is done
-              Promise.all(promise_list)
-              .then(function() {
-                 self.view.setRSButtonDisplay(true, false);
-              })
-              .catch((err) => { console.log(err) });
-          } else { // allows recording even though waveform display not completed
-             self.view.setRSButtonDisplay(true, false);
-          }
-        },
-
-        // at maximum selected prompts, cannot record anymore, must upload to 
-        // continue, or delete then record
-        onMaxpromptsrecorded: function() { 
-          self.view.enableDeleteButtons();
-          self.view.showAudioPlayer();
-          self.view.showPlayButtons();
-          self.view.setRSUButtonDisplay(false, false, true);
-        },
+        onFirstpromptrecorded:  self._firstpromptrecorded.bind(self),
+        onMidpromptsrecorded: self._midpromptsrecorded.bind(self),
+        onMaxpromptsrecorded: self._maxpromptsrecorded.bind(self),
 
         // #####################################################################
         // Action States
@@ -238,6 +160,90 @@ Controller.prototype.start = function () {
 
     this._setUpButtonClicksWithFsmtransitions();
     this._setMaxPromptsEvenTriger();
+}
+
+// if location changed, notify user
+// if no change in location, check time since last submission, if too long notify user
+Controller.prototype._firstpromptrecorded = function () {
+    var self = this;
+
+    if (self.view.displayRecordingInfoChecked() ) {
+        if (self.view.geolocationReminderChecked() ) {
+          location.getCurrentPosition() // long running function that may or may not return successfully
+          .then( function (coords) {
+              if (location.changed(coords) ) {
+                  window.alert(self.alert_message.location_change);
+                  self.view.profileInfo();
+                  self.view.recordingInformation();
+                  location.saveToLocalStorage(coords);
+              } else {
+                  this._checkTimeSinceLastSubmission();
+              }
+          })
+          .catch( function (err) {
+              console.warn("can't get location: " + err);
+              this._checkTimeSinceLastSubmission();               
+          });
+        } else  {
+            this._checkTimeSinceLastSubmission();
+        }
+    }
+
+    if ( self.view.userSaysBackgroundNoise() &&
+       localStorage.getItem("vad_run") === 'true')
+    {
+      window.alert(self.alert_message.noise_Turn_Off_Vad);
+    }
+
+    self.view.enableDeleteButtons();
+    self.view.showPlayButtons();
+    if (self.audio.parms.blockDisplayOfRecordButton) {
+      //block display of record button - stays off until after recording is done
+      Promise.all(promise_list)
+      .then(function() {
+         self.view.setRSButtonDisplay(true, false);
+      })
+      .catch((err) => { console.log(err) });
+    } else { // allows recording even though waveform display not completed
+      self.view.setRSButtonDisplay(true, false); 
+    }    
+}
+
+Controller.prototype._checkTimeSinceLastSubmission = function () {
+    if (self.view.timeSinceLastSubmissionChecked() &&
+      self.uploader.timeSinceLastSubmission())
+    {
+      window.alert(self.alert_message.time_limit);
+      self.view.profileInfo();
+      self.view.recordingInformation();
+    }
+}
+
+Controller.prototype._midpromptsrecorded = function () {
+    var self = this;
+    
+    this.view.enableDeleteButtons();
+    this.view.showAudioPlayer();
+    this.view.showPlayButtons();
+    if (this.audio.parms.blockDisplayOfRecordButton) {
+      //block display of record button stays off until after recording is done
+      Promise.all(promise_list)
+      .then(function() {
+         self.view.setRSButtonDisplay(true, false);
+      })
+      .catch((err) => { console.log(err) });
+    } else { // allows recording even though waveform display not completed
+     this.view.setRSButtonDisplay(true, false);
+    }
+}
+
+// at maximum selected prompts, cannot record anymore, must upload to 
+// continue, or delete then record
+Controller.prototype._maxpromptsrecorded = function () {
+    this.view.enableDeleteButtons();
+    this.view.showAudioPlayer();
+    this.view.showPlayButtons();
+    this.view.setRSUButtonDisplay(false, false, true);
 }
 
 Controller.prototype._recordingfirst = function () {
