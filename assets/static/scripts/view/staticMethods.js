@@ -28,8 +28,29 @@ but will be too late for it to display to the user correctly... so user will
 see "Please Select" after a page refresh, even though the select will have
 properties showing that a certain element was selected...
 */
-View.updateView = function(json_object, localized_yes, localized_other, default_value) {
-    //Speaker Characteristics
+View.updateView = function(
+    json_object,
+    localized_yes,
+    localized_other,
+    default_value)
+{
+    View._displaySpeakerCharacteristics(
+        json_object,
+        localized_yes,
+        localized_other,
+        default_value);
+    View._displayRecordingInformation(
+        json_object,
+        localized_yes,
+        localized_other);    
+}
+
+View._displaySpeakerCharacteristics = function(
+    json_object,
+    localized_yes,
+    localized_other,
+    default_value)    
+{
     $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
     if (json_object.username) {
       $('#anonymous_instructions_display').hide();
@@ -60,7 +81,7 @@ View.updateView = function(json_object, localized_yes, localized_other, default_
     }
 
     // if user has filled in relevant profile information, no need to present
-    // to Speaker Characteristics section to user
+    // Speaker Characteristics section to user
     if ( json_object.gender !== default_value &&
         json_object.age  !== default_value &&
         json_object.native_speaker !== default_value &&
@@ -70,8 +91,13 @@ View.updateView = function(json_object, localized_yes, localized_other, default_
     {
        $("#speaker_characteristics_display").hide();
     }
+}
 
-    //Recording Information:
+View._displayRecordingInformation = function(
+    json_object,
+    localized_yes,
+    localized_other)
+{
     $('#microphone').val( json_object.microphone );
     $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
     if ( json_object.microphone === localized_other )
@@ -103,10 +129,12 @@ View.updateView = function(json_object, localized_yes, localized_other, default_
 /**
 * get user entered DOM data
 */
-View.getUserProfileInfo = function(localized_yes,
-                                   localized_other,
-                                   localized_anonymous,
-                                   default_value) {
+View.getUserProfileInfo = function(
+    localized_yes,
+    localized_other,
+    localized_anonymous,
+    default_value)
+{
     var profile_hash = {};
 
     // note, this leaves the contents of Form unchanged, only when user 

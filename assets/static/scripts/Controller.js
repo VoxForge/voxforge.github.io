@@ -508,7 +508,7 @@ Controller.prototype._updateDisplayForRecording = function () {
 Controller.prototype._setRecordingDurationTimeout = function () {
     var self = this;
     
-    self.rec_timeout_obj = setTimeout(function(){
+    self.recording_timeout_obj = setTimeout(function(){
         self.fsm.recordingtimeout();
     }, self.parms.recording_timeout);
 }
