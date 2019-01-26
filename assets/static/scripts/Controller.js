@@ -110,42 +110,17 @@ Controller.prototype.start = function () {
       methods: {
         // #####################################################################
         // Transitions: user initiated
-        onStopclicked: function() {
-          self.audio.endRecording(
-            self.view.audioVisualizerChecked(),
-            localStorage.getItem("vad_run") === 'true');
-        },
-
+        onStopclicked: self._stopclicked.bind(self),
         onDeleteclickedoneleft: self.view.updateProgress.bind(self),
         onDeleteclicked: self.view.updateProgress.bind(self),
 
         // Transition Actions: system initiated
-        onRecordingtimeout: function() {
-          self.view.hidePromptDisplay();
-          self.audio.endRecording(
-            self.view.audioVisualizerChecked(),
-            localStorage.getItem("vad_run") === 'true');          
-        },
+        onRecordingtimeout: self._recordingtimeout.bind(self),
 
         // #####################################################################
         // Static States
-        onNopromptsrecorded: function() {
-          self.view.setRSUButtonDisplay(true, false, false);
-
-          if (! self.view.displayRecordingInfoChecked()  && 
-              self.uploader.getNumberOfSubmissions() > self.parms.numPrompt2SubmittForRecordInfo &&
-              localStorage.getItem("recording_info_asked_user") !== 'true' )
-          {
-              // only ask the user once if they want to activate the Recording Information section
-              localStorage.setItem("recording_info_asked_user", true); 
-              self.view.recordingInformationButtonDisplay();
-              // TODO when this gets sent, Recording information section should display to user rather
-              // than being buried under Profile Info
-              window.alert(self.alert_message.rec_info_activated);
-          }
-        },
-
-        onFirstpromptrecorded:  self._firstpromptrecorded.bind(self),
+        onNopromptsrecorded: self._nopromptsrecorded.bind(self),
+        onFirstpromptrecorded: self._firstpromptrecorded.bind(self),
         onMidpromptsrecorded: self._midpromptsrecorded.bind(self),
         onMaxpromptsrecorded: self._maxpromptsrecorded.bind(self),
 
@@ -160,6 +135,37 @@ Controller.prototype.start = function () {
 
     this._setUpButtonClicksWithFsmtransitions();
     this._setMaxPromptsEvenTriger();
+}
+
+Controller.prototype._stopclicked = function () {
+    this.audio.endRecording(
+        this.view.audioVisualizerChecked(),
+        localStorage.getItem("vad_run") === 'true');
+}
+
+
+Controller.prototype._recordingtimeout = function () {
+    this.view.hidePromptDisplay();
+    this.audio.endRecording(
+        this.view.audioVisualizerChecked(),
+        localStorage.getItem("vad_run") === 'true');      
+}
+
+Controller.prototype._nopromptsrecorded = function () {
+    this.view.setRSUButtonDisplay(true, false, false);
+
+    if (! this.view.displayRecordingInfoChecked()  && 
+      this.uploader.getNumberOfSubmissions() > this.parms.numPrompt2SubmittForRecordInfo &&
+      localStorage.getItem("recording_info_asked_user") !== 'true' )
+    {
+      // only ask the user once if they want to activate the Recording Information section
+      localStorage.setItem("recording_info_asked_user", true); 
+      this.view.recordingInformationButtonDisplay();
+      
+      // TODO when this gets sent, Recording information section should display to user rather
+      // than being buried under Profile Info
+      window.alert(this.alert_message.rec_info_activated);
+    }
 }
 
 // if location changed, notify user
