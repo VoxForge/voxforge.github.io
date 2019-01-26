@@ -121,8 +121,7 @@ Controller.prototype.start = function () {
 
         // Transition Actions: system initiated
         onRecordingtimeout: function() {
-          self.view.hidePromptDisplay(); // !!!!!!
-          //self.audio.endRecording( self.view.audioVisualizerChecked() );
+          self.view.hidePromptDisplay();
           self.audio.endRecording(
             self.view.audioVisualizerChecked(),
             localStorage.getItem("vad_run") === 'true');          
@@ -230,76 +229,75 @@ Controller.prototype.start = function () {
 
         // #####################################################################
         // Action States
-        onRecordingfirst: function() {
-          self.view.setRSButtonDisplay(false, true);
-          self._recordAudio();
-        },
-
-        onRecordingmid: function() { 
-          self.view.disableDeleteButtons();
-          self.view.hideAudioPlayer();
-          self.view.hidePlayButtons();
-          self.view.setRSButtonDisplay(false, true);  
-          self._recordAudio(); 
-        },
-
-        onRecordinglast: function() {
-          self.view.disableDeleteButtons();
-          self.view.hideAudioPlayer();
-          self.view.hidePlayButtons();
-          self.view.setRSButtonDisplay(false, true);  
-          self._recordAudio(); // should be blocking
-        },
-
-        onUploading: function() { 
-          self.view.disableDeleteButtons();
-          self.view.hideAudioPlayer();
-          self.view.hidePlayButtons();
-          self.view.setRSUButtonDisplay(false, false, false);
-
-          // audio.device_event_buffer_size only available after first recording
-          self.profile.setAudioPropertiesAndContraints( 
-              self.audio.getAudioPropertiesAndContraints()
-          );
-
-          // user may change debug setting just before upload, so only
-          // get audio debug values when uploading after at last recorded
-          // audio prompt
-          if ( self.view.debugChecked() ) {
-              self.debug.setValues( 'audio', self.audio.getDebugValues() );
-          } else {
-              self.debug.clearValues('audio');
-          }
-
-          // make sure all promises complete before trying to gather audio
-          // from shadow DOM before upload, otherwise will miss some audio 
-          // recordings...
-          Promise.all(promise_list)
-          .then( function() {
-              // start of promise chain with multiple parameters needs to be
-              // within function; cannot be passed as function reference after
-              // Promise.all.
-            self.uploader.upload(
-                self.prompts,
-                self.profile,
-                self.debug,
-                self.appversion,
-                document.querySelectorAll('.clip'), // all clips
-                self.language,
-                view.debugChecked())
-            .then( self._saveProfileAndReset.bind(self) )
-            .catch(function (err) {
-                console.log(err.message);
-                console.log(err.stack);
-            });
-          })
-          .catch((err) => { console.log(err) });
-        },
+        onRecordingfirst:  self._recordingfirst.bind(self),
+        onRecordingmid:  self._recordingMidLast.bind(self),
+        onRecordinglast: self._recordingMidLast.bind(self),
+        onUploading: self._uploading.bind(self),
       }
     });
 
     this._setUpButtonClicksWithFsmtransitions();
     this._setMaxPromptsEvenTriger();
+}
+
+Controller.prototype._recordingfirst = function () {
+    this.view.setRSButtonDisplay(false, true);
+    this._recordAudio();
+}
+
+Controller.prototype._recordingMidLast = function () {
+    this.view.disableDeleteButtons();
+    this.view.hideAudioPlayer();
+    this.view.hidePlayButtons();
+    this.view.setRSButtonDisplay(false, true);  
+    this._recordAudio(); 
+}
+
+Controller.prototype._uploading = function () {
+    var self = this;
+    
+    self.view.disableDeleteButtons();
+    self.view.hideAudioPlayer();
+    self.view.hidePlayButtons();
+    self.view.setRSUButtonDisplay(false, false, false);
+
+    // audio.device_event_buffer_size only available after first recording
+    self.profile.setAudioPropertiesAndContraints( 
+      self.audio.getAudioPropertiesAndContraints()
+    );
+
+    // user may change debug setting just before upload, so only
+    // get audio debug values when uploading after at last recorded
+    // audio prompt
+    if ( self.view.debugChecked() ) {
+      self.debug.setValues( 'audio', self.audio.getDebugValues() );
+    } else {
+      self.debug.clearValues('audio');
+    }
+
+    // make sure all promises complete before trying to gather audio
+    // from shadow DOM before upload, otherwise will miss some audio 
+    // recordings...
+    Promise.all(promise_list)
+    .then( function() {
+        // start of promise chain with multiple parameters needs to be
+        // within function; cannot be passed as function reference after
+        // Promise.all.
+        self.uploader.upload(
+            self.prompts,
+            self.profile,
+            self.debug,
+            self.appversion,
+            document.querySelectorAll('.clip'), // all clips
+            self.language,
+            view.debugChecked())
+        .then( self._saveProfileAndReset.bind(self) )
+        .catch(function (err) {
+            console.log(err.message);
+            console.log(err.stack);
+        });
+    })
+    .catch((err) => { console.log(err) });
 }
 
 Controller.prototype._setMaxPromptsEvenTriger = function () {
