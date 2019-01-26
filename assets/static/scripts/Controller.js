@@ -108,8 +108,8 @@ Controller.prototype.start = function () {
         // #####################################################################
         // Transitions: user initiated
         onStopclicked: self._stopclicked.bind(self),
-        onDeleteclickedoneleft: self.view.updateProgress.bind(self),
-        onDeleteclicked: self.view.updateProgress.bind(self),
+        onDeleteclickedoneleft: self.view.updateProgress.bind(self.view),
+        onDeleteclicked: self.view.updateProgress.bind(self.view),
 
         // Transition Actions: system initiated
         onRecordingtimeout: self._recordingtimeout.bind(self),
@@ -385,6 +385,7 @@ Controller.prototype._recordingfirst = function () {
 
 Controller.prototype._recordingfirst = function () {
     this.view.setRSButtonDisplay(false, true);
+    
     this._recordAudio();
 }
 
@@ -392,7 +393,8 @@ Controller.prototype._recordingMidLast = function () {
     this.view.disableDeleteButtons();
     this.view.hideAudioPlayer();
     this.view.hidePlayButtons();
-    this.view.setRSButtonDisplay(false, true);  
+    this.view.setRSButtonDisplay(false, true);
+    
     this._recordAudio(); 
 }
 
@@ -400,6 +402,7 @@ Controller.prototype._uploading = function () {
     this._setupUploadingButtons();
     this._captureAudioPropertiesForDebugging();
     this._dealWithDebugSettings();
+    
     this._waitForAllRecordingsToCompleteThenUpload();
 }
 
@@ -475,13 +478,12 @@ Controller.prototype._dealWithChangeInMaxNumPrompts = function () {
     }
 }
 
-
-
 /**
 * 
 */
 Controller.prototype._recordAudio = function () {
-    this._updateDisplayForRecording(); 
+    this._updateDisplayForRecording();
+    this._setRecordingDurationTimeout()
     this._startRecordingPromiseChain(); 
 }
 
@@ -501,6 +503,14 @@ Controller.prototype._updateDisplayForRecording = function () {
     if ( this.view.audioVisualizerChecked() ) {
         this.view.visualize(this.audio.analyser);          
     }
+}
+
+Controller.prototype._setRecordingDurationTimeout = function () {
+    var self = this;
+    
+    self.rec_timeout_obj = setTimeout(function(){
+        self.fsm.recordingtimeout();
+    }, self.parms.recording_timeout);
 }
 
 Controller.prototype._startRecordingPromiseChain = function () {
