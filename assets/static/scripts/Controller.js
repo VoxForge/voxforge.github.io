@@ -134,6 +134,75 @@ Controller.prototype.start = function () {
     this._setMaxPromptsEvenTrigger();
 }
 
+// ### associate user button clicks with fsm transitions ###################
+Controller.prototype._setUpButtonClicksWithFsmTransitions = function () {
+    this._setUpRecordButtonEventWithFsmTransition();
+    this._setUpStopButtonEventWithFsmTransitionm();
+    this._setUpUploadButtonEventWithFsmTransition();
+    this._setUpDeleteButtonEventWithFsmTransition();
+}
+
+Controller.prototype._setUpRecordButtonEventWithFsmTransition = function () {
+    var self = this;
+    
+    this.view.record.onclick = function() {
+        // sets current_promptLine and increment prompt_count; discarding return value
+        self.prompts.getNextPrompt();  
+
+        if ( self.prompts.lastone() ) {
+            self.fsm.recordclickedlast(); // record last prompt
+        } else {
+            self.fsm.recordclickedltn(); // ltn = less than n; where n < maxprompts
+        }
+    }
+}
+
+Controller.prototype._setUpStopButtonEventWithFsmTransitionm = function () {
+    var self = this;
+    
+    this.view.stop.onclick = function() {
+        clearTimeout(self.recording_timeout_obj);
+        var start =  Date.now();
+        self.view.hidePromptDisplay();
+
+        // actual stopping of recording is delayed because some users hit it
+        // early and cut off the end of their recording.
+        setTimeout( function () {
+            self.fsm.stopclicked(); 
+        }, self.parms.recording_stop_delay);
+    }
+}
+
+Controller.prototype._setUpUploadButtonEventWithFsmTransition = function () {
+    var self = this;
+    
+    this.view.upload.onclick = function() {
+        self.fsm.uploadclicked();
+    }
+}
+
+/** 
+ * using a dummy 'delete' div that is triggered by clicking 
+ * delete button of any one recorded prompt
+ *
+ * TODO should we be using an event trigger explicitly rather than a click event?
+*/
+Controller.prototype._setUpDeleteButtonEventWithFsmTransition = function () {
+    var self = this;
+
+    this.view.delete_clicked.onclick = function() { 
+        // prompt_count has already been decremented in view call to prompts.movePrompt2Stack
+        if ( self.prompts.oneleft() ) {
+            // at first prompt which means only one prompt left to delete
+            self.fsm.deleteclickedoneleft(); 
+        } else {
+            self.fsm.deleteclicked();
+        } 
+    }   
+}
+
+// #############################################################################
+
 Controller.prototype._stopclicked = function () {
     this._endRecording(); 
 }
@@ -331,13 +400,38 @@ Controller.prototype._uploading = function () {
     this._setupUploadingButtons();
     this._captureAudioPropertiesForDebugging();
     this._dealWithDebugSettings();
-    this._waitForAllRecordingsToCompletThenUpload();
+    this._waitForAllRecordingsToCompleteThenUpload();
+}
+
+Controller.prototype._setupUploadingButtons = function () {
+    this.view.disableDeleteButtons();
+    this.view.hideAudioPlayer();
+    this.view.hidePlayButtons();
+    this.view.setRSUButtonDisplay(false, false, false);
+}
+
+// user may change debug setting just before upload, so only
+// get audio debug values when uploading after at last recorded
+// audio prompt
+Controller.prototype._dealWithDebugSettings = function () {
+    if ( this.view.debugChecked() ) {
+      this.debug.setValues( 'audio', this.audio.getDebugValues() );
+    } else {
+      this.debug.clearValues('audio');
+    }
+}
+
+// audio.device_event_buffer_size only available after first recording
+Controller.prototype._captureAudioPropertiesForDebugging = function () {
+    this.profile.setAudioPropertiesAndContraints( 
+        this.audio.getAudioPropertiesAndContraints()
+    );
 }
 
 // make sure all promises complete before trying to gather audio
 // from shadow DOM before upload, otherwise will miss some audio 
 // recordings...
-Controller.prototype._waitForAllRecordingsToCompletThenUpload = function () {
+Controller.prototype._waitForAllRecordingsToCompleteThenUpload = function () {
     var self = this;
 
     Promise.all(promise_list)
@@ -365,32 +459,6 @@ Controller.prototype._uploadPromiseChain = function () {
     });
 }
 
-
-// user may change debug setting just before upload, so only
-// get audio debug values when uploading after at last recorded
-// audio prompt
-Controller.prototype._dealWithDebugSettings = function () {
-    if ( this.view.debugChecked() ) {
-      this.debug.setValues( 'audio', this.audio.getDebugValues() );
-    } else {
-      this.debug.clearValues('audio');
-    }
-}
-
-// audio.device_event_buffer_size only available after first recording
-Controller.prototype._captureAudioPropertiesForDebugging = function () {
-    this.profile.setAudioPropertiesAndContraints( 
-        this.audio.getAudioPropertiesAndContraints()
-    );
-}
-
-Controller.prototype._setupUploadingButtons = function () {
-    this.view.disableDeleteButtons();
-    this.view.hideAudioPlayer();
-    this.view.hidePlayButtons();
-    this.view.setRSUButtonDisplay(false, false, false);
-}
-
 Controller.prototype._setMaxPromptsEvenTrigger = function () {
     this.view.maxnumpromptschanged.onChange = function() {
         this._dealWithChangeInMaxNumPrompts();
@@ -407,70 +475,7 @@ Controller.prototype._dealWithChangeInMaxNumPrompts = function () {
     }
 }
 
-// ### associate user button clicks with fsm transitions ###################
-Controller.prototype._setUpButtonClicksWithFsmTransitions = function () {
-    this._setUpRecordButtonEventWithFsmTransition();
-    this._setUpStopButtonEventWithFsmTransitionm();
-    this._setUpUploadButtonEventWithFsmTransition();
-    this._setUpDeleteButtonEventWithFsmTransition();
-}
 
-Controller.prototype._setUpRecordButtonEventWithFsmTransition = function () {
-    var self = this;
-    
-    this.view.record.onclick = function() { 
-        self.prompts.getNextPrompt();  // sets current_promptLine and increment prompt_count; discarding return value
-
-        if ( self.prompts.lastone() ) {
-            self.fsm.recordclickedlast(); // record last prompt
-        } else {
-            self.fsm.recordclickedltn(); // ltn = less than n; where n < maxprompts
-        }
-    }
-}
-
-Controller.prototype._setUpStopButtonEventWithFsmTransitionm = function () {
-    var self = this;
-    
-    this.view.stop.onclick = function() {
-        clearTimeout(self.recording_timeout_obj);
-        var start =  Date.now();
-        self.view.hidePromptDisplay();
-
-        // actual stopping of recording is delayed because some users hit it
-        // early and cut off the end of their recording.
-        setTimeout( function () {
-            self.fsm.stopclicked(); 
-        }, self.parms.recording_stop_delay);
-    }
-}
-
-Controller.prototype._setUpUploadButtonEventWithFsmTransition = function () {
-    var self = this;
-    
-    this.view.upload.onclick = function() {
-      self.fsm.uploadclicked();
-    }
-}
-
-/** 
- * using a dummy 'delete' div that is triggered by clicking 
- * delete button of any one recorded prompt
- *
- * TODO should we be using an event trigger explicitly rather than a click event?
-*/
-Controller.prototype._setUpDeleteButtonEventWithFsmTransition = function () {
-    var self = this;
-
-    this.view.delete_clicked.onclick = function() { 
-      // prompt_count has already been decremented in view call to prompts.movePrompt2Stack
-      if ( self.prompts.oneleft() ) {
-         self.fsm.deleteclickedoneleft(); // at first prompt which means only one prompt left to delete
-      } else {
-         self.fsm.deleteclicked();
-      } 
-    }   
-}
 
 /**
 * 
@@ -508,23 +513,25 @@ Controller.prototype._startRecordingPromiseChain = function () {
             vad_run,
             self.view.audioVisualizerChecked() )
         .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
-        .then( function () {
-              if ( view.debugChecked() ) {
-                    self.prompts.setAudioCharacteristics.bind(self.prompts);
-              } else {
-                    self.prompts.clearAudioCharacteristics.bind(self.prompts);
-              }
-        })
+        .then( self._dealWithRecordingDebugSettings.bind(self) )
         .catch(function (err) {
             console.log(err)
         });
+}
+
+Controller.prototype._dealWithRecordingDebugSettings = function (result) {
+    if ( view.debugChecked() ) {
+        this.prompts.setAudioCharacteristics.bind(self.prompts);
+    } else {
+        this.prompts.clearAudioCharacteristics.bind(self.prompts);
+    }
 }
 
 /**
 * function to be executed after processsing of shadow DOM
 * audio elements completed, otherwise submission package will be
 * missing prompt lines and audio files...
-* basically a blocking wait until audio files get converted into
+* perfom call to this method after audio files get converted into
 * blobs for later processing by zipupload web worker.
 */
 Controller.prototype._saveProfileAndReset = function (result) {
