@@ -245,6 +245,11 @@ Controller.prototype._recordingfirst = function () {
     this._recordAudio();
 }
 
+Controller.prototype._recordingfirst = function () {
+    this.view.setRSButtonDisplay(false, true);
+    this._recordAudio();
+}
+
 Controller.prototype._recordingMidLast = function () {
     this.view.disableDeleteButtons();
     this.view.hideAudioPlayer();
@@ -254,27 +259,26 @@ Controller.prototype._recordingMidLast = function () {
 }
 
 Controller.prototype._uploading = function () {
-    var self = this;
-    
-    self.view.disableDeleteButtons();
-    self.view.hideAudioPlayer();
-    self.view.hidePlayButtons();
-    self.view.setRSUButtonDisplay(false, false, false);
+    this.view.disableDeleteButtons();
+    this.view.hideAudioPlayer();
+    this.view.hidePlayButtons();
+    this.view.setRSUButtonDisplay(false, false, false);
 
     // audio.device_event_buffer_size only available after first recording
-    self.profile.setAudioPropertiesAndContraints( 
-      self.audio.getAudioPropertiesAndContraints()
+    this.profile.setAudioPropertiesAndContraints( 
+      this.audio.getAudioPropertiesAndContraints()
     );
 
     // user may change debug setting just before upload, so only
     // get audio debug values when uploading after at last recorded
     // audio prompt
-    if ( self.view.debugChecked() ) {
-      self.debug.setValues( 'audio', self.audio.getDebugValues() );
+    if ( this.view.debugChecked() ) {
+      this.debug.setValues( 'audio', this.audio.getDebugValues() );
     } else {
-      self.debug.clearValues('audio');
+      this.debug.clearValues('audio');
     }
 
+    var self = this;
     // make sure all promises complete before trying to gather audio
     // from shadow DOM before upload, otherwise will miss some audio 
     // recordings...
@@ -301,24 +305,21 @@ Controller.prototype._uploading = function () {
 }
 
 Controller.prototype._setMaxPromptsEvenTriger = function () {
-    var self = this;
-    
-    self.view.maxnumpromptschanged.onChange = function() {
-      if ( self.prompts.maxnumpromptsincreased() ) {
-        self.fsm.maxnumpromptsincreased();
+    this.view.maxnumpromptschanged.onChange = function() {
+      if ( this.prompts.maxnumpromptsincreased() ) {
+        this.fsm.maxnumpromptsincreased();
       } else { 
-        if ( self.prompts.recordedmorethancurrentmaxprompts() ) {
-          self.fsm.recordedmorethancurrentmaxprompts();
+        if ( this.prompts.recordedmorethancurrentmaxprompts() ) {
+          this.fsm.recordedmorethancurrentmaxprompts();
         }
       } 
     }
 }
 
+// ### associate user button clicks with fsm transitions ###################
 Controller.prototype._setUpButtonClicksWithFsmtransitions = function () {
     var self = this;
-    // ### associate user button clicks with fsm transitions ###################
-
-    self.view.record.onclick = function() { 
+    this.view.record.onclick = function() { 
       self.prompts.getNextPrompt();  // sets current_promptLine and increment prompt_count; discarding return value
 
       if ( self.prompts.lastone() ) {
@@ -328,7 +329,7 @@ Controller.prototype._setUpButtonClicksWithFsmtransitions = function () {
       }
     }
 
-    self.view.stop.onclick = function() {
+    this.view.stop.onclick = function() {
       clearTimeout(self.recording_timeout_obj);
       var start =  Date.now();
       self.view.hidePromptDisplay();
@@ -340,7 +341,7 @@ Controller.prototype._setUpButtonClicksWithFsmtransitions = function () {
       }, self.parms.recording_stop_delay);
     }
 
-    self.view.upload.onclick = function() {
+    this.view.upload.onclick = function() {
       self.fsm.uploadclicked();
     }
 
@@ -349,7 +350,7 @@ Controller.prototype._setUpButtonClicksWithFsmtransitions = function () {
      * delete button of any one recorded prompt
     */
     // TODO should we be using an event trigger explicitly rather than a click event?
-    self.view.delete_clicked.onclick = function() { 
+    this.view.delete_clicked.onclick = function() { 
       // prompt_count has already been decremented in view call to prompts.movePrompt2Stack
       if ( self.prompts.oneleft() ) {
          self.fsm.deleteclickedoneleft(); // at first prompt which means only one prompt left to delete
@@ -396,8 +397,6 @@ Controller.prototype._recordAudio = function () {
  * silence...
  */
 Controller.prototype._updateDisplayForRecording = function () {
-    var self = this;
-        
     this.view.hideProfileInfo();
     this.view.updateProgress();
 
@@ -418,14 +417,12 @@ Controller.prototype._updateDisplayForRecording = function () {
 * blobs for later processing by zipupload web worker.
 */
 Controller.prototype._saveProfileAndReset = function (result) {
-    var self = this;
-    
-    self.profile.addProfile2LocalStorage();
-    self.prompts.resetIndices();
-    self.view.reset();
-    self.promise_index=0;
+    this.profile.addProfile2LocalStorage();
+    this.prompts.resetIndices();
+    this.view.reset();
+    this.promise_index=0;
 
-    self.profile.updateRandomStrings();
+    this.profile.updateRandomStrings();
 
-    self.fsm.donesubmission();
+    this.fsm.donesubmission();
 }
