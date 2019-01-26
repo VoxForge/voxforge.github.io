@@ -135,16 +135,18 @@ Controller.prototype.start = function () {
 }
 
 Controller.prototype._stopclicked = function () {
-    this.audio.endRecording(
-        this.view.audioVisualizerChecked(),
-        localStorage.getItem("vad_run") === 'true');
+    this._endRecording(); 
 }
 
 Controller.prototype._recordingtimeout = function () {
     this.view.hidePromptDisplay();
+    this._endRecording();      
+}
+
+Controller.prototype._endRecording = function () {
     this.audio.endRecording(
         this.view.audioVisualizerChecked(),
-        localStorage.getItem("vad_run") === 'true');      
+        localStorage.getItem("vad_run") === 'true');   
 }
 
 Controller.prototype._nopromptsrecorded = function () {
@@ -154,15 +156,18 @@ Controller.prototype._nopromptsrecorded = function () {
         this._maxNumSubmissionsReached() &&
         localStorage.getItem("recording_info_asked_user") !== 'true' )
     {
-        // only ask the user once if they want to activate the Recording
-        // Information section
-        localStorage.setItem("recording_info_asked_user", true); 
-        this.view.recordingInformationButtonDisplay();
-
-        // TODO when this gets sent, Recording information section should
-        // display to user rather than being buried under Profile Info
-        window.alert(this.alert_message.rec_info_activated);
+        this._askUserAboutRecordingInformation();
     }
+}
+
+// only ask the user once if they want to activate the Recording
+// Information section
+// TODO when this gets sent, Recording information section should
+// display to user rather than being buried under Profile Info
+Controller.prototype._askUserAboutRecordingInformation = function () {
+    localStorage.setItem("recording_info_asked_user", true); 
+    this.view.recordingInformationButtonDisplay();
+    window.alert(this.alert_message.rec_info_activated);
 }
 
 Controller.prototype._maxNumSubmissionsReached = function () {
@@ -175,20 +180,25 @@ Controller.prototype._maxNumSubmissionsReached = function () {
 Controller.prototype._firstpromptrecorded = function () {
     this._checkRecordingInformationReminder();
     this._IfTooMuchBackgroundnoiseTurnOffVad();
-    this._checkForLowEndDevice();    
+    this._checkForLowEndDevice();
     this.view.enableDeleteButtons();
     this.view.showPlayButtons();
 }
 
 Controller.prototype._checkRecordingInformationReminder = function () {
     if (this.view.displayRecordingInfoChecked() ) {
-        if (this.view.geolocationReminderChecked() ) {
-            this._checkForLocationChange();
-        } else  {
-            this._checkTimeSinceLastSubmission();
-        }
+        this._displayRecordingInfoChecked();
     }
 }
+
+Controller.prototype._displayRecordingInfoChecked = function () {
+    if (this.view.geolocationReminderChecked() ) {
+        this._checkForLocationChange();
+    } else  {
+        this._checkTimeSinceLastSubmission();
+    }
+}
+
 /*
  * if too much background noise, turn off VAD
  */
@@ -321,38 +331,40 @@ Controller.prototype._uploading = function () {
     this._setupUploadingButtons();
     this._captureAudioPropertiesForDebugging();
     this._dealWithDebugSettings();
-    this._runUploadPromiseChain();
+    this._waitForAllRecordingsToCompletThenUpload();
 }
 
 // make sure all promises complete before trying to gather audio
 // from shadow DOM before upload, otherwise will miss some audio 
 // recordings...
-Controller.prototype._runUploadPromiseChain = function () {
+Controller.prototype._waitForAllRecordingsToCompletThenUpload = function () {
     var self = this;
 
     Promise.all(promise_list)
-    .then( function() {
-        // start of promise chain with multiple parameters needs to be
-        // within function; cannot be passed as function reference after
-        // Promise.all.
-        self.uploader.upload(
-            self.prompts,
-            self.profile,
-            self.debug,
-            self.appversion,
-            document.querySelectorAll('.clip'), // all clips
-            self.language,
-            view.debugChecked())
-        .then( self._saveProfileAndReset.bind(self) )
-        .catch(function (err) {
-            console.log(err.message);
-            console.log(err.stack);
-        });
-    })
+    .then( self._uploadPromiseChain.bind(self) )
     .catch(function (err) {
         console.log(err)
     });
 }
+
+Controller.prototype._uploadPromiseChain = function () {
+    var self = this;
+        
+    self.uploader.upload(
+        self.prompts,
+        self.profile,
+        self.debug,
+        self.appversion,
+        document.querySelectorAll('.clip'), // all clips
+        self.language,
+        view.debugChecked())
+    .then( self._saveProfileAndReset.bind(self) )
+    .catch(function (err) {
+        console.log(err.message);
+        console.log(err.stack);
+    });
+}
+
 
 // user may change debug setting just before upload, so only
 // get audio debug values when uploading after at last recorded
