@@ -28,29 +28,33 @@ but will be too late for it to display to the user correctly... so user will
 see "Please Select" after a page refresh, even though the select will have
 properties showing that a certain element was selected...
 */
-View.updateView = function(
-    json_object,
+
+function ProfileView (
     localized_yes,
     localized_other,
+    localized_anonymous,    
     default_value)
 {
-    View._displaySpeakerCharacteristics(
-        json_object,
-        localized_yes,
-        localized_other,
-        default_value);
-    View._displayRecordingInformation(
-        json_object,
-        localized_yes,
-        localized_other);    
+    this.localized_yes = localized_yes;
+    this.localized_other = localized_other;
+    this.localized_anonymous = localized_anonymous;
+    this.default_value = default_value;    
 }
 
-View._displaySpeakerCharacteristics = function(
-    json_object,
-    localized_yes,
-    localized_other,
-    default_value)    
+ProfileView.prototype.update = function(json_object)
 {
+    this._setSpeakerCharacteristics(json_object);
+    this._setRecordingInformation(json_object);
+}
+
+ProfileView.prototype._setSpeakerCharacteristics = function(json_object)
+{
+    this._setUserInfo(json_object);
+    this._setLanguageCharacteristics(json_object);
+    this._displaySpeakerCharacteristicsIfNotAllFilled(json_object);
+}
+
+ProfileView.prototype._setUserInfo = function(json_object) {
     $('#username').val( Profile.cleanUserInputRemoveSpaces(json_object.username) );
     if (json_object.username) {
       $('#anonymous_instructions_display').hide();
@@ -59,77 +63,113 @@ View._displaySpeakerCharacteristics = function(
     $('#gender option[text=" + json_object.gender + "]').attr('selected','selected'); 
 
     $('#age').val( json_object.age );
+}
 
+ProfileView.prototype._setLanguageCharacteristics = function(json_object) {
+    this._setNativeSpeaker(json_object);
+    this._setFirstLanguage(json_object);
+    this._setDialect(json_object);
+}
+
+ProfileView.prototype._setNativeSpeaker = function(json_object) {
     $('#native_speaker').val( json_object.native_speaker );
-    if ( json_object.native_speaker === localized_yes )
+    if ( json_object.native_speaker === this.localized_yes )
     {
       $("#dialect_display").show();
     } else {
       $("#first_language_display").show();
     }
+}
+
+ProfileView.prototype._setFirstLanguage = function(json_object) {
     $('#first_language').val( json_object.first_language );
     $('#first_language_other').val( Profile.cleanUserInput(json_object.first_language_other) );
+}
 
+ProfileView.prototype._setDialect = function(json_object) {
     $('#dialect').val( json_object.dialect );
     $('#sub_dialect').val( json_object.sub_dialect );
-    if ( json_object.sub_dialect !== default_value ) {
+    if ( json_object.sub_dialect !== this.default_value ) {
       $("#sub_dialect_display").show();
     }
     $('#dialect_other').val( Profile.cleanUserInput(json_object.dialect_other) );
-    if ( json_object.dialect === localized_other ) {
+    if ( json_object.dialect === this.localized_other ) {
       $("#dialect_other_display").show();
     }
+}
 
-    // if user has filled in relevant profile information, no need to present
-    // Speaker Characteristics section to user
-    if ( json_object.gender !== default_value &&
-        json_object.age  !== default_value &&
-        json_object.native_speaker !== default_value &&
-        (json_object.first_language !== default_value ||
-               json_object.dialect  !== default_value)
-      )
-    {
+/*
+ * hide filled Speaker Characteristic section
+ * 
+ * if user has filled in relevant profile information, no need to present
+ * Speaker Characteristics section to user 
+ */
+ProfileView.prototype._displaySpeakerCharacteristicsIfNotAllFilled = function(json_object) {
+    if ( this._speakerCharacteristicsFilled(json_object) )  {
        $("#speaker_characteristics_display").hide();
     }
 }
 
-View._displayRecordingInformation = function(
-    json_object,
-    localized_yes,
-    localized_other)
+ProfileView.prototype._speakerCharacteristicsFilled = function(json_object) {
+    return ( json_object.gender !== this.default_value &&
+             json_object.age  !== this.default_value &&
+             json_object.native_speaker !== this.default_value &&
+            (json_object.first_language !== this.default_value ||
+                   json_object.dialect  !== this.default_value)
+    );
+}
+
+// ###
+
+ProfileView.prototype._setRecordingInformation = function(json_object)
 {
+    this._setMic(json_object);
+    this._setLocation(json_object);
+    this._setNoise(json_object);
+    this._setLicense(json_object);    
+}
+
+ProfileView.prototype._setMic = function(json_object) {
     $('#microphone').val( json_object.microphone );
     $('#microphone_other').val( Profile.cleanUserInput(json_object.microphone_other) );
-    if ( json_object.microphone === localized_other )
+    if ( json_object.microphone === this.localized_other )
     {
       $("#microphone_other_display").show();
     }
+}
 
+ProfileView.prototype._setLocation = function(json_object) {
     $('#recording_location').val( json_object.recording_location );
     $('#recording_location_other').val( Profile.cleanUserInput(json_object.recording_location_other) );
-    if ( json_object.recording_location === localized_other )
+    if ( json_object.recording_location === this.localized_other )
     {
       $("#recording_location_other_display").show();
     }
+}
+
+ProfileView.prototype._setNoise = function(json_object) {
     $('#background_noise').val( json_object.background_noise );
-    if ( json_object.background_noise === localized_yes )
+    if ( json_object.background_noise === this.localized_yes )
     {
       $("#background_noise_display").show();
     }
     $('#noise_volume').val( json_object.noise_volume );
     $('#noise_type').val( json_object.noise_type );
     $('#noise_type_other').val( Profile.cleanUserInput(json_object.noise_type_other) );
-    if ( json_object.noise_type === localized_other )
+    if ( json_object.noise_type === this.localized_other )
     {
       $("#noise_type_other_display").show();
     }
+}
+
+ProfileView.prototype._setLicense = function(json_object) {
     $('#license').val( json_object.license );
 }
 
 /**
 * get user entered DOM data
 */
-View.getUserProfileInfo = function(
+ProfileView.getUserProfileInfo = function(
     localized_yes,
     localized_other,
     localized_anonymous,
@@ -224,14 +264,14 @@ View.getUserProfileInfo = function(
 /**
 * get user selected license
 */
-View.getLicenseID = function() {
+ProfileView.getLicenseID = function() {
   return $("#license").val();
 }
 
 /**
 * get user keyed in username
 */
-View.getUserName = function() {
+ProfileView.getUserName = function() {
   return $('#username').val();
 }
 

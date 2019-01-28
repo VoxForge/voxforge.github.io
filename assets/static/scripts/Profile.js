@@ -275,7 +275,10 @@ Profile.prototype.addProfile2LocalStorage = function () {
 * return cleaned username user entered into input field
 */
 Profile.prototype.getUserName = function () {
-    return Profile.cleanUserInputRemoveSpaces( View.getUserName() ) || this.anonymous || "anonymous";
+    return Profile.cleanUserInputRemoveSpaces(
+        View.getUserName() ) ||
+        this.anonymous ||
+        "anonymous";
 }
 
 /**
@@ -295,7 +298,10 @@ Profile.prototype.getShortSubmissionName = function () {
   var day = d.getDate();
   day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
   var date = d.getFullYear().toString() + month.toString() + day.toString();
-  var result = this.language.toUpperCase() + '-' + this.getUserName() + '-' + date + '-' + this.suffix;
+  var result = this.language.toUpperCase() + '-' +
+               this.getUserName() + '-' +
+               date + '-' +
+               this.suffix;
 
   return result;
 }
@@ -346,7 +352,8 @@ Profile.prototype.getLicense = function (license) {
     if ( license_obj ) {
       license_array[i++] = license_obj.title + '\n\n';
 
-      license_array[i++] = license_obj.attribution.replace("_year_", year) + " " + this.getUserName() + '\n\n';
+      license_array[i++] = license_obj.attribution.replace("_year_", year) + " " +
+                           this.getUserName() + '\n\n';
       for (var j = 0; j < license_obj.text.length; j++) {
         license_array[i++] = license_obj.text[j] + "\n";
       }
@@ -356,7 +363,9 @@ Profile.prototype.getLicense = function (license) {
      
       license_array[i++] = 'CC0 - Creative Commons Public Domain Dedication\n\n';
 
-      license_array[i++] = year + ' - VoxForge Speech Recording by: ' + this.getUserName() + '\n';
+      license_array[i++] = year +
+                           ' - VoxForge Speech Recording by: ' +
+                           this.getUserName() + '\n';
    
       license_array[i++] = '\nThe person who associated a work with this deed has dedicated the work\n';
       license_array[i++] = 'to the public domain by waiving all of his or her rights to the work\n';

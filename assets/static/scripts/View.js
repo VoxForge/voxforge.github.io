@@ -56,6 +56,7 @@ View.prototype._setupTranslations = function () {
     this.localized_yes = this.pageVariables.localized_yes;
     this.localized_no = this.pageVariables.localized_no;
     this.localized_other = this.pageVariables.localized_other;
+    this.localized_anonymous = this.pageVariables.anonymous;    
     this.please_select = this.pageVariables.please_select;
     this.default_value = this.pageVariables.default_value;
     this.alert_message = this.pageVariables.alert_message;
@@ -65,19 +66,27 @@ View.prototype._setupTranslations = function () {
 }
 
 /*
- * See also staticMethods.js - basically a mixin
+ * See also BrowserWindow.js - basically a mixin
  */
 View.prototype._instantiateClassDependencies = function () {
     this.settings = new Settings();
     this.submissionsLog = new SubmissionsLog(
-         this.pageVariables.saved_submissions,
-         this.pageVariables.uploaded_submissions,
+         this.saved_submissions,
+         this.uploaded_submissions,
     );
     this.audioPlayer = new AudioPlayer(
         this.prompts,
         this.pageVariables,
-    ); 
+    );
 }
+
+/*
+ * Static methods
+ */
+ 
+View.getUserProfileInfo = ProfileView.getUserProfileInfo;
+View.getLicenseID = ProfileView.getLicenseID;
+View.getUserName = ProfileView.getUserName;
 
 // ### METHODS #################################################################
 
@@ -94,15 +103,15 @@ View.prototype.init = function () {
     return new Promise(function (resolve, reject) {
         var json_object = self.profile.getProfileFromBrowserStorage();
         if (json_object) {
-            View.updateView(
-                json_object,
+            var profileView = new ProfileView(
                 self.localized_yes,
                 self.localized_other,
-                self.default_value)
-            .then( resolve("OK") );
-        } else {
-            resolve("OK");
+                self.localized_anonymous,      
+                self.default_value
+            );               
+            profileView.update(json_object);
         }
+        resolve("OK");
     }); // promise
 }
 
