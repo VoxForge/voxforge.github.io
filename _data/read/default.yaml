@@ -306,19 +306,19 @@ alert_message:
   submission_plural: submissions
   audio_too_loud: >
     Your recording is too loud!<br>
-    Please reduce your microphone volume<br>
-    delete this recording and re-record the prompt
+    Please reduce your microphone volume,<br>
+    then delete this recording and re-record the prompt.
   audio_too_soft: >
     Your recording levels are too low!<br>
-    Please increase your microphone volume, 
+    Please increase your microphone volume,<br>
     then delete this prompt recording and re-record it.
   no_trailing_silence: >
-    You did not leave enough trailing silence - you may have clicked
-    'stop' too early! <br>
+    You may have not left enough trailing silence (clicked
+    'stop' too early) <br>
     Please review this prompt recording, and delete and re-record if necessary.
   no_speech: >
-    No Speech or recording volume too low<br>
-    Please increase your microphone volume,
+    No Speech (or microphone volume too low).<br>
+    Please increase microphone volume,<br>
     then delete and re-record this prompt.
   audio_too_loud_autogain: >
     Your recording is too loud!<br>
@@ -330,8 +330,9 @@ alert_message:
     Please delete this recording and re-record the prompt.
   no_speech_autogain: >
     No Speech or recording volume too low.<br>
-    Automatically increasing volume.<br>
-    Please delete this recording and re-record the prompt.
+    Please delete this recording and re-record the prompt.<br>    
+    Microphone volume automatically increased for nextr recording.<br>
+
   getUserMedia_error: >
     Could not get audio input... make sure your microphone is connected to your 
     computer.  Your browser is giving this error message:
