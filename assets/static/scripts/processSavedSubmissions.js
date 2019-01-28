@@ -103,7 +103,7 @@ function processSavedSubmissions(uploadURL, workertype) {
           noUploadList[noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
           var m = 'Upload request failed for: ' + saved_submission_name.replace(/\[.*\]/gi, '') + '\n\n' +
                    '...will try again on next upload attempt.  error: ' + err;
-          console.error(m);
+          console.warn(m);
           reject(m);
         });
 
