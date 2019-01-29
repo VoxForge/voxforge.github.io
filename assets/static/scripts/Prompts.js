@@ -60,13 +60,15 @@ Prompts.splitPromptLine = function(promptLine) {
 /**
 * split prompt file from server into an array and decide if it needs a 
 * prompt ID added; store in 'self.list'
+*
+* see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
 */
-Prompts.convertPromptDataToArray = function(prompt_data,
-                                           contains_promptid,
-                                           start,
-                                           prefix) 
+Prompts.convertPromptDataToArray = function(
+    prompt_data,
+    contains_promptid,
+    start,
+    prefix) 
 {
-    // see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
     function pad(num, size) {
       var s = num+"";
       while (s.length <= size) s = "0" + s;
@@ -95,10 +97,11 @@ Prompts.convertPromptDataToArray = function(prompt_data,
 /**
 *
 */
-Prompts.confirmPromptListLength = function(list,
-                                           number_of_prompts,
-                                           prompt_file_index,
-                                           language)
+Prompts.confirmPromptListLength = function(
+    list,
+    number_of_prompts,
+    prompt_file_index,
+    language)
 {
     if (number_of_prompts !=  list.length) {
       console.warn("number of prompts in prompt_list_files[" + prompt_file_index + "] = " + 
@@ -112,11 +115,12 @@ Prompts.confirmPromptListLength = function(list,
 * save the prompt file as a JSON object in user's browser 
 * InnoDB database using LocalForage 
 */
-Prompts.save2BrowserStorage = function(local_prompt_file_name,
-                                       language,
-                                       id,
-                                       list,
-                                       promptCache) 
+Prompts.save2BrowserStorage = function(
+    local_prompt_file_name,
+    language,
+    id,
+    list,
+    promptCache) 
 {
     var jsonOnject = {};
     jsonOnject['language'] = language;
@@ -143,8 +147,9 @@ Prompts.save2BrowserStorage = function(local_prompt_file_name,
 * reading prompt list using the self.index and modulus to wrap
 * around the prompt list array.
 */
-Prompts.initPromptStack = function(list,
-                                   max_num_prompts) 
+Prompts.initPromptStack = function(
+    list,
+    max_num_prompts) 
 {
     var prompt_stack = [];
     var index = Math.floor((Math.random() * list.length));
@@ -159,8 +164,9 @@ Prompts.initPromptStack = function(list,
 }
 
 /* get the saved submission object from browser storage */
-Prompts.getSavedPromptList = function(promptCache, 
-                                      local_prompt_file_name) 
+Prompts.getSavedPromptList = function(
+    promptCache, 
+    local_prompt_file_name) 
 {
   return new Promise(function (resolve, reject) {
 
