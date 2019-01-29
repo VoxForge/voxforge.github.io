@@ -77,8 +77,12 @@ var view;  // needs to be global so can be accessible to index.html
       debug = new Debug(false);
     }
     
-    var prompts = new Prompts(parms.prompt, pageVariables); 
-    var profile = new Profile(appversion, pageVariables);
+    var prompts = new Prompts(
+        parms.prompt,
+        pageVariables); 
+    var profile = new Profile(
+        appversion,
+        pageVariables);
     
     // 'view' needs to be global so can be accessed by index.html
     view = new View(

@@ -47,60 +47,6 @@ function Prompts(parms,
 */
 
 /**
-* helper function to return prompt id and prompt sentence in an array
-*/
-Prompts.splitPromptLine = function(promptLine) {
-    var promptArray = promptLine.split(/(\s+)/); // create array
-    var promptId = promptArray.shift(); // extract prompt id
-    var promptSentence =  promptArray.join(""); // make string;
-
-    return [promptId, promptSentence.trim()];
-}
-
-/**
-*
-*/
-Prompts.confirmPromptListLength = function(
-    list,
-    number_of_prompts,
-    prompt_file_index,
-    language)
-{
-    if (number_of_prompts !=  list.length) {
-      console.warn("number of prompts in prompt_list_files[" + prompt_file_index + "] = " + 
-                   number_of_prompts + 
-                  " in read.md, not same as prompt file line counts for language: " + 
-                  language + "= " + list.length );
-    }
-}
-
-/** 
-* save the prompt file as a JSON object in user's browser 
-* InnoDB database using LocalForage 
-*/
-Prompts.save2BrowserStorage = function(
-    local_prompt_file_name,
-    language,
-    id,
-    list,
-    promptCache) 
-{
-    var jsonOnject = {};
-    jsonOnject['language'] = language;
-    jsonOnject['id'] = id;
-    jsonOnject['list'] = list;
-
-    promptCache.setItem(local_prompt_file_name, jsonOnject)
-    .then(function (value) {
-      console.info('saved promptfile to localforage browser storage: ' + local_prompt_file_name);
-    })
-    .catch(function(err) {
-      console.error('save of promptfile to localforage browser storage failed!', err);
-    });
-}
-
-
-/**
 * initialize prompt stack with number of prompts chosen by user
 *
 * User's set of prompts to be read in contained in a stack, that way
@@ -229,17 +175,15 @@ Prompts.prototype.init = function () {
             $.get(prompt_file_name,
                 function(prompt_data) {
                   self.list = self._convertPromptDataToArray(plf, prompt_data);
-                  Prompts.confirmPromptListLength(self.list,
-                                                  plf.number_of_prompts,
-                                                  prompt_file_index,
-                                                  self.language);
-                  Prompts.save2BrowserStorage(local_prompt_file_name,
-                                              self.language,
-                                              plf.id,
-                                              self.list,
-                                              self.promptCache);
-                  self.prompt_stack = Prompts.initPromptStack(self.list,
-                                                              self.max_num_prompts);
+                  self._confirmPromptListLength(
+                      plf.number_of_prompts,
+                      prompt_file_index);
+                  self._save2BrowserStorage(
+                      local_prompt_file_name,
+                      plf.id);
+                  self.prompt_stack = Prompts.initPromptStack(
+                      self.list,
+                      self.max_num_prompts);
                   var m = "downloaded prompt file from VoxForge server";
                   console.log(m);
                   resolve(m); // returnPromise
@@ -300,11 +244,9 @@ Prompts.prototype.init = function () {
                 $.get(prompt_file_name, 
                     function(prompt_data) {
                       self.list = self._convertPromptDataToArray(plf, prompt_data);
-                      Prompts.save2BrowserStorage(local_prompt_file_name,
-                                                  self.language,
-                                                  plf.id,
-                                                  self.list,
-                                                  self.promptCache);
+                      self._save2BrowserStorage(
+                          local_prompt_file_name,
+                          plf.id);
                       console.log("updating saved prompts file with new one from VoxForge server");
                       resolve("got prompts from local storage"); // returnPromise
                     }
@@ -359,6 +301,60 @@ Prompts.prototype.init = function () {
     }); // promise
 }
 
+
+/** 
+* save the prompt file as a JSON object in user's browser 
+* InnoDB database using LocalForage 
+*/
+Prompts.prototype._save2BrowserStorage = function(
+    local_prompt_file_name,
+    id) 
+{
+    var jsonOnject = this._creatObject(id);
+    this._saveObject2PromptCache(
+        local_prompt_file_name,
+        jsonOnject);
+}
+
+Prompts.prototype._creatObject = function(id) {
+    var jsonOnject = {};
+
+    jsonOnject['language'] = this.language;
+    jsonOnject['id'] = id;
+    jsonOnject['list'] = this.list;
+
+    return jsonOnject;
+}
+
+Prompts.prototype._saveObject2PromptCache = function(
+    local_prompt_file_name,
+    jsonOnject)
+{
+    this.promptCache.setItem(local_prompt_file_name, jsonOnject)
+    .then(function (value) {
+        console.info('saved promptfile to localforage browser storage: ' +
+                     local_prompt_file_name);
+    })
+    .catch(function(err) {
+      console.error('save of promptfile to localforage browser storage failed!', err);
+    });
+}
+
+Prompts.prototype._confirmPromptListLength = function(
+    number_of_prompts,
+    prompt_file_index)
+{
+    if (number_of_prompts !=  this.list.length) {
+        console.warn(
+            "number of prompts in prompt_list_files[" +
+            prompt_file_index + "] = " + 
+            number_of_prompts + 
+            " in read.md, not same as prompt file line counts for language: " + 
+            this.language + "= " + this.list.length );
+    }
+}
+
+
 /**
 * split prompt file from server into an array and decide if it needs a 
 * prompt ID added;
@@ -378,8 +374,7 @@ Prompts.prototype._convertPromptDataToArray = function(plf, prompt_data) {
     
     function addPromptId(sentence, i) {
         var prompt_id = plf.prefix + pad( i + plf.start, 5 );
-        var newSentence = prompt_id  + " " + sentence;
-        return newSentence;
+        return prompt_id  + " " + sentence;
     }
 
     var sentences = prompt_data.split('\n');      
@@ -443,14 +438,26 @@ Prompts.prototype.getCurrentPromptLine = function () {
 * get prompt id portion of current prompt line as determined by index.
 */
 Prompts.prototype.getPromptId = function () {
-   return Prompts.splitPromptLine(this.current_promptLine)[0];
+   return this._splitPromptLine(this.current_promptLine)[0];
 }
 
 /**
 * get prompt portion of current prompt line as determined by index.
 */
 Prompts.prototype.getPromptSentence = function () {
-   return Prompts.splitPromptLine(this.current_promptLine)[1];
+   return this._splitPromptLine(this.current_promptLine)[1];
+}
+
+
+/**
+* helper function to return prompt id and prompt sentence in an array
+*/
+Prompts.prototype._splitPromptLine = function(promptLine) {
+    var promptArray = promptLine.split(/(\s+)/); // create array
+    var promptId = promptArray.shift(); // extract prompt id
+    var promptSentence =  promptArray.join(""); // make string;
+
+    return [promptId, promptSentence.trim()];
 }
 
 /**
