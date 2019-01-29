@@ -24,7 +24,7 @@ function Prompts(parms,
                  pageVariables)
 {
     this.max_num_prompts = parms.num_prompts_to_trigger_upload;
-    this.list = []; // list of prompts to be recorded by user; iniitlaized in convertPromptDataToArray
+    this.list = []; // list of prompts to be recorded by user; initialized in convertPromptDataToArray
     this.previous_max_num_prompts = 0; // to decide what to do when use changes max number of prompts
     this.index = 0; // pointer to position in prompt list array
     this.prompt_count = 0; // number of prompts user read
@@ -55,43 +55,6 @@ Prompts.splitPromptLine = function(promptLine) {
     var promptSentence =  promptArray.join(""); // make string;
 
     return [promptId, promptSentence.trim()];
-}
-
-/**
-* split prompt file from server into an array and decide if it needs a 
-* prompt ID added; store in 'self.list'
-*
-* see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
-*/
-Prompts.convertPromptDataToArray = function(
-    prompt_data,
-    contains_promptid,
-    start,
-    prefix) 
-{
-    function pad(num, size) {
-      var s = num+"";
-      while (s.length <= size) s = "0" + s;
-      return s;
-    }
-
-    var sentences = prompt_data.split('\n');
-    var list = []; 
-
-    // add prompt ID to each prompt line if none exists
-    for (var i = 0; i < sentences.length; i++) {
-      if (sentences[i] != "") { // skip empty string
-        if (contains_promptid)
-        { // first word of prompt line is the prompt ID
-            list[i] = sentences[i];
-        } else {
-            var prompt_id = prefix + pad( i + start, 5 );
-            list[i] = prompt_id  + " " + sentences[i];
-        }
-      }
-    }
-
-    return list;
 }
 
 /**
@@ -265,10 +228,7 @@ Prompts.prototype.init = function () {
 
             $.get(prompt_file_name,
                 function(prompt_data) {
-                  self.list = Prompts.convertPromptDataToArray(prompt_data,
-                                                               plf.contains_promptid,
-                                                               plf.start,
-                                                               plf.prefix);
+                  self.list = self._convertPromptDataToArray(plf, prompt_data);
                   Prompts.confirmPromptListLength(self.list,
                                                   plf.number_of_prompts,
                                                   prompt_file_index,
@@ -339,11 +299,7 @@ Prompts.prototype.init = function () {
                             "with new one from VoxForge server");
                 $.get(prompt_file_name, 
                     function(prompt_data) {
-                      self.list = 
-                          Prompts.convertPromptDataToArray(prompt_data,
-                                                           plf.contains_promptid,
-                                                           plf.start,
-                                                           plf.prefix);
+                      self.list = self._convertPromptDataToArray(plf, prompt_data);
                       Prompts.save2BrowserStorage(local_prompt_file_name,
                                                   self.language,
                                                   plf.id,
@@ -402,6 +358,39 @@ Prompts.prototype.init = function () {
         .catch((err) => { console.log(err) });
     }); // promise
 }
+
+/**
+* split prompt file from server into an array and decide if it needs a 
+* prompt ID added;
+*
+* see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
+*/
+Prompts.prototype._convertPromptDataToArray = function(plf, prompt_data) {
+    function pad(num, size) {
+      var s = num+"";
+      while (s.length <= size) s = "0" + s;
+      return s;
+    }
+ 
+    function removeEmptyStrings(sentence) {
+        return sentence.trim() != "";
+    }
+    
+    function addPromptId(sentence, i) {
+        var prompt_id = plf.prefix + pad( i + plf.start, 5 );
+        var newSentence = prompt_id  + " " + sentence;
+        return newSentence;
+    }
+
+    var sentences = prompt_data.split('\n');      
+    var list = sentences.filter(removeEmptyStrings);
+    if ( ! plf.contains_promptid ) {
+        list = list.map(addPromptId);
+    }
+    
+    return list;
+}
+
 
 /**
 * reset prompt array and index after submission is completed
