@@ -107,9 +107,10 @@ View.prototype.init = function () {
                 self.localized_yes,
                 self.localized_other,
                 self.localized_anonymous,      
-                self.default_value
+                self.default_value,
+                json_object,                
             );               
-            profileView.update(json_object);
+            profileView.update();
         }
         resolve("OK");
     }); // promise
@@ -463,7 +464,6 @@ View.prototype.enableDeleteButtons = function () {
 View.prototype.enableVoiceActivityDetection = function () {
     $('#vad_run').prop('checked', true); 
 }
-
    
 /*
  *
@@ -530,7 +530,6 @@ View.prototype.audioVisualizerChecked = function () {
     return $('#audio_visualizer').is(":checked");  
 }
 
-
 /**
 *     // container holding visualizer, and buttons
 
@@ -576,23 +575,35 @@ View.prototype.geolocationReminderChecked = function () {
 * TODO create user override for this
 */
 View.prototype.userSaysBackgroundNoise = function () {
-    if (  $('#background_noise').val() === this.localized_yes ) {
-      var options = document.getElementById('noise_volume').options;
-      var values = [];
-      var i = 0, len = options.length;
-
-      while (i < len)
-      {
-        values.push(options[i++].value);
-      }
-
-      // assumes first two values are always low background noise
-      if ( $('#noise_volume').val() !== values[1] &&
-           $('#noise_volume').val() !== values[2] )
-      {
+    if ( this._userHasSelectedBackgroundNoise() &&
+         this._NoiseLevelTooHighForVAD() )
+    {
         return true;
-      }
     }
+}
+
+View.prototype._userHasSelectedBackgroundNoise = function () {
+    return (  $('#background_noise').val() === this.localized_yes );
+}
+
+// assumes first two values are always low background noise
+View.prototype._NoiseLevelTooHighForVAD = function() {
+    var values = this._getNoiseSelectValues();    
+
+    return  ( $('#noise_volume').val() !== values[1] &&
+              $('#noise_volume').val() !== values[2] );
+}
+
+View.prototype._getNoiseSelectValues = function() {
+    var options = document.getElementById('noise_volume').options;
+
+    var values = [];
+
+    Object.keys(options).forEach(function(key) {
+        values.push(options[key]);
+    });
+    
+    return values;
 }
 
 /**
