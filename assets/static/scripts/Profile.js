@@ -102,6 +102,8 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
   /**
   * get profile information from local storage and if it exists, return parsed
   * JSON object, otherwise return null.
+  *
+  * Note: localStorage is a synchronous API... no need for async promise cruft
   */
   function retrieve() {
       var retrievedObject = localStorage.getItem(self.language);

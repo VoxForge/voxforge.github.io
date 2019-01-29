@@ -77,8 +77,10 @@ View.prototype._instantiateClassDependencies = function () {
          this.saved_submissions,
          this.uploaded_submissions,
     );
+    var movePrompt2Stack_method =
+        this.prompts.movePrompt2Stack.bind(this.prompts);
     this.audioPlayer = new AudioPlayer(
-        this.prompts.movePrompt2Stack.bind(this.prompts),
+        movePrompt2Stack_method,
         this.pageVariables,
     );
 }
@@ -120,21 +122,18 @@ View.prototype.init = function () {
     if ( localStorage.getItem("vad_run") === 'true') {
       view.enableVoiceActivityDetection();
     }
-    
-    return new Promise(function (resolve, reject) {
-        var json_object = self.profile.getProfileFromBrowserStorage();
-        if (json_object) {
-            var profileView = new ProfileView(
-                self.localized_yes,
-                self.localized_other,
-                self.localized_anonymous,      
-                self.default_value,
-                json_object,                
-            );               
-            profileView.update();
-        }
-        resolve("OK");
-    }); // promise
+
+    var json_object = self.profile.getProfileFromBrowserStorage();
+    if (json_object) {
+        var profileView = new ProfileView(
+            self.localized_yes,
+            self.localized_other,
+            self.localized_anonymous,      
+            self.default_value,
+            json_object,                
+        );               
+        profileView.update();
+    }
 }
 
 View.prototype._setupDisplayDefaults = function () {
