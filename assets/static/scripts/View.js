@@ -17,8 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 /*
- *
- * ######## TODO convert View class from JQUERY to vanilla JS; keep jQuery mobile css
+ * Contructor
  */
 function View (
     parms,
@@ -34,6 +33,10 @@ function View (
     
     this._initProperties();
 }
+
+/*
+ * Methods
+ */
 
 View.prototype._initProperties = function () {
     this._setupButtons();
@@ -83,7 +86,6 @@ View.prototype._instantiateClassDependencies = function () {
 /*
  * Static methods
  */
- 
 View.getUserProfileInfo = ProfileView.getUserProfileInfo;
 View.getLicenseID = ProfileView.getLicenseID;
 View.getUserName = ProfileView.getUserName;
@@ -334,9 +336,6 @@ View.prototype._setupLanguages = function () {
     $('#first_language').append(option);
 }
 
-/**
-* 
-*/
 View.prototype._setupPrompts = function () {
     var self = this;
     
@@ -357,7 +356,9 @@ View.prototype._setupPrompts = function () {
     });
 }
 
-// set default (device dependent) max number of prompts the user can record 
+/**
+* set default (device dependent) max number of prompts the user can record 
+*/
 View.prototype._displayPrompts = function () {
     var startPrompt = 10; // min number of prompts no matter what device
     var incr = 5;
@@ -458,16 +459,10 @@ View.prototype.enableDeleteButtons = function () {
     $('.delete').prop('disabled', false);
 }
 
-/**
-* 
-*/
 View.prototype.enableVoiceActivityDetection = function () {
     $('#vad_run').prop('checked', true); 
 }
    
-/*
- *
- */
 View.prototype.hideAudioPlayer = function () {
     //only hides the first instance of audio_player, even though it is a class
     //document.querySelector('.audio_player').controls = false;
@@ -477,9 +472,6 @@ View.prototype.hideAudioPlayer = function () {
     }
 }
 
-/**
-*
-*/
 View.prototype.showAudioPlayer = function () {
     //document.querySelector('.audio_player').controls = true;
     var object_arr = $('.audio_player');
@@ -489,8 +481,6 @@ View.prototype.showAudioPlayer = function () {
 }
 
 /**
-
-*
 * can't just disable the play button on the lower audio player, need to hide
 * whole thing...
 */
@@ -507,32 +497,22 @@ View.prototype.showPlayButtons = function () {
 }
 
 /**
-* hide prompt display
 * TODO enable does not seem to work with WaveSurfer
 */
 View.prototype.hidePromptDisplay = function () {
     $('.info-display').hide();
 }
 
-
-
-/**
-* get debug value
-*/
 View.prototype.debugChecked = function () {
     return $('#debug').is(":checked");
 }
 
-/**
-* 
-*/
 View.prototype.audioVisualizerChecked = function () {
     return $('#audio_visualizer').is(":checked");  
 }
 
 /**
-*     // container holding visualizer, and buttons
-
+* container holding visualizer, and buttons
 */
 View.prototype.visualize = function (analyser) {
     var visualizer = document.querySelector('.visualizer');
@@ -542,16 +522,10 @@ View.prototype.visualize = function (analyser) {
     }
 }
 
-/**
-* get recording information value
-*/
 View.prototype.displayRecordingInfoChecked = function () {
     return $('#display_record_info').is(":checked");
 }
 
-/**
-* get recording information value
-*/
 View.prototype.timeSinceLastSubmissionChecked = function () {
     return $('#recording_time_reminder').is(":checked");
 }
@@ -574,7 +548,7 @@ View.prototype.geolocationReminderChecked = function () {
 * 
 * TODO create user override for this
 */
-View.prototype.userSaysBackgroundNoise = function () {
+View.prototype.userSaysTooMuchBackgroundNoise = function () {
     if ( this._userHasSelectedBackgroundNoise() &&
          this._NoiseLevelTooHighForVAD() )
     {
