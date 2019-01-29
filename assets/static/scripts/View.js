@@ -25,11 +25,13 @@ function View (
     profile,
     pageVariables)
 {
-    this.parms = parms;
-    this.prompts = prompts;
-    this.profile = profile;
-    this.pageVariables = pageVariables;
+    this.max_numPrompts_selector = parms.max_numPrompts_selector;
     this.displayWaveform = parms.displayWaveform;
+    this.movePrompt2Stack = prompts.movePrompt2Stack.bind(prompts);
+    this.userChangedMaxNum = prompts.userChangedMaxNum.bind(prompts);
+    this.getProgressDescription = prompts.getProgressDescription.bind(prompts);
+    this.json_object = profile.getProfileFromBrowserStorage();
+    this.pageVariables = pageVariables;
     
     this._initProperties();
 }
@@ -77,10 +79,9 @@ View.prototype._instantiateClassDependencies = function () {
          this.saved_submissions,
          this.uploaded_submissions,
     );
-    var movePrompt2Stack_method =
-        this.prompts.movePrompt2Stack.bind(this.prompts);
+
     this.audioPlayer = new AudioPlayer(
-        movePrompt2Stack_method,
+        this.movePrompt2Stack,
         this.pageVariables,
     );
 }
@@ -123,14 +124,13 @@ View.prototype.init = function () {
       view.enableVoiceActivityDetection();
     }
 
-    var json_object = self.profile.getProfileFromBrowserStorage();
-    if (json_object) {
+    if (this.json_object) {
         var profileView = new ProfileView(
             self.localized_yes,
             self.localized_other,
             self.localized_anonymous,      
             self.default_value,
-            json_object,                
+            self.json_object,                
         );               
         profileView.update();
     }
@@ -359,7 +359,7 @@ View.prototype._setupPrompts = function () {
     
     this.maxnumpromptschanged = document.querySelector('#max_num_prompts');
 
-    if (this.prompts.max_numPrompts_selector > 10) {
+    if (this.max_numPrompts_selector > 10) {
         this._displayPrompts();
     } else {
         $('#max_num_prompts-display').hide();
@@ -369,7 +369,7 @@ View.prototype._setupPrompts = function () {
     */
     //$('#max_num_prompts').click(function () { 
     $('#max_num_prompts').change(function () { 
-      self.prompts.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
+      self.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
       self.updateProgress();
     });
 }
@@ -381,7 +381,7 @@ View.prototype._displayPrompts = function () {
     var startPrompt = 10; // min number of prompts no matter what device
     var incr = 5;
     var option = ''; // clear previous use of option var    
-    for (var i=startPrompt; i <= this.prompts.max_numPrompts_selector; i = i + incr){
+    for (var i=startPrompt; i <= this.max_numPrompts_selector; i = i + incr){
        option += '<option value="'+ i + '">' + i +  '</option>';
     }
     $('#max_num_prompts').append(option);
@@ -619,6 +619,6 @@ View.prototype.reset = function () {
 * update number of prompts recorded and total number of prompts to record
 */
 View.prototype.updateProgress = function () {
-    var progress = this.prompts.getProgressDescription();
-    document.querySelector('.progress-display').innerText = progress;
+    document.querySelector('.progress-display').innerText =
+        this.getProgressDescription();
 }

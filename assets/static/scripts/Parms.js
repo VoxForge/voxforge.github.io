@@ -19,11 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 function Parms() {
     this.prompt = {
-      // corresponds to the maximum number of prompts that a user can select from the 
-      // drop-down menu selector;  This value changes based on type of device being used.
-      max_numPrompts_selector: 50,
-      num_prompts_to_trigger_upload: 10, // user can upload anytime after recording 10 prompts
-     }
+        // user can upload anytime after recording 10 prompts
+        num_prompts_to_trigger_upload: 10, 
+    }
 
     this.audio = {
       // this was used before we just set audioNodebufferSize to largest size 
@@ -47,7 +45,10 @@ function Parms() {
     }
 
     this.view = {
-      displayWaveform: true,
+        displayWaveform: true,
+        // corresponds to the maximum number of prompts that a user can select from the 
+        // drop-down menu selector;  This value changes based on type of device being used.
+        max_numPrompts_selector: 50,      
     }
 
     this.uploader = {
@@ -86,12 +87,12 @@ function Parms() {
           if (parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
             // the more prompts to display the more it cpu is uses on mobile 
             // devices causing problems with drop outs crackles in recorded audio
-            this.prompt.max_numPrompts_selector = 10;
+            this.view.max_numPrompts_selector = 10;
           } else { // Android 5 and above
-            this.prompt.max_numPrompts_selector = 20;
+            this.view.max_numPrompts_selector = 20;
           }
         } else { // can't parse user agent... assume older version of Android/browser
-            this.prompt.max_numPrompts_selector = 10;
+            this.view.max_numPrompts_selector = 10;
         }
     }
 }

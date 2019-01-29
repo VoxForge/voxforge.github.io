@@ -24,7 +24,6 @@ function Prompts(parms,
                  pageVariables)
 {
     this.max_num_prompts = parms.num_prompts_to_trigger_upload;
-    this.max_numPrompts_selector = parms.max_numPrompts_selector;
     this.list = []; // list of prompts to be recorded by user; iniitlaized in convertPromptDataToArray
     this.previous_max_num_prompts = 0; // to decide what to do when use changes max number of prompts
     this.index = 0; // pointer to position in prompt list array
