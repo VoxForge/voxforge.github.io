@@ -78,7 +78,7 @@ View.prototype._instantiateClassDependencies = function () {
          this.uploaded_submissions,
     );
     this.audioPlayer = new AudioPlayer(
-        this.prompts,
+        this.prompts.movePrompt2Stack.bind(this.prompts),
         this.pageVariables,
     );
 }
@@ -86,7 +86,6 @@ View.prototype._instantiateClassDependencies = function () {
 /*
  * Static methods
  */
-//View.getUserProfileInfo = ProfileView.getUserProfileInfo;
 View.getUserProfileInfo = function (
     localized_yes,
     localized_other,

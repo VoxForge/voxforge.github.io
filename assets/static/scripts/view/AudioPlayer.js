@@ -21,10 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * setup app settings Popup for user to modify
 */
 function AudioPlayer (
-    prompts,
+    movePrompt2Stack,
     pageVariables,)
 {
-    this.prompts = prompts;
+    this.movePrompt2Stack = movePrompt2Stack;
 
     var a = pageVariables.alert_message;
     this.no_speech = a.no_speech,      
@@ -92,7 +92,7 @@ AudioPlayer.prototype.display = function (obj)
             var evtTgt = e.target;
             var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
 
-            self.prompts.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
+            self.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
             evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
             console.log("prompt deleted: " + prompt_id);
 
