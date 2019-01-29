@@ -109,9 +109,6 @@ var view;  // needs to be global so can be accessible to index.html
 
     prompts.init();
     view.init();
-    if ( localStorage.getItem("vad_run") === 'true') {
-      view.enableVoiceActivityDetection();
-    }
     uploader.init();
 
     // wait for user to accept permission for use of microphone (call to
