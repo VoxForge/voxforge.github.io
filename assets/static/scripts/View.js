@@ -35,7 +35,7 @@ function View (
 }
 
 /*
- * Methods
+ * Contructor Methods
  */
 
 View.prototype._initProperties = function () {
@@ -86,7 +86,24 @@ View.prototype._instantiateClassDependencies = function () {
 /*
  * Static methods
  */
-View.getUserProfileInfo = ProfileView.getUserProfileInfo;
+//View.getUserProfileInfo = ProfileView.getUserProfileInfo;
+View.getUserProfileInfo = function (
+    localized_yes,
+    localized_other,
+    localized_anonymous,      
+    default_value,)
+{
+    var profileView = new ProfileView(
+        localized_yes,
+        localized_other,
+        localized_anonymous,      
+        default_value,
+        null, // json_object
+    );    
+
+    return profileView.getUserProfileInfo();
+}
+
 View.getLicenseID = ProfileView.getLicenseID;
 View.getUserName = ProfileView.getUserName;
 
