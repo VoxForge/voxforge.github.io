@@ -117,7 +117,10 @@ View.prototype.init = function () {
     var self = this;
     this._setupDisplayDefaults();
     this._turnAllButtonsOff();
-
+    if ( localStorage.getItem("vad_run") === 'true') {
+      view.enableVoiceActivityDetection();
+    }
+    
     return new Promise(function (resolve, reject) {
         var json_object = self.profile.getProfileFromBrowserStorage();
         if (json_object) {
