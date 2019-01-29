@@ -128,14 +128,14 @@ SubmissionsLog.prototype.setupDisplay = function ()
         var count = 1;
         if (array) {
             return '<h3>' + heading + '</h3>' +
-                   '<ul>' + 
-                   jQuery.map( array,
-                               function( element ) {
-                                  return ( '<li>' + count++ + '. ' + element + '</li>'  );
-                               }
-                   )
-                   .join('') + // returns as a string
-                   '</ul>';
+               '<ul>' + 
+               jQuery.map(array,
+                   function(element) {
+                      return( '<li>' + count++ + '. ' + element + '</li>' );
+                   }
+               )
+               .join('') + // returns as a string
+               '</ul>';
         } else {
            return "";
         }
