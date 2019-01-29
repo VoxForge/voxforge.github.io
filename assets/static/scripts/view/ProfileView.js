@@ -51,183 +51,10 @@ function ProfileView (
  */
 
 /**
-* get user entered DOM data
+* get user keyed in username
 */
-ProfileView.getUserProfileInfo = function(localized) {
-    var profile_hash = {};
-
-    ProfileView._getSpeakerCharacteristics(localized, profile_hash);
-    ProfileView._getRecordingInformation(localized, profile_hash);   
-
-    return profile_hash;
-}
-
-ProfileView._getSpeakerCharacteristics = function(localized, profile_hash) {
-    ProfileView._getUserInfo(localized, profile_hash);   
-    ProfileView._getLanguageCharacteristics(localized, profile_hash);
-}
-
-ProfileView._getUserInfo = function(localized, profile_hash) {
-    if ( $('#username').val() ) {
-        profile_hash["username"] =
-            Profile.cleanUserInputRemoveSpaces( $("#username").val() );
-    } else {
-      profile_hash["username"] = localized.anonymous || "anonymous";
-    }
-    profile_hash["gender"] = $("#gender").val();
-    profile_hash["age"] = $("#age").val();
-    profile_hash["age_old_value"] = $('#age').find(':selected').attr('old_value');
-}
-
-ProfileView._getLanguageCharacteristics = function(localized, profile_hash) {
-    ProfileView._getNativeSpeaker(profile_hash);
-    ProfileView._getFirstLanguage(localized, profile_hash);
-    ProfileView._getDialect(localized, profile_hash);
-}
-
-ProfileView._getNativeSpeaker = function(profile_hash) {
-    profile_hash["native_speaker"] = $("#native_speaker").val();
-}
-
-ProfileView._getFirstLanguage = function(localized, profile_hash) {
-    profile_hash["first_language"] = $('#first_language').val();
-    if ( ProfileView._otherFirstLanguage(localized) ) {
-        profile_hash["first_language_other"] =
-            Profile.cleanUserInput( $("#first_language_other").val() );        
-    } else {
-        profile_hash["first_language_other"] = "";
-    }
-}
-
-ProfileView._otherFirstLanguage = function(localized) {
-    return ( $('#first_language').val() === localized.other );
-}
-
-ProfileView._getDialect = function(localized, profile_hash) {
-    profile_hash["dialect"] = $("#dialect").val();
-    if ( ProfileView._otheDialect(localized) ) {
-        profile_hash["dialect_other"] =
-            Profile.cleanUserInput( $("#dialect_other").val() );        
-    } else {
-        profile_hash["dialect_other"] = "";
-    }
-
-    profile_hash["sub_dialect"] = $("#sub_dialect").val();
-}
-
-ProfileView._otheDialect = function(localized) {
-    return ($('#dialect').val() === localized.other);
-}
-
-ProfileView._getRecordingInformation = function(localized, profile_hash) {
-    ProfileView._getMic(localized, profile_hash);
-    ProfileView._getLocation(localized, profile_hash);
-    ProfileView._getNoise(localized, profile_hash);      
-    ProfileView._userAgentInfo(profile_hash);
-    ProfileView._getLicense(profile_hash);             
-}
-
-ProfileView._getMic = function(localized, profile_hash) {
-    profile_hash["microphone"] = $("#microphone").val() ;
-    if ( ProfileView._otherMic(localized) ) {
-        profile_hash["microphone_other"] =
-            Profile.cleanUserInput( $("#microphone_other").val() );        
-    } else {
-        profile_hash["microphone_other"] = "";
-    }
-}
-
-ProfileView._otherMic = function(localized) {
-    return  ($('#microphone').val() === localized.other);
-}
-
-ProfileView._getLocation = function(localized, profile_hash) {
-    profile_hash["recording_location"] = $("#recording_location").val();
-    if ( ProfileView._otherLocation(localized) ) {
-        profile_hash["recording_location_other"] =
-            Profile.cleanUserInput( $("#recording_location_other").val() );        
-    } else {
-        profile_hash["recording_location_other"] = "";
-    }
-}
-
-ProfileView._otherLocation = function(localized) {
-    return  ($('#recording_location').val() === localized.other);
-}
-
-ProfileView._getNoise = function(localized, profile_hash) {
-    profile_hash["background_noise"] = $("#background_noise").val() ;
-    if ( ProfileView._hasNoise(localized) ) {    
-        ProfileView._noise(localized, profile_hash);
-    } else {
-        ProfileView._noNoise(localized, profile_hash);
-    }
-}
-
-ProfileView._hasNoise = function(localized) {
-    return  ( $("#background_noise").val() === localized.yes ) ;
-}
-
-ProfileView._noise = function(profile_hash) {
-    profile_hash["noise_volume"] = $("#noise_volume").val();
-
-    profile_hash["noise_type"] = $("#noise_type").val();
-    if ( ProfileView._otherNoiseType(localized) ) {
-        profile_hash["noise_type_other"] =
-            Profile.cleanUserInput( $("#noise_type_other").val() );        
-    } else {
-        profile_hash["noise_type_other"] = "";
-    }
-}
-
-ProfileView._otherNoiseType = function(localized) {
-    return  ($('#noise_type').val() === localized.other);
-}
-
-ProfileView._noNoise = function(localized, profile_hash) {
-    profile_hash["noise_volume"] = localized.default_value;
-    profile_hash["noise_type"] = localized.default_value;
-    profile_hash["noise_type_other"] = "";
-}
-
-// see http://www.whatsmyua.info/
-// https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
-ProfileView._userAgentInfo = function(profile_hash) {
-    if ( ProfileView._includeUA() ) {
-        ProfileView._getUserAgentInfo(profile_hash);
-    } else {
-        ProfileView._clearUserAgentInfo(profile_hash);
-    }
-}
-
-ProfileView._includeUA = function() {
-    return  $('#ua_string').is(":checked");
-}
-
-ProfileView._getUserAgentInfo = function(profile_hash) {
-    profile_hash["user_agent_string"] = platform.ua;
-    
-    // attempts to parse the ua string; use empty string if cannot parse
-    profile_hash["os_family"] = platform.os.family || '';
-    profile_hash["os_version"] = platform.os.version || '';
-    profile_hash["browser_name"] = platform.name || '';
-    profile_hash["browser_version"] = platform.version || '';
-    profile_hash["product"] = platform.product || '';
-    profile_hash["manufacturer"] = platform.manufacturer || '';
-}
-    
-ProfileView._clearUserAgentInfo = function(profile_hash) {
-    profile_hash["user_agent_string"] = '';
-    profile_hash["os_family"] = '';
-    profile_hash["os_version"] = '';
-    profile_hash["browser_name"] = '';
-    profile_hash["browser_version"] = '';
-    profile_hash["product"] = '';
-    profile_hash["manufacturer"] = '';
-}
-
-ProfileView._getLicense = function(profile_hash) {
-    profile_hash["license"] = $("#license").val();
+ProfileView.getUserName = function() {
+  return $('#username').val();
 }
 
 /**
@@ -235,13 +62,6 @@ ProfileView._getLicense = function(profile_hash) {
 */
 ProfileView.getLicenseID = function() {
   return $("#license").val();
-}
-
-/**
-* get user keyed in username
-*/
-ProfileView.getUserName = function() {
-  return $('#username').val();
 }
 
 /*
@@ -324,8 +144,8 @@ ProfileView.prototype._otherDialectSelected = function() {
 /*
  * hide filled Speaker Characteristic section
  * 
- * if user has filled in relevant profile information, no need to present
- * Speaker Characteristics section to user 
+ * (if user has filled in relevant profile information, no need to present
+ * Speaker Characteristics section to user)
  */
 ProfileView.prototype._displaySpeakerCharacteristicsIfNotAllFilled = function() {
     if ( this._speakerCharacteristicsFilled() )  {
@@ -404,3 +224,185 @@ ProfileView.prototype._setLicense = function() {
     $('#license').val( this.json_object.license );
 }
 
+/*
+ * #############################################################################
+ */
+/**
+* get user entered DOM data
+*/
+ProfileView.prototype.getUserProfileInfo = function() {
+    this.profile_hash = {};
+
+    this._getSpeakerCharacteristics();
+    this._getRecordingInformation();   
+
+    return this.profile_hash;
+}
+
+ProfileView.prototype._getSpeakerCharacteristics = function() {
+    this._getUserInfo();   
+    this._getLanguageCharacteristics();
+}
+
+ProfileView.prototype._getUserInfo = function() {
+    if ( $('#username').val() ) {
+        this.profile_hash["username"] =
+            Profile.cleanUserInputRemoveSpaces( $("#username").val() );
+    } else {
+        this.profile_hash["username"] = this.localized_anonymous || "anonymous";
+    }
+    this.profile_hash["gender"] = $("#gender").val();
+    this.profile_hash["age"] = $("#age").val();
+    this.profile_hash["age_old_value"] = $('#age').find(':selected').attr('old_value');
+}
+
+ProfileView.prototype._getLanguageCharacteristics = function() {
+    this._getNativeSpeaker();
+    this._getFirstLanguage();
+    this._getDialect();
+}
+
+ProfileView.prototype._getNativeSpeaker = function() {
+    this.profile_hash["native_speaker"] = $("#native_speaker").val();
+}
+
+ProfileView.prototype._getFirstLanguage = function() {
+    this.profile_hash["first_language"] = $('#first_language').val();
+    if ( this._otherFirstLanguage() ) {
+        this.profile_hash["first_language_other"] =
+            Profile.cleanUserInput( $("#first_language_other").val() );        
+    } else {
+        this.profile_hash["first_language_other"] = "";
+    }
+}
+
+ProfileView.prototype._otherFirstLanguage = function() {
+    return ( $('#first_language').val() === this.localized_other );
+}
+
+ProfileView.prototype._getDialect = function() {
+    this.profile_hash["dialect"] = $("#dialect").val();
+    if ( this._otheDialect() ) {
+        this.profile_hash["dialect_other"] =
+            Profile.cleanUserInput( $("#dialect_other").val() );        
+    } else {
+        this.profile_hash["dialect_other"] = "";
+    }
+
+    this.profile_hash["sub_dialect"] = $("#sub_dialect").val();
+}
+
+ProfileView.prototype._otheDialect = function() {
+    return ($('#dialect').val() === this.localized_other);
+}
+
+ProfileView.prototype._getRecordingInformation = function() {
+    this._getMic();
+    this._getLocation();
+    this._getNoise();      
+    this._userAgentInfo();
+    this._getLicense();             
+}
+
+ProfileView.prototype._getMic = function() {
+    this.profile_hash["microphone"] = $("#microphone").val() ;
+    if ( this._otherMic() ) {
+        this.profile_hash["microphone_other"] =
+            Profile.cleanUserInput( $("#microphone_other").val() );        
+    } else {
+        this.profile_hash["microphone_other"] = "";
+    }
+}
+
+ProfileView.prototype._otherMic = function() {
+    return  ($('#microphone').val() === this.localized_other);
+}
+
+ProfileView.prototype._getLocation = function() {
+    this.profile_hash["recording_location"] = $("#recording_location").val();
+    if ( this._otherLocation() ) {
+        this.profile_hash["recording_location_other"] =
+            Profile.cleanUserInput( $("#recording_location_other").val() );        
+    } else {
+        this.profile_hash["recording_location_other"] = "";
+    }
+}
+
+ProfileView.prototype._otherLocation = function() {
+    return  ($('#recording_location').val() === this.localized_other);
+}
+
+ProfileView.prototype._getNoise = function() {
+    this.profile_hash["background_noise"] = $("#background_noise").val() ;
+    if ( this._hasNoise() ) {    
+        this._noise();
+    } else {
+        this._noNoise();
+    }
+}
+
+ProfileView.prototype._hasNoise = function() {
+    return  ( $("#background_noise").val() === this.localized_yes ) ;
+}
+
+ProfileView.prototype._noise = function() {
+    this.profile_hash["noise_volume"] = $("#noise_volume").val();
+
+    this.profile_hash["noise_type"] = $("#noise_type").val();
+    if ( this._otherNoiseType() ) {
+        this.profile_hash["noise_type_other"] =
+            Profile.cleanUserInput( $("#noise_type_other").val() );        
+    } else {
+        this.profile_hash["noise_type_other"] = "";
+    }
+}
+
+ProfileView.prototype._otherNoiseType = function() {
+    return  ($('#noise_type').val() === this.localized_other);
+}
+
+ProfileView.prototype._noNoise = function() {
+    this.profile_hash["noise_volume"] = this.default_value;
+    this.profile_hash["noise_type"] = this.default_value;
+    this.profile_hash["noise_type_other"] = "";
+}
+
+// see http://www.whatsmyua.info/
+// https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
+ProfileView.prototype._userAgentInfo = function() {
+    if ( this._includeUA() ) {
+        this._getUserAgentInfo();
+    } else {
+        this._clearUserAgentInfo();
+    }
+}
+
+ProfileView.prototype._includeUA = function() {
+    return  $('#ua_string').is(":checked");
+}
+
+ProfileView.prototype._getUserAgentInfo = function() {
+    this.profile_hash["user_agent_string"] = platform.ua;
+    
+    // attempts to parse the ua string; use empty string if cannot parse
+    this.profile_hash["os_family"] = platform.os.family || '';
+    this.profile_hash["os_version"] = platform.os.version || '';
+    this.profile_hash["browser_name"] = platform.name || '';
+    this.profile_hash["browser_version"] = platform.version || '';
+    this.profile_hash["product"] = platform.product || '';
+    this.profile_hash["manufacturer"] = platform.manufacturer || '';
+}
+    
+ProfileView.prototype._clearUserAgentInfo = function() {
+    this.profile_hash["user_agent_string"] = '';
+    this.profile_hash["os_family"] = '';
+    this.profile_hash["os_version"] = '';
+    this.profile_hash["browser_name"] = '';
+    this.profile_hash["browser_version"] = '';
+    this.profile_hash["product"] = '';
+    this.profile_hash["manufacturer"] = '';
+}
+
+ProfileView.prototype._getLicense = function() {
+    this.profile_hash["license"] = $("#license").val();
+}
