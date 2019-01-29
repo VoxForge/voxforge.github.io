@@ -27,12 +27,12 @@ function View (
 {
     this.max_numPrompts_selector = parms.max_numPrompts_selector;
     this.displayWaveform = parms.displayWaveform;
-    this.movePrompt2Stack = prompts.movePrompt2Stack.bind(prompts);
-    this.userChangedMaxNum = prompts.userChangedMaxNum.bind(prompts);
-    this.getProgressDescription = prompts.getProgressDescription.bind(prompts);
-    this.json_object = profile.getProfileFromBrowserStorage();
+    this.movePrompt2Stack = prompts.movePrompt2Stack.bind(prompts); // reference to method passed to variable
+    this.userChangedMaxNum = prompts.userChangedMaxNum.bind(prompts); // reference to method passed to variable
+    this.getProgressDescription = prompts.getProgressDescription.bind(prompts); // reference to method passed to variable
+    this.json_object = profile.getProfileFromBrowserStorage(); // method executed and return value is an object
     this.pageVariables = pageVariables;
-    
+
     this._initProperties();
 }
 
