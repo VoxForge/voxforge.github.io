@@ -95,8 +95,6 @@ Uploader.prototype.init = function () {
     */
     function processWorkerEventMessage(event) {
         var returnObj = event.data;
-        console.log(returnObj.workertype + " says: " + returnObj.status);
-
         var workertype;
         if (returnObj.workertype == "serviceworker") {
           workertype = self.alert_message.serviceworker;
@@ -105,7 +103,8 @@ Uploader.prototype.init = function () {
         } else {
           workertype = self.alert_message.workernotfound;
         }
-
+        console.log(workertype + ": " + returnObj.status);
+        
         function processMessage(m) {
             console.info(workertype + ": " + m);
             Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
