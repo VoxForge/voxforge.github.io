@@ -105,7 +105,6 @@ Controller.prototype.start = function () {
 
       // javascript-state-machine does not like underscores in method or state names...
       methods: {
-        // #####################################################################
         // Transitions: user initiated
         onStopclicked: self._stopclicked.bind(self),
         onDeleteclickedoneleft: self.view.updateProgress.bind(self.view),
@@ -114,14 +113,12 @@ Controller.prototype.start = function () {
         // Transition Actions: system initiated
         onRecordingtimeout: self._recordingtimeout.bind(self),
 
-        // #####################################################################
         // Static States
         onNopromptsrecorded: self._nopromptsrecorded.bind(self),
         onFirstpromptrecorded: self._firstpromptrecorded.bind(self),
         onMidpromptsrecorded: self._midpromptsrecorded.bind(self),
         onMaxpromptsrecorded: self._maxpromptsrecorded.bind(self),
 
-        // #####################################################################
         // Action States
         onRecordingfirst:  self._recordingfirst.bind(self),
         onRecordingmid:  self._recordingMidLast.bind(self),
@@ -134,7 +131,9 @@ Controller.prototype.start = function () {
     this._setMaxPromptsEvenTrigger();
 }
 
-// ### associate user button clicks with fsm transitions ###################
+/*
+ * associate user button clicks with fsm transitions
+ */
 Controller.prototype._setUpButtonClicksWithFsmTransitions = function () {
     this._setUpRecordButtonEventWithFsmTransition();
     this._setUpStopButtonEventWithFsmTransitionm();
@@ -229,10 +228,12 @@ Controller.prototype._nopromptsrecorded = function () {
     }
 }
 
-// only ask the user once if they want to activate the Recording
-// Information section
-// TODO when this gets sent, Recording information section should
-// display to user rather than being buried under Profile Info
+/*
+only ask the user once if they want to activate the Recording
+Information section
+TODO when this gets sent, Recording information section should
+display to user rather than being buried under Profile Info
+* */
 Controller.prototype._askUserAboutRecordingInformation = function () {
     localStorage.setItem("recording_info_asked_user", true); 
     this.view.recordingInformationButtonDisplay();
@@ -244,8 +245,11 @@ Controller.prototype._maxNumSubmissionsReached = function () {
             this.parms.numPrompt2SubmittForRecordInfo);
 }
 
-// if location changed, notify user
-// if no change in location, check time since last submission, if too long notify user
+/*
+if location changed, notify user
+if no change in location, check time since last submission,
+* if too long notify user
+*/
 Controller.prototype._firstpromptrecorded = function () {
     this._checkRecordingInformationReminder();
     this._IfTooMuchBackgroundnoiseTurnOffVad();
@@ -272,7 +276,7 @@ Controller.prototype._displayRecordingInfoChecked = function () {
  * if too much background noise, turn off VAD
  */
 Controller.prototype._IfTooMuchBackgroundnoiseTurnOffVad = function () {
-    if ( this.view.userSaysBackgroundNoise() &&
+    if ( this.view.userSaysTooMuchBackgroundNoise() &&
         localStorage.getItem("vad_run") === 'true')
     {
         window.alert(this.alert_message.noise_Turn_Off_Vad);
@@ -351,12 +355,16 @@ Controller.prototype._midpromptsrecorded = function () {
     }
 }
 
-// allows recording even though waveform display not completed
+/*
+ * allows recording even though waveform display not completed
+ */
 Controller.prototype._displayOfRecordButtonWhileRecording = function () {
     this.view.setRSButtonDisplay(true, false);
 }
 
-//block display of record button stays off until after recording is done
+/*
+ * block display of record button stays off until after recording is done
+ */
 Controller.prototype._blockDisplayOfRecordButtonUntilRecDone = function () {
     var self = this;
     
@@ -369,8 +377,10 @@ Controller.prototype._blockDisplayOfRecordButtonUntilRecDone = function () {
     });
 }
 
-// at maximum selected prompts, cannot record anymore, must upload to 
-// continue, or delete then record
+/*
+ * at maximum selected prompts, cannot record anymore, must upload to 
+ * continue, or delete then record
+ */
 Controller.prototype._maxpromptsrecorded = function () {
     this.view.enableDeleteButtons();
     this.view.showAudioPlayer();
@@ -413,9 +423,11 @@ Controller.prototype._setupUploadingButtons = function () {
     this.view.setRSUButtonDisplay(false, false, false);
 }
 
-// user may change debug setting just before upload, so only
-// get audio debug values when uploading after at last recorded
-// audio prompt
+/*
+user may change debug setting just before upload, so only
+get audio debug values when uploading after at last recorded
+audio prompt
+*/
 Controller.prototype._dealWithDebugSettings = function () {
     if ( this.view.debugChecked() ) {
       this.debug.setValues( 'audio', this.audio.getDebugValues() );
@@ -424,16 +436,20 @@ Controller.prototype._dealWithDebugSettings = function () {
     }
 }
 
-// audio.device_event_buffer_size only available after first recording
+/*
+* audio.device_event_buffer_size only available after first recording
+*/
 Controller.prototype._captureAudioPropertiesForDebugging = function () {
     this.profile.setAudioPropertiesAndContraints( 
         this.audio.getAudioPropertiesAndContraints()
     );
 }
 
-// make sure all promises complete before trying to gather audio
-// from shadow DOM before upload, otherwise will miss some audio 
-// recordings...
+/*
+make sure all promises complete before trying to gather audio
+from shadow DOM before upload, otherwise will miss some audio 
+recordings...
+*/
 Controller.prototype._waitForAllRecordingsToCompleteThenUpload = function () {
     var self = this;
 
@@ -479,7 +495,7 @@ Controller.prototype._dealWithChangeInMaxNumPrompts = function () {
 }
 
 /**
-* 
+* ##############################################################################
 */
 Controller.prototype._recordAudio = function () {
     this._updateDisplayForRecording();
