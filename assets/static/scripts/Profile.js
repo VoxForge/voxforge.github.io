@@ -23,17 +23,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function Profile (appversion, 
                   pageVariables) 
 {
-  this.appversion = appversion;
- 
-  this.suffix = Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
-  this.randomDigits = Profile.makeRandString (10,'1234567890');
+    this.appversion = appversion;
 
-  this.localized_yes = pageVariables.localized_yes;
-  this.localized_other = pageVariables.localized_other;
-  this.language = pageVariables.language;
-  this.localized_anonymous = pageVariables.anonymous;
-  this.license = pageVariables.license;
-  this.default_value = pageVariables.default_value;  
+    this.suffix = Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
+    this.randomDigits = Profile.makeRandString (10,'1234567890');
+
+    this.localized_yes = pageVariables.localized_yes;
+    this.localized_other = pageVariables.localized_other;
+    this.language = pageVariables.language;
+    this.localized_anonymous = pageVariables.anonymous;
+    this.license = pageVariables.license;
+    this.default_value = pageVariables.default_value;
+
+    this.localized = {
+        yes : this.localized_yes,
+        other :this.localized_other,
+        anonymous : this.localized_anonymous,
+        default_value : this.default_value,
+    };     
 }
 
 /**
@@ -132,11 +139,9 @@ Profile.prototype.getProfileFromBrowserStorage = function () {
 */
 Profile.prototype.toHash = function () {
     // TODO View.getUserProfileInfo gets called twice to get same info
-    // everytime a user uploads... 
-    var profile_hash = View.getUserProfileInfo(this.localized_yes,
-                                               this.localized_other,
-                                               this.localized_anonymous,
-                                               this.default_value);
+    // everytime a user uploads...
+ 
+    var profile_hash = View.getUserProfileInfo(this.localized);
 
     profile_hash["language"] = this.language;
 
@@ -169,10 +174,8 @@ Profile.prototype.toTextArray = function () {
     // TODO View.getUserProfileInfo gets called twice to get same info
     // everytime a user uploads... cache info somehow...
     // TODO this method assumes that toHash was called before it... 
-    var profile_hash = View.getUserProfileInfo(this.localized_yes,
-                                               this.localized_other,
-                                               this.localized_anonymous,
-                                               this.default_value);
+    var profile_hash = View.getUserProfileInfo(this.localized);
+                                            
     var profile_array = [];
     var i=0;
 

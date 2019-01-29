@@ -313,9 +313,11 @@ alert_message:
     Please increase your microphone volume,<br>
     then delete this prompt recording and re-record it.
   no_trailing_silence: >
-    You may have not left enough trailing silence (clicked
+    You may have not left enough trailing silence (i.e. clicked
     'stop' too early) <br>
-    Please review this prompt recording, and delete and re-record if necessary.
+    Please review and make sure there is some silence (at least
+    1/4 of a second) at end of this recording. <br>
+    If not, delete and re-record the prompt.
   no_speech: >
     No Speech (or microphone volume too low).<br>
     Please increase microphone volume,<br>
