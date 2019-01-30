@@ -102,70 +102,7 @@ Prompts.validate_Readmd_file = function(prompt_list_files) {
 Prompts.prototype.init = function () {
     var self = this;
 
-    /* Main */
     return new Promise(function (resolve, reject) { // returnPromise
-
-
-        /**
-          1. use localstorage prompts to start with,
-          2. then asynchronously try to download updated prompt file...
-
-          this prevents hang of app when user records offline (when using a 
-          promise chain) or timing issues with no promise chain when app starts
-          up offline and prompts file 'get' is hanging...
-
-         * doing prompt stack update at beginning means that the prompt stack 
-         * is always one behind the call to VoxForge server... 
-         * why? for reponsiveness when user is recording offline.  
-         * If were to try to access server while offline,
-         * there would be a delay with user being able to 
-         * start recording - $.get hangs trying to access server while
-         * offlien, so give the user a stack of prompts (using current
-         * prompt list file), then try to access server to update current
-         * prompt file stored in browser.
-         * if no internet access, then user using stored prompt file, 
-         * if there is Internet access, then user will get updated 
-         * random prompts on subsequent submission.
-         */
-        function getPromptsFileFromBrowserStorage(prompt_file_index) {
-            var prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
-            var plf = self.prompt_list_files[prompt_file_index];
-
-            self._getSavedPromptList()
-            .then( function(jsonObject) {
-                // get saved promptList file (from browser storage) and update
-                // prompt stack.
-                // doing prompt stack update here means that the prompt stack 
-                // is always one behind the call to VoxForge server... see above
-                self.prompt_stack = self._initPromptStack(jsonObject.list);
-
-                console.log("attempting async update of saved prompts file to replace " + 
-                            "with new one from VoxForge server");
-                $.get(prompt_file_name, 
-                    function(prompt_data) {
-                      self.list = self._convertPromptDataToArray(plf, prompt_data);
-                      self._save2BrowserStorage(
-                          self._getLocalPromptFilename(),
-                          plf.id);
-                      console.log("updating saved prompts file with new one from VoxForge server");
-                      resolve("got prompts from local storage"); // returnPromise
-                    }
-                )
-                .fail(function() {
-                    var m = "cannot get updated prompts file from VoxForge server: " + 
-                            prompt_file_name + 
-                            "; device offline or has bad Internet connection, " + 
-                            "using browser storage prompts file\n ";
-                    console.log(m);
-                    // reject(m); // no need to reject since already updated prompt_stack
-                });
-
-
-            })
-            .catch((err) => { console.log(err) });            
-        }
-
-        // #####################################################################
 
         Prompts.validate_Readmd_file(self.prompt_list_files);
         var prompt_file_index = Math.floor((Math.random() * self.prompt_list_files.length)); // zero indexed
@@ -185,11 +122,81 @@ Prompts.prototype.init = function () {
                 self._getPromptsFileFromServerOrCache(prompt_file_index, 
                                 "downloaded prompt file from VoxForge server");
             } else { 
-                getPromptsFileFromBrowserStorage(prompt_file_index);
+                self._getPromptsFileFromBrowserStorage(prompt_file_index);
             }
         })
         .catch((err) => { console.log(err) });
     }); // promise
+}
+
+
+/**
+  1. use localstorage prompts to start with,
+  2. then asynchronously try to download updated prompt file...
+
+  this prevents hang of app when user records offline (when using a 
+  promise chain) or timing issues with no promise chain when app starts
+  up offline and prompts file 'get' is hanging...
+
+ * doing prompt stack update at beginning means that the prompt stack 
+ * is always one behind the call to VoxForge server... 
+ * why? for reponsiveness when user is recording offline.  
+ * If were to try to access server while offline,
+ * there would be a delay with user being able to 
+ * start recording - $.get hangs trying to access server while
+ * offlien, so give the user a stack of prompts (using current
+ * prompt list file), then try to access server to update current
+ * prompt file stored in browser.
+ * if no internet access, then user using stored prompt file, 
+ * if there is Internet access, then user will get updated 
+ * random prompts on subsequent submission.
+ */
+Prompts.prototype._getPromptsFileFromBrowserStorage = function (prompt_file_index) {  
+    var self = this;
+    
+    this._getSavedPromptList()
+    .then(self._processJsonObject.bind(self))
+    .then(self._asyncServerUpdateOfPromptsFile.bind(self))
+    .catch(function(err) { console.log(err) });            
+}
+
+
+// get saved promptList file (from browser storage) and update
+// prompt stack.
+// doing prompt stack update here means that the prompt stack 
+// is always one behind the call to VoxForge server... see above
+Prompts.prototype._processJsonObject = function(jsonObject) {        
+    this.prompt_stack = this._initPromptStack(jsonObject.list);
+}
+
+Prompts.prototype._asyncServerUpdateOfPromptsFile = function () {
+    var self = this;
+    
+    var plf = this.prompt_list_files[prompt_file_index];
+    var prompt_file_name = this.prompt_list_files[prompt_file_index]['file_location'];
+    
+    console.log("attempting async update of saved prompts file to replace " + 
+                "with new one from VoxForge server");
+                
+    const resultObj = $.get(prompt_file_name);
+    resultObj.done(function(prompt_data) {                            
+          self.list = self._convertPromptDataToArray(plf, prompt_data);
+          self._save2BrowserStorage(
+              self._getLocalPromptFilename(),
+              plf.id);
+          console.log("updating saved prompts file with new one from VoxForge server");
+          resolve("got prompts from local storage"); // returnPromise
+        }
+    )
+    resultObj.fail(function() {
+        var m = "cannot get updated prompts file from VoxForge server: " + 
+                prompt_file_name + 
+                "; device offline or has bad Internet connection, " + 
+                "using browser storage prompts file\n ";
+        console.log(m);
+        // reject(m); // no need to reject since already updated prompt_stack
+    });
+
 }
 
 /**
@@ -214,7 +221,7 @@ Prompts.prototype._getPromptsFileFromServerOrCache = function(
     var prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
 
     return new Promise(function (resolve, reject) {
-       const resultObj = $.get(prompt_file_name);
+        const resultObj = $.get(prompt_file_name);
         resultObj.done(function(prompt_data) {
             self._copyPromptData2Stack(prompt_file_index, prompt_data);
             console.log(m);
@@ -233,12 +240,12 @@ Prompts.prototype._getPromptsFileFromServerOrCache = function(
 }
 
 Prompts.prototype._noServiceWorkerCache = function(prompt_file_name) {
-    var m = "cannot find prompts file on VoxForge server: " +
+    var m = "Error: cannot find prompts file on VoxForge server: " +
             prompt_file_name + 
-            "or in service worker cache; could be bad Internet connection...\n " +
+            "or in service worker cache....\n " +
             "retry later.";
-    console.warn(m);
-    return m; // returnPromise
+    console.error(m);
+    return m; 
 }
 
 Prompts.prototype._copyPromptData2Stack = function(
