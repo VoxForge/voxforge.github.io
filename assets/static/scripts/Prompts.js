@@ -46,31 +46,6 @@ function Prompts(parms,
 * ### Functions / static methods ##############################################
 */
 
-/**
-* initialize prompt stack with number of prompts chosen by user
-*
-* User's set of prompts to be read in contained in a stack, that way
-* if a user wants to re-read a prompt, they delete it, and it gets
-* placed in the stack and re-displayed to the user to record again.
-*
-* reading prompt list using the self.index and modulus to wrap
-* around the prompt list array.
-*/
-Prompts.initPromptStack = function(
-    list,
-    max_num_prompts) 
-{
-    var prompt_stack = [];
-    var index = Math.floor((Math.random() * list.length));
-
-    for (var i = 0; i < max_num_prompts; i++) { // just count number of prompts to select
-      // using unshift (rather than push) to keep prompt elements in order
-      prompt_stack.unshift(list[index++]);
-      index = index % (list.length -1);
-    }
-
-    return prompt_stack;
-}
 
 /* get the saved submission object from browser storage */
 Prompts.getSavedPromptList = function(
@@ -181,9 +156,7 @@ Prompts.prototype.init = function () {
                   self._save2BrowserStorage(
                       local_prompt_file_name,
                       plf.id);
-                  self.prompt_stack = Prompts.initPromptStack(
-                      self.list,
-                      self.max_num_prompts);
+                  self.prompt_stack = self._initPromptStack(self.list);
                   var m = "downloaded prompt file from VoxForge server";
                   console.log(m);
                   resolve(m); // returnPromise
@@ -236,8 +209,7 @@ Prompts.prototype.init = function () {
                 // prompt stack.
                 // doing prompt stack update here means that the prompt stack 
                 // is always one behind the call to VoxForge server... see above
-                self.prompt_stack = Prompts.initPromptStack(jsonObject.list,
-                                                            self.max_num_prompts);
+                self.prompt_stack = self._initPromptStack(jsonObject.list);
 
                 console.log("attempting async update of saved prompts file to replace " + 
                             "with new one from VoxForge server");
@@ -301,6 +273,45 @@ Prompts.prototype.init = function () {
     }); // promise
 }
 
+/**
+* initialize prompt stack with number of prompts chosen by user
+*
+* User's set of prompts to be read in contained in a stack, that way
+* if a user wants to re-read a prompt, they delete it, and it gets
+* placed in the stack and re-displayed to the user to record again.
+*
+* reading prompt list using the self.index and modulus to wrap
+* around the prompt list array.
+*
+* Note: using unshift (rather than push) to keep prompt elements in order
+*/
+Prompts.prototype._initPromptStack = function(list) 
+{
+    var self = this;
+    var prompt_stack = [];
+    var index = Math.floor((Math.random() * list.length));
+
+    //for (var i = 0; i < this.max_num_prompts; i++) { 
+    //    prompt_stack.unshift(list[index++]);
+    //    index = index % (list.length -1);
+    //}
+    
+    function addToStack() {
+        prompt_stack.unshift(list[index++]);
+        index = index % (list.length -1);
+    }
+
+    const fillStack = this._repeatTimes(addToStack, this.max_num_prompts);
+    fillStack();
+    
+    return prompt_stack;
+}
+
+Prompts.prototype._repeatTimes = function(fn, n) {
+  return function() {
+    while (n--) fn(...arguments);
+  };
+}
 
 /** 
 * save the prompt file as a JSON object in user's browser 
@@ -310,13 +321,13 @@ Prompts.prototype._save2BrowserStorage = function(
     local_prompt_file_name,
     id) 
 {
-    var jsonOnject = this._creatObject(id);
+    var jsonOnject = this._createJsonPromptObject(id);
     this._saveObject2PromptCache(
         local_prompt_file_name,
         jsonOnject);
 }
 
-Prompts.prototype._creatObject = function(id) {
+Prompts.prototype._createJsonPromptObject = function(id) {
     var jsonOnject = {};
 
     jsonOnject['language'] = this.language;
