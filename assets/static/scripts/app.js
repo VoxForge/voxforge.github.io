@@ -78,7 +78,7 @@ var view;  // needs to be global so can be accessible to index.html
     }
     
     var prompts = new Prompts(
-        parms.prompt,
+        parms.prompts,
         pageVariables); 
     var profile = new Profile(
         appversion,

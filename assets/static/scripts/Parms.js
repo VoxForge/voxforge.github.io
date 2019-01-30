@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 function Parms() {
-    this.prompt = {
+    this.prompts = {
         // user can upload anytime after recording 10 prompts
         num_prompts_to_trigger_upload: 10, 
     }
@@ -69,7 +69,7 @@ function Parms() {
 
     // TODO for debugging
     if ( ! (window.location.origin === 'https://voxforge.github.io') ) { 
-        this.prompt.num_prompts_to_trigger_upload = 3;
+        this.prompts.num_prompts_to_trigger_upload = 3;
         this.controller.numPrompt2SubmittForRecordInfo = 1;
         this.uploader.maxMinutesSinceLastSubmission = 1; // only relevant if recording information is included with submission
     } 
