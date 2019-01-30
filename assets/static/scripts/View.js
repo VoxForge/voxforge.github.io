@@ -55,6 +55,9 @@ View.prototype._setupButtons = function () {
     this.record = document.querySelector('.record');
     this.stop = document.querySelector('.stop');
     this.upload = document.querySelector('.upload');
+
+    this.playbuttontext = this.pageVariables.playbuttontext;
+    this.stopbuttontext = this.pageVariables.stopbuttontext;    
 }
 
 View.prototype._setupTranslations = function () {
@@ -65,9 +68,8 @@ View.prototype._setupTranslations = function () {
     this.please_select = this.pageVariables.please_select;
     this.default_value = this.pageVariables.default_value;
     this.alert_message = this.pageVariables.alert_message;
-
-    this.playbuttontext = this.pageVariables.playbuttontext;
-    this.stopbuttontext = this.pageVariables.stopbuttontext;
+    this.saved_submissions = this.pageVariables.saved_submissions;
+    this.uploaded_submissions = this.pageVariables.uploaded_submissions;    
 }
 
 /*
