@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 /**
-* setup app settings Popup for user to modify
+* setup display of log of uploaded and saved submissions
 */
 function SubmissionsLog (
     saved_submissions,
@@ -37,7 +37,6 @@ function SubmissionsLog (
 }
 
 /**
-* setup display of log of uploaded and saved submissions
 * 
 * TODO how to deal with n>25 submissions... only show 25 most recent submissions?
 * TODO this function is really slow on slower mobile devices, need caching
