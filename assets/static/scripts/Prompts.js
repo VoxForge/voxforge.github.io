@@ -287,30 +287,22 @@ Prompts.prototype.init = function () {
 */
 Prompts.prototype._initPromptStack = function(list) 
 {
-    var self = this;
     var prompt_stack = [];
-    var index = Math.floor((Math.random() * list.length));
+    var n = this.max_num_prompts;
+    var i = Math.floor((Math.random() * list.length));
 
-    //for (var i = 0; i < this.max_num_prompts; i++) { 
-    //    prompt_stack.unshift(list[index++]);
-    //    index = index % (list.length -1);
-    //}
-    
-    function addToStack() {
-        prompt_stack.unshift(list[index++]);
-        index = index % (list.length -1);
+    function nextPrompt() {
+        i = i % (list.length -1);
+        return list[i++];
     }
 
-    const fillStack = this._repeatTimes(addToStack, this.max_num_prompts);
-    fillStack();
-    
-    return prompt_stack;
-}
+    function addPromptToStack() {
+        prompt_stack.unshift(nextPrompt());
+    }
 
-Prompts.prototype._repeatTimes = function(fn, n) {
-  return function() {
-    while (n--) fn(...arguments);
-  };
+    while (n--) addPromptToStack();
+
+    return prompt_stack;
 }
 
 /** 
