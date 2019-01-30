@@ -46,27 +46,6 @@ function Prompts(parms,
 * ### Functions / static methods ##############################################
 */
 
-
-/* get the saved submission object from browser storage */
-Prompts.getSavedPromptList = function(
-    promptCache, 
-    local_prompt_file_name) 
-{
-  return new Promise(function (resolve, reject) {
-
-      // getItem only returns jsonObject
-      promptCache.getItem(local_prompt_file_name)
-      .then(function(jsonOnject) {
-        // resolve sends these as parameters to next promise in chain
-        resolve(jsonOnject);
-      })
-      .catch(function(err) {
-        reject('error getting saved promptList file: ' + err);
-      });
-
-  });
-}
-
 /**
 * verify that read.md entries contain valid prompt related data
 */
@@ -125,8 +104,7 @@ Prompts.prototype.init = function () {
     var self = this;
 
     /* ====================================================================== */
-    // TODO duplicate definition in service worker file: processSavedSubmission.js
-    var local_prompt_file_name = self.language + '_' + 'prompt_file';
+
 
     /* Main */
     return new Promise(function (resolve, reject) { // returnPromise
@@ -154,7 +132,7 @@ Prompts.prototype.init = function () {
                       plf.number_of_prompts,
                       prompt_file_index);
                   self._save2BrowserStorage(
-                      local_prompt_file_name,
+                      self._getLocalPromptFilename(),
                       plf.id);
                   self.prompt_stack = self._initPromptStack(self.list);
                   var m = "downloaded prompt file from VoxForge server";
@@ -203,7 +181,7 @@ Prompts.prototype.init = function () {
             var prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
             var plf = self.prompt_list_files[prompt_file_index];
 
-            Prompts.getSavedPromptList(self.promptCache, local_prompt_file_name)
+            self._getSavedPromptList()
             .then( function(jsonObject) {
                 // get saved promptList file (from browser storage) and update
                 // prompt stack.
@@ -217,7 +195,7 @@ Prompts.prototype.init = function () {
                     function(prompt_data) {
                       self.list = self._convertPromptDataToArray(plf, prompt_data);
                       self._save2BrowserStorage(
-                          local_prompt_file_name,
+                          self._getLocalPromptFilename(),
                           plf.id);
                       console.log("updating saved prompts file with new one from VoxForge server");
                       resolve("got prompts from local storage"); // returnPromise
@@ -271,6 +249,30 @@ Prompts.prototype.init = function () {
         })
         .catch((err) => { console.log(err) });
     }); // promise
+}
+
+/*
+ * get the saved submission object from browser storage
+ *
+ * getItem returns jsonObject
+ * resolve sends its parameter to next promise in chain
+ */
+Prompts.prototype._getSavedPromptList = function() {
+    var self = this;
+
+    return new Promise(function (resolve, reject) {
+        self.promptCache.getItem( self._getLocalPromptFilename() )
+        .then(function(jsonOnject) {
+            resolve(jsonOnject);
+        })
+        .catch(function(err) {
+            reject('error getting saved promptList file: ' + err);
+        });
+    });
+}
+
+Prompts.prototype._getLocalPromptFilename = function() {
+    return this.language + '_' + 'prompt_file';
 }
 
 /**
@@ -399,9 +401,7 @@ Prompts.prototype.resetIndices = function () {
     this.audio_characteristics = {};
 
     this.prompt_stack = [];
-    this.prompt_stack = Prompts.initPromptStack(this.list,
-                                                this.max_num_prompts);
-
+    this.prompt_stack = this._initPromptStack(this.list);
 }
 
 /**
@@ -614,8 +614,7 @@ Prompts.prototype.userChangedMaxNum = function (new_max_prompts) {
 
     // promptId start point will be randomized and not be consecutive
     // to previous prompt IDs.
-    this.prompt_stack = Prompts.initPromptStack(this.list,
-                                                this.max_num_prompts);
+    this.prompt_stack = this.initPromptStack(this.list);
 
     console.log('max_num_prompts:' + new_max_prompts);
 }
