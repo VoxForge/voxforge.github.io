@@ -100,61 +100,11 @@ Prompts.validate_Readmd_file = function(prompt_list_files) {
 * with a constructor)
 */
 Prompts.prototype.init = function () {
-    // save context
     var self = this;
-
-    /* ====================================================================== */
-
 
     /* Main */
     return new Promise(function (resolve, reject) { // returnPromise
-        /**
-        No good way to detect if online or offline. Therefore, first try to 
-        get a random prompts file from server (i.e. might not be 
-        prompt_file_index == 0).  If fail, then fall back and use
-        service worker cached prompt file (which should work since it downloaded
-        the entire app in the first place...)
-        Failure in this case would be where prompt file is described in read.md
-        but missing from server; or where user while offline, erroneously deletes
-        the prompt cache from their browser, but leaves service worker cache untouched.
 
-        This way we can have very large prompt sets, but user only needs to 
-        download a small portion
-        */
-        function getPromptsFileFromServerOrCache(prompt_file_index, m) {
-            var prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
-            var plf = self.prompt_list_files[prompt_file_index];
-
-            $.get(prompt_file_name,
-                function(prompt_data) {
-                  self.list = self._convertPromptDataToArray(plf, prompt_data);
-                  self._confirmPromptListLength(
-                      plf.number_of_prompts,
-                      prompt_file_index);
-                  self._save2BrowserStorage(
-                      self._getLocalPromptFilename(),
-                      plf.id);
-                  self.prompt_stack = self._initPromptStack(self.list);
-                  var m = "downloaded prompt file from VoxForge server";
-                  console.log(m);
-                  resolve(m); // returnPromise
-                }
-            )
-            .fail(function() { // first prompt file should be cached by service worker
-                if (prompt_file_index > 0) {
-
-                    prompt_file_index = 0;
-                    getPromptsFileFromServerOrCache(prompt_file_index, 
-                                          "using service worker cached prompt file id: 001");
-
-                } else { // prompt_file_index = 0
-                    var m = "cannot find prompts file on VoxForge server: " + prompt_file_name + 
-                            "or in service worker cache; could be bad Internet connection...\n ";
-                    console.warn(m);
-                    reject(m); // returnPromise
-                }
-            });
-        }
 
         /**
           1. use localstorage prompts to start with,
@@ -219,16 +169,7 @@ Prompts.prototype.init = function () {
 
         Prompts.validate_Readmd_file(self.prompt_list_files);
         var prompt_file_index = Math.floor((Math.random() * self.prompt_list_files.length)); // zero indexed
-
-        var plf = self.prompt_list_files[prompt_file_index];
-        var m = "";
-        if ( ! plf.contains_promptid) {
-            let end = plf.start + plf.number_of_prompts;
-            m = "promptId start: " + plf.start +
-                "; end: " + end;
-        }
-        console.log("prompt file id: " + plf.id + 
-                    " (prompt file array index: " + prompt_file_index + ") " + m);
+        self._logPromptFileInformation(prompt_file_index);
 
         /** 
         * get prompts file for given language from server; used cached version of 
@@ -241,7 +182,7 @@ Prompts.prototype.init = function () {
         self.promptCache.length() // Gets the number of keys in the offline store
         .then(function(numberOfKeys) { 
             if (numberOfKeys == 0) { // first time set up of prompts file
-                getPromptsFileFromServerOrCache(prompt_file_index, 
+                self._getPromptsFileFromServerOrCache(prompt_file_index, 
                                 "downloaded prompt file from VoxForge server");
             } else { 
                 getPromptsFileFromBrowserStorage(prompt_file_index);
@@ -251,6 +192,71 @@ Prompts.prototype.init = function () {
     }); // promise
 }
 
+/**
+No good way to detect if online or offline. Therefore, first try to 
+get a random prompts file from server (i.e. might not be 
+prompt_file_index == 0).  If fail, then fall back and use
+service worker cached prompt file (which should work since it downloaded
+the entire app in the first place...)
+Failure in this case would be where prompt file is described in read.md
+but missing from server; or where user while offline, erroneously deletes
+the prompt cache from their browser, but leaves service worker cache untouched.
+
+This way we can have very large prompt sets, but user only needs to 
+download a small portion
+*/
+Prompts.prototype._getPromptsFileFromServerOrCache = function(
+    prompt_file_index,
+    m)
+{
+    var self = this;
+    
+    var prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
+
+    return new Promise(function (resolve, reject) {
+       const resultObj = $.get(prompt_file_name);
+        resultObj.done(function(prompt_data) {
+            self._copyPromptData2Stack(prompt_file_index, prompt_data);
+            console.log(m);
+            resolve(m);
+        });
+        resultObj.fail(function() {
+            if (prompt_file_index > 0) {
+                m = "using service worker cached prompt file id: 001";                
+                self._getPromptsFileFromServerOrCache(0, m);
+                resolve(m);              
+            } else { // prompt_file_index = 0 and does not exist... user deleted?
+                 reject( self._noServiceWorkerCache(prompt_file_name) );
+            }            
+        });
+    });    
+}
+
+Prompts.prototype._noServiceWorkerCache = function(prompt_file_name) {
+    var m = "cannot find prompts file on VoxForge server: " +
+            prompt_file_name + 
+            "or in service worker cache; could be bad Internet connection...\n " +
+            "retry later.";
+    console.warn(m);
+    return m; // returnPromise
+}
+
+Prompts.prototype._copyPromptData2Stack = function(
+    prompt_file_index,
+    prompt_data)
+{
+    var plf = this.prompt_list_files[prompt_file_index];
+        
+    this.list = this._convertPromptDataToArray(plf, prompt_data);
+    this._confirmPromptListLength(
+        plf.number_of_prompts,
+        prompt_file_index);
+    this._save2BrowserStorage(
+        this._getLocalPromptFilename(),
+        plf.id);
+      
+    this.prompt_stack = this._initPromptStack(this.list);
+}
 /*
  * get the saved submission object from browser storage
  *
@@ -270,6 +276,20 @@ Prompts.prototype._getSavedPromptList = function() {
         });
     });
 }
+
+
+Prompts.prototype._logPromptFileInformation = function(prompt_file_index) {
+    var plf = this.prompt_list_files[prompt_file_index];
+    var m = "";
+    if ( ! plf.contains_promptid) {
+        let end = plf.start + plf.number_of_prompts;
+        m = "promptId start: " + plf.start +
+            "; end: " + end;
+    }
+    console.log("prompt file id: " + plf.id + 
+                " (prompt file array index: " + prompt_file_index + ") " + m);
+}
+
 
 Prompts.prototype._getLocalPromptFilename = function() {
     return this.language + '_' + 'prompt_file';
