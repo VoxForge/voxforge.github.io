@@ -99,34 +99,47 @@ Prompts.validate_Readmd_file = function(prompt_list_files) {
 * create separate init function so can return promises on init (can't do that 
 * with a constructor)
 */
-Prompts.prototype.init = function () {
+Prompts.prototype.init = async function () {
     var self = this;
+    this.prompt_file_index = Math.floor((Math.random() * self.prompt_list_files.length)); // zero indexed
 
-    return new Promise(function (resolve, reject) { // returnPromise
+    Prompts.validate_Readmd_file(self.prompt_list_files);
+    self._logPromptFileInformation();
+    
+    /** 
+    * get prompts file for given language from server; used cached version of 
+    * prompt file if no network connection...
 
-        Prompts.validate_Readmd_file(self.prompt_list_files);
-        var prompt_file_index = Math.floor((Math.random() * self.prompt_list_files.length)); // zero indexed
-        self._logPromptFileInformation(prompt_file_index);
+    * Note: each language has its own prefixed prompt file, so counting keys
+    * tells you if prompt file was already locally cached in promptCache 
+    * for that language
+    */
+    //self.promptCache.length() // Gets the number of keys in the offline store
+    //.then(function(numberOfKeys) { 
+     //   if (numberOfKeys == 0) { // first time set up of prompts file
+     //       self._getPromptsFileFromServerOrCache(prompt_file_index, 
+     //                       "downloaded prompt file from VoxForge server");
+     //   } else { 
+     //       self._getPromptsFileFromBrowserStorage(prompt_file_index);
+     //   }
+    //})
+    //.catch((err) => { console.log(err) });
 
-        /** 
-        * get prompts file for given language from server; used cached version of 
-        * prompt file if no network connection...
+    var browserStorageEmpty = await self._isBrowserStorageEmpty();
+    if ( browserStorageEmpty ) {
+        self._getPromptsFileFromServerOrServiceWorkerCache(
+            "downloaded prompt file from VoxForge server");
+    } else {
+        self._getPromptsFileFromBrowserStorage();
+    }
+}
 
-        * Note: each language has its own prefixed prompt file, so counting keys
-        * tells you if prompt file was already locally cached in promptCache 
-        * for that language
-        */
-        self.promptCache.length() // Gets the number of keys in the offline store
-        .then(function(numberOfKeys) { 
-            if (numberOfKeys == 0) { // first time set up of prompts file
-                self._getPromptsFileFromServerOrCache(prompt_file_index, 
-                                "downloaded prompt file from VoxForge server");
-            } else { 
-                self._getPromptsFileFromBrowserStorage(prompt_file_index);
-            }
-        })
-        .catch((err) => { console.log(err) });
-    }); // promise
+Prompts.prototype._isBrowserStorageEmpty = function () {  
+    var promise = this.promptCache.length()
+        .then(function(length) {
+                return (length == 0)
+        });
+    return promise;
 }
 
 
@@ -151,9 +164,9 @@ Prompts.prototype.init = function () {
  * if there is Internet access, then user will get updated 
  * random prompts on subsequent submission.
  */
-Prompts.prototype._getPromptsFileFromBrowserStorage = function (prompt_file_index) {  
+Prompts.prototype._getPromptsFileFromBrowserStorage = function () {  
     var self = this;
-    
+
     this._getSavedPromptList()
     .then(self._processJsonObject.bind(self))
     .then(self._asyncServerUpdateOfPromptsFile.bind(self))
@@ -172,8 +185,8 @@ Prompts.prototype._processJsonObject = function(jsonObject) {
 Prompts.prototype._asyncServerUpdateOfPromptsFile = function () {
     var self = this;
     
-    var plf = this.prompt_list_files[prompt_file_index];
-    var prompt_file_name = this.prompt_list_files[prompt_file_index]['file_location'];
+    var plf = this.prompt_list_files[this.prompt_file_index];
+    var prompt_file_name = this.prompt_list_files[this.prompt_file_index]['file_location'];
     
     console.log("attempting async update of saved prompts file to replace " + 
                 "with new one from VoxForge server");
@@ -212,27 +225,25 @@ the prompt cache from their browser, but leaves service worker cache untouched.
 This way we can have very large prompt sets, but user only needs to 
 download a small portion
 */
-Prompts.prototype._getPromptsFileFromServerOrCache = function(
-    prompt_file_index,
-    m)
+Prompts.prototype._getPromptsFileFromServerOrServiceWorkerCache = function(m)
 {
     var self = this;
     
-    var prompt_file_name = self.prompt_list_files[prompt_file_index]['file_location'];
+    var prompt_file_name = self.prompt_list_files[this.prompt_file_index]['file_location'];
 
     return new Promise(function (resolve, reject) {
         const resultObj = $.get(prompt_file_name);
         resultObj.done(function(prompt_data) {
-            self._copyPromptData2Stack(prompt_file_index, prompt_data);
+            self._copyPromptData2Stack(prompt_data);
             console.log(m);
             resolve(m);
         });
         resultObj.fail(function() {
-            if (prompt_file_index > 0) {
+            if (self.prompt_file_index > 0) {
                 m = "using service worker cached prompt file id: 001";                
                 self._getPromptsFileFromServerOrCache(0, m);
                 resolve(m);              
-            } else { // prompt_file_index = 0 and does not exist... user deleted?
+            } else { // self.prompt_file_index = 0 and does not exist... user deleted?
                  reject( self._noServiceWorkerCache(prompt_file_name) );
             }            
         });
@@ -248,16 +259,12 @@ Prompts.prototype._noServiceWorkerCache = function(prompt_file_name) {
     return m; 
 }
 
-Prompts.prototype._copyPromptData2Stack = function(
-    prompt_file_index,
-    prompt_data)
+Prompts.prototype._copyPromptData2Stack = function(prompt_data)
 {
-    var plf = this.prompt_list_files[prompt_file_index];
+    var plf = this.prompt_list_files[this.prompt_file_index];
         
     this.list = this._convertPromptDataToArray(plf, prompt_data);
-    this._confirmPromptListLength(
-        plf.number_of_prompts,
-        prompt_file_index);
+    this._confirmPromptListLength();
     this._save2BrowserStorage(
         this._getLocalPromptFilename(),
         plf.id);
@@ -285,8 +292,8 @@ Prompts.prototype._getSavedPromptList = function() {
 }
 
 
-Prompts.prototype._logPromptFileInformation = function(prompt_file_index) {
-    var plf = this.prompt_list_files[prompt_file_index];
+Prompts.prototype._logPromptFileInformation = function() {
+    var plf = this.prompt_list_files[this.prompt_file_index];
     var m = "";
     if ( ! plf.contains_promptid) {
         let end = plf.start + plf.number_of_prompts;
@@ -294,7 +301,7 @@ Prompts.prototype._logPromptFileInformation = function(prompt_file_index) {
             "; end: " + end;
     }
     console.log("prompt file id: " + plf.id + 
-                " (prompt file array index: " + prompt_file_index + ") " + m);
+                " (prompt file array index: " + this.prompt_file_index + ") " + m);
 }
 
 
@@ -372,15 +379,15 @@ Prompts.prototype._saveObject2PromptCache = function(
     });
 }
 
-Prompts.prototype._confirmPromptListLength = function(
-    number_of_prompts,
-    prompt_file_index)
+Prompts.prototype._confirmPromptListLength = function()
 {
-    if (number_of_prompts !=  this.list.length) {
+    var plf = this.prompt_list_files[this.prompt_file_index];
+    
+    if (plf.number_of_prompts !=  this.list.length) {
         console.warn(
             "number of prompts in prompt_list_files[" +
-            prompt_file_index + "] = " + 
-            number_of_prompts + 
+            this.prompt_file_index + "] = " + 
+            plf.number_of_prompts + 
             " in read.md, not same as prompt file line counts for language: " + 
             this.language + "= " + this.list.length );
     }
