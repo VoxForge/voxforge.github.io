@@ -545,15 +545,34 @@ Prompts.prototype.toJsonString = function () {
     var obj = {};
 
     for (var i = 0 ; i < arr.length ; i++) {
-        var prompt_line = arr[i].split(/\s+/);
-        var prompt_id = prompt_line.shift();
-        prompt_line = prompt_line.join(' ').replace(/\s+$/, "");
-
-        // join array back together into a string and remove trailing space
-        obj[prompt_id] = prompt_line;
+        var promptLine = arr[i];
+        this._addPromptlineToObject(obj, promptLine);
     }
 
     return JSON.stringify(obj,null,"  ");
+}
+
+Prompts.prototype._addPromptlineToObject = function (obj, promptLine) {
+    var prompt_id = this._extractPromptIdFromPromptLine(promptLine);
+    var prompt_line = this._extractPromptSentencePromptLine(promptLine);
+
+    obj[prompt_id] = prompt_line;
+}
+
+Prompts.prototype._extractPromptIdFromPromptLine = function (promptLine) {
+    var prompt_line = promptLine.split(/\s+/);
+    return prompt_line.shift(); // return first element
+}
+
+Prompts.prototype._extractPromptSentencePromptLine = function (promptLine) {
+    var prompt_line = promptLine.split(/\s+/); // split string
+    prompt_line.shift(); // remove first element
+    // convert array back into string and remove trailing space
+    return prompt_line.join(' ').replace(/\s+$/, ""); 
+}
+
+Prompts.prototype.addToPromptsRecorded = function (prompt) {
+    this.prompts_recorded.push(prompt + '\n');
 }
 
 /**
