@@ -554,9 +554,9 @@ Prompts.prototype.toJsonString = function () {
 
 Prompts.prototype._addPromptlineToObject = function (obj, promptLine) {
     var prompt_id = this._extractPromptIdFromPromptLine(promptLine);
-    var prompt_line = this._extractPromptSentencePromptLine(promptLine);
+    var prompt_sentence = this._extractPromptSentencePromptLine(promptLine);
 
-    obj[prompt_id] = prompt_line;
+    obj[prompt_id] = prompt_sentence;
 }
 
 Prompts.prototype._extractPromptIdFromPromptLine = function (promptLine) {
@@ -584,18 +584,24 @@ Prompts.prototype.getDebugValues = function () {
 
     for (var i = 0 ; i < arr.length ; i++)
     {
-      var prompt_line = arr[i].split(/\s+/);
-      var prompt_id = prompt_line.shift();
-      prompt_line = prompt_line.join(' ').replace(/\s+$/, "");
-      
-      // join array back together into a string and remove trailing space
-      obj[prompt_id] = {
-        sentence : prompt_line, 
-        audio: this.audio_characteristics[prompt_id],
-      }
+        //var prompt_line = arr[i].split(/\s+/);
+        //var prompt_id = prompt_line.shift();
+        //prompt_line = prompt_line.join(' ').replace(/\s+$/, "");
+        var promptLine = arr[i];
+        this._addPromptlineToDebugObject(obj, promptLine);
     }
 
     return obj;
+}
+
+Prompts.prototype._addPromptlineToDebugObject = function (obj, promptLine) {
+    var prompt_id = this._extractPromptIdFromPromptLine(promptLine);
+    var prompt_sentence = this._extractPromptSentencePromptLine(promptLine);
+
+    obj[prompt_id] = {
+        sentence : prompt_sentence, 
+        audio: this.audio_characteristics[prompt_id],
+    }
 }
 
 /**
