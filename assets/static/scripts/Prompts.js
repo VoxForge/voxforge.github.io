@@ -61,18 +61,16 @@ function Prompts(parms,
 * get prompts file for given language from server; used cached version of 
 * prompt file if no network connection...
 */
-Prompts.prototype.init = async function () {
+Prompts.prototype.init = function () {
     var self = this;
 
+    this._validateParmsAndLog();
+    this._initializePrompts();
+}
+
+Prompts.prototype._validateParmsAndLog = function () {
     this.validate_Readmd_file();
     this._logPromptFileInformation();
-
-    var browserStorageEmpty = await self._isBrowserStorageEmpty();
-    if ( browserStorageEmpty ) {
-        this._getPromptsFileFromServerOrServiceWorkerCache();
-    } else {
-        this._getPromptsFileFromBrowserStorage();
-    }
 }
 
 /**
@@ -128,6 +126,17 @@ Prompts.prototype._checkForUndefinedAttributesIfNoPromptId = function (
         console.warn("prompt_list_files[" + i + "].prefix " + notDefined);
     }
 
+}
+
+Prompts.prototype._initializePrompts = async function () {
+    var self = this;
+    
+    var browserStorageEmpty = await self._isBrowserStorageEmpty();
+    if ( browserStorageEmpty ) {
+        this._getPromptsFileFromServerOrServiceWorkerCache();
+    } else {
+        this._getPromptsFileFromBrowserStorage();
+    }
 }
 
 /** 
@@ -220,11 +229,11 @@ Prompts.prototype._initPromptStack = function(list)
         return list[i++];
     }
 
-    function addPromptToStack() {
+    function addPromptToFrontOfStack() {
         prompt_stack.unshift(nextPrompt());
     }
 
-    while (n--) addPromptToStack();
+    while (n--) addPromptToFrontOfStack();
 
     return prompt_stack;
 }
@@ -543,11 +552,9 @@ Prompts.prototype.toArray = function () {
 Prompts.prototype.toJsonString = function () {
     var arr = this.prompts_recorded.sort();
     var obj = {};
+    var i = arr.length;
 
-    for (var i = 0 ; i < arr.length ; i++) {
-        var promptLine = arr[i];
-        this._addPromptlineToObject(obj, promptLine);
-    }
+    while (i--) this._addPromptlineToObject(obj, arr[i]);
 
     return JSON.stringify(obj,null,"  ");
 }
@@ -581,16 +588,10 @@ Prompts.prototype.addToPromptsRecorded = function (prompt) {
 Prompts.prototype.getDebugValues = function () {
     var arr = this.prompts_recorded.sort();
     var obj = {};
+    var i = arr.length;
 
-    for (var i = 0 ; i < arr.length ; i++)
-    {
-        //var prompt_line = arr[i].split(/\s+/);
-        //var prompt_id = prompt_line.shift();
-        //prompt_line = prompt_line.join(' ').replace(/\s+$/, "");
-        var promptLine = arr[i];
-        this._addPromptlineToDebugObject(obj, promptLine);
-    }
-
+    while (i--) this._addPromptlineToDebugObject(obj, arr[i]);
+    
     return obj;
 }
 
