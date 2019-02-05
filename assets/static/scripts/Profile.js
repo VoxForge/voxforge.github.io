@@ -169,7 +169,7 @@ Profile.prototype._addProfileSpecificAttributes = function (profile_hash) {
 * used to create profile.json file, and saving state between submissions.
 */
 Profile.prototype.toJsonString = function () {
-    return JSON.stringify(this.toHash() ,null ,"  ");
+    return JSON.stringify(this.toHash(), null, "  ");
 }
 
 /**
@@ -183,7 +183,6 @@ Profile.prototype.toTextArray = function () {
     var profile_hash = this._getProfileAttributesFromViewClass();                                                
 
     var profile_array = [];
-    this.i=0;
     this._setUserInformation(profile_hash, profile_array);
     this._setLanguageInfo(profile_hash, profile_array);
     this._setRecordingInformation(profile_hash, profile_array);
@@ -192,7 +191,7 @@ Profile.prototype.toTextArray = function () {
 };
 
 Profile.prototype._setUserInformation = function (profile_hash, profile_array) {
-    var i = this.i;
+    var i = profile_array.length;
         
     profile_array[i++] = 'User Name: ' + profile_hash["username"] + '\n';
 
@@ -205,12 +204,10 @@ Profile.prototype._setUserInformation = function (profile_hash, profile_array) {
     } else {
       profile_array[i++] = 'Age Range: ' +  profile_hash["age"] + '\n';
     }
-
-    this.i = i;    
 }
 
 Profile.prototype._setLanguageInfo = function (profile_hash, profile_array) {
-    var i = this.i;
+    var i = profile_array.length;
     
     profile_array[i++] = 'Language: ' +  this.language + '\n';
 
@@ -220,12 +217,10 @@ Profile.prototype._setLanguageInfo = function (profile_hash, profile_array) {
     } else { 
         this._nonNativeSpeaker(profile_hash, profile_array);        
     }
-
-    this.i = i;
 }
 
 Profile.prototype._nativeSpeaker = function (profile_hash, profile_array) {
-    var i = this.i;
+    var i = profile_array.length;
 
     if (profile_hash["dialect"] !== this.localized_other) {
         profile_array[i++] = 'Pronunciation dialect: ' + profile_hash["dialect"] + '\n';
@@ -235,12 +230,10 @@ Profile.prototype._nativeSpeaker = function (profile_hash, profile_array) {
     } else {
         profile_array[i++] =  'Pronunciation dialect: Other - ' + profile_hash["dialect_other"] + '\n';
     }
-      
-    this.i = i;
 }
 
 Profile.prototype._nonNativeSpeaker = function (profile_hash, profile_array) {
-    var i = this.i;
+    var i = profile_array.length;
 
     if ( profile_hash["first_language"] !== this.localized_other) {
         var langId = profile_hash["first_language"];
@@ -248,12 +241,10 @@ Profile.prototype._nonNativeSpeaker = function (profile_hash, profile_array) {
     } else {
         profile_array[i++] = '  first language: ' + profile_hash["first_language_other"];
     }
-
-    this.i = i;
 }
 
 Profile.prototype._setRecordingInformation = function (profile_hash, profile_array) {
-    var i = this.i;
+    var i = profile_array.length;
         
     profile_array[i++] = '\nRecording Information: \n\n';
 
@@ -263,24 +254,20 @@ Profile.prototype._setRecordingInformation = function (profile_hash, profile_arr
     this._setBrowserInfo(profile_hash, profile_array);
     this._setAudioInfo(profile_hash, profile_array);
     this._setLicense(profile_hash, profile_array);
-    
-    this.i = i; 
 }
 
 Profile.prototype._setMic = function (profile_hash, profile_array) {
-    var i = this.i;
+    var i = profile_array.length;
         
     if (profile_hash["microphone"] !== this.localized_other) {
-      profile_array[i++] = 'Microphone Type: ' + profile_hash["microphone"] + '\n';
+        profile_array[i++] = 'Microphone Type: ' + profile_hash["microphone"] + '\n';
     } else {
-      profile_array[i++] = 'Microphone Type: Other - ' + profile_hash["microphone_other"]  + '\n';
+        profile_array[i++] = 'Microphone Type: Other - ' + profile_hash["microphone_other"]  + '\n';
     }
-
-    this.i = i;    
 }
 
 Profile.prototype._setLocation = function (profile_hash, profile_array) {
-    var i = this.i;
+    var i = profile_array.length;
         
     if ( profile_hash["recording_location"] !== this.localized_other) {
       profile_array[i++] = 'Recording Location: ' +  profile_hash["recording_location"] + '\n';
@@ -288,60 +275,50 @@ Profile.prototype._setLocation = function (profile_hash, profile_array) {
       profile_array[i++] = 'Recording Location: Other - ' + profile_hash["recording_location_other"] + '\n';
     }
 
-    this.i = i;    
 }
 
 Profile.prototype._setNoise = function (profile_hash, profile_array) {
-    var i = this.i;
+    var i = profile_array.length;
         
     profile_array[i++] = 'Background Noise: ' + profile_hash["background_noise"] + '\n';
     if (profile_hash["background_noise"] === this.localized_yes) {
-      profile_array[i++] = 'Noise Volume: ' + profile_hash["noise_volume"] + '\n';
-      if (profile_hash["noise_type"] !== this.localized_other) {
-        profile_array[i++] = 'Noise Type: ' + profile_hash["noise_type"]  + '\n';
-      } else {
-        profile_array[i++] = 'Noise Type: Other - ' + profile_hash["noise_type_other"] + '\n';
-      }
+        profile_array[i++] = 'Noise Volume: ' + profile_hash["noise_volume"] + '\n';
+        if (profile_hash["noise_type"] !== this.localized_other) {
+            profile_array[i++] = 'Noise Type: ' + profile_hash["noise_type"]  + '\n';
+        } else {
+            profile_array[i++] = 'Noise Type: Other - ' + profile_hash["noise_type_other"] + '\n';
+        }
     }
-
-    this.i = i;    
 }
 
 Profile.prototype._setBrowserInfo = function (profile_hash, profile_array) {
-    var i = this.i;
+    var i = profile_array.length;
 
     profile_array[i++] = 'Audio Recording Software: VoxForge Javascript speech submission application\n';
         
     profile_array[i++] = 'O/S: ' +  platform.os.toString() + '\n';
     profile_array[i++] = 'Browser: ' +  platform.name + ' ' + platform.version + '\n';
     if (platform.product) { // smartphone product name
-      profile_array[i++] = 'Product: ' + platform.product + '\n';
+        profile_array[i++] = 'Product: ' + platform.product + '\n';
     }
     if (platform.manufacturer) { // smartphone manufacturer
-      profile_array[i++] = 'Manufacturer: ' + platform.manufacturer + '\n';
+        profile_array[i++] = 'Manufacturer: ' + platform.manufacturer + '\n';
     }
-    
-    this.i = i;    
 }
 
 Profile.prototype._setAudioInfo = function (profile_hash, profile_array) {
-    var i = this.i;
+    var i = profile_array.length;
         
     profile_array[i++] = '\nFile Info: \n\n';
     profile_array[i++] = 'File type: wav\n';
     profile_array[i++] = 'Sample Rate: ' + this.sample_rate + '\n';
     profile_array[i++] = 'Sample Rate Format (bit depth): ' + this.bit_depth + '\n';
     profile_array[i++] = 'Number of channels: ' + this.channels + '\n';
-
-    this.i = i;        
 }
 
 Profile.prototype._setLicense = function (profile_hash, profile_array) {
-    var i = this.i;
-    
+    var i = profile_array.length;
     profile_array[i++] = '\nLicense: ' + profile_hash["license"]  + '\n';        
-
-    this.i = i;        
 }
 
 /**
@@ -380,33 +357,33 @@ Profile.prototype.getTempSubmissionName = function () {
 * return submission name in lang-username-date format
 */
 Profile.prototype.getShortSubmissionName = function () {
-  var d = new Date();
-  var month = d.getMonth() + 1;
-  month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
-  var day = d.getDate();
-  day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
-  var date = d.getFullYear().toString() + month.toString() + day.toString();
-  var result = this.language.toUpperCase() + '-' +
-               this.getUserName() + '-' +
-               date + '-' +
-               this.suffix;
+    var shortSubmissionName = this.language.toUpperCase() + '-' +
+        this.getUserName() + '-' +
+        this._getDate() + '-' +
+        this.getSuffix();
 
-  return result;
+  return shortSubmissionName;
 }
 
+Profile.prototype._getDate = function () {
+  var d = new Date();
+  
+  var month = d.getMonth() + 1;
+  month = month < 10 ? '0' + month : '' + month; // add leading zero to one digit month
+  
+  var day = d.getDate();
+  day = day < 10 ? '0' + day : '' + day; // add leading zero to one digit day
+  
+  var date = d.getFullYear().toString() + month.toString() + day.toString();
+
+  return date;
+}
 
 /**
 * return suffix used in for submission name
 */
 Profile.prototype.getSuffix = function () {
     return this.suffix;
-}
-
-/**
-* return username to be used in license
-*/
-Profile.prototype.getLicenseUserName = function () {
-    return Profile.prototype.getUserName;
 }
 
 /**
@@ -417,9 +394,9 @@ Profile.prototype.getLicenseUserName = function () {
 */
 Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
     for (const prop in obj) {
-      if (obj.hasOwnProperty(prop)) {
-        this[prop] = obj[prop];
-      }
+        if (obj.hasOwnProperty(prop)) {
+            this[prop] = obj[prop];
+        }
     } 
 }
 
@@ -430,42 +407,73 @@ Profile.prototype.setAudioPropertiesAndContraints = function (obj) {
 * if none present, then set CC0 as default.
 */
 Profile.prototype.getLicense = function (license) {
-    var license_obj = this.license.full_license[license];
+    var license_array;
 
-    var license_array = [];
-    var i=0;
+    var license_obj = this.license.full_license[license];
+    if (license_obj) {
+        license_array = this._licenseObj2Array(license_obj);
+    } else {
+        console.warn("invalid licence ID: " +
+            license +
+            "; using CC0 as default");
+        license_array = this._defaultLicense();
+    }
+
+    return license_array;
+}
+
+Profile.prototype._getYear = function () {
     var d = new Date();
     var year = d.getFullYear().toString();
 
-    if ( license_obj ) {
-      license_array[i++] = license_obj.title + '\n\n';
+    return year;
+}
 
-      license_array[i++] = license_obj.attribution.replace("_year_", year) + " " +
-                           this.getUserName() + '\n\n';
-      for (var j = 0; j < license_obj.text.length; j++) {
+Profile.prototype._licenseObj2Array = function (license_obj) {
+    var license_array = [];
+    var year = this._getYear();   
+    var i = 0;
+            
+    license_array[i++] = license_obj.title + '\n\n';
+
+    license_array[i++] = license_obj.attribution.replace("_year_", year) +
+        " " +
+        this.getUserName() + '\n\n';
+        
+    for (var j = 0; j < license_obj.text.length; j++) {
         license_array[i++] = license_obj.text[j] + "\n";
-      }
-      license_array[i++] = license_obj.text_last + " " + license_obj.link;
-    } else {
-      console.warn("invalid licence ID: " + license + "; using CC0 as default");
-     
-      license_array[i++] = 'CC0 - Creative Commons Public Domain Dedication\n\n';
-
-      license_array[i++] = year +
-                           ' - VoxForge Speech Recording by: ' +
-                           this.getUserName() + '\n';
-   
-      license_array[i++] = '\nThe person who associated a work with this deed has dedicated the work\n';
-      license_array[i++] = 'to the public domain by waiving all of his or her rights to the work\n';
-      license_array[i++] = 'worldwide under copyright law, including all related and neighboring \n';
-      license_array[i++] = 'rights, to the extent allowed by law.\n';
-
-      license_array[i++] = '\nYou can copy, modify, distribute and perform the work, even for\n';
-      license_array[i++] = 'commercial purposes, all without asking permission.\n';
-
-      license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
-      license_array[i++] = 'work.  If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.\n';
     }
+    
+    license_array[i++] = license_obj.text_last + " " +
+        license_obj.link;
+
+    return license_array;
+}
+
+/*
+ * CC0 is default license
+ */
+Profile.prototype._defaultLicense = function () {
+    var license_array = [];
+    var year = this._getYear();    
+    var i = 0;
+        
+    license_array[i++] = 'CC0 1.0 - Creative Commons CC0 1.0 Universal Public Domain Dedication\n\n';
+
+    license_array[i++] = year +
+                       ' - VoxForge Speech Recording by: ' +
+                       this.getUserName() + '\n';
+
+    license_array[i++] = '\nThe person who associated a work with this deed has dedicated the work\n';
+    license_array[i++] = 'to the public domain by waiving all of his or her rights to the work\n';
+    license_array[i++] = 'worldwide under copyright law, including all related and neighboring \n';
+    license_array[i++] = 'rights, to the extent allowed by law.\n';
+
+    license_array[i++] = '\nYou can copy, modify, distribute and perform the work, even for\n';
+    license_array[i++] = 'commercial purposes, all without asking permission.\n';
+
+    license_array[i++] = '\nYou should have received a copy of the CC0 legalcode along with this\n';
+    license_array[i++] = 'work.  If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.\n';
 
     return license_array;
 }
@@ -478,5 +486,3 @@ Profile.prototype.licensetoArray = function () {
 
     return  this.getLicense(licenseID);
 }
-
-
