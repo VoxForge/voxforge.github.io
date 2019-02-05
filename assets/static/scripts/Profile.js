@@ -95,38 +95,40 @@ Profile.prototype.updateRandomStrings = function () {
 }
 
 /**
-*
+* refresh displayed user information with info stored in offline storage.
+* Note: not using cookies... no need to pass this info back to the server
+* with each call (which is what cookies do...)
 */
 Profile.prototype.getProfileFromBrowserStorage = function () {
-  var self = this;
-  /**
-  * get profile information from local storage and if it exists, return parsed
-  * JSON object, otherwise return null.
-  *
-  * Note: localStorage is a synchronous API... no need for async promise cruft
-  */
-  function retrieve() {
-      var retrievedObject = localStorage.getItem(self.language);
-      // boolean expression. Second part is evaluated only if left one is true. 
-      // therefore if retrievedObject is null, that gets returned
-      return retrievedObject && JSON.parse(retrievedObject);
-  }
+    var parsedLocalStorageObject = this._getParsedLocalStorageObject();
 
-  /**
-  * refresh displayed user information with info stored in offline storage.
-  * Note: not using cookies... no need to pass this info back to the server
-  * with each call (which is what cookies do...)
-  */
-  var parsedLocalStorageObject = retrieve();
-  if ( parsedLocalStorageObject ) {
-      this.sample_rate = parsedLocalStorageObject.sample_rate;
-      this.bit_depth = parsedLocalStorageObject.bit_depth;
-      this.channels = parsedLocalStorageObject.channels;
+    if ( parsedLocalStorageObject ) {
+        this._extractFields(parsedLocalStorageObject);
+        return parsedLocalStorageObject;
+    } else {
+        return null;
+    }
+}
 
-      return parsedLocalStorageObject;
-  } else {
-    return null;
-  }
+Profile.prototype._extractFields = function (parsedLocalStorageObject) {
+    this.sample_rate = parsedLocalStorageObject.sample_rate;
+    this.bit_depth = parsedLocalStorageObject.bit_depth;
+    this.channels = parsedLocalStorageObject.channels;
+}
+
+/**
+* get profile information from local storage and if it exists, return parsed
+* JSON object, otherwise return null.
+*
+* Note: localStorage is a synchronous API... no need for async promise cruft
+*
+* boolean expression. Second part is evaluated only if left one is true. 
+* therefore if retrievedObject is null, that gets returned
+*/
+Profile.prototype._getParsedLocalStorageObject = function () {
+    var retrievedObject = localStorage.getItem(self.language);
+
+    return retrievedObject && JSON.parse(retrievedObject);
 }
 
 /**

@@ -232,7 +232,8 @@ Uploader.prototype.upload = function ( prompts,
           var audioBlobUrl = clip.querySelector('audio').src;
           var prompt = clip.querySelector('prompt').innerText;
           var prompt_id = prompt.split(/(\s+)/).shift();
-          prompts.prompts_recorded.push(prompt + '\n');
+          //prompts.prompts_recorded.push(prompt + '\n');
+          prompts.addToPromptsRecorded(prompt);
 
           // Ajax is asynchronous - once the request is sent script will 
           // continue executing without waiting for the response.
