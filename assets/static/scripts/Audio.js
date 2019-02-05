@@ -50,7 +50,7 @@ function Audio (parms,
     this.mediaStreamOutput = null;
     this.analyser = null;
     this.gain_minValue = -3.4; // most-negative-single-float	Approximately -3.4028235e38
-    this.gain_maxValue = 3.4; // 	most-positive-single-float	Approximately 3.4028235e38
+    this.gain_maxValue = 3.4; // most-positive-single-float	Approximately 3.4028235e38
 
     // rule is to collect speech audio that best reflects the user's environment, therefore
     // take whatever defaults user's device supports
@@ -63,39 +63,6 @@ function Audio (parms,
 
 Audio.prototype.init = function () {
     var self = this;
-
-    /**
-    * set up audio nodes that are connected together in a graph so that the 
-    * source microphone input can be captured, and volume node can be created,
-    * an analyzer to create visually display the amplitude
-    * of the captured audio, a processor to capture the raw audio, and 
-    * a destination audiocontext to capture audio
-    *
-    */
-    function setupAudioNodes(stream) {
-      return new Promise(function (resolve, reject) {
-        self.microphone = self.audioCtx.createMediaStreamSource(stream);
-
-        self.gainNode = self.audioCtx.createGain();
-        // Create a ScriptProcessorNode with a bufferSize of audioNodebufferSize and a single input and output channel
-        self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize, 1, 1);
-        self.analyser = self.audioCtx.createAnalyser();
-        self.mediaStreamOutput = self.audioCtx.destination;
-
-        self.microphone.channelCount = 1;
-        self.gainNode.channelCount = 1;
-        self.processor.channelCount = 1;
-        self.analyser.channelCount = 1;
-        self.mediaStreamOutput.channelCount = 1;
-
-        self.microphone.connect(self.gainNode);    
-        self.gainNode.connect(self.processor);
-        self.processor.connect(self.audioCtx.destination);
-        self.gainNode.connect(self.analyser);        
-
-        resolve(stream);
-      }); // promise
-    }
 
     // #########################################################################
 
@@ -143,7 +110,7 @@ Audio.prototype.init = function () {
         * see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
         */
         navigator.mediaDevices.getUserMedia(self.constraints)
-        .then(setupAudioNodes)
+        .then( self._setupAudioNodes.bind(self) )
         .then(function(stream) {
           self.stream = stream;
           self.setProfileAudioProperties(stream.getAudioTracks()[0]);
@@ -161,21 +128,58 @@ Audio.prototype.init = function () {
 }
 
 /**
+* set up audio nodes that are connected together in a graph so that the 
+* source microphone input can be captured, and volume node can be created,
+* an analyzer to create visually display the amplitude
+* of the captured audio, a processor to capture the raw audio, and 
+* a destination audiocontext to capture audio
 *
 */
-Audio.prototype.setProfileAudioProperties = function (track) {
-      var self = this;
-  
-      self.audioPropertiesAndContraints = {
-        'sample_rate' : self.audioCtx.sampleRate,
-        'bit_depth' : self.parms.bitDepth,
-        'channels' : self.mediaStreamOutput.channelCount,
-      };
+Audio.prototype._setupAudioNodes = function(stream) {
+    var self = this;
+        
+    self.microphone = self.audioCtx.createMediaStreamSource(stream);
 
+    self.gainNode = self.audioCtx.createGain();
+    // Create a ScriptProcessorNode with a bufferSize of audioNodebufferSize and a single input and output channel
+    self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize, 1, 1);
+    self.analyser = self.audioCtx.createAnalyser();
+    self.mediaStreamOutput = self.audioCtx.destination;
+
+    self.microphone.channelCount = 1;
+    self.gainNode.channelCount = 1;
+    self.processor.channelCount = 1;
+    self.analyser.channelCount = 1;
+    self.mediaStreamOutput.channelCount = 1;
+
+    self.microphone.connect(self.gainNode);    
+    self.gainNode.connect(self.processor);
+    self.processor.connect(self.audioCtx.destination);
+    self.gainNode.connect(self.analyser);        
+
+    return(stream);
+}
+
+Audio.prototype.setProfileAudioProperties = function (track) {
+    this._setAudioPropertiesAndContraints();
+    this._setDebugValues(track);
+
+    console.log('audioCtx.sampleRate: ' + this.audioCtx.sampleRate);
+}
+
+Audio.prototype._setAudioPropertiesAndContraints = function () {
+    this.audioPropertiesAndContraints = {
+        'sample_rate' : this.audioCtx.sampleRate,
+        'bit_depth' : this.parms.bitDepth,
+        'channels' : this.mediaStreamOutput.channelCount,
+    };
+}
+
+Audio.prototype._setDebugValues = function (track) {
       var c = navigator.mediaDevices.getSupportedConstraints();
       let s = track.getSettings();
 
-      self.debugValues = {
+      this.debugValues = {
         'browser_supports_echoCancellation' : (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation,
         'browser_supports_noiseSuppression' : (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression,
         'browser_supports_autoGain' : (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported,
@@ -188,26 +192,19 @@ Audio.prototype.setProfileAudioProperties = function (track) {
         'latency' : (typeof s.latency == 'undefined') ? 'undefined' : s.latency,
         'volume' : (typeof s.volume == 'undefined') ? 'undefined' : s.volume,
 
-        'vad_maxsilence' :  self.parms.vad.maxsilence,
-        'vad_minvoice' : self.parms.vad.minvoice,
-        'vad_bufferSize' : self.parms.vad.buffersize,
-        'audioNode_bufferSize' : self.parms.audioNodebufferSize || 'undefined',
-        'device_event_buffer_size' : self.device_event_buffer_size || 'undefined',
+        'vad_maxsilence' :  this.parms.vad.maxsilence,
+        'vad_minvoice' : this.parms.vad.minvoice,
+        'vad_bufferSize' : this.parms.vad.buffersize,
+        'audioNode_bufferSize' : this.parms.audioNodebufferSize || 'undefined',
+        'device_event_buffer_size' : this.device_event_buffer_size || 'undefined',
       };
 
-      console.log('audioCtx.sampleRate: ' + self.audioCtx.sampleRate);
 }
 
-/**
-*
-*/
 Audio.prototype.getAudioPropertiesAndContraints = function () {
     return this.audioPropertiesAndContraints;
 }
 
-/**
-*
-*/
 Audio.prototype.getDebugValues = function () {
     return this.debugValues;
 }
