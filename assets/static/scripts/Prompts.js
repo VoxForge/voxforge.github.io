@@ -260,7 +260,7 @@ Prompts.prototype._logNoServiceWorkerCache = function() {
  */
 Prompts.prototype._getPromptsFileFromBrowserStorage = function () {
     this._getPromptsThatUserCanUseNow();
-    this._asyncupdateOfPromptsFileFromServer();
+    this._asyncUpdateOfPromptsFileFromServer();
 }
 
 Prompts.prototype._getPromptsThatUserCanUseNow = async function() {
@@ -297,7 +297,7 @@ Prompts.prototype._extractPromptStackFromObj = function(jsonObject) {
 /*
  *check if can get random prompt file from server
  */
-Prompts.prototype._updateOfPromptsFileFromServer = async function () {
+Prompts.prototype._asyncUpdateOfPromptsFileFromServer = async function () {
     var self = this;
 
     try {
@@ -563,9 +563,8 @@ Prompts.prototype.toArray = function () {
 */
 Prompts.prototype.toJsonString = function () {
     var self = this;
-    
+    var obj = {};    
     var arr = this.prompts_recorded.sort();
-    var obj = {};
 
     arr.forEach(function(promptLine) {
         self._addPromptlineToObject(obj, promptLine);
@@ -602,9 +601,8 @@ Prompts.prototype.addToPromptsRecorded = function (prompt) {
 */
 Prompts.prototype.getDebugValues = function () {
     var self = this;
-    
+    var obj = {};    
     var arr = this.prompts_recorded.sort();
-    var obj = {};
 
     arr.forEach(function(promptLine) {
         self._addPromptlineToDebugObject(obj, promptLine);
@@ -623,9 +621,6 @@ Prompts.prototype._addPromptlineToDebugObject = function (obj, promptLine) {
     }
 }
 
-/**
-*
-*/
 Prompts.prototype.setAudioCharacteristics = function (obj) {
   var self = this;
 
@@ -659,39 +654,25 @@ Prompts.prototype.lastone = function () {
     return this.prompt_count >= this.max_num_prompts;
 }
 
-/**
-*
-*/
 Prompts.prototype.oneleft = function () {
     return this.prompt_count == 1;
 }
 
-/**
-*
-*/
 Prompts.prototype.maxnumpromptsincreased = function () {
     return this.max_num_prompts >= this.previous_max_num_prompts;
 }
 
 /**
-*
 * e.g. user set max prompt to 30, records 25, then changes max prompts to 20
 */
 Prompts.prototype.recordedmorethancurrentmaxprompts = function () {
     return this.prompt_count >= this.max_num_prompts;
 }
 
-
-/**
-*
-*/
 Prompts.prototype.oneleft = function () {
     return this.prompt_count == 1;
 }
 
-/**
-*
-*/
 Prompts.prototype.atmid = function () {
     return (this.prompt_count > 0 && this.prompt_count < this.max_num_prompts);
 }
@@ -703,7 +684,6 @@ Prompts.prototype.atmid = function () {
 Prompts.prototype.getProgressDescription = function () {
     return this.prompt_count + "/" + this.max_num_prompts;
 }
-
 
 /**
 * user changed the maximum number of prompts to record from drop down menu
