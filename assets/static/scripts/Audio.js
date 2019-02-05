@@ -65,50 +65,62 @@ Audio.prototype.init = function () {
     var self = this;
 
     // #########################################################################
-
-    /**
-    * Older browsers might not implement mediaDevices at all, so we set an empty 
-    * object first
-    * see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    */
     if (navigator.mediaDevices === undefined) {
-      navigator.mediaDevices = {};
+        navigator.mediaDevices = {};
     }
 
     if (navigator.mediaDevices.getUserMedia === undefined) {
-      navigator.mediaDevices.getUserMedia = function(constraints) {
+        navigator.mediaDevices.getUserMedia =
+            this._polyfillPartiallyImplementedGetUserMediaOnOldBrowsers;
+    }
+    
+    this.autoGainSupported =
+        navigator.mediaDevices.getSupportedConstraints().autoGainSupported;
 
-        // First get ahold of the legacy getUserMedia, if present
-        var getUserMedia = ( navigator.getUserMedia ||
-                             navigator.webkitGetUserMedia ||
-                             navigator.mozGetUserMedia ||
-                             navigator.msGetUserMedia);
-        // Some browsers just don't implement it - return a rejected promise with 
-        // an error to keep a consistent interface
-        if (!getUserMedia) {
-          console.error('getUserMedia not supported on your browser!');
-          //document.querySelector('.info-display').innerText = self.alert_message.notHtml5_error;
-          windows.alert( self.alert_message.notHtml5_error );
-          document.querySelector('.prompt_id').innerText = "";
-          return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
-        }
+    return this._setupGetUserMedia();
+}
 
-        // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
-        return new Promise(function(resolve, reject) {
-          getUserMedia.call(navigator, constraints, resolve, reject);
-        });
-      }
+/**
+* Older browsers might not implement mediaDevices at all, so we set an empty 
+* object first
+* see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+*/
+Audio.prototype._polyfillPartiallyImplementedGetUserMediaOnOldBrowsers =
+    function(constraints)
+{
+    // First get ahold of the legacy getUserMedia, if present
+    var getUserMedia = ( navigator.getUserMedia ||
+                         navigator.webkitGetUserMedia ||
+                         navigator.mozGetUserMedia ||
+                         navigator.msGetUserMedia);
+                         
+    // Some browsers just don't implement it - return a rejected promise with 
+    // an error to keep a consistent interface
+    if (!getUserMedia) {
+        console.error('getUserMedia not supported on your browser!');
+        //document.querySelector('.info-display').innerText = self.alert_message.notHtml5_error;
+        windows.alert( self.alert_message.notHtml5_error );
+        document.querySelector('.prompt_id').innerText = "";
+        return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
     }
 
-    this.autoGainSupported = navigator.mediaDevices.getSupportedConstraints().autoGainSupported;
+    // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
+    return new Promise(function(resolve, reject) {
+        getUserMedia.call(navigator, constraints, resolve, reject);
+    });
+}
+
+/**
+* asks the user for permission to use a media input which produces a 
+* MediaStream with tracks containing the requested types of media - i.e. audio track
+*
+* see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+*/
+Audio.prototype._setupGetUserMedia = function() {
+    var self = this;
     
     return new Promise(function (resolve, reject) {
-        /**
-        * asks the user for permission to use a media input which produces a 
-        * MediaStream with tracks containing the requested types of media - i.e. audio track
-        *
-        * see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-        */
+
         navigator.mediaDevices.getUserMedia(self.constraints)
         .then( self._setupAudioNodes.bind(self) )
         .then(function(stream) {
@@ -126,6 +138,7 @@ Audio.prototype.init = function () {
 
     }); // promise
 }
+    
 
 /**
 * set up audio nodes that are connected together in a graph so that the 
@@ -180,17 +193,26 @@ Audio.prototype._setDebugValues = function (track) {
       let s = track.getSettings();
 
       this.debugValues = {
-        'browser_supports_echoCancellation' : (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation,
-        'browser_supports_noiseSuppression' : (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression,
-        'browser_supports_autoGain' : (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported,
+        'browser_supports_echoCancellation' :
+            (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation,
+        'browser_supports_noiseSuppression' :
+            (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression,
+        'browser_supports_autoGain' :
+            (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported,
 
-        'autoGainControl' : (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl,
-        'echoCancellation' : (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation,
-        'noiseSuppression' : (typeof s.noiseSuppression == 'undefined') ? 'undefined' : s.noiseSuppression,
+        'autoGainControl' :
+            (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl,
+        'echoCancellation' :
+            (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation,
+        'noiseSuppression' :
+            (typeof s.noiseSuppression == 'undefined') ? 'undefined' : s.noiseSuppression,
 
-        'channelCount' : (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount,
-        'latency' : (typeof s.latency == 'undefined') ? 'undefined' : s.latency,
-        'volume' : (typeof s.volume == 'undefined') ? 'undefined' : s.volume,
+        'channelCount' :
+            (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount,
+        'latency' :
+            (typeof s.latency == 'undefined') ? 'undefined' : s.latency,
+        'volume' :
+            (typeof s.volume == 'undefined') ? 'undefined' : s.volume,
 
         'vad_maxsilence' :  this.parms.vad.maxsilence,
         'vad_minvoice' : this.parms.vad.minvoice,
