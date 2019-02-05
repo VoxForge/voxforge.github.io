@@ -127,6 +127,8 @@ Prompts.prototype._checkForUndefinedAttributesIfNoPromptId = function (
 
 }
 
+// #############################################################################
+
 Prompts.prototype._initializePrompts = async function () {
     var self = this;
     
@@ -157,116 +159,6 @@ Prompts.prototype._isBrowserStorageEmpty = function () {
 }
 
 /**
-  1. use localstorage prompts to start with,
-  2. then asynchronously try to download updated prompt file...
-
-  this prevents hang of app when user records offline (when using a 
-  promise chain) or timing issues with no promise chain when app starts
-  up offline and prompts file 'get' is hanging...
-
- * doing prompt stack update at beginning means that the prompt stack 
- * is always one behind the call to VoxForge server... 
- * why? for reponsiveness when user is recording offline.  
- * If were to try to access server while offline,
- * there would be a delay with user being able to 
- * start recording - $.get hangs trying to access server while
- * offlien, so give the user a stack of prompts (using current
- * prompt list file), then try to access server to update current
- * prompt file stored in browser.
- * if no internet access, then user using stored prompt file, 
- * if there is Internet access, then user will get updated 
- * random prompts on subsequent submission.
- */
-Prompts.prototype._getPromptsFileFromBrowserStorage = async function () {  
-    var jsonObject = await this._getSavedPromptList();
-    this._extractPromptStackFromObj(jsonObject);
-    this._updateOfPromptsFileFromServer();
-}
-
-Prompts.prototype._getSavedPromptList = function() {
-    var promise =
-        this.promptCache.getItem( this._getLocalPromptFilename() )
-        .then(function(jsonOnject) {
-            return(jsonOnject);
-        })
-
-    return promise;
-}
-
-/*
-* get saved promptList file (from browser storage) and update
-* prompt stack, so user can immediately start recording prompts.
-* 
-* doing prompt stack update here means that the prompt stack 
-* is always one behind the call to VoxForge server...
-* (see _getPromptsFileFromBrowserStorage comments)
-*/
-Prompts.prototype._extractPromptStackFromObj = function(jsonObject) {        
-    this.prompt_stack = this._initPromptStack(jsonObject.list);
-}
-
-/**
-* initialize prompt stack with number of prompts chosen by user
-*
-* User's set of prompts to be read in contained in a stack, that way
-* if a user wants to re-read a prompt, they delete it, and it gets
-* placed in the stack and re-displayed to the user to record again.
-*
-* reading prompt list using the self.index and modulus to wrap
-* around the prompt list array.
-*
-* Note: using unshift (rather than push) to keep prompt elements in order
-*/
-Prompts.prototype._initPromptStack = function(list) 
-{
-    var prompt_stack = [];
-    var i = Math.floor((Math.random() * list.length));
-
-    function nextPrompt() {
-        i = i % (list.length -1);
-        return list[i++];
-    }
-
-    function addPromptToFrontOfStack() {
-        prompt_stack.unshift(nextPrompt());
-    }
-
-    var n = this.max_num_prompts;
-    while (n--) addPromptToFrontOfStack();
-
-    return prompt_stack;
-}
-
-Prompts.prototype._updateOfPromptsFileFromServer = async function () {
-    var self = this;
-
-    try {
-        var prompt_data = await this._getPromptsFileFromServer();
-        self._savePromptData2BrowserStorage(prompt_data);
-    } catch(err) {
-        self._getPromptFileFromServerFailed(err, self.prompt_file_name);    
-    }
-}
-
-Prompts.prototype._savePromptData2BrowserStorage = function(prompt_data) {
-    this.list = this._convertPromptDataToArray(prompt_data);
-    this._save2BrowserStorage();
-    console.log("updating saved prompts file with new one from VoxForge server");
-}
-
-Prompts.prototype._getPromptFileFromServerFailed = function(
-    err,
-    prompt_file_name)
-{
-    var m = "cannot get updated prompts file from VoxForge server: " + 
-        prompt_file_name + 
-        "; device offline or has bad Internet connection, " + 
-        "using browser storage prompts file\n " +
-        "err = " + err;
-    console.warn(m);
-}
-
-/**
 No good way to detect if online or offline. Therefore, first try to 
 get a random prompts file from server (i.e. might not be 
 prompt_file_index == 0).  If fail, then fall back and use
@@ -294,6 +186,15 @@ Prompts.prototype._getPromptsFileFromServerOrServiceWorkerCache =
 
 Prompts.prototype._getPromptsFileFromServer = function() {
     return $.get(this.prompt_file_name);
+}
+
+Prompts.prototype._copyPromptData2Stack = function(prompt_data)
+{
+    this.list = this._convertPromptDataToArray(prompt_data);
+    this._confirmPromptListLength();
+    this._save2BrowserStorage();
+      
+    this.prompt_stack = this._initPromptStack(this.list);
 }
 
 /*
@@ -336,13 +237,125 @@ Prompts.prototype._logNoServiceWorkerCache = function() {
     return m; 
 }
 
-Prompts.prototype._copyPromptData2Stack = function(prompt_data)
-{
+/**
+  1. use localstorage prompts to start with,
+  2. then asynchronously try to download updated prompt file...
+
+  this prevents hang of app when user records offline (when using a 
+  promise chain) or timing issues with no promise chain when app starts
+  up offline and prompts file 'get' is hanging...
+
+ * doing prompt stack update at beginning means that the prompt stack 
+ * is always one behind the call to VoxForge server... 
+ * why? for reponsiveness when user is recording offline.  
+ * If were to try to access server while offline,
+ * there would be a delay with user being able to 
+ * start recording - $.get hangs trying to access server while
+ * offlien, so give the user a stack of prompts (using current
+ * prompt list file), then try to access server to update current
+ * prompt file stored in browser.
+ * if no internet access, then user using stored prompt file, 
+ * if there is Internet access, then user will get updated 
+ * random prompts on subsequent submission.
+ */
+Prompts.prototype._getPromptsFileFromBrowserStorage = function () {
+    this._getPromptsThatUserCanUseNow();
+    this._asyncupdateOfPromptsFileFromServer();
+}
+
+Prompts.prototype._getPromptsThatUserCanUseNow = async function() {
+    var jsonObject = await this._getSavedPromptList();
+    this._extractPromptStackFromObj(jsonObject);
+}
+
+Prompts.prototype._getSavedPromptList = function() {
+    var promise =
+        this.promptCache.getItem( this._getLocalizedPromptFilename() )
+        .then(function(jsonOnject) {
+            return(jsonOnject);
+        })
+        .catch(function(err) {
+            console.err("cannot get saved PromptList file from browser: " +
+            err);
+        });  
+
+    return promise;
+}
+
+/*
+* get saved promptList file (from browser storage) and update
+* prompt stack, so user can immediately start recording prompts.
+* 
+* doing prompt stack update here means that the prompt stack 
+* is always one behind the call to VoxForge server...
+* (see _getPromptsFileFromBrowserStorage comments)
+*/
+Prompts.prototype._extractPromptStackFromObj = function(jsonObject) {        
+    this.prompt_stack = this._initPromptStack(jsonObject.list);
+}
+
+/*
+ *check if can get random prompt file from server
+ */
+Prompts.prototype._updateOfPromptsFileFromServer = async function () {
+    var self = this;
+
+    try {
+        var prompt_data = await this._getPromptsFileFromServer();
+        self._savePromptData2BrowserStorage(prompt_data);
+    } catch(err) {
+        self._logGetPromptFileFromServerFailed(err, self.prompt_file_name);    
+    }
+}
+
+Prompts.prototype._savePromptData2BrowserStorage = function(prompt_data) {
     this.list = this._convertPromptDataToArray(prompt_data);
-    this._confirmPromptListLength();
     this._save2BrowserStorage();
-      
-    this.prompt_stack = this._initPromptStack(this.list);
+    console.log("updating saved prompts file with new one from VoxForge server");
+}
+
+Prompts.prototype._logGetPromptFileFromServerFailed = function(
+    err,
+    prompt_file_name)
+{
+    var m = "cannot get updated prompts file from VoxForge server: " + 
+        prompt_file_name + 
+        "; device offline or has bad Internet connection, " + 
+        "using browser storage prompts file\n " +
+        "err = " + err;
+    console.warn(m);
+}
+
+/**
+* initialize prompt stack with number of prompts chosen by user
+*
+* User's set of prompts to be read in contained in a stack, that way
+* if a user wants to re-read a prompt, they delete it, and it gets
+* placed in the stack and re-displayed to the user to record again.
+*
+* reading prompt list using the self.index and modulus to wrap
+* around the prompt list array.
+*
+* Note: using unshift (rather than push) to keep prompt elements in order
+*/
+Prompts.prototype._initPromptStack = function(list) 
+{
+    var prompt_stack = [];
+    var i = Math.floor((Math.random() * list.length));
+
+    function nextPrompt() {
+        i = i % (list.length -1);
+        return list[i++];
+    }
+
+    function addPromptToFrontOfStack() {
+        prompt_stack.unshift(nextPrompt());
+    }
+
+    var n = this.max_num_prompts;
+    while (n--) addPromptToFrontOfStack();
+
+    return prompt_stack;
 }
 
 Prompts.prototype._logPromptFileInformation = function() {
