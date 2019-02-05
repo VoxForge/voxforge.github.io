@@ -20,9 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Class declaration
 */
-function Profile (appversion, 
-                  pageVariables) 
-{
+function Profile (appversion, pageVariables) {
     this.appversion = appversion;
 
     this.suffix = Profile.makeRandString (3, "abcdefghijklmnopqrstuvwxyz");
@@ -185,82 +183,13 @@ Profile.prototype.toTextArray = function () {
     var profile_hash = this._getProfileAttributesFromViewClass();                                                
 
     var profile_array = [];
-    this.i=0; var i = 0;
+    this.i=0;
     this._setUserInformation(profile_hash, profile_array);
     this._setLanguageInfo(profile_hash, profile_array);
-
-    profile_array[i++] = '\nRecording Information: \n\n';
-    if (profile_hash["microphone"] !== this.localized_other) {
-      profile_array[i++] = 'Microphone Type: ' + profile_hash["microphone"] + '\n';
-    } else {
-      profile_array[i++] = 'Microphone Type: Other - ' + profile_hash["microphone_other"]  + '\n';
-    }
-
-    if ( profile_hash["recording_location"] !== this.localized_other) {
-      profile_array[i++] = 'Recording Location: ' +  profile_hash["recording_location"] + '\n';
-    } else {
-      profile_array[i++] = 'Recording Location: Other - ' + profile_hash["recording_location_other"] + '\n';
-    }
-
-    profile_array[i++] = 'Background Noise: ' + profile_hash["background_noise"] + '\n';
-    if (profile_hash["background_noise"] === this.localized_yes) {
-      profile_array[i++] = 'Noise Volume: ' + profile_hash["noise_volume"] + '\n';
-      if (profile_hash["noise_type"] !== this.localized_other) {
-        profile_array[i++] = 'Noise Type: ' + profile_hash["noise_type"]  + '\n';
-      } else {
-        profile_array[i++] = 'Noise Type: Other - ' + profile_hash["noise_type_other"] + '\n';
-      }
-    }
-
-    profile_array[i++] = 'Audio Recording Software: VoxForge Javascript speech submission application\n';
-
-    profile_array[i++] = 'O/S: ' +  platform.os.toString() + '\n';
-    profile_array[i++] = 'Browser: ' +  platform.name + ' ' + platform.version + '\n';
-    if (platform.product) { // smartphone product name
-      profile_array[i++] = 'Product: ' + platform.product + '\n';
-    }
-    if (platform.manufacturer) { // smartphone manufacturer
-      profile_array[i++] = 'Manufacturer: ' + platform.manufacturer + '\n';
-    }
-
-    profile_array[i++] = '\nLicense: ' + profile_hash["license"]  + '\n';
-
-    profile_array[i++] = '\nFile Info: \n\n';
-    profile_array[i++] = 'File type: wav\n';
-    profile_array[i++] = 'Sample Rate: ' + this.sample_rate + '\n';
-    profile_array[i++] = 'Sample Rate Format (bit depth): ' + this.bit_depth + '\n';
-    profile_array[i++] = 'Number of channels: ' + this.channels + '\n';
+    this._setRecordingInformation(profile_hash, profile_array);
 
     return profile_array;
 };
-
-Profile.prototype._setLanguageInfo = function (profile_hash, profile_array) {
-    var i = this.i;
-    
-    profile_array[i++] = 'Language: ' +  this.language + '\n';
-
-    profile_array[i++] = 'Native Speaker: ' + profile_hash["native_speaker"] + '\n';
-    if (profile_hash["native_speaker"] !== "No") {  // is a native speaker - default
-      if (profile_hash["dialect"] !== this.localized_other) {
-        profile_array[i++] = 'Pronunciation dialect: ' + profile_hash["dialect"] + '\n';
-        if ( profile_hash["sub_dialect"] ) {
-          profile_array[i++] = '  sub-dialect: ' + profile_hash["sub_dialect"] + '\n';
-        }
-      } else {
-        profile_array[i++] =  'Pronunciation dialect: Other - ' + profile_hash["dialect_other"] + '\n';
-      }
-    } else { // Not a native speaker
-      if ( profile_hash["first_language"] !== this.localized_other) 
-      {
-        var langId = profile_hash["first_language"];
-        profile_array[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
-      } else {
-        profile_array[i++] = '  first language: ' + profile_hash["first_language_other"];
-      }
-    }
-
-    this.i = i;
-}
 
 Profile.prototype._setUserInformation = function (profile_hash, profile_array) {
     var i = this.i;
@@ -278,6 +207,141 @@ Profile.prototype._setUserInformation = function (profile_hash, profile_array) {
     }
 
     this.i = i;    
+}
+
+Profile.prototype._setLanguageInfo = function (profile_hash, profile_array) {
+    var i = this.i;
+    
+    profile_array[i++] = 'Language: ' +  this.language + '\n';
+
+    profile_array[i++] = 'Native Speaker: ' + profile_hash["native_speaker"] + '\n';
+    if (profile_hash["native_speaker"] !== "No") {  // is a native speaker - default
+        this._nativeSpeaker(profile_hash, profile_array);
+    } else { 
+        this._nonNativeSpeaker(profile_hash, profile_array);        
+    }
+
+    this.i = i;
+}
+
+Profile.prototype._nativeSpeaker = function (profile_hash, profile_array) {
+    var i = this.i;
+
+    if (profile_hash["dialect"] !== this.localized_other) {
+        profile_array[i++] = 'Pronunciation dialect: ' + profile_hash["dialect"] + '\n';
+        if ( profile_hash["sub_dialect"] ) {
+          profile_array[i++] = '  sub-dialect: ' + profile_hash["sub_dialect"] + '\n';
+        }
+    } else {
+        profile_array[i++] =  'Pronunciation dialect: Other - ' + profile_hash["dialect_other"] + '\n';
+    }
+      
+    this.i = i;
+}
+
+Profile.prototype._nonNativeSpeaker = function (profile_hash, profile_array) {
+    var i = this.i;
+
+    if ( profile_hash["first_language"] !== this.localized_other) {
+        var langId = profile_hash["first_language"];
+        profile_array[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
+    } else {
+        profile_array[i++] = '  first language: ' + profile_hash["first_language_other"];
+    }
+
+    this.i = i;
+}
+
+Profile.prototype._setRecordingInformation = function (profile_hash, profile_array) {
+    var i = this.i;
+        
+    profile_array[i++] = '\nRecording Information: \n\n';
+
+    this._setMic(profile_hash, profile_array);
+    this._setLocation(profile_hash, profile_array);
+    this._setNoise(profile_hash, profile_array);
+    this._setBrowserInfo(profile_hash, profile_array);
+    this._setAudioInfo(profile_hash, profile_array);
+    this._setLicense(profile_hash, profile_array);
+    
+    this.i = i; 
+}
+
+Profile.prototype._setMic = function (profile_hash, profile_array) {
+    var i = this.i;
+        
+    if (profile_hash["microphone"] !== this.localized_other) {
+      profile_array[i++] = 'Microphone Type: ' + profile_hash["microphone"] + '\n';
+    } else {
+      profile_array[i++] = 'Microphone Type: Other - ' + profile_hash["microphone_other"]  + '\n';
+    }
+
+    this.i = i;    
+}
+
+Profile.prototype._setLocation = function (profile_hash, profile_array) {
+    var i = this.i;
+        
+    if ( profile_hash["recording_location"] !== this.localized_other) {
+      profile_array[i++] = 'Recording Location: ' +  profile_hash["recording_location"] + '\n';
+    } else {
+      profile_array[i++] = 'Recording Location: Other - ' + profile_hash["recording_location_other"] + '\n';
+    }
+
+    this.i = i;    
+}
+
+Profile.prototype._setNoise = function (profile_hash, profile_array) {
+    var i = this.i;
+        
+    profile_array[i++] = 'Background Noise: ' + profile_hash["background_noise"] + '\n';
+    if (profile_hash["background_noise"] === this.localized_yes) {
+      profile_array[i++] = 'Noise Volume: ' + profile_hash["noise_volume"] + '\n';
+      if (profile_hash["noise_type"] !== this.localized_other) {
+        profile_array[i++] = 'Noise Type: ' + profile_hash["noise_type"]  + '\n';
+      } else {
+        profile_array[i++] = 'Noise Type: Other - ' + profile_hash["noise_type_other"] + '\n';
+      }
+    }
+
+    this.i = i;    
+}
+
+Profile.prototype._setBrowserInfo = function (profile_hash, profile_array) {
+    var i = this.i;
+
+    profile_array[i++] = 'Audio Recording Software: VoxForge Javascript speech submission application\n';
+        
+    profile_array[i++] = 'O/S: ' +  platform.os.toString() + '\n';
+    profile_array[i++] = 'Browser: ' +  platform.name + ' ' + platform.version + '\n';
+    if (platform.product) { // smartphone product name
+      profile_array[i++] = 'Product: ' + platform.product + '\n';
+    }
+    if (platform.manufacturer) { // smartphone manufacturer
+      profile_array[i++] = 'Manufacturer: ' + platform.manufacturer + '\n';
+    }
+    
+    this.i = i;    
+}
+
+Profile.prototype._setAudioInfo = function (profile_hash, profile_array) {
+    var i = this.i;
+        
+    profile_array[i++] = '\nFile Info: \n\n';
+    profile_array[i++] = 'File type: wav\n';
+    profile_array[i++] = 'Sample Rate: ' + this.sample_rate + '\n';
+    profile_array[i++] = 'Sample Rate Format (bit depth): ' + this.bit_depth + '\n';
+    profile_array[i++] = 'Number of channels: ' + this.channels + '\n';
+
+    this.i = i;        
+}
+
+Profile.prototype._setLicense = function (profile_hash, profile_array) {
+    var i = this.i;
+    
+    profile_array[i++] = '\nLicense: ' + profile_hash["license"]  + '\n';        
+
+    this.i = i;        
 }
 
 /**
