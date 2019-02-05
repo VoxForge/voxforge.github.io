@@ -100,11 +100,11 @@ Profile.prototype.updateRandomStrings = function () {
 * with each call (which is what cookies do...)
 */
 Profile.prototype.getProfileFromBrowserStorage = function () {
-    var parsedLocalStorageObject = this._getParsedLocalStorageObject();
+    var object = this._getParsedLocalStorageObject();
 
-    if ( parsedLocalStorageObject ) {
-        this._extractFields(parsedLocalStorageObject);
-        return parsedLocalStorageObject;
+    if (object) {
+        this._extractFields(object);
+        return object;
     } else {
         return null;
     }
@@ -131,13 +131,16 @@ Profile.prototype._getParsedLocalStorageObject = function () {
     return retrievedObject && JSON.parse(retrievedObject);
 }
 
-/**
-* 
-*/
+// TODO View.getUserProfileInfo gets called twice to get same info
+// everytime a user uploads...
 Profile.prototype.toHash = function () {
-    // TODO View.getUserProfileInfo gets called twice to get same info
-    // everytime a user uploads...
-   
+    var profile_hash = this._getProfileAttributesFromViewClass();
+    this._addProfileSpecificAttributes(profile_hash);
+
+    return profile_hash;
+};
+
+Profile.prototype._getProfileAttributesFromViewClass = function () {
     var profile_hash = View.getUserProfileInfo(
         this.localized_yes,
         this.localized_other,
@@ -145,6 +148,10 @@ Profile.prototype.toHash = function () {
         this.default_value,
     );
 
+    return profile_hash
+}
+
+Profile.prototype._addProfileSpecificAttributes = function (profile_hash) {
     profile_hash["language"] = this.language;
 
     profile_hash["Audio Recording Software:"] = 'VoxForge Javascript speech submission application';
@@ -155,9 +162,7 @@ Profile.prototype.toHash = function () {
     profile_hash["sample_rate"] = this.sample_rate;
     profile_hash["bit_depth"] = this.bit_depth;
     profile_hash["channels"] = this.channels;
-
-    return profile_hash;
-};
+}
 
 /**
 * Convert profile object to JSON string, with line feeds after every key 
@@ -171,54 +176,18 @@ Profile.prototype.toJsonString = function () {
 
 /**
 * Read HTML Form Data to convert profile data to array
+*
+* TODO View.getUserProfileInfo gets called twice to get same info
+* everytime a user uploads... cache info somehow...
 */
 Profile.prototype.toTextArray = function () {
-    // TODO View.getUserProfileInfo gets called twice to get same info
-    // everytime a user uploads... cache info somehow...
     // TODO this method assumes that toHash was called before it... 
-    var profile_hash = View.getUserProfileInfo(
-        this.localized_yes,
-        this.localized_other,
-        this.localized_anonymous,      
-        this.default_value,
-    );
-                                                
+    var profile_hash = this._getProfileAttributesFromViewClass();                                                
+
     var profile_array = [];
-    var i=0;
-
-    profile_array[i++] = 'User Name: ' + profile_hash["username"] + '\n';
-
-    profile_array[i++] = '\nSpeaker Characteristics: \n\n';
-
-    profile_array[i++] = 'Gender: ' +  profile_hash["gender"] + '\n';
-
-    if (profile_hash["age_old_value"]) {
-      profile_array[i++] = 'Age Range: ' + profile_hash["age_old_value"] + '\n';
-    } else {
-      profile_array[i++] = 'Age Range: ' +  profile_hash["age"] + '\n';
-    }
-
-    profile_array[i++] = 'Language: ' +  this.language + '\n';
-
-    profile_array[i++] = 'Native Speaker: ' + profile_hash["native_speaker"] + '\n';
-    if (profile_hash["native_speaker"] !== "No") {  // is a native speaker - default
-      if (profile_hash["dialect"] !== this.localized_other) {
-        profile_array[i++] = 'Pronunciation dialect: ' + profile_hash["dialect"] + '\n';
-        if ( profile_hash["sub_dialect"] ) {
-          profile_array[i++] = '  sub-dialect: ' + profile_hash["sub_dialect"] + '\n';
-        }
-      } else {
-        profile_array[i++] =  'Pronunciation dialect: Other - ' + profile_hash["dialect_other"] + '\n';
-      }
-    } else { // Not a native speaker
-      if ( profile_hash["first_language"] !== this.localized_other) 
-      {
-        var langId = profile_hash["first_language"];
-        profile_array[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
-      } else {
-        profile_array[i++] = '  first language: ' + profile_hash["first_language_other"];
-      }
-    }
+    this.i=0; var i = 0;
+    this._setUserInformation(profile_hash, profile_array);
+    this._setLanguageInfo(profile_hash, profile_array);
 
     profile_array[i++] = '\nRecording Information: \n\n';
     if (profile_hash["microphone"] !== this.localized_other) {
@@ -265,6 +234,51 @@ Profile.prototype.toTextArray = function () {
     return profile_array;
 };
 
+Profile.prototype._setLanguageInfo = function (profile_hash, profile_array) {
+    var i = this.i;
+    
+    profile_array[i++] = 'Language: ' +  this.language + '\n';
+
+    profile_array[i++] = 'Native Speaker: ' + profile_hash["native_speaker"] + '\n';
+    if (profile_hash["native_speaker"] !== "No") {  // is a native speaker - default
+      if (profile_hash["dialect"] !== this.localized_other) {
+        profile_array[i++] = 'Pronunciation dialect: ' + profile_hash["dialect"] + '\n';
+        if ( profile_hash["sub_dialect"] ) {
+          profile_array[i++] = '  sub-dialect: ' + profile_hash["sub_dialect"] + '\n';
+        }
+      } else {
+        profile_array[i++] =  'Pronunciation dialect: Other - ' + profile_hash["dialect_other"] + '\n';
+      }
+    } else { // Not a native speaker
+      if ( profile_hash["first_language"] !== this.localized_other) 
+      {
+        var langId = profile_hash["first_language"];
+        profile_array[i++] = '  first language: ' + languages.getLanguageInfo(langId).name + '\n';
+      } else {
+        profile_array[i++] = '  first language: ' + profile_hash["first_language_other"];
+      }
+    }
+
+    this.i = i;
+}
+
+Profile.prototype._setUserInformation = function (profile_hash, profile_array) {
+    var i = this.i;
+        
+    profile_array[i++] = 'User Name: ' + profile_hash["username"] + '\n';
+
+    profile_array[i++] = '\nSpeaker Characteristics: \n\n';
+
+    profile_array[i++] = 'Gender: ' +  profile_hash["gender"] + '\n';
+
+    if (profile_hash["age_old_value"]) {
+      profile_array[i++] = 'Age Range: ' + profile_hash["age_old_value"] + '\n';
+    } else {
+      profile_array[i++] = 'Age Range: ' +  profile_hash["age"] + '\n';
+    }
+
+    this.i = i;    
+}
 
 /**
 * Convert profile object to Array
