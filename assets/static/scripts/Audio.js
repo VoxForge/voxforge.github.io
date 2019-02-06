@@ -263,46 +263,55 @@ Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked)
     if (audio_visualizer_checked) {
         self.gainNode.connect(self.analyser);
     }
-    this._determineTypeOfRecording();
+    this._determineTypeOfRecording(vad_run);
     this.processor.onaudioprocess = this._sendAudioToWorkerForRecording.bind(this);
 
+
+    return this._processResultsFromAudioWorker();
+}
+
+/**
+* reply from audio worker
+* creates new function every time record is pressed
+* why? needed a promise to resolve so could create promise chain in call to audio record
+*/
+Audio.prototype._processResultsFromAudioWorker = function () {
+    var self = this;
+    
     return new Promise(function (resolve, reject) {
-      /**
-      * reply from audio worker
-      * creates new function every time record is pressed
-      * why? needed a promise to resolve so could create promise chain in call to audio record
-      */
-      audioworker.onmessage = function(returnObj) { 
-          var obj = returnObj.data.obj;
-          switch (returnObj.data.status) {
-              /**
-              * after this process sends a request to the worker to 'finish' recording,
-              * worker sends back the recorded data as an audio blob
-              */
-              case 'finished':
-                obj.gain = self.gainNode.gain.value;
-                obj.app_auto_gain = self.parms.app_auto_gain;
+            
+        audioworker.onmessage = function(returnObj) { 
+            var obj = returnObj.data.obj;
+            switch (returnObj.data.status) {
+                  /**
+                  * after this process sends a request to the worker to 'finish' recording,
+                  * worker sends back the recorded data as an audio blob
+                  */
+                case 'finished':
+                    obj.gain = self.gainNode.gain.value;
+                    obj.app_auto_gain = self.parms.app_auto_gain;
 
-                // some phones have their own (hardware/software?) auto gain implemented.
-                // Where device has own auto gain, do not use adjustVolume() function
-                if (obj.app_auto_gain && ! this.autoGainSupported) {
-                    self._adjustVolume(obj); 
-                }
+                    // some phones have their own (hardware/software?) auto gain implemented.
+                    // Where device has own auto gain, do not use adjustVolume() function
+                    if (obj.app_auto_gain && ! this.autoGainSupported) {
+                        self._adjustVolume(obj); 
+                    }
 
-                resolve(obj);
-              break;
+                    resolve(obj);
+                break;
 
-              default:
-                let m = 'message from audio worker: audio error: ' + returnObj.status;
-                console.error(m);
-                reject(m);
-          }
-      };
-
+                default:
+                    let m = 'message from audio worker: audio error: ' + returnObj.status;
+                    console.error(m);
+                    reject(m);
+            }
+        };
+        
     }); // promise
 }
 
-Audio.prototype._determineTypeOfRecording = function () {
+// TODO replace with subclassing?
+Audio.prototype._determineTypeOfRecording = function (vad_run) {
     if (vad_run) {
         this._recordWithVAD();
     } else {
