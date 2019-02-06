@@ -89,21 +89,7 @@ Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
 
     switch (returnObj.status) {
       case 'AllUploaded':
-        var filesUploaded = returnObj.filesUploaded;
-        
-        self._saveSubmissionsToList(filesUploaded);
-        
-        var numberOfUploadedSubmissions = self.getNumberOfUploadedSubmissions() + filesUploaded.length;
-        localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
-
-
-        var submissionText = (filesUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
-        var m = filesUploaded.length + " " + 
-            submissionText + " " +
-            self.alert_message.uploaded_message  + "\n    " +
-            filesUploaded.join("\n    ");
-        self._processMessage(returnObj.workertype, m);
-
+        this._allUploaded(returnObj);
         break;
 
       case 'noneUploaded': // files saved to browser storage
@@ -114,7 +100,7 @@ Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
             filesNotUploaded.length + " " + 
             submissionText + ":\n    " + 
             filesNotUploaded.join("\n    ");
-        self._processMessage(returnObj.workertype, m);         
+        self._displayMessageToUser(returnObj.workertype, m);         
         break;
 
       // if there is an error with one submission (usually server side check - e.g.
@@ -146,7 +132,7 @@ Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
             m = m + "\n========================\n";
             m = m + "\n\nserver error message: " + returnObj.err;
         }
-        self._processMessage(returnObj.workertype, m);   
+        self._displayMessageToUser(returnObj.workertype, m);   
         break;
 
       default:
@@ -155,7 +141,26 @@ Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
   } // switch
 } // processWorkerEventMessage
 
-Uploader.prototype._processMessage = function (workertype, m) {
+Uploader.prototype._allUploaded = function (returnObj) {
+    var filesUploaded = returnObj.filesUploaded;
+    
+    this._saveSubmissionsToList(filesUploaded);
+    
+    var numberOfUploadedSubmissions = this.getNumberOfUploadedSubmissions() + filesUploaded.length;
+    localStorage.setItem(
+        'numberOfUploadedSubmissions',
+        numberOfUploadedSubmissions);
+
+    var submissionText = (filesUploaded.length > 1 ? this.alert_message.submission_plural : this.alert_message.submission_singular);
+    var m = filesUploaded.length + " " + 
+        submissionText + " " +
+        this.alert_message.uploaded_message  + "\n    " +
+        filesUploaded.join("\n    ");
+        
+    this._displayMessageToUser(returnObj.workertype, m);
+}
+
+Uploader.prototype._displayMessageToUser = function (workertype, m) {
     console.info(workertype + ": " + m);
     Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
     .then(function() {
@@ -165,17 +170,17 @@ Uploader.prototype._processMessage = function (workertype, m) {
 }
 
 Uploader.prototype._validateAndLogWorkerType = function (returnObj) {
-    var workertype;
+    var m;
     
     if (returnObj.workertype == "serviceworker") {
-        workertype = this.alert_message.serviceworker;
+        m = this.alert_message.serviceworker;
     } else if (returnObj.workertype == "webworker") {
-        workertype = this.alert_message.webworker;
+        m = this.alert_message.webworker;
     } else {
-        workertype = this.alert_message.workernotfound;
+        m = this.alert_message.workernotfound;
     }
     
-    console.log(workertype + ": " + returnObj.status);
+    console.log(m + ": " + returnObj.status);
 }
 
 Uploader.prototype._saveSubmissionsToList = function (filesUploaded) {
