@@ -254,30 +254,16 @@ Audio.prototype.getDebugValues = function () {
 }
 
 /**
-* connect nodes; tell worker to start recording audio 
+* tell worker to start recording audio 
 */
 Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked) {
-    var self = this; // save context when calling inner functions
+    var self = this;
 
     if ( ! vad_run ) {
        console.log('VAD disabled');
     }
 
-    var bitDepth = self.parms.bitDepth;
-    if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
-      console.warn("invalid bit depth: " + data.bitDepth + "; setting to 16 bit");
-      bitDepth = 16;
-    }
-      
-    // clears out audio buffer 
-    audioworker.postMessage({
-      command: 'start',
-      prompt_id: prompt_id,
-      vad_parms: self.parms.vad,
-      ssd_parms : self.parms.ssd,
-      sampleRate: self.audioCtx.sampleRate,
-      bitDepth: bitDepth,
-    });
+    this._clearAudioBuffer(prompt_id);
 
     if (audio_visualizer_checked) {
         self.gainNode.connect(self.analyser);
@@ -385,6 +371,24 @@ Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked)
       };
 
     }); // promise
+}
+
+// clears out audio buffer 
+Audio.prototype._clearAudioBuffer = function (prompt_id) {
+    var bitDepth = this.parms.bitDepth;
+    if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
+      console.warn("invalid bit depth: " + data.bitDepth + "; setting to 16 bit");
+      bitDepth = 16;
+    }
+        
+    audioworker.postMessage({
+        command: 'start',
+        prompt_id: prompt_id,
+        vad_parms: this.parms.vad,
+        ssd_parms : this.parms.ssd,
+        sampleRate: this.audioCtx.sampleRate,
+        bitDepth: bitDepth,
+    });
 }
 
 /**
