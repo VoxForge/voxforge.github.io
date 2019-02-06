@@ -89,18 +89,11 @@ Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
 
     switch (returnObj.status) {
       case 'AllUploaded':
-        this._allUploaded(returnObj);
+        this._allFileUploadedToServer(returnObj);
         break;
 
       case 'noneUploaded': // files saved to browser storage
-        var filesNotUploaded =  returnObj.filesNotUploaded;
-        var submissionText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
-        var m = self.alert_message.localstorage_message + "\n" +
-            self.alert_message.browsercontains_message.trim() + " " + // remove newline
-            filesNotUploaded.length + " " + 
-            submissionText + ":\n    " + 
-            filesNotUploaded.join("\n    ");
-        self._displayMessageToUser(returnObj.workertype, m);         
+        this._allFilesSavedToBrowserStorage(returnObj);     
         break;
 
       // if there is an error with one submission (usually server side check - e.g.
@@ -141,7 +134,19 @@ Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
   } // switch
 } // processWorkerEventMessage
 
-Uploader.prototype._allUploaded = function (returnObj) {
+Uploader.prototype._allFilesSavedToBrowserStorage = function (returnObj) {
+    var filesNotUploaded =  returnObj.filesNotUploaded;
+    var submissionText = (filesNotUploaded.length > 1 ? this.alert_message.submission_plural : this.alert_message.submission_singular);
+    var m = this.alert_message.localstorage_message + "\n" +
+        this.alert_message.browsercontains_message.trim() + " " + // remove newline
+        filesNotUploaded.length + " " + 
+        submissionText + ":\n    " + 
+        filesNotUploaded.join("\n    ");
+        
+    this._displayMessageToUser(returnObj.workertype, m);    
+}
+
+Uploader.prototype._allFileUploadedToServer = function (returnObj) {
     var filesUploaded = returnObj.filesUploaded;
     
     this._saveSubmissionsToList(filesUploaded);
