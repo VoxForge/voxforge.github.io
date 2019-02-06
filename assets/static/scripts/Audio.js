@@ -143,8 +143,6 @@ Audio.prototype._setupAudioNodes = function(stream) {
     return(stream);
 }
 
-// Create a ScriptProcessorNode with a bufferSize of audioNodebufferSize
-// and a single input and output channel
 Audio.prototype._createAudioNodes = function(stream) {
     this.microphone = this.audioCtx.createMediaStreamSource(stream);
     this.gainNode = this.audioCtx.createGain();
@@ -343,28 +341,34 @@ Audio.prototype._sendAudioToWorkerForRecording = function (event) {
         // event.inputBuffer.getChannelData(0) is a floatArray_time_domain
         this.debugValues.device_event_buffer_size = event.inputBuffer.getChannelData(0).length;
     }      
-
 }
 
 Audio.prototype._clearAudioBuffer = function (prompt_id) {
-    var bitDepth = this.parms.bitDepth;
-    if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
-      console.warn("invalid bit depth: " + data.bitDepth + "; setting to 16 bit");
-      bitDepth = 16;
-    }
-        
     audioworker.postMessage({
         command: 'start',
         prompt_id: prompt_id,
         vad_parms: this.parms.vad,
         ssd_parms : this.parms.ssd,
         sampleRate: this.audioCtx.sampleRate,
-        bitDepth: bitDepth,
+        bitDepth: this._getBitDepth(),
     });
 }
 
+Audio.prototype._getBitDepth = function () {
+    var bitDepth = this.parms.bitDepth;
+    
+    if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
+    console.warn("invalid bit depth: " +
+        data.bitDepth +
+        "; setting to 16 bit");
+    bitDepth = 16;
+    }
+
+    return bitDepth;
+}
+
 /**
-* app auto gain - changes gain for *next* recording
+* app auto gain - changes gain for *following* recording (not the current one)
 
     // TODO save gain level for future recordings
     // TODO update Prompts.json with gain level for each submission, 

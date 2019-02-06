@@ -622,11 +622,7 @@ Prompts.prototype._addPromptlineToDebugObject = function (obj, promptLine) {
 }
 
 Prompts.prototype.setAudioCharacteristics = function (obj) {
-  var self = this;
-
-  return new Promise(function (resolve, reject) {
-      
-    self.audio_characteristics[obj.prompt_id] = {
+    this.audio_characteristics[obj.prompt_id] = {
         no_trailing_silence : obj.no_trailing_silence,
         no_speech : obj.no_speech,
         clipping : obj.clipping,
@@ -634,9 +630,6 @@ Prompts.prototype.setAudioCharacteristics = function (obj) {
         gain : obj.gain,
         vad_run : obj.vad_run,
     };
-    resolve(obj);
-    
-  });
 }
 
 /**
