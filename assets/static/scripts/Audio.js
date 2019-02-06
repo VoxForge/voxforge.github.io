@@ -78,9 +78,6 @@ Audio.prototype.init = function () {
             this._polyfillPartiallyImplementedGetUserMediaOnOldBrowsers;
     }
     
-    this.autoGainSupported =
-        navigator.mediaDevices.getSupportedConstraints().autoGainSupported;
-
     return this._setupGetUserMedia();
 }
 
@@ -123,21 +120,18 @@ Audio.prototype._setupGetUserMedia = function() {
 
         navigator.mediaDevices.getUserMedia(self.constraints)
         .then( self._setupAudioNodes.bind(self) )
-        .then(function(stream) {
-          self.stream = stream;
-          self.setProfileAudioProperties(stream.getAudioTracks()[0]);
-
-          resolve("OK");
+        .then( self._setProfileAudioProperties.bind(self) )
+        .then(function() {
+            resolve("OK");
         })
         .catch(function(err) {
-          window.alert( self.alert_message.getUserMedia_error + " " + err);
-          console.error(self.alert_message.getUserMedia_error + " " + err);
-          reject("Not ok");
+            window.alert( self.alert_message.getUserMedia_error + " " + err);
+            console.error(self.alert_message.getUserMedia_error + " " + err);
+            reject("Not ok");
         });
 
     }); // promise
 }
-    
 
 /**
 * set up audio nodes that are connected together in a graph so that the 
@@ -185,8 +179,14 @@ Audio.prototype._connectAudioNodes = function(stream) {
     this.gainNode.connect(this.analyser);    
 }
 
-Audio.prototype.setProfileAudioProperties = function (track) {
+Audio.prototype._setProfileAudioProperties = function (stream) {
+    this.stream = stream;
+    
+    this.autoGainSupported =
+        navigator.mediaDevices.getSupportedConstraints().autoGainSupported;
+
     this._setAudioPropertiesAndContraints();
+    var track = stream.getAudioTracks()[0];
     this._setDebugValues(track);
 
     console.log('audioCtx.sampleRate: ' + this.audioCtx.sampleRate);
@@ -201,38 +201,54 @@ Audio.prototype._setAudioPropertiesAndContraints = function () {
 }
 
 Audio.prototype._setDebugValues = function (track) {
-      var c = navigator.mediaDevices.getSupportedConstraints();
-      let s = track.getSettings();
+    var c = navigator.mediaDevices.getSupportedConstraints();
+    var s = track.getSettings();
+    this.debugValues = {};
+    
+    this._browserSupportedProperties(c,s);
+    this._propertiesActuallyTurnedOn(c,s);
+    this._audioProperties(c,s);
+    this._appRecordingProperties(c,s);     
+}
 
-      this.debugValues = {
-        'browser_supports_echoCancellation' :
-            (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation,
-        'browser_supports_noiseSuppression' :
-            (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression,
-        'browser_supports_autoGain' :
-            (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported,
+Audio.prototype._browserSupportedProperties = function (c,s) {
+    var d = this.debugValues;
+    d.browser_supports_echoCancellation =
+        (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation;
+    d.browser_supports_noiseSuppression =
+        (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression;
+    d.browser_supports_autoGain =
+        (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported;
+}
 
-        'autoGainControl' :
-            (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl,
-        'echoCancellation' :
-            (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation,
-        'noiseSuppression' :
-            (typeof s.noiseSuppression == 'undefined') ? 'undefined' : s.noiseSuppression,
+Audio.prototype._propertiesActuallyTurnedOn = function (c,s) {
+    var d = this.debugValues;    
+    d.echoCancellation =
+        (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation;
+    d.noiseSuppression =
+        (typeof s.noiseSuppression == 'undefined') ? 'undefined' : s.noiseSuppression;              
+    d.autoGainControl =
+        (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl;
+}
 
-        'channelCount' :
-            (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount,
-        'latency' :
-            (typeof s.latency == 'undefined') ? 'undefined' : s.latency,
-        'volume' :
-            (typeof s.volume == 'undefined') ? 'undefined' : s.volume,
+Audio.prototype._audioProperties = function (c,s) {
+    var d = this.debugValues;    
+    d.channelCount =
+        (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount;
+    d.latency =
+        (typeof s.latency == 'undefined') ? 'undefined' : s.latency;
+    d.volume =
+        (typeof s.volume == 'undefined') ? 'undefined' : s.volume;
+}
 
-        'vad_maxsilence' :  this.parms.vad.maxsilence,
-        'vad_minvoice' : this.parms.vad.minvoice,
-        'vad_bufferSize' : this.parms.vad.buffersize,
-        'audioNode_bufferSize' : this.parms.audioNodebufferSize || 'undefined',
-        'device_event_buffer_size' : this.device_event_buffer_size || 'undefined',
-      };
-
+Audio.prototype._appRecordingProperties = function (c,s) {
+    var d = this.debugValues;
+    
+    d.vad_maxsilence = this.parms.vad.maxsilence;
+    d.vad_minvoice = this.parms.vad.minvoice;
+    d.vad_bufferSize = this.parms.vad.buffersize;
+    d.audioNode_bufferSize = this.parms.audioNodebufferSize || 'undefined';
+    d.device_event_buffer_size = this.device_event_buffer_size || 'undefined';
 }
 
 Audio.prototype.getAudioPropertiesAndContraints = function () {
