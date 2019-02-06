@@ -305,10 +305,6 @@ Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked)
 }
 
 Audio.prototype._determineTypeOfRecording = function () {
-    if ( ! vad_run ) {
-       console.log('VAD disabled');
-    }
-        
     if (vad_run) {
         this._recordWithVAD();
     } else {
@@ -325,11 +321,13 @@ Audio.prototype._recordWithVAD = function (event) {
 }
 
 Audio.prototype._recordNoVad = function (event) {
-       audioworker.postMessage({ 
-          command: 'kill_vad',
-       });
+    audioworker.postMessage({ 
+        command: 'kill_vad',
+    });
 
-       this.command = 'record';
+    this.command = 'record';
+
+    console.log('VAD disabled');             
 }
 
 Audio.prototype._sendAudioToWorkerForRecording = function (event) {
