@@ -115,22 +115,16 @@ Audio.prototype._polyfillPartiallyImplementedGetUserMediaOnOldBrowsers =
 */
 Audio.prototype._setupGetUserMedia = function() {
     var self = this;
-    
-    return new Promise(function (resolve, reject) {
 
-        navigator.mediaDevices.getUserMedia(self.constraints)
+    // getUserMedia returns a Promise that resolves to a MediaStream object.
+    return navigator.mediaDevices.getUserMedia(self.constraints)
         .then( self._setupAudioNodes.bind(self) )
         .then( self._setProfileAudioProperties.bind(self) )
-        .then(function() {
-            resolve("OK");
-        })
         .catch(function(err) {
             window.alert( self.alert_message.getUserMedia_error + " " + err);
             console.error(self.alert_message.getUserMedia_error + " " + err);
-            reject("Not ok");
         });
 
-    }); // promise
 }
 
 /**
