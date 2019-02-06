@@ -83,31 +83,6 @@ AudioWorker.prototype._record = function (data) {
     this.numSamples += data.event_buffer.length;
 }
 
-AudioWorker.prototype._finishVad = function () {
-    var speech_array, no_speech, no_trailing_silence, clipping, too_soft;
-    
-    [speech_array,
-    no_speech,
-    no_trailing_silence,
-    clipping,
-    too_soft] = this.vad.getSpeech(this.buffers);
-        
-    self.postMessage({
-      status: 'finished',
-      obj : { 
-        prompt_id: this.prompt_id,
-        blob: this._convertBufferToAudioBlob(speech_array),
-        no_trailing_silence: no_trailing_silence,
-        no_speech: no_speech,
-        clipping: clipping,
-        too_soft: too_soft,
-        vad_run: true,
-      }
-    });
-
-    this.buffers = [];
-}
-
 AudioWorker.prototype._finish = function () {
     self.postMessage({
         status: 'finished',
@@ -192,4 +167,29 @@ AudioWorker.prototype._performVadOnChunk = function(
         chunk_energy,
         buffers_index,
         chunk_index);
+}
+
+AudioWorker.prototype._finishVad = function () {
+    var speech_array, no_speech, no_trailing_silence, clipping, too_soft;
+    
+    [speech_array,
+    no_speech,
+    no_trailing_silence,
+    clipping,
+    too_soft] = this.vad.getSpeech(this.buffers);
+        
+    self.postMessage({
+      status: 'finished',
+      obj : { 
+        prompt_id: this.prompt_id,
+        blob: this._convertBufferToAudioBlob(speech_array),
+        no_trailing_silence: no_trailing_silence,
+        no_speech: no_speech,
+        clipping: clipping,
+        too_soft: too_soft,
+        vad_run: true,
+      }
+    });
+
+    this.buffers = [];
 }
