@@ -29,8 +29,6 @@ function Uploader(parms,
     this.maxMinutesSinceLastSubmission = parms.maxMinutesSinceLastSubmission;
     this.alert_message = alert_message;
 
-    // TODO keep track of names of uploaded submissions... and allow user to display
-
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
@@ -72,127 +70,134 @@ function Uploader(parms,
 Uploader.prototype.init = function () {
     var self = this;
 
-    /** 
-    * process messages from service worker or web worker
-    */
-    function saveSubmissionsToList(filesUploaded) {
-        for (let fileName of filesUploaded) {
-            var jsonOnject = {};
-            if (!Date.now) { // UTC timestamp in milliseconds;
-                Date.now = function() { return new Date().getTime(); }
-            }
-            jsonOnject['timestamp'] = Date.now();
-            
-            self.uploadedSubmissions.setItem(fileName, jsonOnject)
-            .catch(function(err) {
-              console.error('save of uploaded submission name to localforage browser storage failed!', err);
-            });
-        }
-    }
+    self.upload_worker.onmessage = self._processWorkerEventMessage.bind(self);
 
-    /** 
-    * process messages from service worker or web worker
-    */
-    function processWorkerEventMessage(event) {
-        var returnObj = event.data;
-        var workertype;
-        if (returnObj.workertype == "serviceworker") {
-          workertype = self.alert_message.serviceworker;
-        } else if (returnObj.workertype == "webworker") {
-          workertype = self.alert_message.webworker;
-        } else {
-          workertype = self.alert_message.workernotfound;
-        }
-        console.log(workertype + ": " + returnObj.status);
+    // Handler for messages coming from service worker
+    navigator.serviceWorker.addEventListener(
+        'message',
+        self._processWorkerEventMessage.bind(self));
+}
+
+/** 
+* process messages from service worker or web worker
+*/
+Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
+    var self = this;
+      
+    var returnObj = event.data;
+    this._validateAndLogWorkerType(returnObj);
+
+    switch (returnObj.status) {
+      case 'AllUploaded':
+        var filesUploaded = returnObj.filesUploaded;
         
-        function processMessage(m) {
-            console.info(workertype + ": " + m);
-            Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
-            .then(function() {
-              window.alert(m);
-            })
-            .catch((err) => { console.log(err) });            
+        self._saveSubmissionsToList(filesUploaded);
+        
+        var numberOfUploadedSubmissions = self.getNumberOfUploadedSubmissions() + filesUploaded.length;
+        localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
+
+
+        var submissionText = (filesUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
+        var m = filesUploaded.length + " " + 
+            submissionText + " " +
+            self.alert_message.uploaded_message  + "\n    " +
+            filesUploaded.join("\n    ");
+        self._processMessage(returnObj.workertype, m);
+
+        break;
+
+      case 'noneUploaded': // files saved to browser storage
+        var filesNotUploaded =  returnObj.filesNotUploaded;
+        var submissionText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
+        var m = self.alert_message.localstorage_message + "\n" +
+            self.alert_message.browsercontains_message.trim() + " " + // remove newline
+            filesNotUploaded.length + " " + 
+            submissionText + ":\n    " + 
+            filesNotUploaded.join("\n    ");
+        self._processMessage(returnObj.workertype, m);         
+        break;
+
+      // if there is an error with one submission (usually server side check - e.g.
+      // file too big for server settings), then other submissions will upload, but
+      // erroneous one will stay in browser storage.
+      // TODO need a way for user to save these their o/s filesystem and upload
+      // them to VoxForge server some other way.
+      case 'partialUpload':
+        var filesNotUploaded = returnObj.filesNotUploaded;
+        var filesUploaded = returnObj.filesUploaded;
+
+        var numberOfUploadedSubmissions = self.getNumberOfUploadedSubmissions() + filesUploaded.length;
+        localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
+
+        var savedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
+        var uploadedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
+
+        var m = "Partial Upload:\n\n" +
+              filesUploaded.length + " " + 
+              savedText + " " +
+              self.alert_message.uploaded_message + 
+              "    " + filesUploaded.join("\n    ") +
+              "\n========================\n" +
+              self.alert_message.browsercontains_message.trim() + " " + // removes newline
+              filesNotUploaded.length + " " + 
+              uploadedText + ":\n" + 
+              "    " + filesNotUploaded.join("\n    ");
+        if (returnObj.err) {
+            m = m + "\n========================\n";
+            m = m + "\n\nserver error message: " + returnObj.err;
         }
+        self._processMessage(returnObj.workertype, m);   
+        break;
 
-        switch (returnObj.status) {
-          case 'AllUploaded':
-            var filesUploaded = returnObj.filesUploaded;
-            
-            saveSubmissionsToList(filesUploaded);
-            
-            var numberOfUploadedSubmissions = self.getNumberOfUploadedSubmissions() + filesUploaded.length;
-            localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
+      default:
+        console.error('message from upload worker: transfer error: ' +
+                      returnObj.status + " " + returnObj.message);
+  } // switch
+} // processWorkerEventMessage
 
+Uploader.prototype._processMessage = function (workertype, m) {
+    console.info(workertype + ": " + m);
+    Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
+    .then(function() {
+        window.alert(m);
+    })
+    .catch((err) => { console.log(err) });            
+}
 
-            var submissionText = (filesUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
-            processMessage( filesUploaded.length + " " + 
-                            submissionText + " " +
-                            self.alert_message.uploaded_message  + "\n    " +
-                            filesUploaded.join("\n    ")
-            );
+Uploader.prototype._validateAndLogWorkerType = function (returnObj) {
+    var workertype;
+    
+    if (returnObj.workertype == "serviceworker") {
+        workertype = this.alert_message.serviceworker;
+    } else if (returnObj.workertype == "webworker") {
+        workertype = this.alert_message.webworker;
+    } else {
+        workertype = this.alert_message.workernotfound;
+    }
+    
+    console.log(workertype + ": " + returnObj.status);
+}
 
-            break;
+Uploader.prototype._saveSubmissionsToList = function (filesUploaded) {
+    filesUploaded.forEach(this._saveSubmissionNameToList.bind(this));
+}
 
-          case 'noneUploaded': // files saved to browser storage
-            var filesNotUploaded =  returnObj.filesNotUploaded;
-            var submissionText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
-            processMessage(  self.alert_message.localstorage_message + "\n" +
-                             self.alert_message.browsercontains_message.trim() + " " + // remove newline
-                             filesNotUploaded.length + " " + 
-                             submissionText + ":\n    " + 
-                             filesNotUploaded.join("\n    ")
-            );
-            break;
+Uploader.prototype._saveSubmissionNameToList = function(submissionName) {
+    var jsonOnject = {};
 
-          // if there is an error with one submission (usually server side check - e.g.
-          // file too big for server settings), then other submissions will upload, but
-          // erroneous one will stay in browser storage.
-          // TODO need a way for user to save these their o/s filesystem and upload
-          // them to VoxForge server some other way.
-          case 'partialUpload':
-            var filesNotUploaded = returnObj.filesNotUploaded;
-            var filesUploaded = returnObj.filesUploaded;
+    jsonOnject['timestamp'] = this._getDate();
+    
+    this.uploadedSubmissions.setItem(submissionName, jsonOnject)
+    .catch(function(err) {
+        console.error('save of uploaded submission name to localforage browser storage failed!', err);
+    });
+}
 
-            var numberOfUploadedSubmissions = self.getNumberOfUploadedSubmissions() + filesUploaded.length;
-            localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
-
-            var savedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
-            var uploadedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
-
-            var m = "Partial Upload:\n\n" +
-                  filesUploaded.length + " " + 
-                  savedText + " " +
-                  self.alert_message.uploaded_message + 
-                  "    " + filesUploaded.join("\n    ") +
-                  "\n========================\n" +
-                  self.alert_message.browsercontains_message.trim() + " " + // removes newline
-                  filesNotUploaded.length + " " + 
-                  uploadedText + ":\n" + 
-                  "    " + filesNotUploaded.join("\n    ");
-            if (returnObj.err) {
-                m = m + "\n========================\n";
-                m = m + "\n\nserver error message: " + returnObj.err;
-            }
-            processMessage(m);
-            break;
-
-          default:
-            console.error('message from upload worker: transfer error: ' +
-                          returnObj.status + " " + returnObj.message);
-      } // switch
-    } // processWorkerEventMessage
-
-    // #########################################################################
-
-    /** 
-    * Handler for messages coming from web worker
-    */
-    self.upload_worker.onmessage = processWorkerEventMessage;
-
-    /** 
-    * Handler for messages coming from service worker
-    */
-    navigator.serviceWorker.addEventListener('message', processWorkerEventMessage);
+Uploader.prototype._getDate = function () {
+    if (!Date.now) { // UTC timestamp in milliseconds;
+        Date.now = function() { return new Date().getTime(); }
+    }
+    return Date.now();
 }
 
 /**
