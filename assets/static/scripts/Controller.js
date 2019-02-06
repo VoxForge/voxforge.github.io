@@ -545,11 +545,11 @@ Controller.prototype._startRecordingPromiseChain = function () {
         });
 }
 
-Controller.prototype._dealWithRecordingDebugSettings = function (result) {
+Controller.prototype._dealWithRecordingDebugSettings = function (obj) {
     if ( view.debugChecked() ) {
-        this.prompts.setAudioCharacteristics.bind(self.prompts);
+        this.prompts.setAudioCharacteristics(obj);
     } else {
-        this.prompts.clearAudioCharacteristics.bind(self.prompts);
+        this.prompts.clearAudioCharacteristics(obj);
     }
 }
 
