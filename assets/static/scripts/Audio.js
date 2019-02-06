@@ -381,30 +381,56 @@ Audio.prototype._clearAudioBuffer = function (prompt_id) {
 
 */
 Audio.prototype._adjustVolume = function (obj) {
-    if (Math.abs(obj.gain) < self.gain_maxValue ) {
-        var newgain;
-        if (obj.clipping) {
-          // reduce volume
-          newgain = Math.max(self.gainNode.gain.value * 
-              self.parms.gain_decrement_factor, self.gain_minValue);
-          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-        } else if (obj.too_soft) {
-          // increase volume
-          newgain = Math.min(self.gainNode.gain.value * 
-              self.parms.gain_increment_factor, self.gain_maxValue);
-          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-        } else if (obj.no_speech) {
-          // increase max volume
-          newgain = Math.min(self.gainNode.gain.value * 
-              self.parms.gain_max_increment_factor, self.gain_maxValue);
-          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-        }
-
-        if (obj.clipping || obj.too_soft || obj.no_speech) {
-          console.log ("gain changed from: " + obj.gain + " to: " + newgain);
-          self.debugValues.gainNode_gain_value = newgain;
-        }
+    if (obj.clipping) {
+        this._reduceVolume("too loud (clipping)", obj.gain);
+    } else if (obj.too_soft && this._volumeLessThanMaxValue(obj.gain) ) {
+        this._increaseVolume("volume too low", obj.gain);
+    } else if (obj.no_speech && this._volumeLessThanMaxValue(obj.gain) ) {
+        this._increaseMaxVolume("no speech",obj.gain);
     }
+}
+
+Audio.prototype._volumeLessThanMaxValue = function (gain) {
+    return Math.abs(gain) < this.gain_maxValue;
+}
+
+Audio.prototype._increaseMaxVolume = function (m, oldgain) {
+    var newgain = Math.min(
+        this.gainNode.gain.value * this.parms.gain_max_increment_factor,
+        this.gain_maxValue);
+    this.gainNode.gain.setValueAtTime(
+        newgain,
+        this.audioCtx.currentTime + 1);
+
+    this._logVolumeChange(m, oldgain, newgain);
+}
+
+Audio.prototype._reduceVolume = function (m, oldgain) {
+    var newgain = Math.max(
+        this.gainNode.gain.value * this.parms.gain_decrement_factor,
+        this.gain_minValue);
+    this.gainNode.gain.setValueAtTime(
+        newgain,
+        this.audioCtx.currentTime + 1);
+
+    this._logVolumeChange(m, oldgain, newgain);        
+}
+
+Audio.prototype._increaseVolume = function (m, oldgain) {
+    var newgain = Math.min(
+        this.gainNode.gain.value * this.parms.gain_increment_factor,
+        this.gain_maxValue);
+    this.gainNode.gain.setValueAtTime(
+        newgain,
+        this.audioCtx.currentTime + 1);
+
+    this._logVolumeChange(m, oldgain, newgain);        
+}
+
+Audio.prototype._logVolumeChange = function (m, oldgain, newgain) {
+    console.log (m + "; volume changed from: " + oldgain + " to: " + newgain);
+    
+    this.debugValues.gainNode_gain_value = newgain;
 }
 
 /**
