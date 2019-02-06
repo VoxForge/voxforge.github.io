@@ -279,7 +279,6 @@ Audio.prototype._clearAndInitializeAudioBuffer = function (prompt_id) {
         command: 'start',
         prompt_id: prompt_id,
         vad_parms: this.parms.vad,
-        ssd_parms : this.parms.ssd,
         sampleRate: this.audioCtx.sampleRate,
         bitDepth: this._getBitDepth(),
     });
@@ -352,17 +351,17 @@ Audio.prototype._sendAudioToWorkerForRecording = function (event) {
 /**
 * reply from audio worker
 * creates new function every time record is pressed
-* why? needed a promise to resolve so could create promise chain in call to audio record
+* why? needed a promise to resolve so could create promise chain in call
+* to audio record
 *
 * after this process sends a request to the worker to 'finish' recording,
-* worker sends back the recorded data as an audio blob
-*/
+* worker sends back the recorded data as an audio blob in return object
 */
 Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
     var self = this;
-    
+
     return new Promise(function (resolve, reject) {
-            
+
       audioworker.onmessage = function(returnObj) { 
         var obj = returnObj.data.obj;
         switch (returnObj.data.status) {
@@ -372,12 +371,13 @@ Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
             break;
 
             default:
-                let m = 'message from audio worker: audio error: ' + returnObj.status;
+                let m = 'message from audio worker: audio error: ' +
+                    returnObj.status;
                 console.error(m);
                 reject(m);
         }
       };
-        
+
     }); // promise
 }
 
@@ -394,18 +394,13 @@ Audio.prototype._setGainAndAdjustVolumeIfNeeded = function (obj) {
 
 /**
 * app auto gain - changes gain for *following* recording (not the current one)
-
-    // TODO save gain level for future recordings
-    // TODO update Prompts.json with gain level for each submission, 
-    // since adjustments are made dynamically
-
-    // changing gain also increases noise in what were silence portions
-    // and this might mess up VAD
-
-    // tells user that audio is too loud or soft, adjusts
-    // gain (volume) up or down, then tells them to delete the 
-    // prompt and re-record at new gain level
-
+*
+* changing gain also increases noise in what were silence portions
+* and this might mess up VAD
+*
+* tells user that audio is too loud or soft, adjusts
+* gain (volume) up or down, then tells them to delete the 
+* prompt and re-record at new gain level
 */
 Audio.prototype._adjustVolume = function (obj) {
     if (obj.clipping) {
@@ -432,17 +427,6 @@ Audio.prototype._reduceVolume = function (m, oldgain) {
     this._logVolumeChange(m, oldgain, newgain);        
 }
 
-Audio.prototype._increaseMaxVolume = function (m, oldgain) {
-    var newgain = Math.min(
-        this.gainNode.gain.value * this.parms.gain_max_increment_factor,
-        this.gain_maxValue);
-    this.gainNode.gain.setValueAtTime(
-        newgain,
-        this.audioCtx.currentTime + 1);
-
-    this._logVolumeChange(m, oldgain, newgain);
-}
-
 Audio.prototype._increaseVolume = function (m, oldgain) {
     var newgain = Math.min(
         this.gainNode.gain.value * this.parms.gain_increment_factor,
@@ -452,6 +436,17 @@ Audio.prototype._increaseVolume = function (m, oldgain) {
         this.audioCtx.currentTime + 1);
 
     this._logVolumeChange(m, oldgain, newgain);        
+}
+
+Audio.prototype._increaseMaxVolume = function (m, oldgain) {
+    var newgain = Math.min(
+        this.gainNode.gain.value * this.parms.gain_max_increment_factor,
+        this.gain_maxValue);
+    this.gainNode.gain.setValueAtTime(
+        newgain,
+        this.audioCtx.currentTime + 1);
+
+    this._logVolumeChange(m, oldgain, newgain);
 }
 
 Audio.prototype._logVolumeChange = function (m, oldgain, newgain) {
