@@ -92,47 +92,52 @@ Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
         this._allFileUploadedToServer(returnObj);
         break;
 
-      case 'noneUploaded': // files saved to browser storage
+      case 'noneUploaded': 
         this._allFilesSavedToBrowserStorage(returnObj);     
         break;
 
-      // if there is an error with one submission (usually server side check - e.g.
-      // file too big for server settings), then other submissions will upload, but
-      // erroneous one will stay in browser storage.
-      // TODO need a way for user to save these their o/s filesystem and upload
-      // them to VoxForge server some other way.
       case 'partialUpload':
-        var filesNotUploaded = returnObj.filesNotUploaded;
-        var filesUploaded = returnObj.filesUploaded;
-
-        var numberOfUploadedSubmissions = self.getNumberOfUploadedSubmissions() + filesUploaded.length;
-        localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
-
-        var savedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
-        var uploadedText = (filesNotUploaded.length > 1 ? self.alert_message.submission_plural : self.alert_message.submission_singular);
-
-        var m = "Partial Upload:\n\n" +
-              filesUploaded.length + " " + 
-              savedText + " " +
-              self.alert_message.uploaded_message + 
-              "    " + filesUploaded.join("\n    ") +
-              "\n========================\n" +
-              self.alert_message.browsercontains_message.trim() + " " + // removes newline
-              filesNotUploaded.length + " " + 
-              uploadedText + ":\n" + 
-              "    " + filesNotUploaded.join("\n    ");
-        if (returnObj.err) {
-            m = m + "\n========================\n";
-            m = m + "\n\nserver error message: " + returnObj.err;
-        }
-        self._displayMessageToUser(returnObj.workertype, m);   
+         this._partialUpload(returnObj);     
         break;
 
       default:
         console.error('message from upload worker: transfer error: ' +
                       returnObj.status + " " + returnObj.message);
-  } // switch
-} // processWorkerEventMessage
+    } 
+}
+
+// if there is an error with one submission (usually server side check - e.g.
+// file too big for server settings), then other submissions will upload, but
+// erroneous one will stay in browser storage.
+// TODO need a way for user to save these their o/s filesystem and upload
+// them to VoxForge server some other way.
+Uploader.prototype._partialUpload = function (returnObj) {
+    var filesNotUploaded = returnObj.filesNotUploaded;
+    var filesUploaded = returnObj.filesUploaded;
+
+    var numberOfUploadedSubmissions = this.getNumberOfUploadedSubmissions() + filesUploaded.length;
+    localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
+
+    var savedText = (filesNotUploaded.length > 1 ? this.alert_message.submission_plural : this.alert_message.submission_singular);
+    var uploadedText = (filesNotUploaded.length > 1 ? this.alert_message.submission_plural : this.alert_message.submission_singular);
+
+    var m = "Partial Upload:\n\n" +
+          filesUploaded.length + " " + 
+          savedText + " " +
+          this.alert_message.uploaded_message + 
+          "    " + filesUploaded.join("\n    ") +
+          "\n========================\n" +
+          this.alert_message.browsercontains_message.trim() + " " + // removes newline
+          filesNotUploaded.length + " " + 
+          uploadedText + ":\n" + 
+          "    " + filesNotUploaded.join("\n    ");
+    if (returnObj.err) {
+        m = m + "\n========================\n";
+        m = m + "\n\nserver error message: " + returnObj.err;
+    }
+    
+    this._displayMessageToUser(returnObj.workertype, m);  
+}
 
 Uploader.prototype._allFilesSavedToBrowserStorage = function (returnObj) {
     var filesNotUploaded =  returnObj.filesNotUploaded;
