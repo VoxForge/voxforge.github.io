@@ -20,84 +20,89 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 importScripts('../scripts/wavAudioEncoder.js'); 
 importScripts('../scripts/Vad.js'); 
 
-var buffers = undefined;
-var vad = undefined;
-var vad_parms = undefined;
-var prompt_id = undefined;
-var ssd_parms = undefined;
-var starttime = 0;
+function AudioWorker(data) {
+    this.sampleRate = data.sampleRate;
+    this.bitDepth = data.bitDepth;
+    this.vad_parms = data.vad_parms;
+    this.prompt_id = data.prompt_id;
 
-var dataViews;
-var numSamples;
-var sampleRate;
-var bitDepth;
-var vad_parms;
+    this.buffers = [];    
+    this.dataViews = [];
+    this.numSamples = 0;
+}
+
+AudioWorker.prototype._initVad = function () {
+    this.vad = new Vad(
+        this.sampleRate,
+        this.vad_parms);
+}
+
+AudioWorker.prototype._killVad = function () {
+    this.vad = null;
+}
+
+var audioWorker;
 
 self.onmessage = function(event) {
   var data = event.data;
-
+    
   switch (data.command) {
     case 'start':
-      starttime = Date.now();
-      dataViews = [];
-      numSamples = 0;
-      sampleRate = data.sampleRate;
-      bitDepth = data.bitDepth;
-      vad_parms = data.vad_parms;
-      
-      prompt_id = data.prompt_id;
-      buffers = [];
-
-      ssd_parms = data.ssd_parms;
-
+      audioWorker = new AudioWorker(data);
       break;
 
     case 'init_vad':
-      vad = new Vad(sampleRate, vad_parms);
+      audioWorker._initVad();
       break;
 
     case 'kill_vad':
-      vad = null;
+      audioWorker._killVad();
       break;
 
     case 'record':
       // no encoding while collecting audio for low powered devices
-      buffers.push(data.event_buffer); // array of buffer arrays
-      numSamples += data.event_buffer.length;
+      audioWorker.buffers.push(data.event_buffer); // array of buffer arrays
+      audioWorker.numSamples += data.event_buffer.length;
       break;
 
     case 'finish':
       // batch encoding after recording is completed
-      if (bitDepth === 16) { // testing FF on Chrome    
-        while (buffers.length > 0) {
-          var view = float2int16(buffers.shift());
-          dataViews.push(view);
+      if (audioWorker.bitDepth === 16) { // testing FF on Chrome    
+        while (audioWorker.buffers.length > 0) {
+          var view = float2int16(audioWorker.buffers.shift());
+          audioWorker.dataViews.push(view);
         }
       } else { // 32-bit float - buffer unmodified
-          dataViews = buffers;
+         audioWorker.dataViews = audioWorker.buffers;
       }
-      var header = createWavHeader(numSamples, bitDepth, sampleRate);
-      dataViews.unshift(header);
-      var audio_blob = new Blob(dataViews, { type: 'audio/wav' });
+      var header = createWavHeader(
+        audioWorker.numSamples,
+        audioWorker.bitDepth,
+        audioWorker.sampleRate);
+      audioWorker.dataViews.unshift(header);
+      
+      var audio_blob = new Blob(
+            audioWorker.dataViews,
+            { type: 'audio/wav' });
       
       self.postMessage({
           status: 'finished',
           obj : { 
-            prompt_id: prompt_id,
+            prompt_id: audioWorker.prompt_id,
             blob: audio_blob,
             vad_run: false,
           }
       });
 
-      buffers = [];
+      audioWorker.buffers = [];
       break;
 
     // TODO VAD currently only works with 16-bit audio.
     // So no matter what device you are using, if using vad,
     // there will always be a conversion to 16-bit audio
     case 'record_vad':
-      buffers.push(data.event_buffer); // array of buffer arrays
-      numSamples += data.event_buffer.length;
+      audioWorker.buffers.push(data.event_buffer); // array of buffer arrays
+      audioWorker.numSamples += data.event_buffer.length;
 
       // VAD can only process 16-bit audio, with sampling rates of 8/16/32/48kHz
       // we are fudging a bit so can process 44.1kHz
@@ -105,19 +110,20 @@ self.onmessage = function(event) {
       // split buffer up into smaller chunks that VAD can digest
       let num_chunks = 4;
       let cutoff = Math.round(data.event_buffer.length / num_chunks);
-      let buffers_index = buffers.length - 1;
+      let buffers_index = audioWorker.buffers.length - 1;
       for (let i = 0; i < num_chunks; i++) {
         let chunk_index = i;
         let start = i * cutoff;
         let end = (i * cutoff) + cutoff;
         // slice extracts up to but not including end.
         let chunk = data.event_buffer.slice(start, end);
-
         var [buffer_chunk_int, chunk_energy] = floatTo16BitPCM(chunk);
-        vad.calculateSilenceBoundaries(buffer_chunk_int,
-                                       chunk_energy,
-                                       buffers_index,
-                                       chunk_index);
+
+        audioWorker.vad.calculateSilenceBoundaries(
+            buffer_chunk_int,
+            chunk_energy,
+            buffers_index,
+            chunk_index);
       }
       break;
 
@@ -132,25 +138,30 @@ self.onmessage = function(event) {
        no_speech,
        no_trailing_silence,
        clipping,
-       too_soft] = vad.getSpeech(buffers);
+       too_soft] = audioWorker.vad.getSpeech(audioWorker.buffers);
 
-      if (bitDepth === 16) { // testing FF on Chrome    
+      if (audioWorker.bitDepth === 16) { // testing FF on Chrome    
         while (speech_array.length > 0) {
           var view = float2int16(speech_array.shift());
-          dataViews.push(view);
+          audioWorker.dataViews.push(view);
         }
       } else { // 32-bit float - buffer unmodified
-          dataViews = speech_array;
+          audioWorker.dataViews = speech_array;
       }
 
-      var header = createWavHeader(numSamples, bitDepth, sampleRate);
-      dataViews.unshift(header);
-      var audio_blob = new Blob(dataViews, { type: 'audio/wav' });
+      var header = createWavHeader(
+        audioWorker.numSamples,
+        audioWorker.bitDepth,
+        audioWorker.sampleRate);
+      audioWorker.dataViews.unshift(header);
+      var audio_blob = new Blob(
+            audioWorker.dataViews,
+            { type: 'audio/wav' });
            
       self.postMessage({
           status: 'finished',
           obj : { 
-            prompt_id: prompt_id,
+            prompt_id: audioWorker.prompt_id,
             blob: audio_blob,
             no_trailing_silence: no_trailing_silence,
             no_speech: no_speech,
@@ -160,7 +171,7 @@ self.onmessage = function(event) {
           }
       });
 
-      buffers = [];
+      audioWorker.buffers = [];
 
       break;
   }
