@@ -64,7 +64,11 @@ function Audio (parms,
 Audio.prototype.init = function () {
     var self = this;
 
-    // #########################################################################
+    /**
+    * Older browsers might not implement mediaDevices at all, so we set an empty 
+    * object first
+    * see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+    */
     if (navigator.mediaDevices === undefined) {
         navigator.mediaDevices = {};
     }
@@ -80,11 +84,7 @@ Audio.prototype.init = function () {
     return this._setupGetUserMedia();
 }
 
-/**
-* Older browsers might not implement mediaDevices at all, so we set an empty 
-* object first
-* see: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-*/
+
 Audio.prototype._polyfillPartiallyImplementedGetUserMediaOnOldBrowsers =
     function(constraints)
 {
@@ -130,7 +130,6 @@ Audio.prototype._setupGetUserMedia = function() {
           resolve("OK");
         })
         .catch(function(err) {
-          // TODO should this be done in View class?
           window.alert( self.alert_message.getUserMedia_error + " " + err);
           console.error(self.alert_message.getUserMedia_error + " " + err);
           reject("Not ok");
@@ -149,28 +148,41 @@ Audio.prototype._setupGetUserMedia = function() {
 *
 */
 Audio.prototype._setupAudioNodes = function(stream) {
-    var self = this;
-        
-    self.microphone = self.audioCtx.createMediaStreamSource(stream);
-
-    self.gainNode = self.audioCtx.createGain();
-    // Create a ScriptProcessorNode with a bufferSize of audioNodebufferSize and a single input and output channel
-    self.processor = self.audioCtx.createScriptProcessor(self.parms.audioNodebufferSize, 1, 1);
-    self.analyser = self.audioCtx.createAnalyser();
-    self.mediaStreamOutput = self.audioCtx.destination;
-
-    self.microphone.channelCount = 1;
-    self.gainNode.channelCount = 1;
-    self.processor.channelCount = 1;
-    self.analyser.channelCount = 1;
-    self.mediaStreamOutput.channelCount = 1;
-
-    self.microphone.connect(self.gainNode);    
-    self.gainNode.connect(self.processor);
-    self.processor.connect(self.audioCtx.destination);
-    self.gainNode.connect(self.analyser);        
+    this._createAudioNodes(stream);
+    this._setAllAudioNodesToMono(stream);
+    this._connectAudioNodes(stream);   
 
     return(stream);
+}
+
+// Create a ScriptProcessorNode with a bufferSize of audioNodebufferSize
+// and a single input and output channel
+Audio.prototype._createAudioNodes = function(stream) {
+    this.microphone = this.audioCtx.createMediaStreamSource(stream);
+    this.gainNode = this.audioCtx.createGain();
+    var numInputChannels = 1;
+    var numOuputChannels = 1;    
+    this.processor = this.audioCtx.createScriptProcessor(
+        this.parms.audioNodebufferSize,
+        numInputChannels,
+        numOuputChannels);
+    this.analyser = this.audioCtx.createAnalyser();
+    this.mediaStreamOutput = this.audioCtx.destination;
+}
+
+Audio.prototype._setAllAudioNodesToMono = function(stream) {
+    this.microphone.channelCount = 1;
+    this.gainNode.channelCount = 1;
+    this.processor.channelCount = 1;
+    this.analyser.channelCount = 1;
+    this.mediaStreamOutput.channelCount = 1;
+}
+
+Audio.prototype._connectAudioNodes = function(stream) {
+    this.microphone.connect(this.gainNode);    
+    this.gainNode.connect(this.processor);
+    this.processor.connect(this.audioCtx.destination);
+    this.gainNode.connect(this.analyser);    
 }
 
 Audio.prototype.setProfileAudioProperties = function (track) {
