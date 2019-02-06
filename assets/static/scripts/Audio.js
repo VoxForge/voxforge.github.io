@@ -256,62 +256,56 @@ Audio.prototype.getDebugValues = function () {
 /**
 * tell worker to start recording audio 
 */
-Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked) {
+Audio.prototype.record = function (
+    prompt_id,
+    vad_run,
+    audio_visualizer_checked)
+{
     var self = this;
 
-    this._clearAudioBuffer(prompt_id);
+    this._clearAndInitializeAudioBuffer(prompt_id);
     if (audio_visualizer_checked) {
-        self.gainNode.connect(self.analyser);
+        this._enableVisualizer();
     }
-    this._determineTypeOfRecording(vad_run);
-    this.processor.onaudioprocess = this._sendAudioToWorkerForRecording.bind(this);
-
-
-    return this._processResultsFromAudioWorker();
-}
-
-/**
-* reply from audio worker
-* creates new function every time record is pressed
-* why? needed a promise to resolve so could create promise chain in call to audio record
-*/
-Audio.prototype._processResultsFromAudioWorker = function () {
-    var self = this;
+    this._setRecordingType(vad_run);
     
-    return new Promise(function (resolve, reject) {
-            
-        audioworker.onmessage = function(returnObj) { 
-            var obj = returnObj.data.obj;
-            switch (returnObj.data.status) {
-                  /**
-                  * after this process sends a request to the worker to 'finish' recording,
-                  * worker sends back the recorded data as an audio blob
-                  */
-                case 'finished':
-                    obj.gain = self.gainNode.gain.value;
-                    obj.app_auto_gain = self.parms.app_auto_gain;
-
-                    // some phones have their own (hardware/software?) auto gain implemented.
-                    // Where device has own auto gain, do not use adjustVolume() function
-                    if (obj.app_auto_gain && ! this.autoGainSupported) {
-                        self._adjustVolume(obj); 
-                    }
-
-                    resolve(obj);
-                break;
-
-                default:
-                    let m = 'message from audio worker: audio error: ' + returnObj.status;
-                    console.error(m);
-                    reject(m);
-            }
-        };
-        
-    }); // promise
+    this.processor.onaudioprocess =
+        this._sendAudioToWorkerForRecording.bind(this);
+    return this._processResultsFromAudioWorkerWhenAvailable();
 }
 
-// TODO replace with subclassing?
-Audio.prototype._determineTypeOfRecording = function (vad_run) {
+Audio.prototype._clearAndInitializeAudioBuffer = function (prompt_id) {
+    audioworker.postMessage({
+        command: 'start',
+        prompt_id: prompt_id,
+        vad_parms: this.parms.vad,
+        ssd_parms : this.parms.ssd,
+        sampleRate: this.audioCtx.sampleRate,
+        bitDepth: this._getBitDepth(),
+    });
+}
+
+Audio.prototype._getBitDepth = function () {
+    var bitDepth = this.parms.bitDepth;
+    
+    if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
+    console.warn("invalid bit depth: " +
+        data.bitDepth +
+        "; setting to 16 bit");
+    bitDepth = 16;
+    }
+
+    return bitDepth;
+}
+
+Audio.prototype._enableVisualizer = function () {
+    this.gainNode.connect(this.analyser);
+}
+
+/*
+ * is this a VAD recording or not
+ */
+Audio.prototype._setRecordingType = function (vad_run) {
     if (vad_run) {
         this._recordWithVAD();
     } else {
@@ -337,43 +331,65 @@ Audio.prototype._recordNoVad = function (event) {
     console.log('VAD disabled');             
 }
 
+/*
+ * event.inputBuffer.getChannelData(0) = left channel (mono)
+ * event.inputBuffer.getChannelData(0) is a floatArray_time_domain
+ * 
+ *     // TODO is audioNodebufferSize always same device_event_buffer_size??
+    // if so, then dont need this!!
+ */
 Audio.prototype._sendAudioToWorkerForRecording = function (event) {
-    // event.inputBuffer.getChannelData(0) = left channel (mono)
     audioworker.postMessage({ 
         command: this.command, 
         event_buffer: event.inputBuffer.getChannelData(0),
     });
 
-    // TODO is audioNodebufferSize always same device_event_buffer_size??
-    // if so, then dont need this!!
     if (typeof this.debugValues.device_event_buffer_size  == 'undefined') {
-        // event.inputBuffer.getChannelData(0) is a floatArray_time_domain
         this.debugValues.device_event_buffer_size = event.inputBuffer.getChannelData(0).length;
     }      
 }
 
-Audio.prototype._clearAudioBuffer = function (prompt_id) {
-    audioworker.postMessage({
-        command: 'start',
-        prompt_id: prompt_id,
-        vad_parms: this.parms.vad,
-        ssd_parms : this.parms.ssd,
-        sampleRate: this.audioCtx.sampleRate,
-        bitDepth: this._getBitDepth(),
-    });
+/**
+* reply from audio worker
+* creates new function every time record is pressed
+* why? needed a promise to resolve so could create promise chain in call to audio record
+*
+* after this process sends a request to the worker to 'finish' recording,
+* worker sends back the recorded data as an audio blob
+*/
+*/
+Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
+    var self = this;
+    
+    return new Promise(function (resolve, reject) {
+            
+      audioworker.onmessage = function(returnObj) { 
+        var obj = returnObj.data.obj;
+        switch (returnObj.data.status) {
+            case 'finished':
+                self._setGainAndAdjustVolumeIfNeeded.bind(this, obj);
+                resolve(obj);
+            break;
+
+            default:
+                let m = 'message from audio worker: audio error: ' + returnObj.status;
+                console.error(m);
+                reject(m);
+        }
+      };
+        
+    }); // promise
 }
 
-Audio.prototype._getBitDepth = function () {
-    var bitDepth = this.parms.bitDepth;
-    
-    if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
-    console.warn("invalid bit depth: " +
-        data.bitDepth +
-        "; setting to 16 bit");
-    bitDepth = 16;
-    }
+Audio.prototype._setGainAndAdjustVolumeIfNeeded = function (obj) {
+    obj.gain = self.gainNode.gain.value;
+    obj.app_auto_gain = self.parms.app_auto_gain;
 
-    return bitDepth;
+    // some phones have their own (hardware/software?) auto gain implemented.
+    // Where device has own auto gain, do not use adjustVolume() function
+    if (obj.app_auto_gain && ! this.autoGainSupported) {
+        self._adjustVolume(obj); 
+    }
 }
 
 /**
@@ -405,17 +421,6 @@ Audio.prototype._volumeLessThanMaxValue = function (gain) {
     return Math.abs(gain) < this.gain_maxValue;
 }
 
-Audio.prototype._increaseMaxVolume = function (m, oldgain) {
-    var newgain = Math.min(
-        this.gainNode.gain.value * this.parms.gain_max_increment_factor,
-        this.gain_maxValue);
-    this.gainNode.gain.setValueAtTime(
-        newgain,
-        this.audioCtx.currentTime + 1);
-
-    this._logVolumeChange(m, oldgain, newgain);
-}
-
 Audio.prototype._reduceVolume = function (m, oldgain) {
     var newgain = Math.max(
         this.gainNode.gain.value * this.parms.gain_decrement_factor,
@@ -425,6 +430,17 @@ Audio.prototype._reduceVolume = function (m, oldgain) {
         this.audioCtx.currentTime + 1);
 
     this._logVolumeChange(m, oldgain, newgain);        
+}
+
+Audio.prototype._increaseMaxVolume = function (m, oldgain) {
+    var newgain = Math.min(
+        this.gainNode.gain.value * this.parms.gain_max_increment_factor,
+        this.gain_maxValue);
+    this.gainNode.gain.setValueAtTime(
+        newgain,
+        this.audioCtx.currentTime + 1);
+
+    this._logVolumeChange(m, oldgain, newgain);
 }
 
 Audio.prototype._increaseVolume = function (m, oldgain) {
