@@ -437,21 +437,9 @@ Audio.prototype._logVolumeChange = function (m, oldgain, newgain) {
 * disconnect audio nodes; send message to audio worker to stop recording
 *
 * see: https://stackoverflow.com/questions/17648819/how-can-i-stop-a-web-audio-script-processor-and-clear-the-buffer
-*/
-Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
-    var self = this;
-    
-    var command;
-    if (vad_run) {
-      command = 'finish_vad';
-    } else {
-      command = 'finish';
-    }
-    audioworker.postMessage({ 
-      command: command,
-    });
-
-    // disconnecting AudioNodes leaves audio data somewhere in audio chain
+*
+*
+*     // disconnecting AudioNodes leaves audio data somewhere in audio chain
     // (likely in microphone Audio node - MediaStreamSource buffer) that gets added
     // to next recording... therefore do not disconnect Audio Nodes
     //self.microphone.disconnect(); // all outgoing connections are disconnected.
@@ -463,12 +451,33 @@ Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
     // TODO amazon just sets a 'record' flag that if true sends audio to web
     //   worker, and doesn't send anything if false
     //   see: https://aws.amazon.com/blogs/machine-learning/capturing-voice-input-in-a-browser/
-    //   see also: https://github.com/mattdiamond/Recorderjs/blob/master/src/recorder.js    
+    //   see also: https://github.com/mattdiamond/Recorderjs/blob/master/src/recorder.js
+    *
+    *     // need to cue user when recording has stopped and started.  Disconnecting
+    // the analyser node and reconnecting on record does this...
+*/
+Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
+    var self = this;
+
+    audioworker.postMessage({ 
+        command: this._getEndRecordingCommand(vad_run),
+    });
+
     this.processor.onaudioprocess = null;
 
-    // need to cue user when recording has stopped and started.  Disconnecting
-    // the analyser node and reconnecting on record does this...
     if (audio_visualizer_checked) {
         self.gainNode.disconnect(self.analyser);
     }
+}
+
+Audio.prototype._getEndRecordingCommand = function (vad_run) {
+    var command;
+        
+    if (vad_run) {
+        command = 'finish_vad';
+    } else {
+        command = 'finish';
+    }
+
+    return command;
 }
