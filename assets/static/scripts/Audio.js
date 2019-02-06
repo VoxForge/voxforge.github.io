@@ -242,7 +242,9 @@ Audio.prototype._appRecordingProperties = function (c,s) {
     d.vad_minvoice = this.parms.vad.minvoice;
     d.vad_bufferSize = this.parms.vad.buffersize;
     d.audioNode_bufferSize = this.parms.audioNodebufferSize || 'undefined';
-    d.device_event_buffer_size = this.device_event_buffer_size || 'undefined';
+
+    // TODO is audioNodebufferSize always same device_event_buffer_size??    
+    //d.device_event_buffer_size = this.device_event_buffer_size || 'undefined';
 }
 
 Audio.prototype.getAudioPropertiesAndContraints = function () {
@@ -259,83 +261,12 @@ Audio.prototype.getDebugValues = function () {
 Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked) {
     var self = this;
 
-    if ( ! vad_run ) {
-       console.log('VAD disabled');
-    }
-
     this._clearAudioBuffer(prompt_id);
-
     if (audio_visualizer_checked) {
         self.gainNode.connect(self.analyser);
     }
-
-    var command;
-    if (vad_run) {
-       audioworker.postMessage({ 
-          command: 'init_vad',
-       });
-       command = 'record_vad';
-    } else {
-       audioworker.postMessage({ 
-          command: 'kill_vad',
-       });       
-       command = 'record';
-    }
-    // start recording
-    this.processor.onaudioprocess = function(event) {
-      // event.inputBuffer.getChannelData(0) = left channel (mono)
-      audioworker.postMessage({ 
-        command: command, 
-        event_buffer: event.inputBuffer.getChannelData(0),
-      });
-
-      if (typeof self.debugValues.device_event_buffer_size  == 'undefined') {
-          // event.inputBuffer.getChannelData(0) is a floatArray_time_domain
-          self.debugValues.device_event_buffer_size = event.inputBuffer.getChannelData(0).length;
-      }      
-    };
-
-    /**
-    * app auto gain - changes gain for *next* recording
-
-        // TODO save gain level for future recordings
-        // TODO update Prompts.json with gain level for each submission, 
-        // since adjustments are made dynamically
-
-        // changing gain also increases noise in what were silence portions
-        // and this might mess up VAD
-
-        // tells user that audio is too loud or soft, adjusts
-        // gain (volume) up or down, then tells them to delete the 
-        // prompt and re-record at new gain level
-
-    */
-    function adjustVolume(obj) {
-        if (Math.abs(obj.gain) < self.gain_maxValue ) {
-            var newgain;
-            if (obj.clipping) {
-              // reduce volume
-              newgain = Math.max(self.gainNode.gain.value * 
-                  self.parms.gain_decrement_factor, self.gain_minValue);
-              self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-            } else if (obj.too_soft) {
-              // increase volume
-              newgain = Math.min(self.gainNode.gain.value * 
-                  self.parms.gain_increment_factor, self.gain_maxValue);
-              self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-            } else if (obj.no_speech) {
-              // increase max volume
-              newgain = Math.min(self.gainNode.gain.value * 
-                  self.parms.gain_max_increment_factor, self.gain_maxValue);
-              self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
-            }
-
-            if (obj.clipping || obj.too_soft || obj.no_speech) {
-              console.log ("gain changed from: " + obj.gain + " to: " + newgain);
-              self.debugValues.gainNode_gain_value = newgain;
-            }
-        }
-    }
+    this._determineTypeOfRecording();
+    this.processor.onaudioprocess = this._sendAudioToWorkerForRecording.bind(this);
 
     return new Promise(function (resolve, reject) {
       /**
@@ -357,7 +288,7 @@ Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked)
                 // some phones have their own (hardware/software?) auto gain implemented.
                 // Where device has own auto gain, do not use adjustVolume() function
                 if (obj.app_auto_gain && ! this.autoGainSupported) {
-                  adjustVolume(obj); 
+                    self._adjustVolume(obj); 
                 }
 
                 resolve(obj);
@@ -373,7 +304,50 @@ Audio.prototype.record = function (prompt_id, vad_run, audio_visualizer_checked)
     }); // promise
 }
 
-// clears out audio buffer 
+Audio.prototype._determineTypeOfRecording = function () {
+    if ( ! vad_run ) {
+       console.log('VAD disabled');
+    }
+        
+    if (vad_run) {
+        this._recordWithVAD();
+    } else {
+        this._recordNoVad();
+    }
+}
+
+Audio.prototype._recordWithVAD = function (event) {
+    audioworker.postMessage({ 
+        command: 'init_vad',
+    });
+    
+    this.command = 'record_vad';
+}
+
+Audio.prototype._recordNoVad = function (event) {
+       audioworker.postMessage({ 
+          command: 'kill_vad',
+       });
+
+       this.command = 'record';
+}
+
+Audio.prototype._sendAudioToWorkerForRecording = function (event) {
+    // event.inputBuffer.getChannelData(0) = left channel (mono)
+    audioworker.postMessage({ 
+        command: this.command, 
+        event_buffer: event.inputBuffer.getChannelData(0),
+    });
+
+    // TODO is audioNodebufferSize always same device_event_buffer_size??
+    // if so, then dont need this!!
+    if (typeof this.debugValues.device_event_buffer_size  == 'undefined') {
+        // event.inputBuffer.getChannelData(0) is a floatArray_time_domain
+        this.debugValues.device_event_buffer_size = event.inputBuffer.getChannelData(0).length;
+    }      
+
+}
+
 Audio.prototype._clearAudioBuffer = function (prompt_id) {
     var bitDepth = this.parms.bitDepth;
     if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
@@ -389,6 +363,48 @@ Audio.prototype._clearAudioBuffer = function (prompt_id) {
         sampleRate: this.audioCtx.sampleRate,
         bitDepth: bitDepth,
     });
+}
+
+/**
+* app auto gain - changes gain for *next* recording
+
+    // TODO save gain level for future recordings
+    // TODO update Prompts.json with gain level for each submission, 
+    // since adjustments are made dynamically
+
+    // changing gain also increases noise in what were silence portions
+    // and this might mess up VAD
+
+    // tells user that audio is too loud or soft, adjusts
+    // gain (volume) up or down, then tells them to delete the 
+    // prompt and re-record at new gain level
+
+*/
+Audio.prototype._adjustVolume = function (obj) {
+    if (Math.abs(obj.gain) < self.gain_maxValue ) {
+        var newgain;
+        if (obj.clipping) {
+          // reduce volume
+          newgain = Math.max(self.gainNode.gain.value * 
+              self.parms.gain_decrement_factor, self.gain_minValue);
+          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+        } else if (obj.too_soft) {
+          // increase volume
+          newgain = Math.min(self.gainNode.gain.value * 
+              self.parms.gain_increment_factor, self.gain_maxValue);
+          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+        } else if (obj.no_speech) {
+          // increase max volume
+          newgain = Math.min(self.gainNode.gain.value * 
+              self.parms.gain_max_increment_factor, self.gain_maxValue);
+          self.gainNode.gain.setValueAtTime(newgain, self.audioCtx.currentTime + 1);
+        }
+
+        if (obj.clipping || obj.too_soft || obj.no_speech) {
+          console.log ("gain changed from: " + obj.gain + " to: " + newgain);
+          self.debugValues.gainNode_gain_value = newgain;
+        }
+    }
 }
 
 /**
