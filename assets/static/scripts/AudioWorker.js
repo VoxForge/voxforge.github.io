@@ -31,16 +31,6 @@ function AudioWorker(data) {
     this.numSamples = 0;
 }
 
-AudioWorker.prototype._initVad = function () {
-    this.vad = new Vad(
-        this.sampleRate,
-        this.vad_parms);
-}
-
-AudioWorker.prototype._killVad = function () {
-    this.vad = null;
-}
-
 var audioWorker;
 
 self.onmessage = function(event) {
@@ -59,121 +49,147 @@ self.onmessage = function(event) {
       audioWorker._killVad();
       break;
 
+    // no encoding while collecting audio for low powered devices
     case 'record':
-      // no encoding while collecting audio for low powered devices
-      audioWorker.buffers.push(data.event_buffer); // array of buffer arrays
-      audioWorker.numSamples += data.event_buffer.length;
+      audioWorker._record(data);
       break;
 
     case 'finish':
-      // batch encoding after recording is completed
-      if (audioWorker.bitDepth === 16) { // testing FF on Chrome    
-        while (audioWorker.buffers.length > 0) {
-          var view = float2int16(audioWorker.buffers.shift());
-          audioWorker.dataViews.push(view);
-        }
-      } else { // 32-bit float - buffer unmodified
-         audioWorker.dataViews = audioWorker.buffers;
-      }
-      var header = createWavHeader(
-        audioWorker.numSamples,
-        audioWorker.bitDepth,
-        audioWorker.sampleRate);
-      audioWorker.dataViews.unshift(header);
-      
-      var audio_blob = new Blob(
-            audioWorker.dataViews,
-            { type: 'audio/wav' });
-      
-      self.postMessage({
-          status: 'finished',
-          obj : { 
-            prompt_id: audioWorker.prompt_id,
-            blob: audio_blob,
-            vad_run: false,
-          }
-      });
-
-      audioWorker.buffers = [];
+      audioWorker._finish();
       break;
 
-    // TODO VAD currently only works with 16-bit audio.
-    // So no matter what device you are using, if using vad,
-    // there will always be a conversion to 16-bit audio
     case 'record_vad':
-      audioWorker.buffers.push(data.event_buffer); // array of buffer arrays
-      audioWorker.numSamples += data.event_buffer.length;
-
-      // VAD can only process 16-bit audio, with sampling rates of 8/16/32/48kHz
-      // we are fudging a bit so can process 44.1kHz
-      //vad.calculateSilenceBoundaries(data.event_buffer, buffers.length - 1);
-      // split buffer up into smaller chunks that VAD can digest
-      let num_chunks = 4;
-      let cutoff = Math.round(data.event_buffer.length / num_chunks);
-      let buffers_index = audioWorker.buffers.length - 1;
-      for (let i = 0; i < num_chunks; i++) {
-        let chunk_index = i;
-        let start = i * cutoff;
-        let end = (i * cutoff) + cutoff;
-        // slice extracts up to but not including end.
-        let chunk = data.event_buffer.slice(start, end);
-        var [buffer_chunk_int, chunk_energy] = floatTo16BitPCM(chunk);
-
-        audioWorker.vad.calculateSilenceBoundaries(
-            buffer_chunk_int,
-            chunk_energy,
-            buffers_index,
-            chunk_index);
-      }
+      audioWorker._recordVad(data);
       break;
 
     case 'finish_vad':
-      var speech_array = null;
-      var no_speech = false;
-      var no_trailing_silence = false; 
-      var clipping = false;
-      var too_soft = false;
-
-      [speech_array,
-       no_speech,
-       no_trailing_silence,
-       clipping,
-       too_soft] = audioWorker.vad.getSpeech(audioWorker.buffers);
-
-      if (audioWorker.bitDepth === 16) { // testing FF on Chrome    
-        while (speech_array.length > 0) {
-          var view = float2int16(speech_array.shift());
-          audioWorker.dataViews.push(view);
-        }
-      } else { // 32-bit float - buffer unmodified
-          audioWorker.dataViews = speech_array;
-      }
-
-      var header = createWavHeader(
-        audioWorker.numSamples,
-        audioWorker.bitDepth,
-        audioWorker.sampleRate);
-      audioWorker.dataViews.unshift(header);
-      var audio_blob = new Blob(
-            audioWorker.dataViews,
-            { type: 'audio/wav' });
-           
-      self.postMessage({
-          status: 'finished',
-          obj : { 
-            prompt_id: audioWorker.prompt_id,
-            blob: audio_blob,
-            no_trailing_silence: no_trailing_silence,
-            no_speech: no_speech,
-            clipping: clipping,
-            too_soft: too_soft,
-            vad_run: true,
-          }
-      });
-
-      audioWorker.buffers = [];
-
+      audioWorker._finishVad();
       break;
   }
-  
 };
+
+AudioWorker.prototype._initVad = function () {
+    this.vad = new Vad(
+        this.sampleRate,
+        this.vad_parms);
+}
+
+AudioWorker.prototype._killVad = function () {
+    this.vad = null;
+}
+
+AudioWorker.prototype._record = function (data) {
+    this.buffers.push(data.event_buffer); // array of buffer arrays
+    this.numSamples += data.event_buffer.length;
+}
+
+AudioWorker.prototype._finishVad = function () {
+    var speech_array, no_speech, no_trailing_silence, clipping, too_soft;
+    
+    [speech_array,
+    no_speech,
+    no_trailing_silence,
+    clipping,
+    too_soft] = this.vad.getSpeech(this.buffers);
+        
+    self.postMessage({
+      status: 'finished',
+      obj : { 
+        prompt_id: this.prompt_id,
+        blob: this._convertBufferToAudioBlob(speech_array),
+        no_trailing_silence: no_trailing_silence,
+        no_speech: no_speech,
+        clipping: clipping,
+        too_soft: too_soft,
+        vad_run: true,
+      }
+    });
+
+    this.buffers = [];
+}
+
+AudioWorker.prototype._finish = function () {
+    self.postMessage({
+        status: 'finished',
+        obj : { 
+            prompt_id: this.prompt_id,
+            blob: this._convertBufferToAudioBlob(this.buffers),
+            vad_run: false,
+        }
+    });
+
+    this.buffers = [];
+}
+
+AudioWorker.prototype._convertBufferToAudioBlob = function (bufferArray) {
+    this._convertBufferToWavDataViewFormat(bufferArray);
+    this._addWavHeaderToDataView();
+       
+    return new Blob(
+        this.dataViews, 
+        { type: 'audio/wav' });
+}
+
+AudioWorker.prototype._convertBufferToWavDataViewFormat = function (bufferArray) {
+    if (this.bitDepth === 16) { // testing FF on Chrome    
+        this._convertAudioBuffersTo16bitDataView(bufferArray);
+    } else { // 32-bit float - buffer unmodified
+        this.dataViews = bufferArray;
+    }
+}
+
+AudioWorker.prototype._convertAudioBuffersTo16bitDataView = function (bufferArray) {
+    while (bufferArray.length > 0) {
+        var view = float2int16(bufferArray.shift());
+        this.dataViews.push(view);
+    }
+}
+
+AudioWorker.prototype._addWavHeaderToDataView = function () {
+    var header = createWavHeader(
+        this.numSamples,
+        this.bitDepth,
+        this.sampleRate);
+        
+    this.dataViews.unshift(header);
+}
+
+// TODO VAD currently only works with 16-bit audio.
+// So no matter what device you are using, if using vad,
+// there will always be a conversion to 16-bit audio
+/*
+ * VAD can only process 16-bit audio, with sampling rates of 8/16/32/48kHz;
+ * we are fudging a bit so can process 44.1kHz...
+ * so split buffer up into smaller chunks that VAD can digest
+ */ 
+AudioWorker.prototype._recordVad = function (data) {
+    this.buffers.push(data.event_buffer); // array of buffer arrays
+    this.numSamples += data.event_buffer.length;
+
+    let num_chunks = 4;
+    let cutoff = Math.round(data.event_buffer.length / num_chunks);
+    let buffers_index = this.buffers.length - 1;
+    for (let i = 0; i < num_chunks; i++) {
+        this._performVadOnChunk(data, i, cutoff, buffers_index);
+    }
+}
+
+AudioWorker.prototype._performVadOnChunk = function(
+    data,
+    i,
+    cutoff,
+    buffers_index)
+{
+    let chunk_index = i;
+    let start = i * cutoff;
+    let end = (i * cutoff) + cutoff;
+    // slice extracts up to but not including end.
+    let chunk = data.event_buffer.slice(start, end);
+    var [buffer_chunk_int, chunk_energy] = floatTo16BitPCM(chunk);
+
+    this.vad.calculateSilenceBoundaries(
+        buffer_chunk_int,
+        chunk_energy,
+        buffers_index,
+        chunk_index);
+}
