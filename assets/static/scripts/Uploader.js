@@ -259,67 +259,12 @@ Uploader.prototype.upload = function ( prompts,
 {
     var self = this;
 
-    var clipIndex = 0;
-    var audioArray = [];
+    this.allClips = allClips;
+    this.prompts = prompts;
 
     // ### inner functions #################################################
 
-    /**
-    * recursive function that loops over audio clips and asynchronously
-    * loads them into audioArray.  This can cause some timing issues if
-    * there are many audio files... therefore only reset user facing display
-    * after all text and audio is sent to web worker for background processing
-    *
-    * uses xhr internally to collect read audio samples from shadow DOM
-    */
-    function processAudio() {
-      return new Promise(function (resolve, reject) {
-      
-        function audioArrayLoop() {
-          var clip = allClips[clipIndex];
-          clip.style.display = 'None';
-          var audioBlobUrl = clip.querySelector('audio').src;
-          var prompt = clip.querySelector('prompt').innerText;
-          var prompt_id = prompt.split(/(\s+)/).shift();
-          //prompts.prompts_recorded.push(prompt + '\n');
-          prompts.addToPromptsRecorded(prompt);
 
-          // Ajax is asynchronous - once the request is sent script will 
-          // continue executing without waiting for the response.
-          var xhr = new XMLHttpRequest();
-          // get blob from browser memory; 
-          xhr.open('GET', audioBlobUrl, true);
-          xhr.responseType = 'blob';
-          xhr.onload = function(e) {
-            if (this.status == 200) {
-              var blob = this.response;
-              // add current audio blob to zip file in browser memory
-              audioArray.push ({
-                  filename: prompt_id + '.wav', 
-                  audioBlob: blob
-              });
-              clipIndex += 1;
-              if (clipIndex < allClips.length) {
-                audioArrayLoop();
-              } else {
-                // must be called here because ajax is asynchronous
-                // Q1: why doesnt createZipFile get called many times as the call stack unrolls???
-                // ... because status no longer status == 200???
-
-                resolve(audioArray); // audioArray passed as parameter to next function in call chain
-              }
-            }
-          };
-          xhr.onerror = function() {
-            reject("error processing audio from DOM");
-          };
-          xhr.send();
-        } // audioArrayLoop
-
-        audioArrayLoop();
-      }); // Promise
-      
-    };// processAudio
     /**
     * call web worker to create zip file and upload to VoxForge server
     */
@@ -476,7 +421,7 @@ Uploader.prototype.upload = function ( prompts,
     
     return new Promise(function (resolve, reject) {
       
-        processAudio()
+        self._processAudio()
         .then(callWorker2createZipFile)
         .then(uploadZippedSubmission)
         .then(resolve) // resolve needs to be passed as a reference... therefore no parms
@@ -487,6 +432,68 @@ Uploader.prototype.upload = function ( prompts,
         
     }); // Promise
 }
+
+
+/**
+* recursive function that loops over audio clips and asynchronously
+* loads them into audioArray.  This can cause some timing issues if
+* there are many audio files... therefore only reset user facing display
+* after all text and audio is sent to web worker for background processing
+*
+* uses xhr internally to collect read audio samples from shadow DOM
+*/
+Uploader.prototype._processAudio = function () {
+    var self = this;
+    var audioArray = [];
+    var clipIndex = 0;
+            
+  return new Promise(function (resolve, reject) {
+  
+    function audioArrayLoop() {
+      var clip = self.allClips[clipIndex];
+      clip.style.display = 'None';
+      var audioBlobUrl = clip.querySelector('audio').src;
+      var prompt = clip.querySelector('prompt').innerText;
+      var prompt_id = prompt.split(/(\s+)/).shift();
+      //prompts.prompts_recorded.push(prompt + '\n');
+      self.prompts.addToPromptsRecorded(prompt);
+
+      // Ajax is asynchronous - once the request is sent script will 
+      // continue executing without waiting for the response.
+      var xhr = new XMLHttpRequest();
+      // get blob from browser memory; 
+      xhr.open('GET', audioBlobUrl, true);
+      xhr.responseType = 'blob';
+      xhr.onload = function(e) {
+        if (this.status == 200) {
+          var blob = this.response;
+          // add current audio blob to zip file in browser memory
+          audioArray.push ({
+              filename: prompt_id + '.wav', 
+              audioBlob: blob
+          });
+          clipIndex += 1;
+          if (clipIndex < self.allClips.length) {
+            audioArrayLoop();
+          } else {
+            // must be called here because ajax is asynchronous
+            // Q1: why doesnt createZipFile get called many times as the call stack unrolls???
+            // ... because status no longer status == 200???
+
+            resolve(audioArray); // audioArray passed as parameter to next function in call chain
+          }
+        }
+      };
+      xhr.onerror = function() {
+        reject("error processing audio from DOM");
+      };
+      xhr.send();
+    } // audioArrayLoop
+
+    audioArrayLoop();
+  }); // Promise
+  
+};// processAudio
 
 /**
 * localStorage stores everything as a string
