@@ -70,18 +70,18 @@ function Uploader(parms,
 Uploader.prototype.init = function () {
     var self = this;
 
-    self.upload_worker.onmessage = self._processWorkerEventMessage.bind(self);
+    self.upload_worker.onmessage =
+        self._workerEventMessageHandler.bind(self);
 
-    // Handler for messages coming from service worker
     navigator.serviceWorker.addEventListener(
         'message',
-        self._processWorkerEventMessage.bind(self));
+        self._workerEventMessageHandler.bind(self));
 }
 
 /** 
 * process messages from service worker or web worker
 */
-Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
+Uploader.prototype._workerEventMessageHandler = function (filesUploaded) {
     var self = this;
       
     var returnObj = event.data;
@@ -89,11 +89,11 @@ Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
 
     switch (returnObj.status) {
       case 'AllUploaded':
-        this._allFileUploadedToServer(returnObj);
+        this._allUploadedToServer(returnObj);
         break;
 
       case 'noneUploaded': 
-        this._allFilesSavedToBrowserStorage(returnObj);     
+        this._allSavedToBrowserStorage(returnObj);     
         break;
 
       case 'partialUpload':
@@ -106,73 +106,133 @@ Uploader.prototype._processWorkerEventMessage = function (filesUploaded) {
     } 
 }
 
-// if there is an error with one submission (usually server side check - e.g.
-// file too big for server settings), then other submissions will upload, but
-// erroneous one will stay in browser storage.
-// TODO need a way for user to save these their o/s filesystem and upload
-// them to VoxForge server some other way.
-Uploader.prototype._partialUpload = function (returnObj) {
-    var filesNotUploaded = returnObj.filesNotUploaded;
+Uploader.prototype._allUploadedToServer = function (returnObj) {
     var filesUploaded = returnObj.filesUploaded;
-
-    var numberOfUploadedSubmissions = this.getNumberOfUploadedSubmissions() + filesUploaded.length;
-    localStorage.setItem('numberOfUploadedSubmissions', numberOfUploadedSubmissions);
-
-    var savedText = (filesNotUploaded.length > 1 ? this.alert_message.submission_plural : this.alert_message.submission_singular);
-    var uploadedText = (filesNotUploaded.length > 1 ? this.alert_message.submission_plural : this.alert_message.submission_singular);
-
-    var m = "Partial Upload:\n\n" +
-          filesUploaded.length + " " + 
-          savedText + " " +
-          this.alert_message.uploaded_message + 
-          "    " + filesUploaded.join("\n    ") +
-          "\n========================\n" +
-          this.alert_message.browsercontains_message.trim() + " " + // removes newline
-          filesNotUploaded.length + " " + 
-          uploadedText + ":\n" + 
-          "    " + filesNotUploaded.join("\n    ");
-    if (returnObj.err) {
-        m = m + "\n========================\n";
-        m = m + "\n\nserver error message: " + returnObj.err;
-    }
-    
-    this._displayMessageToUser(returnObj.workertype, m);  
+    this._saveSubmissionsToList(filesUploaded);
+    this._setNumberOfUploadedSubmissions(returnObj);
+            
+    this._displayMessageToUser(
+        returnObj.workertype,
+        this._getUploadedToServerMessage(returnObj));
 }
 
-Uploader.prototype._allFilesSavedToBrowserStorage = function (returnObj) {
+/*
+ * save name of uploaded submission in localstorage with timestamp
+ */
+Uploader.prototype._saveSubmissionsToList = function (filesUploaded) {
+    filesUploaded.forEach(
+        this._saveSubmissionNameToList.bind(this));
+}
+
+Uploader.prototype._saveSubmissionNameToList = function(submissionName) {
+    var jsonOnject = {};
+
+    jsonOnject['timestamp'] = this._getDate();
+    
+    this.uploadedSubmissions.setItem(submissionName, jsonOnject)
+    .catch(function(err) {
+        console.error('save of uploaded submission name to localforage browser storage failed!', err);
+    });
+}
+
+/*
+ * save count of uploaded submissions
+ */
+Uploader.prototype._setNumberOfUploadedSubmissions = function (returnObj) {
+    var filesUploaded = returnObj.filesUploaded;
+
+    var numberOfUploadedSubmissions =
+        this._getNumberOfUploadedSubmissions() +
+        filesUploaded.length;
+        
+    localStorage.setItem(
+        'numberOfUploadedSubmissions',
+        numberOfUploadedSubmissions);
+}
+
+Uploader.prototype._getUploadedToServerMessage = function (returnObj) {
+    var filesUploaded = returnObj.filesUploaded;
+
+    var submissionText = (filesUploaded.length > 1 ?
+        this.alert_message.submission_plural :
+        this.alert_message.submission_singular);
+            
+    return filesUploaded.length + " " + 
+        submissionText + " " +
+        this.alert_message.uploaded_message  + "\n    " +
+        filesUploaded.join("\n    ");
+}
+
+Uploader.prototype._allSavedToBrowserStorage = function (returnObj) {
+    this._displayMessageToUser(
+        returnObj.workertype,
+        this._getSavedToBrowserStorageMessage(returnObj) );    
+}
+
+Uploader.prototype._getSavedToBrowserStorageMessage = function (returnObj) {
     var filesNotUploaded =  returnObj.filesNotUploaded;
-    var submissionText = (filesNotUploaded.length > 1 ? this.alert_message.submission_plural : this.alert_message.submission_singular);
-    var m = this.alert_message.localstorage_message + "\n" +
+    var submissionText = (filesNotUploaded.length > 1 ?
+        this.alert_message.submission_plural :
+        this.alert_message.submission_singular);
+    
+    return this.alert_message.localstorage_message + "\n" +
         this.alert_message.browsercontains_message.trim() + " " + // remove newline
         filesNotUploaded.length + " " + 
         submissionText + ":\n    " + 
         filesNotUploaded.join("\n    ");
-        
-    this._displayMessageToUser(returnObj.workertype, m);    
 }
 
-Uploader.prototype._allFileUploadedToServer = function (returnObj) {
+/*
+ * if there is an error with one submission (usually server side check - e.g.
+ * file too big for server settings), then other submissions will upload, but
+ * erroneous one will stay in browser storage.
+ * TODO need a way for user to save these their o/s filesystem and upload
+ * them to VoxForge server some other way.
+*/
+Uploader.prototype._partialUpload = function (returnObj) {
+    this._setNumberOfUploadedSubmissions(returnObj);
+
+    this._displayMessageToUser(
+        returnObj.workertype,
+        this._getPartialUploadMessage(returnObj));  
+}
+
+Uploader.prototype._getPartialUploadMessage = function (returnObj) {
+    var filesNotUploaded = returnObj.filesNotUploaded;
     var filesUploaded = returnObj.filesUploaded;
     
-    this._saveSubmissionsToList(filesUploaded);
+    var savedText = (filesNotUploaded.length > 1 ?
+        this.alert_message.submission_plural :
+        this.alert_message.submission_singular);
+    var uploadedText = (filesNotUploaded.length > 1 ?
+        this.alert_message.submission_plural :
+        this.alert_message.submission_singular);
     
-    var numberOfUploadedSubmissions = this.getNumberOfUploadedSubmissions() + filesUploaded.length;
-    localStorage.setItem(
-        'numberOfUploadedSubmissions',
-        numberOfUploadedSubmissions);
-
-    var submissionText = (filesUploaded.length > 1 ? this.alert_message.submission_plural : this.alert_message.submission_singular);
-    var m = filesUploaded.length + " " + 
-        submissionText + " " +
-        this.alert_message.uploaded_message  + "\n    " +
-        filesUploaded.join("\n    ");
+    var m = "Partial Upload:\n\n" +
+        filesUploaded.length + " " + 
+        savedText + " " +
+        this.alert_message.uploaded_message + 
+        "    " + filesUploaded.join("\n    ") +
+        "\n========================\n" +
+        this.alert_message.browsercontains_message.trim() + " " + // removes newline
+        filesNotUploaded.length + " " + 
+        uploadedText + ":\n" + 
+        "    " + filesNotUploaded.join("\n    ");
         
-    this._displayMessageToUser(returnObj.workertype, m);
+    if (returnObj.err) {
+        m = m + "\n========================\n";
+        m = m + "\n\nserver error message: " + returnObj.err;
+    }
+
+    return m;        
 }
 
+/*
+ * Display message to user after recording has ended (i.e. user has pressed stop)
+ */
 Uploader.prototype._displayMessageToUser = function (workertype, m) {
     console.info(workertype + ": " + m);
-    Promise.all(promise_list) // if user recording, wait for stop click before displaying alert
+    Promise.all(promise_list) // wait for stop click before displaying alert (if user recording)
     .then(function() {
         window.alert(m);
     })
@@ -191,21 +251,6 @@ Uploader.prototype._validateAndLogWorkerType = function (returnObj) {
     }
     
     console.log(m + ": " + returnObj.status);
-}
-
-Uploader.prototype._saveSubmissionsToList = function (filesUploaded) {
-    filesUploaded.forEach(this._saveSubmissionNameToList.bind(this));
-}
-
-Uploader.prototype._saveSubmissionNameToList = function(submissionName) {
-    var jsonOnject = {};
-
-    jsonOnject['timestamp'] = this._getDate();
-    
-    this.uploadedSubmissions.setItem(submissionName, jsonOnject)
-    .catch(function(err) {
-        console.error('save of uploaded submission name to localforage browser storage failed!', err);
-    });
 }
 
 Uploader.prototype._getDate = function () {
@@ -462,7 +507,7 @@ Uploader.prototype.upload = function ( prompts,
 /**
 * localStorage stores everything as a string
 */
-Uploader.prototype.getNumberOfUploadedSubmissions = function () {
+Uploader.prototype._getNumberOfUploadedSubmissions = function () {
   return parseInt( localStorage.getItem('numberOfUploadedSubmissions') || 0);
 }
 
