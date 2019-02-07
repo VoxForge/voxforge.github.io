@@ -503,9 +503,18 @@ Uploader.prototype.getNumberOfSubmissions = function () {
 }
 
 /**
-* 
+* use time since last submission to determine if user should be
+* asked to update recording location information
 */
-Uploader.prototype.minutesSinceLastSubmission = function () {
+Uploader.prototype.timeSinceLastSubmission = function () {
+    if (this._minutesSinceLastSubmission() > this.maxMinutesSinceLastSubmission) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+Uploader.prototype._minutesSinceLastSubmission = function () {
     var timeOfLastSubmission = localStorage.getItem('timeOfLastSubmission');
     if ( timeOfLastSubmission ) {
       var millis = Date.now() - timeOfLastSubmission;
@@ -513,17 +522,5 @@ Uploader.prototype.minutesSinceLastSubmission = function () {
       return Math.round(mins);
     } else {
       return 0;
-    }
-}
-
-/**
-* use time since last submission to determine if user should be
-* asked to update recording location information
-*/
-Uploader.prototype.timeSinceLastSubmission = function () {
-    if (this.minutesSinceLastSubmission() > this.maxMinutesSinceLastSubmission) {
-        return true;
-    } else {
-        return false;
     }
 }
