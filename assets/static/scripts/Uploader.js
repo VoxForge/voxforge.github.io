@@ -107,13 +107,21 @@ Uploader.prototype._workerEventMessageHandler = function (filesUploaded) {
 }
 
 Uploader.prototype._allUploadedToServer = function (returnObj) {
-    var filesUploaded = returnObj.filesUploaded;
-    this._saveSubmissionsToList(filesUploaded);
-    this._setNumberOfUploadedSubmissions(returnObj);
+    this._saveSubmissionsToList(returnObj.filesUploaded);
+    this._setNumberOfUploadedSubmissions(returnObj.filesUploaded);
             
     this._displayMessageToUser(
         returnObj.workertype,
         this._getUploadedToServerMessage(returnObj));
+}
+
+Uploader.prototype._getUploadedToServerMessage = function (returnObj) {
+    var filesUploaded = returnObj.filesUploaded;
+            
+    return filesUploaded.length + " " + 
+        this._submissionPluralized(filesUploaded) + " " +
+        this.alert_message.uploaded_message  + "\n    " +
+        filesUploaded.join("\n    ");
 }
 
 /*
@@ -138,9 +146,7 @@ Uploader.prototype._saveSubmissionNameToList = function(submissionName) {
 /*
  * save count of uploaded submissions
  */
-Uploader.prototype._setNumberOfUploadedSubmissions = function (returnObj) {
-    var filesUploaded = returnObj.filesUploaded;
-
+Uploader.prototype._setNumberOfUploadedSubmissions = function(filesUploaded) {
     var numberOfUploadedSubmissions =
         this._getNumberOfUploadedSubmissions() +
         filesUploaded.length;
@@ -150,35 +156,25 @@ Uploader.prototype._setNumberOfUploadedSubmissions = function (returnObj) {
         numberOfUploadedSubmissions);
 }
 
-Uploader.prototype._getUploadedToServerMessage = function (returnObj) {
-    var filesUploaded = returnObj.filesUploaded;
-
-    var submissionText = (filesUploaded.length > 1 ?
+Uploader.prototype._submissionPluralized = function(submissionArray) {
+    return (submissionArray.length > 1 ?
         this.alert_message.submission_plural :
         this.alert_message.submission_singular);
-            
-    return filesUploaded.length + " " + 
-        submissionText + " " +
-        this.alert_message.uploaded_message  + "\n    " +
-        filesUploaded.join("\n    ");
 }
 
 Uploader.prototype._allSavedToBrowserStorage = function (returnObj) {
-    this._displayMessageToUser(
-        returnObj.workertype,
-        this._getSavedToBrowserStorageMessage(returnObj) );    
+    var m = this.alert_message.localstorage_message + "\n" +
+        this._getSavedToBrowserStorageMessage(returnObj);
+        
+    this._displayMessageToUser(returnObj.workertype, m);    
 }
 
 Uploader.prototype._getSavedToBrowserStorageMessage = function (returnObj) {
     var filesNotUploaded =  returnObj.filesNotUploaded;
-    var submissionText = (filesNotUploaded.length > 1 ?
-        this.alert_message.submission_plural :
-        this.alert_message.submission_singular);
-    
-    return this.alert_message.localstorage_message + "\n" +
-        this.alert_message.browsercontains_message.trim() + " " + // remove newline
+   
+    return this.alert_message.browsercontains_message.trim() + " " + // remove newline
         filesNotUploaded.length + " " + 
-        submissionText + ":\n    " + 
+        this._submissionPluralized(filesNotUploaded) + ":\n    " + 
         filesNotUploaded.join("\n    ");
 }
 
@@ -190,34 +186,22 @@ Uploader.prototype._getSavedToBrowserStorageMessage = function (returnObj) {
  * them to VoxForge server some other way.
 */
 Uploader.prototype._partialUpload = function (returnObj) {
-    this._setNumberOfUploadedSubmissions(returnObj);
-
+    this._setNumberOfUploadedSubmissions(returnObj.filesUploaded);
+    this._saveSubmissionsToList(returnObj.filesUploaded);
+    
     this._displayMessageToUser(
         returnObj.workertype,
         this._getPartialUploadMessage(returnObj));  
 }
 
 Uploader.prototype._getPartialUploadMessage = function (returnObj) {
+    var filesUploaded = returnObj.filesUploaded;    
     var filesNotUploaded = returnObj.filesNotUploaded;
-    var filesUploaded = returnObj.filesUploaded;
-    
-    var savedText = (filesNotUploaded.length > 1 ?
-        this.alert_message.submission_plural :
-        this.alert_message.submission_singular);
-    var uploadedText = (filesNotUploaded.length > 1 ?
-        this.alert_message.submission_plural :
-        this.alert_message.submission_singular);
     
     var m = "Partial Upload:\n\n" +
-        filesUploaded.length + " " + 
-        savedText + " " +
-        this.alert_message.uploaded_message + 
-        "    " + filesUploaded.join("\n    ") +
+        this._getUploadedToServerMessage(returnObj) +
         "\n========================\n" +
-        this.alert_message.browsercontains_message.trim() + " " + // removes newline
-        filesNotUploaded.length + " " + 
-        uploadedText + ":\n" + 
-        "    " + filesNotUploaded.join("\n    ");
+        this._getSavedToBrowserStorageMessage(returnObj) ;
         
     if (returnObj.err) {
         m = m + "\n========================\n";
