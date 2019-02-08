@@ -292,9 +292,6 @@ Uploader.prototype.upload = function (
 */
 Uploader.prototype._processAudio = function () {
     var self = this;
-    var audioArray = [];
-    var clipIndex = 0;
-
     
     return new Promise(function (resolve, reject) {
         
@@ -306,7 +303,6 @@ Uploader.prototype._processAudio = function () {
             var prompt = clip.querySelector('prompt').innerText;
             self.prompts.addToPromptsRecorded(prompt);
             var prompt_id = prompt.split(/(\s+)/).shift();
-
                         
             function _onload(e) {
                 if (this.status == 200) {
@@ -344,7 +340,7 @@ Uploader.prototype._processAudio = function () {
             xhr.send();
         } // audioArrayLoop
 
-    _audioArrayLoop(audioArray, clipIndex);
+    _audioArrayLoop([], 0);
     
     }); // Promise
   
