@@ -270,96 +270,7 @@ Uploader.prototype.upload = function ( prompts,
 
     // ### inner functions #################################################
 
-    /** 
-    * worker Processing - depending on browser support, use service worker and 
-    * background sync to upload submission, if not available, use a web
-    * worker that uploads in background; or perform asynchronous upload
-    * if neither is supported.
-    */
-    function uploadZippedSubmission() {
-      /** 
-      * send message to service worker to start submission upload.
-      *
-      * supposed continue to try to upload even if no Internet, until connection
-      * restablished, and if successful, remove uploaded submission from
-      * browser storage, but this does not seem to work in Windows or Linux, 
-      * only works with Android
-      */
-      function serviceWorkerUpload(swRegistration) {
-        // for processing of return values from service worker, see 
-        // service worker event above (i.e. navigator.serviceWorker.addEventListener... )
-        swRegistration.sync.register('voxforgeSync')
-        .then(
-            function() {
-              console.info('service worker background sync event called - submission will be uploaded shortly');
-             }, function() {
-              console.error('service worker background sync failed, will retry later');
-            })
-        .catch((err) => { console.log(err) });
-      }
 
-      /** 
-      * send message to web worker to upload submission.  If fails, submission
-      * stays in InnoDB until next time user makes submission, and then new
-      * submission and any saved submissions will be uploaded, and removed
-      * from browser storage after successful upload
-      */
-      function webWorkerUpload() {
-          self.upload_worker.postMessage({
-            command: 'upload',
-            uploadURL: uploadURL,
-          });
-      }
-
-      /** 
-      * upload submission from main thread, asynchronously...
-      * TODO is this even required???
-      * might be useful to allow user to upload manually...
-      */
-      function asyncMainThreadUpload() {
-        // TODO make sure not deadlock with service/web workers...
-        // TODO: should try web workers first...
-        // TODO localize in Read.md page...
-        console.info('submission uploaded (in main thread) asynchronously to VoxForge server');
-
-        processSavedSubmissions()
-        .then(function(result) {
-          console.info('async upload message: ' + result);
-          window.alert( "the following submissions were successfully uploaded " +
-                        "using async procedure: " + result );   
-        })
-        .catch(function(err) {
-          console.error('async upload message: ' + err);
-        });
-      }
-
-      // #######################################################################
-
-      return new Promise(function (resolve, reject) {
-
-          if (typeof navigator.serviceWorker !== 'undefined') { 
-              navigator.serviceWorker.ready
-              .then(function(swRegistration) { // service workers supported
-                if (typeof swRegistration.sync !== 'undefined') { 
-                  serviceWorkerUpload(swRegistration);  // background sync supported
-                } else { 
-                  console.warn('service worker does not support background sync... using web worker');
-                  webWorkerUpload(); // background sync not supported
-                }
-              })
-              .catch((err) => { console.log(err) });
-          } else { // service workers not supported
-            if( !! window.Worker ) { // web workers supported
-                webWorkerUpload();
-            } else { // should never get here...
-                asyncMainThreadUpload();
-            }
-          }
-          resolve("uploadZippedSubmission");
-
-        }); // Promise
-
-    } // uploadZippedSubmission
 
     // #######################################################################
     
@@ -367,7 +278,7 @@ Uploader.prototype.upload = function ( prompts,
       
         self._processAudio()
         .then(self._callWorker2createZipFile.bind(self))
-        .then(uploadZippedSubmission)
+        .then(self._uploadZippedSubmission.bind(self))
         .then(resolve) // resolve needs to be passed as a reference... therefore no parms
         .catch(function (err) {
           console.log(err.message);
@@ -377,7 +288,99 @@ Uploader.prototype.upload = function ( prompts,
     }); // Promise
 }
 
+/** 
+* worker Processing - depending on browser support, use service worker and 
+* background sync to upload submission, if not available, use a web
+* worker that uploads in background; or perform asynchronous upload
+* if neither is supported.
+*/
+Uploader.prototype._uploadZippedSubmission = function () {
+    var self = this;
+    
+  /** 
+  * send message to service worker to start submission upload.
+  *
+  * supposed continue to try to upload even if no Internet, until connection
+  * restablished, and if successful, remove uploaded submission from
+  * browser storage, but this does not seem to work in Windows or Linux, 
+  * only works with Android
+  */
+  function serviceWorkerUpload(swRegistration) {
+    // for processing of return values from service worker, see 
+    // service worker event above (i.e. navigator.serviceWorker.addEventListener... )
+    swRegistration.sync.register('voxforgeSync')
+    .then(
+        function() {
+          console.info('service worker background sync event called - submission will be uploaded shortly');
+         }, function() {
+          console.error('service worker background sync failed, will retry later');
+        })
+    .catch((err) => { console.log(err) });
+  }
 
+  /** 
+  * send message to web worker to upload submission.  If fails, submission
+  * stays in InnoDB until next time user makes submission, and then new
+  * submission and any saved submissions will be uploaded, and removed
+  * from browser storage after successful upload
+  */
+  function webWorkerUpload() {
+      self.upload_worker.postMessage({
+        command: 'upload',
+        uploadURL: uploadURL,
+      });
+  }
+
+  /** 
+  * upload submission from main thread, asynchronously...
+  * TODO is this even required???
+  * might be useful to allow user to upload manually...
+  */
+  function asyncMainThreadUpload() {
+    // TODO make sure not deadlock with service/web workers...
+    // TODO: should try web workers first...
+    // TODO localize in Read.md page...
+    console.info('submission uploaded (in main thread) asynchronously to VoxForge server');
+
+    processSavedSubmissions()
+    .then(function(result) {
+      console.info('async upload message: ' + result);
+      window.alert( "the following submissions were successfully uploaded " +
+                    "using async procedure: " + result );   
+    })
+    .catch(function(err) {
+      console.error('async upload message: ' + err);
+    });
+  }
+
+  // #######################################################################
+
+  return new Promise(function (resolve, reject) {
+
+      if (typeof navigator.serviceWorker !== 'undefined') { 
+          navigator.serviceWorker.ready
+          .then(function(swRegistration) { // service workers supported
+            if (typeof swRegistration.sync !== 'undefined') { 
+              serviceWorkerUpload(swRegistration);  // background sync supported
+            } else { 
+              console.warn('service worker does not support background sync... using web worker');
+              webWorkerUpload(); // background sync not supported
+            }
+          })
+          .catch((err) => { console.log(err) });
+      } else { // service workers not supported
+        if( !! window.Worker ) { // web workers supported
+            webWorkerUpload();
+        } else { // should never get here...
+            asyncMainThreadUpload();
+        }
+      }
+      resolve("uploadZippedSubmission");
+
+    }); // Promise
+
+} // uploadZippedSubmission
+    
 /**
 * call web worker to create zip file and upload to VoxForge server
 */
@@ -386,32 +389,8 @@ Uploader.prototype._callWorker2createZipFile = function (audioArray) {
     
     this._captureDebugValues();
     this._tellWorkerToZipFile(audioArray);
-    return this._processReplyFromZipWorker(audioArray);
-}
-
-/**
-* Handler for messages coming from zip_worker web worker
-*/
-Uploader.prototype._processReplyFromZipWorker = function (audioArray) {
-    var self = this;
     
-    return new Promise(function (resolve, reject) {
-
-        self.zip_worker.onmessage = function (event) {
-            self._logSubmissionUpload();
-
-            if (event.data.status === "savedInBrowserStorage") {
-                console.info('webworker says: savedInBrowserStorage ' +
-                    '(zip file creation and save completed)');
-                resolve('savedInBrowserStorage');
-            } else {
-                var m = 'webworker says: zip error: ' + event.data.status;
-                console.error(m);
-                reject(m);
-            }
-        }
-
-    }); // Promise
+    return this._processReplyFromZipWorker(audioArray);
 }
 
 Uploader.prototype._captureDebugValues = function () {
@@ -420,11 +399,6 @@ Uploader.prototype._captureDebugValues = function () {
     } else {
       this.debug.clearValues('prompts');
     }
-}
-
-Uploader.prototype._logSubmissionUpload = function () {
-    localStorage.setItem('timeOfLastSubmission', Date.now());
-    localStorage.setItem('numberOfSubmissions', this.getNumberOfSubmissions() + 1);
 }
 
 // need to copy to blobs here (rather than in web worker) because if pass 
@@ -452,6 +426,36 @@ Uploader.prototype._tellWorkerToZipFile = function (audioArray) {
         debug_json_blob: new Blob([self.debug.toJsonString()], {type: "text/plain;charset=utf-8"}),
     });
 
+}
+
+/**
+* Handler for messages coming from zip_worker web worker
+*/
+Uploader.prototype._processReplyFromZipWorker = function (audioArray) {
+    var self = this;
+    
+    return new Promise(function (resolve, reject) {
+
+        self.zip_worker.onmessage = function (event) {
+            self._logSubmissionUpload();
+
+            if (event.data.status === "savedInBrowserStorage") {
+                console.info('webworker says: savedInBrowserStorage ' +
+                    '(zip file creation and save completed)');
+                resolve('savedInBrowserStorage');
+            } else {
+                var m = 'webworker says: zip error: ' + event.data.status;
+                console.error(m);
+                reject(m);
+            }
+        }
+
+    }); // Promise
+}
+
+Uploader.prototype._logSubmissionUpload = function () {
+    localStorage.setItem('timeOfLastSubmission', Date.now());
+    localStorage.setItem('numberOfSubmissions', this.getNumberOfSubmissions() + 1);
 }
 
 /**
@@ -516,10 +520,8 @@ Uploader.prototype._processAudio = function () {
             xhr.send();
         } // audioArrayLoop
 
-
-          
-
     _audioArrayLoop(audioArray, clipIndex);
+    
     }); // Promise
   
 };// processAudio
