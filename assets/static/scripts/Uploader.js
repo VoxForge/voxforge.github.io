@@ -294,7 +294,7 @@ Uploader.prototype._processAudio = function() {
     var self = this;
     
     return new Promise(function (resolve, reject) {
-        self.lastAudioFileFinished = function (audioArray) {
+        self.lastAudioClipFinished = function (audioArray) {
             resolve(audioArray);
         };           
         self.onError = function () {
@@ -315,7 +315,7 @@ Uploader.prototype._addAllClipsToAudioArray = function() {
 
         var lastClip = clipIndex >= (allClips.length -1);
 
-        self._addClipToAudioArray(
+        self._getClipToAddToAudioArray(
             clip,
             lastClip);
     });
@@ -327,24 +327,21 @@ Uploader.prototype._hideClip = function (clip) {
 
 // Ajax is asynchronous - once the request is sent script will 
 // continue executing without waiting for the response.
-Uploader.prototype._addClipToAudioArray = function (
-    clip,
-    lastClip)
-{
+Uploader.prototype._getClipToAddToAudioArray = function (clip, lastClip) {
     var self = this;
-    var audioBlobUrl = self._getAudioURL(clip);
-    var filename = self._extractPromptIDfromClip.call(self, clip) + '.wav';   
+
+    var filename = this._extractPromptIDfromClip.call(self, clip) + '.wav';   
 
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', audioBlobUrl, true); // get blob from browser memory; 
+    xhr.open('GET', this._getAudioURL(clip), true); // get blob from browser memory; 
     xhr.responseType = 'blob';
     xhr.onload =  function () {
         if (this.status != 200) { return } // request failed; skip
-        self._getFinished_AddAudioToArray.call(
-            self,
-            filename,
-            this.response, // blob
-            lastClip,);
+
+        self._addClipToAudioArray.call(self, filename, this.response); 
+        if ( lastClip )  {
+            self.lastAudioClipFinished.call(self, self.audioArray);
+        }
     };
     xhr.onerror = self.onError;
     xhr.send();
@@ -353,23 +350,6 @@ Uploader.prototype._addClipToAudioArray = function (
 Uploader.prototype._getAudioURL = function(clip) {
     // TODO this should be in view?    
     return clip.querySelector('audio').src; 
-}
-
-Uploader.prototype._getFinished_AddAudioToArray = function (
-    filename,
-    blob,
-    lastClip)
-{
-    var self = this;
-
-    self.audioArray.push ({
-        filename:  filename, 
-        audioBlob: blob,
-    });
-                
-    if ( lastClip ) {
-        self.lastAudioFileFinished.call(self, self.audioArray);
-    }    
 }
 
 Uploader.prototype._extractPromptIDfromClip = function (clip) {
@@ -381,6 +361,13 @@ Uploader.prototype._extractPromptIDfromClip = function (clip) {
 
 Uploader.prototype._extractPromptFromClip = function (clip) {
     return clip.querySelector('prompt').innerText;
+}
+
+Uploader.prototype._addClipToAudioArray = function (filename, blob) {
+    this.audioArray.push ({
+        filename: filename, 
+        audioBlob: blob,
+    });
 }
 
 /**
@@ -464,7 +451,6 @@ Uploader.prototype._tellWorkerToZipFile = function (audioArray) {
         audio: audioArray,
         debug_json_blob: new Blob([self.debug.toJsonString()], {type: "text/plain;charset=utf-8"}),
     });
-
 }
 
 /**
@@ -472,7 +458,7 @@ Uploader.prototype._tellWorkerToZipFile = function (audioArray) {
 */
 Uploader.prototype._processReplyFromZipWorker = function (audioArray) {
     var self = this;
-    
+
     return new Promise(function (resolve, reject) {
 
         self.zip_worker.onmessage = function (event) {
@@ -492,7 +478,6 @@ Uploader.prototype._processReplyFromZipWorker = function (audioArray) {
     }); // Promise
 }
 
-
 /** 
 * worker Processing - depending on browser support, use service worker and 
 * background sync to upload submission, if not available, use a web
@@ -502,35 +487,50 @@ Uploader.prototype._processReplyFromZipWorker = function (audioArray) {
 Uploader.prototype._uploadZippedSubmission = function () {
     var self = this;
 
+    return new Promise(function (resolve, reject) {
 
-  // #######################################################################
-
-  return new Promise(function (resolve, reject) {
-
-      if (typeof navigator.serviceWorker !== 'undefined') { 
-          navigator.serviceWorker.ready
-          .then(function(swRegistration) { // service workers supported
-            if (typeof swRegistration.sync !== 'undefined') { 
-                self._serviceWorkerUpload(swRegistration);  // background sync supported
-            } else { 
-                console.warn('service worker does not support background ' +
-                    'sync... using web worker');
-                self._webWorkerUpload(); // background sync not supported
+        if (self._serviceWorkerSupported()) {
+            self._determineIfBackgroundSyncSupported();
+        } else { // service workers not supported
+            if( self._webworkerSupported() ) {
+                self._webWorkerUpload();
+            } else { // should never get here...
+                self._asyncMainThreadUpload.call(self); 
             }
-          })
-          .catch((err) => { console.log(err) });
-      } else { // service workers not supported
-        if( !! window.Worker ) { // web workers supported
-            self._webWorkerUpload();
-        } else { // should never get here...
-            self._asyncMainThreadUpload.call(self); // to use self in called function context
         }
-      }
-      resolve("uploadZippedSubmission");
+        resolve("uploadZippedSubmission");
 
     }); // Promise
 
-} // uploadZippedSubmission
+} 
+
+Uploader.prototype._serviceWorkerSupported = function() {
+    return typeof navigator.serviceWorker !== 'undefined';
+}
+
+Uploader.prototype._webworkerSupported = function() {
+    return !! window.Worker;
+}
+
+Uploader.prototype._determineIfBackgroundSyncSupported = function() {
+    var self = this;
+        
+    navigator.serviceWorker.ready
+    .then(function(swRegistration) {
+        if ( self._backgroundSyncSupported(swRegistration) ) { 
+            self._serviceWorkerUpload(swRegistration);  
+        } else { 
+            console.warn('service worker does not support background ' +
+                'sync... using web worker');
+            self._webWorkerUpload(); // background sync not supported
+        }
+    })
+    .catch((err) => { console.log(err) });
+}
+
+Uploader.prototype._backgroundSyncSupported = function(swRegistration) {
+    return typeof swRegistration.sync !== 'undefined';
+}
 
 /** 
 * send message to service worker to start submission upload.
@@ -594,4 +594,3 @@ Uploader.prototype._logSubmissionUpload = function () {
     localStorage.setItem('timeOfLastSubmission', Date.now());
     localStorage.setItem('numberOfSubmissions', this.getNumberOfSubmissions() + 1);
 }
-
