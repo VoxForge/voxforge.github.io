@@ -296,7 +296,7 @@ Uploader.prototype._processAudio = function () {
     
     return new Promise(function (resolve, reject) {
         
-        function _processClip(clip, clipIndex) {
+        function _processClip(clip, clipIndex, allClips) {
             clip.style.display = 'None'; // hide clip from display as it is being processed
             var audioBlobUrl = clip.querySelector('audio').src; 
 
@@ -317,7 +317,7 @@ Uploader.prototype._processAudio = function () {
                   audioBlob: blob
                 });
 
-                if ( clipIndex >= (self.allClips.length -1) ) {
+                if ( clipIndex >= (allClips.length -1) ) {
                     resolve(audioArray);
                 }
             }
