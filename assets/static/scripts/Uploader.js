@@ -290,62 +290,72 @@ Uploader.prototype.upload = function (
 *
 * uses xhr internally to collect read audio samples from shadow DOM
 */
-Uploader.prototype._processAudio = function () {
+Uploader.prototype._processAudio = function() {
     var self = this;
-
+    
     return new Promise(function (resolve, reject) {
-        
-        function lastAudioFileFinished(audioArray) {
+        self.lastAudioFileFinished = function (audioArray) {
             resolve(audioArray);
         };           
-        function onerror() {
+        self.onError = function () {
             reject("error processing audio from DOM");
         };
         
-        self._processAllAudioClips(lastAudioFileFinished, onerror);
-
-    }); // Promise
+        self._addAllClipsToAudioArray();
+    });
   
 };// processAudio
 
-Uploader.prototype._processAllAudioClips = function (
-    lastAudioFileFinished,
-    onerror)
-{
+Uploader.prototype._addAllClipsToAudioArray = function() {
     var self = this;
     var audioArray = [];
-
-    function _processClip(clip, clipIndex, allClips) {
-        function onload() {
-            if (this.status != 200) { return } // request failed; skip
-
-            var prompt_id = self._extractPromptIDfromClip.call(self, clipIndex);
-            var blob = this.response;
-            // add current audio blob to zip file in browser memory
-            audioArray.push ({
-              filename: prompt_id + '.wav', 
-              audioBlob: blob
-            });
-
-            if ( clipIndex >= (allClips.length -1) ) {
-                lastAudioFileFinished(audioArray);
-            }
-        }
-        
-        clip.style.display = 'None'; // hide clip from display as it is being processed
-        var audioBlobUrl = clip.querySelector('audio').src; 
-
-        // Ajax is asynchronous - once the request is sent script will 
-        // continue executing without waiting for the response.
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', audioBlobUrl, true); // get blob from browser memory; 
-        xhr.responseType = 'blob';
-        xhr.onload =  onload;
-        xhr.onerror = onerror;
-        xhr.send();
-    };
     
-    this.allClips.forEach(_processClip);
+    this.allClips.forEach(function (clip, clipIndex, allClips) {
+        self._hideClip(clip);
+
+        self._addClipToAudioArray(
+            audioArray,
+            clipIndex,
+            self._getAudioURL(clip));
+    });
+}
+
+Uploader.prototype._hideClip = function (clip) {
+    clip.style.display = 'None'; // hide clip from display as it is being processed
+}
+
+Uploader.prototype._getAudioURL = function(clip) {
+    // TODO this should be in view?    
+    return clip.querySelector('audio').src; 
+}
+
+// Ajax is asynchronous - once the request is sent script will 
+// continue executing without waiting for the response.
+Uploader.prototype._addClipToAudioArray = function (
+    audioArray,
+    clipIndex,
+    audioBlobUrl)
+{
+    var self = this;
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', audioBlobUrl, true); // get blob from browser memory; 
+    xhr.responseType = 'blob';
+    xhr.onload =  function () {
+        if (this.status != 200) { return } // request failed; skip
+        
+        var filename = self._extractPromptIDfromClip.call(self, clipIndex) + '.wav';
+        audioArray.push ({
+            filename:  filename, 
+            audioBlob: this.response,
+        });
+                    
+        if ( clipIndex >= (self.allClips.length -1) ) {
+            self.lastAudioFileFinished.call(self, audioArray);
+        }        
+    };
+    xhr.onerror = self.onError;
+    xhr.send();
 }
 
 Uploader.prototype._extractPromptIDfromClip = function (clipIndex) {
