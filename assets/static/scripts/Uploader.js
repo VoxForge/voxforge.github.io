@@ -258,73 +258,17 @@ Uploader.prototype.upload = function ( prompts,
                                        debugChecked )
 {
     var self = this;
-
-    this.allClips = allClips;
+    
     this.prompts = prompts;
+    this.profile = profile;    
+    this.debug = debug;
+    this.speechSubmissionAppVersion = speechSubmissionAppVersion;      
+    this.allClips = allClips;
+    this.language = language;
+    this.debugChecked = debugChecked;
+      
 
     // ### inner functions #################################################
-
-
-    /**
-    * call web worker to create zip file and upload to VoxForge server
-    */
-    function callWorker2createZipFile(audioArray) {
-      if ( debugChecked ) {
-          debug.setValues( 'prompts', prompts.getDebugValues() );
-      } else {
-          debug.clearValues('prompts');
-      }
-      
-      return new Promise(function (resolve, reject) {
-
-        // need to copy to blobs here (rather than in web worker) because if pass 
-        // them as references to ZipWorker, they will be overwritten when page refreshes
-        // and not be accessible within web worker
-        self.zip_worker.postMessage({
-          command: 'zipAndSave',
-
-          speechSubmissionAppVersion: speechSubmissionAppVersion,
-          temp_submission_name: profile.getTempSubmissionName(),
-          short_submission_name: profile.getShortSubmissionName(),
-          username: profile.getUserName(),
-          language: language,
-          suffix: profile.getSuffix(),
-
-          readme_blob: new Blob(profile.toArray(), {type: "text/plain;charset=utf-8"}),
-          prompts_blob: new Blob(prompts.toArray(), {type: "text/plain;charset=utf-8"}),
-          license_blob: new Blob(profile.licensetoArray(), {type: "text/plain;charset=utf-8"}),
-          profile_json_blob: new Blob([profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
-          prompts_json_blob: new Blob([prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
-          audio: audioArray,
-          debug_json_blob: new Blob([debug.toJsonString()], {type: "text/plain;charset=utf-8"}),
-        });
-
-        /**
-        * Handler for messages coming from zip_worker web worker
-        *
-        * receives replies from worker thread and displays status accordingly
-        * this is a worker callback inside the worker context
-        */
-        self.zip_worker.onmessage = function zipworkerDone(event) { 
-
-          localStorage.setItem('timeOfLastSubmission', Date.now());
-          localStorage.setItem('numberOfSubmissions', self.getNumberOfSubmissions() + 1);
-
-          if (event.data.status === "savedInBrowserStorage") {
-            console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
-
-            resolve('savedInBrowserStorage');
-
-          } else {
-            var m = 'webworker says: zip error: ' + event.data.status;
-            console.error(m);
-            reject(m);
-          }
-        };
-
-      }); // Promise
-
-    } // callWorker2createZipFile
 
     /** 
     * worker Processing - depending on browser support, use service worker and 
@@ -422,7 +366,7 @@ Uploader.prototype.upload = function ( prompts,
     return new Promise(function (resolve, reject) {
       
         self._processAudio()
-        .then(callWorker2createZipFile)
+        .then(self._callWorker2createZipFile.bind(self))
         .then(uploadZippedSubmission)
         .then(resolve) // resolve needs to be passed as a reference... therefore no parms
         .catch(function (err) {
@@ -433,6 +377,69 @@ Uploader.prototype.upload = function ( prompts,
     }); // Promise
 }
 
+
+/**
+* call web worker to create zip file and upload to VoxForge server
+*/
+Uploader.prototype._callWorker2createZipFile = function (audioArray) {
+    var self = this;
+    
+  if ( self.debugChecked ) {
+      self.debug.setValues( 'prompts', self.prompts.getDebugValues() );
+  } else {
+      self.debug.clearValues('prompts');
+  }
+  
+  return new Promise(function (resolve, reject) {
+
+    // need to copy to blobs here (rather than in web worker) because if pass 
+    // them as references to ZipWorker, they will be overwritten when page refreshes
+    // and not be accessible within web worker
+    self.zip_worker.postMessage({
+      command: 'zipAndSave',
+
+      speechSubmissionAppVersion: self.speechSubmissionAppVersion,
+      temp_submission_name: self.profile.getTempSubmissionName(),
+      short_submission_name: self.profile.getShortSubmissionName(),
+      username: self.profile.getUserName(),
+      language: self.language,
+      suffix: self.profile.getSuffix(),
+
+      readme_blob: new Blob(self.profile.toArray(), {type: "text/plain;charset=utf-8"}),
+      prompts_blob: new Blob(self.prompts.toArray(), {type: "text/plain;charset=utf-8"}),
+      license_blob: new Blob(self.profile.licensetoArray(), {type: "text/plain;charset=utf-8"}),
+      profile_json_blob: new Blob([self.profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
+      prompts_json_blob: new Blob([self.prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
+      audio: audioArray,
+      debug_json_blob: new Blob([self.debug.toJsonString()], {type: "text/plain;charset=utf-8"}),
+    });
+
+    /**
+    * Handler for messages coming from zip_worker web worker
+    *
+    * receives replies from worker thread and displays status accordingly
+    * this is a worker callback inside the worker context
+    */
+    self.zip_worker.onmessage = function zipworkerDone(event) { 
+
+      localStorage.setItem('timeOfLastSubmission', Date.now());
+      localStorage.setItem('numberOfSubmissions', self.getNumberOfSubmissions() + 1);
+
+      if (event.data.status === "savedInBrowserStorage") {
+        console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
+
+        resolve('savedInBrowserStorage');
+
+      } else {
+        var m = 'webworker says: zip error: ' + event.data.status;
+        console.error(m);
+        reject(m);
+      }
+    };
+
+  }); // Promise
+
+} // callWorker2createZipFile
 
 /**
 * recursive function that loops over audio clips and asynchronously
