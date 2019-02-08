@@ -384,41 +384,43 @@ Uploader.prototype.upload = function ( prompts,
 Uploader.prototype._callWorker2createZipFile = function (audioArray) {
     var self = this;
     
-    if ( self.debugChecked ) {
-      self.debug.setValues( 'prompts', self.prompts.getDebugValues() );
-    } else {
-      self.debug.clearValues('prompts');
-    }
-
-    self._tellWorkerToZipFile(audioArray);
+    this._setDebugIfRequired();
+    this._tellWorkerToZipFile(audioArray);
     
     return new Promise(function (resolve, reject) {
         /**
         * Handler for messages coming from zip_worker web worker
-        *
-        * receives replies from worker thread and displays status accordingly
-        * this is a worker callback inside the worker context
         */
-        self.zip_worker.onmessage = function zipworkerDone(event) { 
+        self.zip_worker.onmessage = function (event) {
+            self._logSubmissionUpload();
 
-          localStorage.setItem('timeOfLastSubmission', Date.now());
-          localStorage.setItem('numberOfSubmissions', self.getNumberOfSubmissions() + 1);
-
-          if (event.data.status === "savedInBrowserStorage") {
-            console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
-
-            resolve('savedInBrowserStorage');
-
-          } else {
-            var m = 'webworker says: zip error: ' + event.data.status;
-            console.error(m);
-            reject(m);
-          }
-        };
+            if (event.data.status === "savedInBrowserStorage") {
+                console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
+                resolve('savedInBrowserStorage');
+            } else {
+                var m = 'webworker says: zip error: ' + event.data.status;
+                console.error(m);
+                reject(m);
+            }
+        }
 
     }); // Promise
 
-} // callWorker2createZipFile
+} 
+
+Uploader.prototype._setDebugIfRequired = function () {
+    if ( this.debugChecked ) {
+      this.debug.setValues( 'prompts', this.prompts.getDebugValues() );
+    } else {
+      this.debug.clearValues('prompts');
+    }
+
+}
+
+Uploader.prototype._logSubmissionUpload = function () {
+    localStorage.setItem('timeOfLastSubmission', Date.now());
+    localStorage.setItem('numberOfSubmissions', this.getNumberOfSubmissions() + 1);
+}
 
 // need to copy to blobs here (rather than in web worker) because if pass 
 // them as references to ZipWorker, they will be overwritten when page refreshes
