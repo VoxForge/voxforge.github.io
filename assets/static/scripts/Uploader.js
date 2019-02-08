@@ -431,18 +431,17 @@ Uploader.prototype._captureDebugValues = function () {
 // them as references to ZipWorker, they will be overwritten when page refreshes
 // and not be accessible within web worker
 Uploader.prototype._tellWorkerToZipFile = function (audioArray) {
-    var self = this;
     var zip_worker_parms = {};
+    
     zip_worker_parms.command = 'zipAndSave';    
     this._mergeProperties(zip_worker_parms, this._zipworkerProperties());
     this._mergeProperties(zip_worker_parms, this._zipworkerBlobProperties());
     zip_worker_parms.audio = audioArray;
     
-    self.zip_worker.postMessage(zip_worker_parms);
+    this.zip_worker.postMessage(zip_worker_parms);
 }
 
 Uploader.prototype._zipworkerProperties = function () {
-    var self = this;    
     return {
         speechSubmissionAppVersion: this.speechSubmissionAppVersion,
         temp_submission_name: this.profile.getTempSubmissionName(),
