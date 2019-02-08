@@ -298,34 +298,31 @@ Uploader.prototype._processAudio = function () {
     return new Promise(function (resolve, reject) {
         
         function _onload(e) {
-            if (this.status == 200) {
-              var prompt_id = self._extractPromptIDfromClip.call(self, clipIndex);
-              
-              var blob = this.response;
-              // add current audio blob to zip file in browser memory
-              audioArray.push ({
-                  filename: prompt_id + '.wav', 
-                  audioBlob: blob
-              });
-              clipIndex += 1;
-              if (clipIndex < self.allClips.length) {
-                _audioArrayLoop();
-              } else {
-                // must be called here because ajax is asynchronous
-                // Q1: why doesnt createZipFile get called many times as the call stack unrolls???
-                // ... because status no longer status == 200???
+            if (this.status != 200) { return; }   
 
-                resolve(audioArray);
-              }
+            var prompt_id = self._extractPromptIDfromClip.call(self, clipIndex);
+            var blob = this.response;
+            // add current audio blob to zip file in browser memory
+            audioArray.push ({
+              filename: prompt_id + '.wav', 
+              audioBlob: blob
+            });
+
+            if (_lastClip()) {
+              resolve(audioArray);
             }
+            clipIndex++;            
         }
 
-        function _reject() {
+        function _lastClip() {
+            return clipIndex >= self.allClips.length - 1;
+        }
+
+        function _onerror() {
             reject("error processing audio from DOM");
         };
-                      
-        function _audioArrayLoop() {
-            var clip = self.allClips[clipIndex];
+
+        function _processClip(clip) {
             clip.style.display = 'None'; // remove clip from display as it is being processed
             var audioBlobUrl = clip.querySelector('audio').src;
 
@@ -336,12 +333,11 @@ Uploader.prototype._processAudio = function () {
             xhr.open('GET', audioBlobUrl, true);
             xhr.responseType = 'blob';
             xhr.onload = _onload;
-            xhr.onerror = _reject;
+            xhr.onerror = _onerror;
             xhr.send();
-        } // audioArrayLoop
+        };
+        self.allClips.forEach(_processClip);
 
-        _audioArrayLoop();
-    
     }); // Promise
   
 };// processAudio
