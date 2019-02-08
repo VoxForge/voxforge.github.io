@@ -310,12 +310,14 @@ Uploader.prototype._addAllClipsToAudioArray = function() {
     var self = this;
     this.audioArray = [];
     
-    this.allClips.forEach(function (clip, clipIndex) {
+    this.allClips.forEach(function (clip, clipIndex, allClips) {
         self._hideClip(clip);
 
+        var lastClip = clipIndex >= (allClips.length -1);
+
         self._addClipToAudioArray(
-            clipIndex,
-            self._getAudioURL(clip));
+            clip,
+            lastClip);
     });
 }
 
@@ -323,57 +325,62 @@ Uploader.prototype._hideClip = function (clip) {
     clip.style.display = 'None'; // hide clip from display as it is being processed
 }
 
-Uploader.prototype._getAudioURL = function(clip) {
-    // TODO this should be in view?    
-    return clip.querySelector('audio').src; 
-}
-
 // Ajax is asynchronous - once the request is sent script will 
 // continue executing without waiting for the response.
 Uploader.prototype._addClipToAudioArray = function (
-    clipIndex,
-    audioBlobUrl)
+    clip,
+    lastClip)
 {
     var self = this;
-    
+    var audioBlobUrl = self._getAudioURL(clip);
+    var filename = self._extractPromptIDfromClip.call(self, clip) + '.wav';   
+
     var xhr = new XMLHttpRequest();
     xhr.open('GET', audioBlobUrl, true); // get blob from browser memory; 
     xhr.responseType = 'blob';
     xhr.onload =  function () {
         if (this.status != 200) { return } // request failed; skip
-        self._getFinishedAddAudioToArray.call(self, clipIndex, this.response);
+        self._getFinished_AddAudioToArray.call(
+            self,
+            filename,
+            this.response, // blob
+            lastClip,);
     };
     xhr.onerror = self.onError;
     xhr.send();
 }
 
-Uploader.prototype._getFinishedAddAudioToArray = function (clipIndex, blob) {
+Uploader.prototype._getAudioURL = function(clip) {
+    // TODO this should be in view?    
+    return clip.querySelector('audio').src; 
+}
+
+Uploader.prototype._getFinished_AddAudioToArray = function (
+    filename,
+    blob,
+    lastClip)
+{
     var self = this;
-    
-    var filename = self._extractPromptIDfromClip.call(self, clipIndex) + '.wav';
+
     self.audioArray.push ({
         filename:  filename, 
         audioBlob: blob,
     });
                 
-    if ( clipIndex >= (self.allClips.length -1) ) {
+    if ( lastClip ) {
         self.lastAudioFileFinished.call(self, self.audioArray);
     }    
 }
 
-Uploader.prototype._extractPromptIDfromClip = function (clipIndex) {
-    var prompt = this._extractPromptFromClip(clipIndex);
+Uploader.prototype._extractPromptIDfromClip = function (clip) {
+    var prompt = this._extractPromptFromClip(clip);
     this.prompts.addToPromptsRecorded(prompt);
           
-    var prompt_id = prompt.split(/(\s+)/).shift();
-    return prompt_id;    
+    return prompt.split(/(\s+)/).shift();
 }
 
-Uploader.prototype._extractPromptFromClip = function (clipIndex) {
-    var clip = this.allClips[clipIndex];
-    var prompt = clip.querySelector('prompt').innerText;
-    
-    return prompt;
+Uploader.prototype._extractPromptFromClip = function (clip) {
+    return clip.querySelector('prompt').innerText;
 }
 
 /**
