@@ -293,49 +293,42 @@ Uploader.prototype.upload = function (
 Uploader.prototype._processAudio = function () {
     var self = this;
     var audioArray = [];
-    var clipIndex = 0;
     
     return new Promise(function (resolve, reject) {
         
-        function _onload(e) {
-            if (this.status != 200) { return; }   
-
-            var prompt_id = self._extractPromptIDfromClip.call(self, clipIndex);
-            var blob = this.response;
-            // add current audio blob to zip file in browser memory
-            audioArray.push ({
-              filename: prompt_id + '.wav', 
-              audioBlob: blob
-            });
-
-            if (_lastClip()) {
-              resolve(audioArray);
-            }
-            clipIndex++;            
-        }
-
-        function _lastClip() {
-            return clipIndex >= self.allClips.length - 1;
-        }
-
-        function _onerror() {
-            reject("error processing audio from DOM");
-        };
-
-        function _processClip(clip) {
-            clip.style.display = 'None'; // remove clip from display as it is being processed
-            var audioBlobUrl = clip.querySelector('audio').src;
+        function _processClip(clip, clipIndex) {
+            clip.style.display = 'None'; // hide clip from display as it is being processed
+            var audioBlobUrl = clip.querySelector('audio').src; 
 
             // Ajax is asynchronous - once the request is sent script will 
             // continue executing without waiting for the response.
             var xhr = new XMLHttpRequest();
-            // get blob from browser memory; 
-            xhr.open('GET', audioBlobUrl, true);
+            xhr.open('GET', audioBlobUrl, true); // get blob from browser memory; 
             xhr.responseType = 'blob';
-            xhr.onload = _onload;
-            xhr.onerror = _onerror;
+            
+            xhr.onload =  function (e) {
+                if (this.status != 200) { return } // request failed; skip
+
+                var prompt_id = self._extractPromptIDfromClip.call(self, clipIndex);
+                var blob = this.response;
+                // add current audio blob to zip file in browser memory
+                audioArray.push ({
+                  filename: prompt_id + '.wav', 
+                  audioBlob: blob
+                });
+
+                if ( clipIndex >= (self.allClips.length -1) ) {
+                    resolve(audioArray);
+                }
+            }
+
+            xhr.onerror = function () {
+                reject("error processing audio from DOM");
+            };
+
             xhr.send();
         };
+        
         self.allClips.forEach(_processClip);
 
     }); // Promise
