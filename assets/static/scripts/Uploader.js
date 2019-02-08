@@ -308,13 +308,12 @@ Uploader.prototype._processAudio = function() {
 
 Uploader.prototype._addAllClipsToAudioArray = function() {
     var self = this;
-    var audioArray = [];
+    this.audioArray = [];
     
     this.allClips.forEach(function (clip, clipIndex, allClips) {
         self._hideClip(clip);
 
         self._addClipToAudioArray(
-            audioArray,
             clipIndex,
             self._getAudioURL(clip));
     });
@@ -332,7 +331,6 @@ Uploader.prototype._getAudioURL = function(clip) {
 // Ajax is asynchronous - once the request is sent script will 
 // continue executing without waiting for the response.
 Uploader.prototype._addClipToAudioArray = function (
-    audioArray,
     clipIndex,
     audioBlobUrl)
 {
@@ -345,13 +343,13 @@ Uploader.prototype._addClipToAudioArray = function (
         if (this.status != 200) { return } // request failed; skip
         
         var filename = self._extractPromptIDfromClip.call(self, clipIndex) + '.wav';
-        audioArray.push ({
+        self.audioArray.push ({
             filename:  filename, 
             audioBlob: this.response,
         });
                     
         if ( clipIndex >= (self.allClips.length -1) ) {
-            self.lastAudioFileFinished.call(self, audioArray);
+            self.lastAudioFileFinished.call(self, self.audioArray);
         }        
     };
     xhr.onerror = self.onError;
