@@ -384,62 +384,68 @@ Uploader.prototype.upload = function ( prompts,
 Uploader.prototype._callWorker2createZipFile = function (audioArray) {
     var self = this;
     
-  if ( self.debugChecked ) {
+    if ( self.debugChecked ) {
       self.debug.setValues( 'prompts', self.prompts.getDebugValues() );
-  } else {
+    } else {
       self.debug.clearValues('prompts');
-  }
-  
-  return new Promise(function (resolve, reject) {
+    }
 
-    // need to copy to blobs here (rather than in web worker) because if pass 
-    // them as references to ZipWorker, they will be overwritten when page refreshes
-    // and not be accessible within web worker
-    self.zip_worker.postMessage({
-      command: 'zipAndSave',
+    self._tellWorkerToZipFile(audioArray);
+    
+    return new Promise(function (resolve, reject) {
+        /**
+        * Handler for messages coming from zip_worker web worker
+        *
+        * receives replies from worker thread and displays status accordingly
+        * this is a worker callback inside the worker context
+        */
+        self.zip_worker.onmessage = function zipworkerDone(event) { 
 
-      speechSubmissionAppVersion: self.speechSubmissionAppVersion,
-      temp_submission_name: self.profile.getTempSubmissionName(),
-      short_submission_name: self.profile.getShortSubmissionName(),
-      username: self.profile.getUserName(),
-      language: self.language,
-      suffix: self.profile.getSuffix(),
+          localStorage.setItem('timeOfLastSubmission', Date.now());
+          localStorage.setItem('numberOfSubmissions', self.getNumberOfSubmissions() + 1);
 
-      readme_blob: new Blob(self.profile.toArray(), {type: "text/plain;charset=utf-8"}),
-      prompts_blob: new Blob(self.prompts.toArray(), {type: "text/plain;charset=utf-8"}),
-      license_blob: new Blob(self.profile.licensetoArray(), {type: "text/plain;charset=utf-8"}),
-      profile_json_blob: new Blob([self.profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
-      prompts_json_blob: new Blob([self.prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
-      audio: audioArray,
-      debug_json_blob: new Blob([self.debug.toJsonString()], {type: "text/plain;charset=utf-8"}),
-    });
+          if (event.data.status === "savedInBrowserStorage") {
+            console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
 
-    /**
-    * Handler for messages coming from zip_worker web worker
-    *
-    * receives replies from worker thread and displays status accordingly
-    * this is a worker callback inside the worker context
-    */
-    self.zip_worker.onmessage = function zipworkerDone(event) { 
+            resolve('savedInBrowserStorage');
 
-      localStorage.setItem('timeOfLastSubmission', Date.now());
-      localStorage.setItem('numberOfSubmissions', self.getNumberOfSubmissions() + 1);
+          } else {
+            var m = 'webworker says: zip error: ' + event.data.status;
+            console.error(m);
+            reject(m);
+          }
+        };
 
-      if (event.data.status === "savedInBrowserStorage") {
-        console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
-
-        resolve('savedInBrowserStorage');
-
-      } else {
-        var m = 'webworker says: zip error: ' + event.data.status;
-        console.error(m);
-        reject(m);
-      }
-    };
-
-  }); // Promise
+    }); // Promise
 
 } // callWorker2createZipFile
+
+// need to copy to blobs here (rather than in web worker) because if pass 
+// them as references to ZipWorker, they will be overwritten when page refreshes
+// and not be accessible within web worker
+Uploader.prototype._tellWorkerToZipFile = function (audioArray) {
+    var self = this;
+    
+    self.zip_worker.postMessage({
+        command: 'zipAndSave',
+
+        speechSubmissionAppVersion: self.speechSubmissionAppVersion,
+        temp_submission_name: self.profile.getTempSubmissionName(),
+        short_submission_name: self.profile.getShortSubmissionName(),
+        username: self.profile.getUserName(),
+        language: self.language,
+        suffix: self.profile.getSuffix(),
+
+        readme_blob: new Blob(self.profile.toArray(), {type: "text/plain;charset=utf-8"}),
+        prompts_blob: new Blob(self.prompts.toArray(), {type: "text/plain;charset=utf-8"}),
+        license_blob: new Blob(self.profile.licensetoArray(), {type: "text/plain;charset=utf-8"}),
+        profile_json_blob: new Blob([self.profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
+        prompts_json_blob: new Blob([self.prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
+        audio: audioArray,
+        debug_json_blob: new Blob([self.debug.toJsonString()], {type: "text/plain;charset=utf-8"}),
+    });
+
+}
 
 /**
 * recursive function that loops over audio clips and asynchronously
