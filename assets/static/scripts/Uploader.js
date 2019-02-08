@@ -384,18 +384,25 @@ Uploader.prototype.upload = function ( prompts,
 Uploader.prototype._callWorker2createZipFile = function (audioArray) {
     var self = this;
     
-    this._setDebugIfRequired();
+    this._captureDebugValues();
     this._tellWorkerToZipFile(audioArray);
+    return this._processReplyFromZipWorker(audioArray);
+}
+
+/**
+* Handler for messages coming from zip_worker web worker
+*/
+Uploader.prototype._processReplyFromZipWorker = function (audioArray) {
+    var self = this;
     
     return new Promise(function (resolve, reject) {
-        /**
-        * Handler for messages coming from zip_worker web worker
-        */
+
         self.zip_worker.onmessage = function (event) {
             self._logSubmissionUpload();
 
             if (event.data.status === "savedInBrowserStorage") {
-                console.info('webworker says: savedInBrowserStorage (zip file creation and save completed)');
+                console.info('webworker says: savedInBrowserStorage ' +
+                    '(zip file creation and save completed)');
                 resolve('savedInBrowserStorage');
             } else {
                 var m = 'webworker says: zip error: ' + event.data.status;
@@ -405,16 +412,14 @@ Uploader.prototype._callWorker2createZipFile = function (audioArray) {
         }
 
     }); // Promise
+}
 
-} 
-
-Uploader.prototype._setDebugIfRequired = function () {
+Uploader.prototype._captureDebugValues = function () {
     if ( this.debugChecked ) {
       this.debug.setValues( 'prompts', this.prompts.getDebugValues() );
     } else {
       this.debug.clearValues('prompts');
     }
-
 }
 
 Uploader.prototype._logSubmissionUpload = function () {
