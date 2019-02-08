@@ -432,25 +432,40 @@ Uploader.prototype._captureDebugValues = function () {
 // and not be accessible within web worker
 Uploader.prototype._tellWorkerToZipFile = function (audioArray) {
     var self = this;
+    var zip_worker_parms = {};
+    zip_worker_parms.command = 'zipAndSave';    
+    this._mergeProperties(zip_worker_parms, this._zipworkerProperties());
+    this._mergeProperties(zip_worker_parms, this._zipworkerBlobProperties());
+    zip_worker_parms.audio = audioArray;
     
-    self.zip_worker.postMessage({
-        command: 'zipAndSave',
+    self.zip_worker.postMessage(zip_worker_parms);
+}
 
-        speechSubmissionAppVersion: self.speechSubmissionAppVersion,
-        temp_submission_name: self.profile.getTempSubmissionName(),
-        short_submission_name: self.profile.getShortSubmissionName(),
-        username: self.profile.getUserName(),
-        language: self.language,
-        suffix: self.profile.getSuffix(),
+Uploader.prototype._zipworkerProperties = function () {
+    var self = this;    
+    return {
+        speechSubmissionAppVersion: this.speechSubmissionAppVersion,
+        temp_submission_name: this.profile.getTempSubmissionName(),
+        short_submission_name: this.profile.getShortSubmissionName(),
+        username: this.profile.getUserName(),
+        language: this.language,
+        suffix: this.profile.getSuffix(),
+    }
+}
 
-        readme_blob: new Blob(self.profile.toArray(), {type: "text/plain;charset=utf-8"}),
-        prompts_blob: new Blob(self.prompts.toArray(), {type: "text/plain;charset=utf-8"}),
-        license_blob: new Blob(self.profile.licensetoArray(), {type: "text/plain;charset=utf-8"}),
-        profile_json_blob: new Blob([self.profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
-        prompts_json_blob: new Blob([self.prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
-        audio: audioArray,
-        debug_json_blob: new Blob([self.debug.toJsonString()], {type: "text/plain;charset=utf-8"}),
-    });
+Uploader.prototype._zipworkerBlobProperties = function () {
+    return {
+        readme_blob: new Blob(this.profile.toArray(), {type: "text/plain;charset=utf-8"}),
+        prompts_blob: new Blob(this.prompts.toArray(), {type: "text/plain;charset=utf-8"}),
+        license_blob: new Blob(this.profile.licensetoArray(), {type: "text/plain;charset=utf-8"}),
+        profile_json_blob: new Blob([this.profile.toJsonString()], {type: "text/plain;charset=utf-8"}),
+        prompts_json_blob: new Blob([this.prompts.toJsonString()], {type: "text/plain;charset=utf-8"}),
+        debug_json_blob: new Blob([this.debug.toJsonString()], {type: "text/plain;charset=utf-8"}),
+    }
+}
+
+Uploader.prototype._mergeProperties = function (obj1, obj2) {
+    for (var attrname in obj2) { obj1[attrname] = obj2[attrname]; }
 }
 
 /**
