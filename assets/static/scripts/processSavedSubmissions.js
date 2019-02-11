@@ -51,24 +51,7 @@ function SavedSubmissions (
 SavedSubmissions.prototype.process = function () {
     var self = this;
 
-    /**
-    * get the submission object from browser storage
-    *
-    */
-    function getSavedSubmission(saved_submission_name) {
-      return new Promise(function (resolve, reject) {
-        // getItem only returns jsonObject
-        submissionCache.getItem(saved_submission_name)
-        .then(function(jsonOnject) {
-          // resolve sends these as parameters to next promise in chain
-          resolve([saved_submission_name, jsonOnject, self.uploadURL]);
 
-        })
-        .catch(function(err) {
-          reject('checkForSavedFailedUpload err: ' + err);
-        });
-      });
-    }
 
     /**
     * returns a promise that finds saved submission in browser storage, uploads
@@ -100,7 +83,7 @@ SavedSubmissions.prototype.process = function () {
           for (var i = 0; i < savedSubmissionArray.length; i++) {
             var saved_submission_name = savedSubmissionArray[i];
             promises.push(
-              getSavedSubmission( saved_submission_name )
+              self._getSavedSubmission.call(self, saved_submission_name)
               .then(self._uploadSubmission.bind(self))
               .then(self._removeSubmission.bind(self))
               //catch at Promise.all
@@ -154,6 +137,28 @@ SavedSubmissions.prototype.process = function () {
 
       })
       .catch(function(err) { console.log(err) });
+    });
+}
+
+/**
+* get the submission object from browser storage
+*
+*/
+SavedSubmissions.prototype._getSavedSubmission = function (saved_submission_name) {
+    var self = this;
+        
+    return new Promise(function (resolve, reject) {
+      
+        // getItem only returns jsonObject
+        submissionCache.getItem(saved_submission_name)
+        .then(function(jsonOnject) {
+          // resolve sends these as parameters to next promise in chain
+          resolve([saved_submission_name, jsonOnject, self.uploadURL]);
+        })
+        .catch(function(err) {
+          reject('checkForSavedFailedUpload err: ' + err);
+        });
+
     });
 }
 
