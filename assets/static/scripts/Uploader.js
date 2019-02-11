@@ -36,7 +36,7 @@ function Uploader(parms,
 
 Uploader.prototype._setUpWorkers = function () {
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', this._registerServiceWorker );
+        window.addEventListener('load', this._registerServiceWorker );
     }
 
     this.zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
@@ -77,14 +77,17 @@ Uploader.prototype._registerServiceWorker = function () {
 * ### METHODS ##############################################
 */
 /**
-* set up worker handlers
+* set up worker event handlers, both (service worker and web worker)
+* use the same function for processing uploads
 */
-Uploader.prototype.init = function () {
+Uploader.prototype.init = function() {
     var self = this;
 
+    // web worker
     self.upload_worker.onmessage =
         self._workerEventMessageHandler.bind(self);
 
+    // service worker
     navigator.serviceWorker.addEventListener(
         'message',
         self._workerEventMessageHandler.bind(self));
@@ -93,23 +96,20 @@ Uploader.prototype.init = function () {
 /** 
 * process messages from service worker or web worker
 */
-Uploader.prototype._workerEventMessageHandler = function (filesUploaded) {
+Uploader.prototype._workerEventMessageHandler = function(filesUploaded) {
     var self = this;
       
     var returnObj = event.data;
-    this._validateAndLogWorkerType(returnObj);
+    this._logWorkerType(returnObj);
 
     switch (returnObj.status) {
-      case 'AllUploaded':
-        this._allUploadedToServer(returnObj);
+      case 'AllUploaded': this._allUploadedToServer(returnObj);
         break;
 
-      case 'noneUploaded': 
-        this._allSavedToBrowserStorage(returnObj);     
+      case 'noneUploaded': this._allSavedToBrowserStorage(returnObj);     
         break;
 
-      case 'partialUpload':
-         this._partialUpload(returnObj);     
+      case 'partialUpload': this._partialUpload(returnObj);     
         break;
 
       default:
@@ -118,32 +118,31 @@ Uploader.prototype._workerEventMessageHandler = function (filesUploaded) {
     } 
 }
 
-Uploader.prototype._allUploadedToServer = function (returnObj) {
-    this._saveSubmissionsToList(returnObj.filesUploaded);
-    this._setNumberOfUploadedSubmissions(returnObj.filesUploaded);
+// ### AllUploaded
+
+Uploader.prototype._allUploadedToServer = function(returnObj) {
+    var filesUploaded = returnObj.filesUploaded;
+    
+    this._saveSubmissionsToList(filesUploaded);
+    this._setNumberOfUploadedSubmissions(filesUploaded);
             
     this._displayMessageToUser(
         returnObj.workertype,
-        this._getUploadedToServerMessage(returnObj));
+        this._getUploadedToServerMessage(filesUploaded));
 }
 
-Uploader.prototype._getUploadedToServerMessage = function (returnObj) {
-    var filesUploaded = returnObj.filesUploaded;
-            
-    return filesUploaded.length + " " + 
-        this._submissionPluralized(filesUploaded) + " " +
-        this.alert_message.uploaded_message  + "\n    " +
-        filesUploaded.join("\n    ");
+/*
+ * iterate through list of saved submissions and call function
+ * to save each one
+ */
+Uploader.prototype._saveSubmissionsToList = function(filesUploaded) {
+    filesUploaded.forEach(
+        this._saveSubmissionNameToList.bind(this));
 }
 
 /*
  * save name of uploaded submission in localstorage with timestamp
  */
-Uploader.prototype._saveSubmissionsToList = function (filesUploaded) {
-    filesUploaded.forEach(
-        this._saveSubmissionNameToList.bind(this));
-}
-
 Uploader.prototype._saveSubmissionNameToList = function(submissionName) {
     var jsonOnject = {};
 
@@ -168,11 +167,22 @@ Uploader.prototype._setNumberOfUploadedSubmissions = function(filesUploaded) {
         numberOfUploadedSubmissions);
 }
 
-Uploader.prototype._submissionPluralized = function(submissionArray) {
-    return (submissionArray.length > 1 ?
+Uploader.prototype._getUploadedToServerMessage = function(filesUploaded) {
+    var numberUploaded = filesUploaded.length;
+    
+    return numberUploaded + " " + 
+        this._submissionPluralized(numberUploaded) + " " +
+        this.alert_message.uploaded_message  + "\n    " +
+        filesUploaded.join("\n    ");
+}
+
+Uploader.prototype._submissionPluralized = function(numberOfSubmissions) {
+    return (numberOfSubmissions > 1 ?
         this.alert_message.submission_plural :
         this.alert_message.submission_singular);
 }
+
+// ### noneUploaded
 
 Uploader.prototype._allSavedToBrowserStorage = function (returnObj) {
     var m = this.alert_message.localstorage_message + "\n" +
@@ -183,12 +193,15 @@ Uploader.prototype._allSavedToBrowserStorage = function (returnObj) {
 
 Uploader.prototype._getSavedToBrowserStorageMessage = function (returnObj) {
     var filesNotUploaded =  returnObj.filesNotUploaded;
-   
+    var numberNotUploaded = filesNotUploaded.length;
+    
     return this.alert_message.browsercontains_message.trim() + " " + // remove newline
-        filesNotUploaded.length + " " + 
-        this._submissionPluralized(filesNotUploaded) + ":\n    " + 
+        numberNotUploaded + " " + 
+        this._submissionPluralized(numberNotUploaded) + ":\n    " + 
         filesNotUploaded.join("\n    ");
 }
+
+// ### partial
 
 /*
  * if there is an error with one submission (usually server side check - e.g.
@@ -235,7 +248,7 @@ Uploader.prototype._displayMessageToUser = function (workertype, m) {
     .catch((err) => { console.log(err) });            
 }
 
-Uploader.prototype._validateAndLogWorkerType = function (returnObj) {
+Uploader.prototype._logWorkerType = function (returnObj) {
     var m;
     
     if (returnObj.workertype == "serviceworker") {
