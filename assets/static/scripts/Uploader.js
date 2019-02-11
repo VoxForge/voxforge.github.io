@@ -26,12 +26,11 @@ function Uploader(parms,
 {
     this.maxMinutesSinceLastSubmission = parms.maxMinutesSinceLastSubmission;
     this.alert_message = alert_message;
-
-    this._setUpWorkers();
-
     this.uploadedSubmissions = localforage.createInstance({
       name: "uploadedSubmissions"
     });
+    
+    this._setUpWorkers();
 }
 
 Uploader.prototype._setUpWorkers = function () {
@@ -237,7 +236,8 @@ Uploader.prototype._getPartialUploadMessage = function (returnObj) {
 }
 
 /*
- * Display message to user after recording has ended (i.e. user has pressed stop)
+ * Display message to user after recording has ended (i.e. wait for user
+ * to press stop before displaying message)
  */
 Uploader.prototype._displayMessageToUser = function (workertype, m) {
     console.info(workertype + ": " + m);
@@ -270,9 +270,9 @@ Uploader.prototype._getDate = function () {
 }
 
 /**
-* collect all recorded audio into an array (audioArray) then calls function 
+* collect all recorded audio into an array (audioArray) then call function 
 * that calls web worker that actually creates the zip file for download
-* to VoxForge server
+* to VoxForge server (by another worker...)
 */
 Uploader.prototype.upload = function (
     prompts,
@@ -308,7 +308,7 @@ Uploader.prototype.upload = function (
 }
 
 /**
-* recursive function that loops over audio clips and asynchronously
+* function that loops over audio clips and asynchronously
 * loads them into audioArray.  This can cause some timing issues if
 * there are many audio files... therefore only reset user facing display
 * after all text and audio is sent to web worker for background processing
@@ -319,17 +319,23 @@ Uploader.prototype._processAudio = function() {
     var self = this;
     
     return new Promise(function (resolve, reject) {
-        self.lastAudioClipFinished = function (audioArray) {
-            resolve(audioArray);
-        };           
-        self.onError = function () {
-            reject("error processing audio from DOM");
-        };
-        
+        self._setUpCallbackFunctions(resolve, reject);
         self._addAllClipsToAudioArray();
     });
   
-};// processAudio
+};
+
+/*
+* setup callback functions in Promise context
+*/
+Uploader.prototype._setUpCallbackFunctions = function(resolve, reject) {
+    this.lastAudioClipFinished = function(audioArray) {
+        resolve(audioArray);
+    };           
+    this.onError = function () {
+        reject("error processing audio from DOM");
+    };
+}
 
 Uploader.prototype._addAllClipsToAudioArray = function() {
     var self = this;
@@ -337,9 +343,7 @@ Uploader.prototype._addAllClipsToAudioArray = function() {
     
     this.allClips.forEach(function (clip, clipIndex, allClips) {
         self._hideClip(clip);
-
         var lastClip = clipIndex >= (allClips.length -1);
-
         self._getClipToAddToAudioArray(
             clip,
             lastClip);
@@ -578,10 +582,11 @@ Uploader.prototype._backgroundSyncSupported = function(swRegistration) {
 * restablished, and if successful, remove uploaded submission from
 * browser storage, but this does not seem to work in Windows or Linux, 
 * only works with Android
+*
+* for processing of return values from service worker, see 
+* service worker event above (i.e. navigator.serviceWorker.addEventListener... )
 */
 Uploader.prototype._serviceWorkerUpload = function(swRegistration) {
-    // for processing of return values from service worker, see 
-    // service worker event above (i.e. navigator.serviceWorker.addEventListener... )
     swRegistration.sync.register('voxforgeSync')
     .then(
         function() {
