@@ -31,13 +31,25 @@ var submissionCache = localforage.createInstance({
 });
 
 /**
+* Class definition
+*/
+function SavedSubmissions (
+    uploadURL,
+    workertype) 
+{
+    this.uploadURL = uploadURL;
+    this.workertype = workertype;
+    this.uploadList = [];
+    this.noUploadList = [];    
+    this.uploadIdx = 0;
+    this.noUploadIdx = 0;
+}
+/**
 * if saved submissions exists, get then upload the submission 
 */
-function processSavedSubmissions(uploadURL, workertype) {
-    var uploadList = [];
-    var noUploadList = [];
-    var uploadIdx = 0;
-    var noUploadIdx = 0;
+
+SavedSubmissions.prototype.process = function () {
+    var self = this;
 
     /**
     * get the submission object from browser storage
@@ -49,85 +61,12 @@ function processSavedSubmissions(uploadURL, workertype) {
         submissionCache.getItem(saved_submission_name)
         .then(function(jsonOnject) {
           // resolve sends these as parameters to next promise in chain
-          resolve([saved_submission_name, jsonOnject, uploadURL]);
+          resolve([saved_submission_name, jsonOnject, self.uploadURL]);
 
         })
         .catch(function(err) {
           reject('checkForSavedFailedUpload err: ' + err);
         });
-      });
-    }
-
-    /**
-    * upload the submission to the VoxForge server 
-    *
-    */
-    function uploadSubmission(data) {
-      var [saved_submission_name, jsonOnject, uploadURL] = data;
-
-      return new Promise(function (resolve, reject) {
-        var form = new FormData();
-        form.append('file', jsonOnject['file']);
-        form.append('language', jsonOnject['language']);
-        form.append('username', jsonOnject['username']);
-        form.append('suffix',   jsonOnject['suffix']);
-
-        fetch(uploadURL, {
-          method: 'post',
-          body: form,
-          mode: 'cors',
-/*          credentials: 'include', */
-        })
-        // this resolves the promise to get the response data from network stream;
-        // basically converts the voxforge server response stream to text...
-        .then(response=>response.text()) 
-        .then((response_text) => {
-            console.log('post URL ' +  uploadURL);
-            if (response_text === "submission uploaded successfully." ) {
-              var short_name = saved_submission_name.replace(/\[.*\]/gi, '');
-              console.info("transferComplete: upload to VoxForge server successfully completed for: " + short_name);
-              uploadList[uploadIdx++] = short_name;
-
-              // resolve sends this as parameter to next promise in chain
-              resolve(saved_submission_name);
-
-            } else {
-              noUploadList[noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
-
-              var m = 'Request failed - invalid server response: \n' +  response_text;
-              console.error(m);
-              reject(m); // skips all inner catches to go to outermost catch
-            }
-        })
-        .catch(function (err) {
-          noUploadList[noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
-          var m = 'Upload request failed for: ' + saved_submission_name.replace(/\[.*\]/gi, '') + '\n\n' +
-                   '...will try again on next upload attempt.  error: ' + err;
-          console.warn(m);
-          reject(m);
-        });
-
-      });
-    }
-
-    /**
-    * delete submission from local storage 
-    */
-    function removeSubmission(saved_submission_name) {
-      return new Promise(function (resolve, reject) {
-        // only remove saved submission if upload completed successfully
-        submissionCache.removeItem(saved_submission_name)
-        .then(function() {
-          console.log('Backup submission removed from browser: ' + saved_submission_name);
-
-          resolve(saved_submission_name);
-
-        })
-        .catch(function(err) {
-          var m = 'Error: cannot remove saved submission: ' + saved_submission_name + ' err: ' + err;
-          console.error(m);
-          reject(m);
-        });  
       });
     }
 
@@ -162,8 +101,8 @@ function processSavedSubmissions(uploadURL, workertype) {
             var saved_submission_name = savedSubmissionArray[i];
             promises.push(
               getSavedSubmission( saved_submission_name )
-              .then(uploadSubmission)
-              .then(removeSubmission)
+              .then(self._uploadSubmission.bind(self))
+              .then(self._removeSubmission.bind(self))
               //catch at Promise.all
             )
           }
@@ -173,23 +112,23 @@ function processSavedSubmissions(uploadURL, workertype) {
           .then(function() { // allUploaded
             var returnObj = {
               status: 'AllUploaded',
-              filesUploaded: uploadList,
-              workertype: workertype,
+              filesUploaded: self.uploadList,
+              workertype: self.workertype,
             };
             resolve(returnObj);
           })
           .catch(function(err) {
              console.warn('processSavedSubmissions one or more submissions not uploaded: ' + err);
-             if ( uploadList.length > 0 ) { // partialUpload
+             if ( self.uploadList.length > 0 ) { // partialUpload
                  var returnObj = {
                    status: 'partialUpload',
-                   filesNotUploaded: noUploadList,
-                   filesUploaded: uploadList,
-                   workertype: workertype,
+                   filesNotUploaded: self.noUploadList,
+                   filesUploaded: self.uploadList,
+                   workertype: self.workertype,
                    err: err,
                  };
                  reject(returnObj);
-              } else if ( noUploadList.length > 0 ) {  // noUploads
+              } else if ( self.noUploadList.length > 0 ) {  // noUploads
                  // if get here then processing loop on savedSubmissionArray was
                  // only partially iterated over, so will never get an accurate
                  // list of saved submissions, therefore, get all submissions
@@ -201,7 +140,7 @@ function processSavedSubmissions(uploadURL, workertype) {
 
                  var returnObj = {
                    status: 'noneUploaded',
-                   //filesNotUploaded: noUploadList,
+                   //filesNotUploaded: self.noUploadList,
                    filesNotUploaded: short_name_array,
                    err: err,
                  }
@@ -218,5 +157,79 @@ function processSavedSubmissions(uploadURL, workertype) {
     });
 }
 
+/**
+* upload the submission to the VoxForge server 
+*
+*/
+SavedSubmissions.prototype._uploadSubmission = function (data) {
+    var self = this;
+    var [saved_submission_name, jsonOnject, uploadURL] = data;
 
+  return new Promise(function (resolve, reject) {
+      
+    var form = new FormData();
+        form.append('file', jsonOnject['file']);
+        form.append('language', jsonOnject['language']);
+        form.append('username', jsonOnject['username']);
+        form.append('suffix',   jsonOnject['suffix']);
 
+        fetch(uploadURL, {
+          method: 'post',
+          body: form,
+          mode: 'cors',
+    /*          credentials: 'include', */
+        })
+        // this resolves the promise to get the response data from network stream;
+        // basically converts the voxforge server response stream to text...
+        .then(response=>response.text()) 
+        .then((response_text) => {
+            console.log('post URL ' +  uploadURL);
+            if (response_text === "submission uploaded successfully." ) {
+              var short_name = saved_submission_name.replace(/\[.*\]/gi, '');
+              console.info("transferComplete: upload to VoxForge server successfully completed for: " + short_name);
+              self.uploadList[self.uploadIdx++] = short_name;
+
+              // resolve sends this as parameter to next promise in chain
+              resolve(saved_submission_name);
+
+            } else {
+              self.noUploadList[self.noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
+
+              var m = 'Request failed - invalid server response: \n' +  response_text;
+              console.error(m);
+              reject(m); // skips all inner catches to go to outermost catch
+            }
+        })
+        .catch(function (err) {
+          self.noUploadList[self.noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
+          var m = 'Upload request failed for: ' + saved_submission_name.replace(/\[.*\]/gi, '') + '\n\n' +
+                   '...will try again on next upload attempt.  error: ' + err;
+          console.warn(m);
+          reject(m);
+        });
+
+  });
+}
+
+/**
+* delete submission from local storage 
+*/
+SavedSubmissions.prototype._removeSubmission = function (saved_submission_name) {
+  return new Promise(function (resolve, reject) {
+      
+    // only remove saved submission if upload completed successfully
+    submissionCache.removeItem(saved_submission_name)
+    .then(function() {
+      console.log('Backup submission removed from browser: ' + saved_submission_name);
+
+      resolve(saved_submission_name);
+
+    })
+    .catch(function(err) {
+      var m = 'Error: cannot remove saved submission: ' + saved_submission_name + ' err: ' + err;
+      console.error(m);
+      reject(m);
+    });
+
+  });
+}

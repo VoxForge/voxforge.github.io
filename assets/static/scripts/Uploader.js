@@ -35,7 +35,9 @@ function Uploader(parms,
 
 Uploader.prototype._setUpWorkers = function () {
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', this._registerServiceWorker );
+        window.addEventListener(
+            'load',
+            this._registerServiceWorker );
     }
 
     this.zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
