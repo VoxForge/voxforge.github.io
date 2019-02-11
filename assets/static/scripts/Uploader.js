@@ -30,18 +30,7 @@ function Uploader(parms,
     this.alert_message = alert_message;
 
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
-        navigator.serviceWorker.register(swUrl)
-        .then(
-            function(reg) {
-              console.log('ServiceWorker registration successful with scope: ', reg.scope);
-            }, function(err) {
-              console.warn('ServiceWorker registration failed: ', err);
-              window.alert('Error: no SSL certificate installed on device - VoxForge uploads will fail silently');
-            })
-        .catch((err) => { console.log(err) });
-      });
+      window.addEventListener('load', this._registerServiceWorker );
     }
 
     this.zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
@@ -58,6 +47,21 @@ function Uploader(parms,
 
     this.uploadedSubmissions = localforage.createInstance({
       name: "uploadedSubmissions"
+    });
+}
+
+Uploader.prototype._registerServiceWorker = function () {
+    const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
+    navigator.serviceWorker.register(swUrl)
+    .then(
+        function(reg) {
+          console.log('ServiceWorker registration successful with scope: ', reg.scope);
+        }, function(err) {
+          console.warn('ServiceWorker registration failed: ', err);
+          window.alert('Error: no SSL certificate installed on device - VoxForge uploads will fail silently');
+        })
+    .catch(function(err) {
+        console.log(err)
     });
 }
 
