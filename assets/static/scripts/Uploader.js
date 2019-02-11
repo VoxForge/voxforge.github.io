@@ -24,11 +24,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function Uploader(parms,
                   alert_message)
 {
-    var self = this;
-
     this.maxMinutesSinceLastSubmission = parms.maxMinutesSinceLastSubmission;
     this.alert_message = alert_message;
 
+    this._setUpWorkers();
+
+    this.uploadedSubmissions = localforage.createInstance({
+      name: "uploadedSubmissions"
+    });
+}
+
+Uploader.prototype._setUpWorkers = function () {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', this._registerServiceWorker );
     }
@@ -36,17 +42,19 @@ function Uploader(parms,
     this.zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
     this.upload_worker = new Worker('/assets/static/scripts/UploadWorker.js');
 
-    /**
-    * if page reloaded kill background worker threads before page reload
-    * to prevent zombie worker threads in FireFox
-    */
-    $( window ).unload(function() {
-      self.zip_worker.terminate();
-      self.upload_worker.terminate();
-    });
+    this._onPageUnloadKillBackgroundWorkerThreadsInFirefox();    
+}
 
-    this.uploadedSubmissions = localforage.createInstance({
-      name: "uploadedSubmissions"
+/**
+* if page reloaded, kill background worker threads before page reload
+* to prevent zombie worker threads in FireFox
+*/
+Uploader.prototype._onPageUnloadKillBackgroundWorkerThreadsInFirefox = function () {
+    var self = this;
+    
+    $( window ).unload(function() {
+        self.zip_worker.terminate();
+        self.upload_worker.terminate();
     });
 }
 
