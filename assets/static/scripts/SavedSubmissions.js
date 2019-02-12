@@ -52,20 +52,20 @@ function SavedSubmissions (
 /**
 * if saved submissions exists, get then upload the submission 
 */
-SavedSubmissions.prototype.process = function () {
+SavedSubmissions.prototype.process = function() {
     var self = this;
     /**
     * returns a promise that finds saved submission in browser storage, uploads
     * it and if successful, removes the submission from storage
     */
-    return new Promise(function (resolve, reject) {
-        if ( self._noSavedSubmissions() ) {
+    return new Promise(function(resolve, reject) {
+        if ( self._noSavedSubmissions() ) { // TODO undefined
             resolve('no submissions found in browser storage: ' + numberOfKeys);
         }
 
         // process submissions saved in indexedDB
         self.submissionCache.keys()
-        .then(function (savedSubmissionArray) {
+        .then(function(savedSubmissionArray) {
             self._uploadAllSubmissions.call(self, savedSubmissionArray);
             self._waitForSubmissionsToUpload.call(
                 self,
@@ -74,6 +74,29 @@ SavedSubmissions.prototype.process = function () {
                 reject);
         })
         .catch(function(err) { console.log(err) });
+    });
+}
+
+/*
+ * check to see if any submissions saved in indexedDB
+ * TODO since later loop iterates through all saved submissions, this 
+ * _should_ prevents service worker from turning into a zombie thread 
+ * and continually checking for (deleted) saved submissions...
+ */
+SavedSubmissions.prototype._noSavedSubmissions = function() {
+    this.submissionCache.length()
+    .then(function(numberOfKeys) {
+        if (numberOfKeys <= 0) {
+            console.log('no submissions found in browser storage: ' + numberOfKeys);
+            return 1;
+        } else {
+            console.log('number of submissions saved in browser storage: ' + numberOfKeys);            
+            return 0;
+        }
+    })
+    .catch(function(err) {
+        var m = 'submissionCache - IndexedDB error: ' + err;
+        console.error(m);
     });
 }
 
@@ -170,37 +193,14 @@ SavedSubmissions.prototype._noUploads = function() {
 
 
 
-/*
- * check to see if any submissions saved in indexedDB
- * TODO since later loop iterates through all saved submissions, this 
- * _should_ prevents service worker from turning into a zombie thread 
- * and continually checking for (deleted) saved submissions...
- */
-SavedSubmissions.prototype._noSavedSubmissions = function () {
-    this.submissionCache.length()
-    .then(function(numberOfKeys) {
-        if (numberOfKeys <= 0) {
-            console.log('no submissions found in browser storage: ' + numberOfKeys);
-            return 1;
-        } else {
-            console.log('number of submissions saved in browser storage: ' + numberOfKeys);            
-            return 0;
-        }
-    })
-    .catch(function(err) {
-        var m = 'submissionCache - IndexedDB error: ' + err;
-        console.error(m);
-    });
-}
-
 /**
 * get the submission object from browser storage
 *
 */
-SavedSubmissions.prototype._getSavedSubmission = function (saved_submission_name) {
+SavedSubmissions.prototype._getSavedSubmission = function(saved_submission_name) {
     var self = this;
         
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       
         // getItem only returns jsonObject
         self.submissionCache.getItem(saved_submission_name)
@@ -218,11 +218,11 @@ SavedSubmissions.prototype._getSavedSubmission = function (saved_submission_name
 /**
 * upload the submission to the VoxForge server 
 */
-SavedSubmissions.prototype._uploadSubmission = function (data) {
+SavedSubmissions.prototype._uploadSubmission = function(data) {
     var self = this;
     var [saved_submission_name, jsonOnject, uploadURL] = data;
 
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
       
     var form = new FormData();
         form.append('file', jsonOnject['file']);
@@ -257,7 +257,7 @@ SavedSubmissions.prototype._uploadSubmission = function (data) {
                 reject(m); // skips all inner catches to go to outermost catch
             }
         })
-        .catch(function (err) {
+        .catch(function(err) {
             self.noUploadList[self.noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
             var m = 'Upload request failed for: ' + saved_submission_name.replace(/\[.*\]/gi, '') + '\n\n' +
                    '...will try again on next upload attempt.  error: ' + err;
@@ -271,10 +271,10 @@ SavedSubmissions.prototype._uploadSubmission = function (data) {
 /**
 * delete submission from local storage 
 */
-SavedSubmissions.prototype._removeSubmission = function (saved_submission_name) {
+SavedSubmissions.prototype._removeSubmission = function(saved_submission_name) {
     var self = this;
     
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       
         // only remove saved submission if upload completed successfully
         self.submissionCache.removeItem(saved_submission_name)
