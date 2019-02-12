@@ -52,14 +52,16 @@ function SavedSubmissions (
 /**
 * if saved submissions exists, get then upload the submission 
 */
-SavedSubmissions.prototype.process = function() {
+SavedSubmissions.prototype.process = async function() {
     var self = this;
+
+    var noSavedSubmissions = await self._noSavedSubmissions();
     /**
     * returns a promise that finds saved submission in browser storage, uploads
     * it and if successful, removes the submission from storage
     */
     return new Promise(function(resolve, reject) {
-        if ( self._noSavedSubmissions() ) { // TODO undefined
+        if ( noSavedSubmissions ) { // TODO not defined
             resolve('no submissions found in browser storage: ' + numberOfKeys);
         }
 
@@ -84,7 +86,7 @@ SavedSubmissions.prototype.process = function() {
  * and continually checking for (deleted) saved submissions...
  */
 SavedSubmissions.prototype._noSavedSubmissions = function() {
-    this.submissionCache.length()
+    return this.submissionCache.length()
     .then(function(numberOfKeys) {
         if (numberOfKeys <= 0) {
             console.log('no submissions found in browser storage: ' + numberOfKeys);
