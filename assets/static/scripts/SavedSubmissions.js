@@ -61,8 +61,8 @@ SavedSubmissions.prototype.process = function() {
 
     return new Promise(function(resolve, reject) {
         
-        self._checkForSavedSubmissions(resolve, reject)
-        .then(self.submissionCache.keys)
+        self._ifHasSavedSubmissions(reject)
+        .then(self._getSubmissionArray.bind(self))
         .then(function(savedSubmissionArray) {
             self._uploadAllSubmissions.call(self, savedSubmissionArray);
             self._waitForSubmissionsToUpload.call(
@@ -76,13 +76,17 @@ SavedSubmissions.prototype.process = function() {
     });
 }
 
+SavedSubmissions.prototype._getSubmissionArray = function() {
+    return this.submissionCache.keys();
+}
+
 /*
  * check to see if any submissions saved in indexedDB
  * TODO since later loop iterates through all saved submissions, this 
  * _should_ prevents service worker from turning into a zombie thread 
  * and continually checking for (deleted) saved submissions...
  */
-SavedSubmissions.prototype._checkForSavedSubmissions = function(resolve, reject) {
+SavedSubmissions.prototype._ifHasSavedSubmissions = function(reject) {
     return this.submissionCache.length()
     .then(function(numberOfKeys) {
         if (numberOfKeys <= 0) {
@@ -90,9 +94,8 @@ SavedSubmissions.prototype._checkForSavedSubmissions = function(resolve, reject)
             console.log(m);
             reject(m);
         } else {
-            let m = 'number of submissions saved in browser storage: ' + numberOfKeys;                 
-            console.log(m);            
-            return(m);
+            console.log('number of submissions saved in browser storage: ' +
+                numberOfKeys);            
         }
     })
     .catch(function(err) {
