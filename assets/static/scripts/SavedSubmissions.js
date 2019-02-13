@@ -52,21 +52,17 @@ function SavedSubmissions (
 /**
 * if saved submissions exists, get then upload the submission 
 */
-SavedSubmissions.prototype.process = async function() {
-    var self = this;
-
-    var noSavedSubmissions = await self._returnIfNoSavedSubmissions();
     /**
     * returns a promise that finds saved submission in browser storage, uploads
     * it and if successful, removes the submission from storage
     */
-    return new Promise(function(resolve, reject) {
-        if ( noSavedSubmissions ) {
-            resolve('no submissions found in browser storage: ' + numberOfKeys);
-        }
+SavedSubmissions.prototype.process = function() {
+    var self = this;
 
-        // process submissions saved in indexedDB
-        self.submissionCache.keys()
+    return new Promise(function(resolve, reject) {
+        
+        self._checkForSavedSubmissions(resolve, reject)
+        .then(self.submissionCache.keys)
         .then(function(savedSubmissionArray) {
             self._uploadAllSubmissions.call(self, savedSubmissionArray);
             self._waitForSubmissionsToUpload.call(
@@ -76,6 +72,7 @@ SavedSubmissions.prototype.process = async function() {
                 reject);
         })
         .catch(function(err) { console.log(err) });
+        
     });
 }
 
@@ -85,15 +82,17 @@ SavedSubmissions.prototype.process = async function() {
  * _should_ prevents service worker from turning into a zombie thread 
  * and continually checking for (deleted) saved submissions...
  */
-SavedSubmissions.prototype._returnIfNoSavedSubmissions = function() {
+SavedSubmissions.prototype._checkForSavedSubmissions = function(resolve, reject) {
     return this.submissionCache.length()
     .then(function(numberOfKeys) {
         if (numberOfKeys <= 0) {
-            console.log('no submissions found in browser storage: ' + numberOfKeys);
-            return 1;
+            let m = 'no submissions found in browser storage: ' + numberOfKeys;
+            console.log(m);
+            reject(m);
         } else {
-            console.log('number of submissions saved in browser storage: ' + numberOfKeys);            
-            return 0;
+            let m = 'number of submissions saved in browser storage: ' + numberOfKeys;                 
+            console.log(m);            
+            return(m);
         }
     })
     .catch(function(err) {
