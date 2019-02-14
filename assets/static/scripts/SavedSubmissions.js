@@ -194,22 +194,32 @@ SavedSubmissions.prototype._processUploadResponse = function(
     resolve,
     reject)
 {
-
-    if (response_text === "submission uploaded successfully." ) {
-        var short_name = saved_submission_name.replace(/\[.*\]/gi, '');
-        console.info("transferComplete: upload to VoxForge server successfully completed for: " + short_name);
+    if (this._uploaded(response_text) ) {
+        var short_name = this._shortName(saved_submission_name);
+        console.info("transferComplete: upload to VoxForge server " +
+            "successfully completed for: " +
+            short_name);
         this.uploadList[this.uploadIdx++] = short_name;
 
         // resolve sends this as parameter to next promise in chain
         resolve(saved_submission_name);
 
     } else {
-        this.noUploadList[this.noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
+        this.noUploadList[this.noUploadIdx++] =
+            this._shortName(saved_submission_name);
 
         var m = 'Request failed - invalid server response: \n' +  response_text;
         console.error(m);
         reject(m); // skips all inner catches to go to outermost catch
     }
+}
+
+SavedSubmissions.prototype._uploaded = function(response_text) {
+    return response_text === "submission uploaded successfully.";
+}
+
+SavedSubmissions.prototype._shortName = function(submission) {
+    return submission.replace(/\[.*\]/gi, '');
 }
 
 /**
