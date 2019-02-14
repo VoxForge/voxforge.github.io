@@ -144,7 +144,11 @@ SavedSubmissions.prototype._getSavedSubmission = function(saved_submission_name)
 }
 
 /**
-* upload the submission to the VoxForge server 
+* upload the submission to the VoxForge server
+*
+* '.then(response=>response.text())': resolves the promise to get the response
+* data from network stream;
+* basically converts the voxforge server response stream to text...
 */
 SavedSubmissions.prototype._uploadSubmission = function(data) {
     var self = this;
@@ -154,8 +158,6 @@ SavedSubmissions.prototype._uploadSubmission = function(data) {
     return new Promise(function(resolve, reject) {
       
         fetch(uploadURL, self._getFetchParms(jsonOnject) )
-        // this resolves the promise to get the response data from network stream;
-        // basically converts the voxforge server response stream to text...
         .then(response=>response.text()) 
         .then(function(response_text) {
             self._processUploadResponse.call(self,
@@ -166,23 +168,30 @@ SavedSubmissions.prototype._uploadSubmission = function(data) {
                 reject)
         })
         .catch(function(err) {
-                    //var short_name = this._shortName(saved_submission_name);
-            self.noUploadList[self.noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
-            var m = 'Upload request failed for: ' + saved_submission_name.replace(/\[.*\]/gi, '') + '\n\n' +
-                   '...will try again on next upload attempt.  error: ' + err;
-            console.warn(m);
+            self._uploadError(err);
             reject(m);
         });
 
     });
 }
 
+SavedSubmissions.prototype._uploadError = function(err) {
+    var short_name = this._shortName(saved_submission_name);
+    this.noUploadList[self.noUploadIdx++] =this._shortName(saved_submission_name);
+    var m = 'Upload request failed for: ' +
+        this._shortName(saved_submission_name) +
+        '\n\n' +
+        '...will try again on next upload attempt.  error: ' +
+        err;
+    console.warn(m);
+}
+
 SavedSubmissions.prototype._getFetchParms = function(jsonOnject) {
     var form = new FormData();
-    form.append('file', jsonOnject['file']);
-    form.append('language', jsonOnject['language']);
-    form.append('username', jsonOnject['username']);
-    form.append('suffix',   jsonOnject['suffix']);
+    form.append('file', jsonOnject.file);
+    form.append('language', jsonOnject.language);
+    form.append('username', jsonOnject.username);
+    form.append('suffix',   jsonOnject.suffix);
 
     var parms = {
         method: 'post',
