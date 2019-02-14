@@ -193,14 +193,12 @@ SavedSubmissions.prototype._getFetchParms = function(jsonOnject) {
     form.append('username', jsonOnject.username);
     form.append('suffix',   jsonOnject.suffix);
 
-    var parms = {
+    return {
         method: 'post',
         body: form,
         mode: 'cors',
         /*          credentials: 'include', */
     }
-
-    return parms;
 }
 
 SavedSubmissions.prototype._processUploadResponse = function(
