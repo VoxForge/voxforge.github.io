@@ -153,18 +153,7 @@ SavedSubmissions.prototype._uploadSubmission = function(data) {
     
     return new Promise(function(resolve, reject) {
       
-        var form = new FormData();
-        form.append('file', jsonOnject['file']);
-        form.append('language', jsonOnject['language']);
-        form.append('username', jsonOnject['username']);
-        form.append('suffix',   jsonOnject['suffix']);
-
-        fetch(uploadURL, {
-          method: 'post',
-          body: form,
-          mode: 'cors',
-        /*          credentials: 'include', */
-        })
+        fetch(uploadURL, self._getFetchParms(jsonOnject) )
         // this resolves the promise to get the response data from network stream;
         // basically converts the voxforge server response stream to text...
         .then(response=>response.text()) 
@@ -177,6 +166,7 @@ SavedSubmissions.prototype._uploadSubmission = function(data) {
                 reject)
         })
         .catch(function(err) {
+                    //var short_name = this._shortName(saved_submission_name);
             self.noUploadList[self.noUploadIdx++] = saved_submission_name.replace(/\[.*\]/gi, '');
             var m = 'Upload request failed for: ' + saved_submission_name.replace(/\[.*\]/gi, '') + '\n\n' +
                    '...will try again on next upload attempt.  error: ' + err;
@@ -187,6 +177,23 @@ SavedSubmissions.prototype._uploadSubmission = function(data) {
     });
 }
 
+SavedSubmissions.prototype._getFetchParms = function(jsonOnject) {
+    var form = new FormData();
+    form.append('file', jsonOnject['file']);
+    form.append('language', jsonOnject['language']);
+    form.append('username', jsonOnject['username']);
+    form.append('suffix',   jsonOnject['suffix']);
+
+    var parms = {
+        method: 'post',
+        body: form,
+        mode: 'cors',
+        /*          credentials: 'include', */
+    }
+
+    return parms;
+}
+
 SavedSubmissions.prototype._processUploadResponse = function(
     response_text,
     saved_submission_name,
@@ -194,7 +201,7 @@ SavedSubmissions.prototype._processUploadResponse = function(
     resolve,
     reject)
 {
-    if (this._uploaded(response_text) ) {
+    if ( this._submissionUploaded(response_text) ) {
         var short_name = this._shortName(saved_submission_name);
         console.info("transferComplete: upload to VoxForge server " +
             "successfully completed for: " +
@@ -214,7 +221,7 @@ SavedSubmissions.prototype._processUploadResponse = function(
     }
 }
 
-SavedSubmissions.prototype._uploaded = function(response_text) {
+SavedSubmissions.prototype._submissionUploaded = function(response_text) {
     return response_text === "submission uploaded successfully.";
 }
 
