@@ -17,11 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-// TODO: processSavedSubmissions is called from service worker (voxforge_sw.js) from 
+// TODO: SavedSubmissions is called from service worker (voxforge_sw.js) from 
 // a different root, therefore localforage import must be done in calling script
-importScripts('../lib/localforage.js'); // localforage needs to be defined before call to processSavedSubmissions
+importScripts('../lib/localforage.js'); // localforage needs to be defined before call to SavedSubmissions
 
-importScripts('processSavedSubmissions.js'); 
+importScripts('SavedSubmissions.js'); 
 
 self.onmessage = function(event) {
   var data = event.data;
@@ -41,7 +41,9 @@ self.onmessage = function(event) {
 * had problems uploading to server
 */
 function upload(self, uploadURL) {
-    processSavedSubmissions(uploadURL, "webworker")
+    var savedSubmissions = new SavedSubmissions(uploadURL, "serviceworker");
+    
+    savedSubmissions.process()    
     .then((returnObj) => {
       self.postMessage(returnObj);
     })
