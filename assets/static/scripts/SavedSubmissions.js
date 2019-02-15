@@ -308,15 +308,20 @@ SavedSubmissions.prototype._noUploadProcessing = function(
     savedSubmissionArray,
     reject)
 {
-    var short_name_array = savedSubmissionArray.map(function(submission) {
-        return submission.replace(/\[.*\]/gi, '');
-    });
     var returnObj = {
         status: 'noneUploaded',
-        filesNotUploaded: short_name_array,
+        filesNotUploaded: this._shortNameArray(savedSubmissionArray),
         err: err,
     }
     reject(returnObj);
+}
+
+SavedSubmissions.prototype._shortNameArray = function(savedSubmissionArray) {
+    var short_name_array = savedSubmissionArray.map(function(submission) {
+        return submission.replace(/\[.*\]/gi, '');
+    });
+
+    return short_name_array;
 }
 
 SavedSubmissions.prototype._partialUploadProcessing = function(reject) {
