@@ -62,8 +62,7 @@ SavedSubmissions.prototype.process = function() {
         self.process_resolve = resolve;
         self.process_reject = reject;
         
-        self._confirmBrowserrHasSavedSubmissions()
-        .then(self._getSubmissionArray.bind(self))
+        self._getSubmissions.call(self)
         .then(function(savedSubmissionArray) {
             self._loopThroughArrayToUploadAllSubmissions.call(
                 self,
@@ -77,6 +76,12 @@ SavedSubmissions.prototype.process = function() {
     });
 }
 
+SavedSubmissions.prototype._getSubmissions = function() {
+    this._confirmBrowserrHasSavedSubmissions();
+    
+    return this.submissionCache.keys();
+}
+
 /*
  * check to see if any submissions saved in indexedDB
  * TODO since later loop iterates through all saved submissions, this 
@@ -86,7 +91,7 @@ SavedSubmissions.prototype.process = function() {
 SavedSubmissions.prototype._confirmBrowserrHasSavedSubmissions = function() {
     var self = this;
     
-    return this.submissionCache.length()
+    this.submissionCache.length()
     .then(function(numberOfKeys) {
         if (numberOfKeys <= 0) {
             let m = 'no submissions found in browser storage: ' + numberOfKeys;
@@ -101,10 +106,6 @@ SavedSubmissions.prototype._confirmBrowserrHasSavedSubmissions = function() {
         var m = 'submissionCache - IndexedDB error: ' + err;
         console.error(m);
     });
-}
-
-SavedSubmissions.prototype._getSubmissionArray = function() {
-    return this.submissionCache.keys();
 }
 
 SavedSubmissions.prototype._loopThroughArrayToUploadAllSubmissions = function(
