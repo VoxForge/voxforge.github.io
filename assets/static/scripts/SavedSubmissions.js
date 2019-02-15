@@ -156,12 +156,12 @@ SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
     
     return new Promise(function(resolve, reject) {
 
-        submissionObj.addPromiseReturnFunctions(resolve, reject);
+        submissionObj.setPromiseReturnFunctions(resolve, reject);
 
         fetch(self.uploadURL, submissionObj.getFetchParms() )
         .then(response=>response.text()) 
         .then(function(response_text) {
-            submissionObj.response_text = response_text;
+            submissionObj.setReponseText(response_text);
             self._processUploadResponse.call(self, submissionObj)
         })
         .catch(function(err) {
@@ -186,7 +186,7 @@ SavedSubmissions.prototype._uploadError = function(err, submissionObj) {
 }
 
 
-SavedSubmissions.prototype._processUploadResponse = function(submissionObj) {
+SavedSubmissions.prototype._processUploadResponse = function(c) {
     if ( this._serverConfirmsSubmissionUploaded(submissionObj) ) {
         this.uploadList[this.uploadIdx++] = submissionObj.shortName();
                 
@@ -199,7 +199,8 @@ SavedSubmissions.prototype._processUploadResponse = function(submissionObj) {
     } else {
         this.noUploadList[this.noUploadIdx++] = submissionObj.shortName();
 
-        var m = 'Request failed - invalid server response: \n' +  response_text;
+        var m = 'Request failed - invalid server response: \n' +
+            submissionObj.response_text;
         console.error(m);
         
         submissionObj.uploadSubmission.reject(m);
@@ -324,10 +325,14 @@ Submission.prototype.shortName = function() {
     return Submission.shortName(this.saved_submission_name);
 }
 
-Submission.prototype.addPromiseReturnFunctions = function(resolve, reject) {
+Submission.prototype.setPromiseReturnFunctions = function(resolve, reject) {
     this.uploadSubmission = {};
     this.uploadSubmission.resolve = resolve;
     this.uploadSubmission.reject = reject;
+}
+
+Submission.prototype.setReponseText = function(response_text) {
+    this.response_text = response_text;
 }
 
 Submission.prototype.getFetchParms = function() {
@@ -346,3 +351,5 @@ Submission.prototype.getFetchParms = function() {
         /*          credentials: 'include', */
     }
 }
+
+            
