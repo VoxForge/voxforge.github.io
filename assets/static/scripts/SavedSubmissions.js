@@ -106,10 +106,14 @@ SavedSubmissions.prototype._confirmBrowserrHasSavedSubmissions = function() {
 SavedSubmissions.prototype._asyncUploadOfSubmissions = function(
     savedSubmissionArray)
 {
-    savedSubmissionArray.forEach(
-        this._uploadSubmissionPromise.bind(this));
+    var self = this;
+        
+    return new Promise(function(resolve, reject) {
+        savedSubmissionArray.forEach(
+            self._uploadSubmissionPromise.bind(self));
 
-    return savedSubmissionArray;
+        resolve(savedSubmissionArray);
+    });
 }
 
 SavedSubmissions.prototype._uploadSubmissionPromise = function(saved_submission_name) {
@@ -169,7 +173,7 @@ SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
             self._processUploadResponse.call(self, submissionObj)
         })
         .catch(function(err) {
-            var m = self._uploadError(err, submissionObj);
+            var m = self._uploadError.call(self, err, submissionObj);
             reject(m);
         });
 
@@ -178,7 +182,7 @@ SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
 
 SavedSubmissions.prototype._uploadError = function(err, submissionObj) {
     var short_name = this._shortName(submissionObj);
-    this.noUploadList[self.noUploadIdx++] = short_name;
+    this.noUploadList[this.noUploadIdx++] = short_name;
     var m = 'Upload request failed for: ' +
         short_name +
         '\n\n' +
@@ -223,6 +227,7 @@ SavedSubmissions.prototype._processUploadResponse = function(submissionObj) {
 
         var m = 'Request failed - invalid server response: \n' +  response_text;
         console.error(m);
+        
         submissionObj.uploadSubmission.reject(m);
     }
 }
@@ -274,24 +279,27 @@ SavedSubmissions.prototype._waitForSubmissionsToUpload = function(
         });
     })
     .catch(function(err) {
-        self._notAllSubmissionsUploaded(err);
+        self._notAllSubmissionsUploaded(err, savedSubmissionArray);
     });
 }
 
-SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err) {
+SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
+    err,
+    savedSubmissionArray,
+) {
     var self = this;
     console.warn('SavedSubmissions one or more submissions not uploaded: ' + err);
     
-    if (  this._partialUploads.call(this) ) { 
-        self.process_reject({
+    if ( this._partialUploads.call(this) ) { 
+        this.process_reject({
             status: 'partialUpload',
             filesNotUploaded: this.noUploadList,
             filesUploaded: this.uploadList,
             workertype: this.workertype,
             err: err,
         });
-    } else if ( this.noUploads.call(self) ) {
-        self.process_reject({
+    } else if ( this._noUploads.call(this) ) {
+        this.process_reject({
             status: 'noneUploaded',
             filesNotUploaded: this._shortNameArray(savedSubmissionArray),
             err: err,
@@ -317,8 +325,9 @@ SavedSubmissions.prototype._shortNameArray = function(savedSubmissionArray) {
     return short_name_array;
 }
 
+// since not alluploaded, check to see if some submission were uploaded
 SavedSubmissions.prototype._partialUploads = function() {
-    return self.uploadList.length > 0;
+    return this.uploadList.length > 0;
 }
 
 SavedSubmissions.prototype._noUploads = function() {
