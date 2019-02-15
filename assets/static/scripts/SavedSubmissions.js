@@ -169,7 +169,7 @@ SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
             self._processUploadResponse.call(self, submissionObj)
         })
         .catch(function(err) {
-            self._uploadError(err, submissionObj);
+            var m = self._uploadError(err, submissionObj);
             reject(m);
         });
 
@@ -185,6 +185,8 @@ SavedSubmissions.prototype._uploadError = function(err, submissionObj) {
         '...will try again on next upload attempt.  error: ' +
         err;
     console.warn(m);
+
+    return m;
 }
 
 SavedSubmissions.prototype._getFetchParms = function(submissionObj) {
@@ -280,7 +282,7 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err) {
     var self = this;
     console.warn('SavedSubmissions one or more submissions not uploaded: ' + err);
     
-    if (  this._partialUploads.bind(this) ) { 
+    if (  this._partialUploads.call(this) ) { 
         self.process_reject({
             status: 'partialUpload',
             filesNotUploaded: this.noUploadList,
@@ -288,7 +290,7 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err) {
             workertype: this.workertype,
             err: err,
         });
-    } else if ( this.noUploads.bind(self) ) {
+    } else if ( this.noUploads.call(self) ) {
         self.process_reject({
             status: 'noneUploaded',
             filesNotUploaded: this._shortNameArray(savedSubmissionArray),
