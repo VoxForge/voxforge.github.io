@@ -115,10 +115,12 @@ SavedSubmissions.prototype._asyncUploadOfSubmissions = function(
 }
 
 SavedSubmissions.prototype._uploadSubmissionPromise = function(saved_submission_name) {
+    var self = this;
+    
     this.promises.push(
-        this._getSavedSubmissionObj.call(this, saved_submission_name)
-        .then(this._uploadSubmission.bind(this))
-        .then(this._removeSubmission.bind(this))
+        self._getSavedSubmissionObj.call(self, saved_submission_name)
+        .then(self._uploadSubmission.bind(self))
+        .then(self._removeSubmission.bind(self))
         //catch at Promise.all
     ) 
 }
@@ -161,8 +163,8 @@ SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
         fetch(self.uploadURL, submissionObj.getFetchParms() )
         .then(response=>response.text()) 
         .then(function(response_text) {
-            submissionObj.setReponseText(response_text);
-            self._processUploadResponse.call(self, submissionObj)
+            submissionObj.setReponseText(response_text);            
+            self._processUploadResponse.call(self, submissionObj);
         })
         .catch(function(err) {
             var m = self._uploadError.call(self, err, submissionObj);
@@ -185,11 +187,11 @@ SavedSubmissions.prototype._uploadError = function(err, submissionObj) {
     return m;
 }
 
-SavedSubmissions.prototype._processUploadResponse = function(c) {
+SavedSubmissions.prototype._processUploadResponse = function(submissionObj) {
     if ( submissionObj.serverConfirmedSubmissionUploaded() ) {
-        this_submissionUploaded(submissionObj);
+        this._submissionUploaded(submissionObj);
     } else {
-        _submissionNotUploaded(submissionObj);
+        this._submissionNotUploaded(submissionObj);
     }
 }
 
@@ -200,8 +202,7 @@ SavedSubmissions.prototype._submissionUploaded = function(submissionObj) {
         "successfully completed for: " +
         submissionObj.shortName() );
 
-    submissionObj.uploadSubmission.resolve(
-        submissionObj.saved_submission_name);
+    submissionObj.uploadSubmission.resolve(submissionObj);
 }
 
 SavedSubmissions.prototype._submissionNotUploaded = function(submissionObj) {
@@ -215,26 +216,23 @@ SavedSubmissions.prototype._submissionNotUploaded = function(submissionObj) {
 }
 
 /**
-* delete submission from local storage 
+* delete submission from local storage
+* (only remove saved submission if upload completed successfully)
 */
-SavedSubmissions.prototype._removeSubmission = function(saved_submission_name) {
-    var self = this;
-    
-    return new Promise(function(resolve, reject) {
-      
-        // only remove saved submission if upload completed successfully
-        self.submissionCache.removeItem(saved_submission_name)
-        .then(function() {
-            console.log('Backup submission removed from browser: ' + saved_submission_name);
+SavedSubmissions.prototype._removeSubmission = function(submissionObj) {
+    this.submissionCache.removeItem(submissionObj.saved_submission_name)
+    .then(function() {
+        console.log('Backup submission removed from browser: ' +
+            submissionObj.saved_submission_name);
 
-            resolve(saved_submission_name);
-        })
-        .catch(function(err) {
-            var m = 'Error: cannot remove saved submission: ' + saved_submission_name + ' err: ' + err;
-            console.error(m);
-            reject(m);
-        });
-
+    })
+    .catch(function(err) {
+        var m = 'Error: cannot remove saved submission: ' +
+            submissionObj.saved_submission_name +
+            ' err: ' +
+            err;
+        console.error(m);
+        reject(m);
     });
 }
 
@@ -338,7 +336,7 @@ Submission.prototype.setReponseText = function(response_text) {
     this.response_text = response_text;
 }
 
-Submission.prototype.serverConfirmedSubmissionUploaded = function(submissionObj) {
+Submission.prototype.serverConfirmedSubmissionUploaded = function() {
     return this.response_text === "submission uploaded successfully.";
 }
 
