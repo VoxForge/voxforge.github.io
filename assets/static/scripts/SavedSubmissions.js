@@ -47,6 +47,8 @@ function SavedSubmissions (
     });
 
     this.promises = [];
+
+    console.log('post URL ' +  uploadURL);    
 }
 
 /**
@@ -112,7 +114,7 @@ SavedSubmissions.prototype._asyncUploadOfSubmissions = function(
 
 SavedSubmissions.prototype._uploadSubmissionPromise = function(saved_submission_name) {
     this.promises.push(
-        this._getSavedSubmission.call(this, saved_submission_name)
+        this._getSavedSubmissionObj.call(this, saved_submission_name)
         .then(this._uploadSubmission.bind(this))
         .then(this._removeSubmission.bind(this))
         //catch at Promise.all
@@ -123,16 +125,19 @@ SavedSubmissions.prototype._uploadSubmissionPromise = function(saved_submission_
 * get the submission object from browser storage
 *
 */
-SavedSubmissions.prototype._getSavedSubmission = function(saved_submission_name) {
+SavedSubmissions.prototype._getSavedSubmissionObj = function(saved_submission_name) {
     var self = this;
         
     return new Promise(function(resolve, reject) {
       
         // getItem only returns jsonObject
         self.submissionCache.getItem(saved_submission_name)
-        .then(function(jsonOnject) {
+        .then(function(jsonObject) {
             // resolve sends these as parameters to next promise in chain
-            resolve([saved_submission_name, jsonOnject, self.uploadURL]);
+            resolve({
+                saved_submission_name: saved_submission_name,
+                jsonObject: jsonObject,
+            });
         })
         .catch(function(err) {
             reject('checkForSavedFailedUpload err: ' + err);
@@ -148,49 +153,48 @@ SavedSubmissions.prototype._getSavedSubmission = function(saved_submission_name)
 * data from network stream;
 * basically converts the voxforge server response stream to text...
 */
-SavedSubmissions.prototype._uploadSubmission = function(data) {
+SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
     var self = this;
-    var [saved_submission_name, jsonOnject, uploadURL] = data;
-    console.log('post URL ' +  uploadURL);
     
     return new Promise(function(resolve, reject) {
-      
-        fetch(uploadURL, self._getFetchParms(jsonOnject) )
+        
+        submissionObj.uploadSubmission = {};
+        submissionObj.uploadSubmission.resolve = resolve;
+        submissionObj.uploadSubmission.reject = reject;
+        
+        fetch(self.uploadURL, self._getFetchParms(submissionObj) )
         .then(response=>response.text()) 
         .then(function(response_text) {
-            self._processUploadResponse.call(
-                self,
-                response_text,
-                saved_submission_name,
-                uploadURL,
-                resolve,
-                reject)
+            submissionObj.response_text = response_text;
+            self._processUploadResponse.call(self, submissionObj)
         })
         .catch(function(err) {
-            self._uploadError(err);
+            self._uploadError(err, submissionObj);
             reject(m);
         });
 
     });
 }
 
-SavedSubmissions.prototype._uploadError = function(err) {
-    var short_name = this._shortName(saved_submission_name);
-    this.noUploadList[self.noUploadIdx++] =this._shortName(saved_submission_name);
+SavedSubmissions.prototype._uploadError = function(err, submissionObj) {
+    var short_name = this._shortName(submissionObj);
+    this.noUploadList[self.noUploadIdx++] = short_name;
     var m = 'Upload request failed for: ' +
-        this._shortName(saved_submission_name) +
+        short_name +
         '\n\n' +
         '...will try again on next upload attempt.  error: ' +
         err;
     console.warn(m);
 }
 
-SavedSubmissions.prototype._getFetchParms = function(jsonOnject) {
+SavedSubmissions.prototype._getFetchParms = function(submissionObj) {
+    var jsonObject = submissionObj.jsonObject;
+    
     var form = new FormData();
-    form.append('file', jsonOnject.file);
-    form.append('language', jsonOnject.language);
-    form.append('username', jsonOnject.username);
-    form.append('suffix',   jsonOnject.suffix);
+    form.append('file', jsonObject.file);
+    form.append('language', jsonObject.language);
+    form.append('username', jsonObject.username);
+    form.append('suffix',   jsonObject.suffix);
 
     return {
         method: 'post',
@@ -200,37 +204,33 @@ SavedSubmissions.prototype._getFetchParms = function(jsonOnject) {
     }
 }
 
-SavedSubmissions.prototype._processUploadResponse = function(
-    response_text,
-    saved_submission_name,
-    uploadURL,
-    resolve,
-    reject)
-{
-    var short_name = this._shortName(saved_submission_name);
+SavedSubmissions.prototype._processUploadResponse = function(submissionObj) {
+    var short_name = this._shortName(submissionObj);
     
-    if ( this._submissionUploaded(response_text) ) {
+    if ( this._serverConfirmsSubmissionUploaded(submissionObj) ) {
+        this.uploadList[this.uploadIdx++] = short_name;
+                
         console.info("transferComplete: upload to VoxForge server " +
             "successfully completed for: " +
             short_name);
-        this.uploadList[this.uploadIdx++] = short_name;
 
-        resolve(saved_submission_name);
+        submissionObj.uploadSubmission.resolve(
+            submissionObj.saved_submission_name);
     } else {
         this.noUploadList[this.noUploadIdx++] = short_name;
 
         var m = 'Request failed - invalid server response: \n' +  response_text;
         console.error(m);
-        reject(m); // skips all inner catches to go to outermost catch
+        submissionObj.uploadSubmission.reject(m);
     }
 }
 
-SavedSubmissions.prototype._submissionUploaded = function(response_text) {
-    return response_text === "submission uploaded successfully.";
+SavedSubmissions.prototype._serverConfirmsSubmissionUploaded = function(submissionObj) {
+    return submissionObj.response_text === "submission uploaded successfully.";
 }
 
-SavedSubmissions.prototype._shortName = function(submission) {
-    return submission.replace(/\[.*\]/gi, '');
+SavedSubmissions.prototype._shortName = function(submissionObj) {
+    return submissionObj.saved_submission_name.replace(/\[.*\]/gi, '');
 }
 
 /**
