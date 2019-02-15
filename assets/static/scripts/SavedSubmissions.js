@@ -285,8 +285,8 @@ SavedSubmissions.prototype._waitForSubmissionsToUpload = function(
 
 SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
     err,
-    savedSubmissionArray,
-) {
+    savedSubmissionArray,)
+{
     var self = this;
     console.warn('SavedSubmissions one or more submissions not uploaded: ' + err);
     
