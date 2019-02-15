@@ -26,8 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // places and have different relative paths to localforage
 // importScripts('assets/static/lib/localforage.js');
 
-
-
 /**
 * Class definition
 */
@@ -72,7 +70,7 @@ SavedSubmissions.prototype.process = function() {
 }
 
 SavedSubmissions.prototype._getSubmissions = function() {
-    this._confirmBrowserrHasSavedSubmissions();
+    this._confirmBrowserHasSavedSubmissions();
     
     return this.submissionCache.keys();
 }
@@ -83,7 +81,7 @@ SavedSubmissions.prototype._getSubmissions = function() {
  * _should_ prevents service worker from turning into a zombie thread 
  * and continually checking for (deleted) saved submissions...
  */
-SavedSubmissions.prototype._confirmBrowserrHasSavedSubmissions = function() {
+SavedSubmissions.prototype._confirmBrowserHasSavedSubmissions = function() {
     var self = this;
     
     this.submissionCache.length()
@@ -134,14 +132,10 @@ SavedSubmissions.prototype._getSavedSubmissionObj = function(saved_submission_na
         
     return new Promise(function(resolve, reject) {
       
-        // getItem only returns jsonObject
         self.submissionCache.getItem(saved_submission_name)
         .then(function(jsonObject) {
-            // resolve sends these as parameters to next promise in chain
-            resolve({
-                saved_submission_name: saved_submission_name,
-                jsonObject: jsonObject,
-            });
+            var submissionObj = new Submission(saved_submission_name, jsonObject);
+            resolve(submissionObj);
         })
         .catch(function(err) {
             reject('checkForSavedFailedUpload err: ' + err);
@@ -161,12 +155,10 @@ SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
     var self = this;
     
     return new Promise(function(resolve, reject) {
-        
-        submissionObj.uploadSubmission = {};
-        submissionObj.uploadSubmission.resolve = resolve;
-        submissionObj.uploadSubmission.reject = reject;
-        
-        fetch(self.uploadURL, self._getFetchParms(submissionObj) )
+
+        submissionObj.addPromiseReturnFunctions(resolve, reject);
+
+        fetch(self.uploadURL, submissionObj.getFetchParms() )
         .then(response=>response.text()) 
         .then(function(response_text) {
             submissionObj.response_text = response_text;
@@ -181,10 +173,10 @@ SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
 }
 
 SavedSubmissions.prototype._uploadError = function(err, submissionObj) {
-    var short_name = this._shortName(submissionObj);
-    this.noUploadList[this.noUploadIdx++] = short_name;
+    this.noUploadList[this.noUploadIdx++] = submissionObj.shortName();
+    
     var m = 'Upload request failed for: ' +
-        short_name +
+        submissionObj.shortName() +
         '\n\n' +
         '...will try again on next upload attempt.  error: ' +
         err;
@@ -193,37 +185,19 @@ SavedSubmissions.prototype._uploadError = function(err, submissionObj) {
     return m;
 }
 
-SavedSubmissions.prototype._getFetchParms = function(submissionObj) {
-    var jsonObject = submissionObj.jsonObject;
-    
-    var form = new FormData();
-    form.append('file', jsonObject.file);
-    form.append('language', jsonObject.language);
-    form.append('username', jsonObject.username);
-    form.append('suffix',   jsonObject.suffix);
-
-    return {
-        method: 'post',
-        body: form,
-        mode: 'cors',
-        /*          credentials: 'include', */
-    }
-}
 
 SavedSubmissions.prototype._processUploadResponse = function(submissionObj) {
-    var short_name = this._shortName(submissionObj);
-    
     if ( this._serverConfirmsSubmissionUploaded(submissionObj) ) {
-        this.uploadList[this.uploadIdx++] = short_name;
+        this.uploadList[this.uploadIdx++] = submissionObj.shortName();
                 
         console.info("transferComplete: upload to VoxForge server " +
             "successfully completed for: " +
-            short_name);
+            submissionObj.shortName() );
 
         submissionObj.uploadSubmission.resolve(
             submissionObj.saved_submission_name);
     } else {
-        this.noUploadList[this.noUploadIdx++] = short_name;
+        this.noUploadList[this.noUploadIdx++] = submissionObj.shortName();
 
         var m = 'Request failed - invalid server response: \n' +  response_text;
         console.error(m);
@@ -234,10 +208,6 @@ SavedSubmissions.prototype._processUploadResponse = function(submissionObj) {
 
 SavedSubmissions.prototype._serverConfirmsSubmissionUploaded = function(submissionObj) {
     return submissionObj.response_text === "submission uploaded successfully.";
-}
-
-SavedSubmissions.prototype._shortName = function(submissionObj) {
-    return submissionObj.saved_submission_name.replace(/\[.*\]/gi, '');
 }
 
 /**
@@ -318,8 +288,8 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
  * listed in indexedDB
  */
 SavedSubmissions.prototype._shortNameArray = function(savedSubmissionArray) {
-    var short_name_array = savedSubmissionArray.map(function(submission) {
-        return submission.replace(/\[.*\]/gi, '');
+    var short_name_array = savedSubmissionArray.map(function(saved_submission_name) {
+        return Submission.shortName(saved_submission_name);
     });
 
     return short_name_array;
@@ -334,4 +304,45 @@ SavedSubmissions.prototype._noUploads = function() {
     return this.noUploadList.length > 0 ;
 }
 
+// #############################################################################
+/**
+* Class definition
+*/
+function Submission (saved_submission_name, jsonObject) {
+    this.saved_submission_name = saved_submission_name;
+    this.jsonObject = jsonObject;  
+}
 
+Submission.shortName = function(saved_submission_name) {
+    return saved_submission_name.replace(/\[.*\]/gi, '');
+}
+
+/**
+* methods
+*/
+Submission.prototype.shortName = function() {
+    return Submission.shortName(this.saved_submission_name);
+}
+
+Submission.prototype.addPromiseReturnFunctions = function(resolve, reject) {
+    this.uploadSubmission = {};
+    this.uploadSubmission.resolve = resolve;
+    this.uploadSubmission.reject = reject;
+}
+
+Submission.prototype.getFetchParms = function() {
+    var jsonObject = this.jsonObject;
+    
+    var form = new FormData();
+    form.append('file', jsonObject.file);
+    form.append('language', jsonObject.language);
+    form.append('username', jsonObject.username);
+    form.append('suffix',   jsonObject.suffix);
+
+    return {
+        method: 'post',
+        body: form,
+        mode: 'cors',
+        /*          credentials: 'include', */
+    }
+}
