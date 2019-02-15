@@ -160,7 +160,8 @@ SavedSubmissions.prototype._uploadSubmission = function(data) {
         fetch(uploadURL, self._getFetchParms(jsonOnject) )
         .then(response=>response.text()) 
         .then(function(response_text) {
-            self._processUploadResponse.call(self,
+            self._processUploadResponse.call(
+                self,
                 response_text,
                 saved_submission_name,
                 uploadURL,
@@ -208,19 +209,17 @@ SavedSubmissions.prototype._processUploadResponse = function(
     resolve,
     reject)
 {
+    var short_name = this._shortName(saved_submission_name);
+    
     if ( this._submissionUploaded(response_text) ) {
-        var short_name = this._shortName(saved_submission_name);
         console.info("transferComplete: upload to VoxForge server " +
             "successfully completed for: " +
             short_name);
         this.uploadList[this.uploadIdx++] = short_name;
 
-        // resolve sends this as parameter to next promise in chain
         resolve(saved_submission_name);
-
     } else {
-        this.noUploadList[this.noUploadIdx++] =
-            this._shortName(saved_submission_name);
+        this.noUploadList[this.noUploadIdx++] = short_name;
 
         var m = 'Request failed - invalid server response: \n' +  response_text;
         console.error(m);
@@ -250,7 +249,6 @@ SavedSubmissions.prototype._removeSubmission = function(saved_submission_name) {
             console.log('Backup submission removed from browser: ' + saved_submission_name);
 
             resolve(saved_submission_name);
-
         })
         .catch(function(err) {
             var m = 'Error: cannot remove saved submission: ' + saved_submission_name + ' err: ' + err;
@@ -271,12 +269,11 @@ SavedSubmissions.prototype._waitForSubmissionsToUpload = function(
 
     Promise.all(self.promises) 
     .then(function() { // allUploaded
-        var returnObj = {
+        resolve({
             status: 'AllUploaded',
             filesUploaded: self.uploadList,
             workertype: self.workertype,
-        };
-        resolve(returnObj);
+        });
     })
     .catch(function(err) {
         self._notAllSubmissionsUploaded(err, reject);
@@ -295,10 +292,6 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err, reject) {
             err: err,
         });
     } else if ( this.noUploads.bind(self) ) {
-        // if get here then processing loop on savedSubmissionArray was
-        // only partially iterated over, so will never get an accurate
-        // list of saved submissions, therefore, get all submissions
-        // listed in indexedDB        
         reject({
             status: 'noneUploaded',
             filesNotUploaded: this._shortNameArray(savedSubmissionArray),
@@ -311,6 +304,12 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err, reject) {
     }
 }
 
+/*
+ * if get here then processing loop on savedSubmissionArray was
+ * only partially iterated over, so will never get an accurate
+ * list of saved submissions, therefore, get all submissions
+ * listed in indexedDB
+ */
 SavedSubmissions.prototype._shortNameArray = function(savedSubmissionArray) {
     var short_name_array = savedSubmissionArray.map(function(submission) {
         return submission.replace(/\[.*\]/gi, '');
