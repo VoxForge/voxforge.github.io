@@ -59,8 +59,10 @@ SavedSubmissions.prototype.process = function() {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-
-        self._confirmBrowserrHasSavedSubmissions(reject)
+        self.process_resolve = resolve;
+        self.process_reject = reject;
+        
+        self._confirmBrowserrHasSavedSubmissions()
         .then(self._getSubmissionArray.bind(self))
         .then(function(savedSubmissionArray) {
             self._loopThroughArrayToUploadAllSubmissions.call(
@@ -68,17 +70,11 @@ SavedSubmissions.prototype.process = function() {
                 savedSubmissionArray);
             self._waitForSubmissionsToUpload.call(
                 self,
-                savedSubmissionArray,
-                resolve,
-                reject);
+                savedSubmissionArray,);
         })
         .catch(function(err) { console.log(err) });
         
     });
-}
-
-SavedSubmissions.prototype._getSubmissionArray = function() {
-    return this.submissionCache.keys();
 }
 
 /*
@@ -87,13 +83,15 @@ SavedSubmissions.prototype._getSubmissionArray = function() {
  * _should_ prevents service worker from turning into a zombie thread 
  * and continually checking for (deleted) saved submissions...
  */
-SavedSubmissions.prototype._confirmBrowserrHasSavedSubmissions = function(reject) {
+SavedSubmissions.prototype._confirmBrowserrHasSavedSubmissions = function() {
+    var self = this;
+    
     return this.submissionCache.length()
     .then(function(numberOfKeys) {
         if (numberOfKeys <= 0) {
             let m = 'no submissions found in browser storage: ' + numberOfKeys;
             console.log(m);
-            reject(m);
+            self.process_reject(m);
         } else {
             console.log('number of submissions saved in browser storage: ' +
                 numberOfKeys);            
@@ -103,6 +101,10 @@ SavedSubmissions.prototype._confirmBrowserrHasSavedSubmissions = function(reject
         var m = 'submissionCache - IndexedDB error: ' + err;
         console.error(m);
     });
+}
+
+SavedSubmissions.prototype._getSubmissionArray = function() {
+    return this.submissionCache.keys();
 }
 
 SavedSubmissions.prototype._loopThroughArrayToUploadAllSubmissions = function(
@@ -261,30 +263,29 @@ SavedSubmissions.prototype._removeSubmission = function(saved_submission_name) {
 
 // wait for all async promises to complete
 SavedSubmissions.prototype._waitForSubmissionsToUpload = function(
-    savedSubmissionArray,
-    resolve,
-    reject)
+    savedSubmissionArray,)
 {
     var self = this;
 
     Promise.all(self.promises) 
     .then(function() { // allUploaded
-        resolve({
+        self.process_resolve({
             status: 'AllUploaded',
             filesUploaded: self.uploadList,
             workertype: self.workertype,
         });
     })
     .catch(function(err) {
-        self._notAllSubmissionsUploaded(err, reject);
+        self._notAllSubmissionsUploaded(err);
     });
 }
 
-SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err, reject) {
+SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err) {
+    var self = this;
     console.warn('SavedSubmissions one or more submissions not uploaded: ' + err);
     
     if (  this._partialUploads.bind(this) ) { 
-        reject({
+        self.process_reject({
             status: 'partialUpload',
             filesNotUploaded: this.noUploadList,
             filesUploaded: this.uploadList,
@@ -292,7 +293,7 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err, reject) {
             err: err,
         });
     } else if ( this.noUploads.bind(self) ) {
-        reject({
+        self.process_reject({
             status: 'noneUploaded',
             filesNotUploaded: this._shortNameArray(savedSubmissionArray),
             err: err,
@@ -300,7 +301,7 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err, reject) {
     } else {
         var m = 'no submissions in uploadList or noUploadList - something is wrong';
         console.error(m);
-        reject(m);
+        self.process_reject(m);
     }
 }
 
