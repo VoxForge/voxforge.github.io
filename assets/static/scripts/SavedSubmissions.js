@@ -185,18 +185,26 @@ SavedSubmissions.prototype._uploadError = function(err, submissionObj) {
     return m;
 }
 
-
 SavedSubmissions.prototype._processUploadResponse = function(c) {
-    if ( this._serverConfirmsSubmissionUploaded(submissionObj) ) {
-        this.uploadList[this.uploadIdx++] = submissionObj.shortName();
-                
-        console.info("transferComplete: upload to VoxForge server " +
-            "successfully completed for: " +
-            submissionObj.shortName() );
-
-        submissionObj.uploadSubmission.resolve(
-            submissionObj.saved_submission_name);
+    if ( submissionObj.serverConfirmedSubmissionUploaded() ) {
+        this_submissionUploaded(submissionObj);
     } else {
+        _submissionNotUploaded(submissionObj);
+    }
+}
+
+SavedSubmissions.prototype._submissionUploaded = function(submissionObj) {
+    this.uploadList[this.uploadIdx++] = submissionObj.shortName();
+            
+    console.info("transferComplete: upload to VoxForge server " +
+        "successfully completed for: " +
+        submissionObj.shortName() );
+
+    submissionObj.uploadSubmission.resolve(
+        submissionObj.saved_submission_name);
+}
+
+SavedSubmissions.prototype._submissionNotUploaded = function(submissionObj) {
         this.noUploadList[this.noUploadIdx++] = submissionObj.shortName();
 
         var m = 'Request failed - invalid server response: \n' +
@@ -204,11 +212,6 @@ SavedSubmissions.prototype._processUploadResponse = function(c) {
         console.error(m);
         
         submissionObj.uploadSubmission.reject(m);
-    }
-}
-
-SavedSubmissions.prototype._serverConfirmsSubmissionUploaded = function(submissionObj) {
-    return submissionObj.response_text === "submission uploaded successfully.";
 }
 
 /**
@@ -333,6 +336,10 @@ Submission.prototype.setPromiseReturnFunctions = function(resolve, reject) {
 
 Submission.prototype.setReponseText = function(response_text) {
     this.response_text = response_text;
+}
+
+Submission.prototype.serverConfirmedSubmissionUploaded = function(submissionObj) {
+    return this.response_text === "submission uploaded successfully.";
 }
 
 Submission.prototype.getFetchParms = function() {
