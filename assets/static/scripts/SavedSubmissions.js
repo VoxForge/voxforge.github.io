@@ -63,16 +63,9 @@ SavedSubmissions.prototype.process = function() {
         self.process_reject = reject;
         
         self._getSubmissions.call(self)
-        .then(function(savedSubmissionArray) {
-            self._loopThroughArrayToUploadAllSubmissions.call(
-                self,
-                savedSubmissionArray);
-            self._waitForSubmissionsToUpload.call(
-                self,
-                savedSubmissionArray,);
-        })
+        .then(self._asyncUploadOfSubmissions.bind(self))
+        .then(self._waitForSubmissionsToUpload.bind(self))        
         .catch(function(err) { console.log(err) });
-        
     });
 }
 
@@ -108,11 +101,13 @@ SavedSubmissions.prototype._confirmBrowserrHasSavedSubmissions = function() {
     });
 }
 
-SavedSubmissions.prototype._loopThroughArrayToUploadAllSubmissions = function(
+SavedSubmissions.prototype._asyncUploadOfSubmissions = function(
     savedSubmissionArray)
 {
     savedSubmissionArray.forEach(
         this._uploadSubmissionPromise.bind(this));
+
+    return savedSubmissionArray;
 }
 
 SavedSubmissions.prototype._uploadSubmissionPromise = function(saved_submission_name) {
