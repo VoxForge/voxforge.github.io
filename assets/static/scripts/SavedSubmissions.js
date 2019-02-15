@@ -287,7 +287,13 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err, reject) {
     console.warn('SavedSubmissions one or more submissions not uploaded: ' + err);
     
     if (  this._partialUploads.bind(this) ) { 
-        this._partialUploadProcessing.call(this, savedSubmissionArray, reject);
+        reject({
+            status: 'partialUpload',
+            filesNotUploaded: this.noUploadList,
+            filesUploaded: this.uploadList,
+            workertype: this.workertype,
+            err: err,
+        });
     } else if ( this.noUploads.bind(self) ) {
         // if get here then processing loop on savedSubmissionArray was
         // only partially iterated over, so will never get an accurate
@@ -305,26 +311,12 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err, reject) {
     }
 }
 
-
-
-
 SavedSubmissions.prototype._shortNameArray = function(savedSubmissionArray) {
     var short_name_array = savedSubmissionArray.map(function(submission) {
         return submission.replace(/\[.*\]/gi, '');
     });
 
     return short_name_array;
-}
-
-SavedSubmissions.prototype._partialUploadProcessing = function(reject) {
-    var returnObj = {
-        status: 'partialUpload',
-        filesNotUploaded: self.noUploadList,
-        filesUploaded: self.uploadList,
-        workertype: self.workertype,
-        err: err,
-    };
-    reject(returnObj);
 }
 
 SavedSubmissions.prototype._partialUploads = function() {
