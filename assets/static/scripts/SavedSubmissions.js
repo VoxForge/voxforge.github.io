@@ -288,11 +288,16 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err, reject) {
     
     if (  this._partialUploads.bind(this) ) { 
         this._partialUploadProcessing.call(this, savedSubmissionArray, reject);
-    } else if ( this.noUploads.bind(self) ) {  
-        this._noUploadProcessing.call(
-            this,
-            savedSubmissionArray,
-            reject);
+    } else if ( this.noUploads.bind(self) ) {
+        // if get here then processing loop on savedSubmissionArray was
+        // only partially iterated over, so will never get an accurate
+        // list of saved submissions, therefore, get all submissions
+        // listed in indexedDB        
+        reject({
+            status: 'noneUploaded',
+            filesNotUploaded: this._shortNameArray(savedSubmissionArray),
+            err: err,
+        });
     } else {
         var m = 'no submissions in uploadList or noUploadList - something is wrong';
         console.error(m);
@@ -300,21 +305,8 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(err, reject) {
     }
 }
 
-// if get here then processing loop on savedSubmissionArray was
-// only partially iterated over, so will never get an accurate
-// list of saved submissions, therefore, get all submissions
-// listed in indexedDB
-SavedSubmissions.prototype._noUploadProcessing = function(
-    savedSubmissionArray,
-    reject)
-{
-    var returnObj = {
-        status: 'noneUploaded',
-        filesNotUploaded: this._shortNameArray(savedSubmissionArray),
-        err: err,
-    }
-    reject(returnObj);
-}
+
+
 
 SavedSubmissions.prototype._shortNameArray = function(savedSubmissionArray) {
     var short_name_array = savedSubmissionArray.map(function(submission) {
