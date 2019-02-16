@@ -59,36 +59,9 @@ AudioPlayer.prototype.display = function (obj)
 
     var clipContainer = document.createElement('article');
     clipContainer.classList.add('clip');
-
-
     var audioURL = window.URL.createObjectURL(blob);
-    /**
-    * create easier to access audio links in DOM
-    * TODO need to figure out how to get audio links from Wavesurfer...
-    * TODO Firefox records audio in 32-bit float, but cannot play it back....
-    * this could be used to store 32bit float audio in Firefox, while
-    * 16bit wav could be sent to WaveSurfer
-    */
-    function createAudioContainer() {
-        var audioPlayer = document.createElement('audio');
-        audioPlayer.src = audioURL;
-
-        return audioPlayer;
-    }
-    
     var prompt_id = document.querySelector('.prompt_id').innerText;
     var waveformdisplay_id = "waveformContainer_" + prompt_id;
-
-    function createAudioPlayer() {
-        var audioPlayer = document.createElement('audio');
-        audioPlayer.classList.add('audio_player');
-        audioPlayer.setAttribute('controls', '');
-        audioPlayer.controls = true;
-        audioPlayer.src = audioURL;
-        console.log(prompt_id + " recorder stopped; audio: " + audioURL);
-
-        return audioPlayer;
-    }
     
     // #########################################################################
     return new Promise(function (resolve, reject) {
@@ -103,9 +76,9 @@ AudioPlayer.prototype.display = function (obj)
                 waveformdisplay_id,
                 prompt_id));
         } else {
-          clipContainer.appendChild(createAudioPlayer());
+          clipContainer.appendChild(self._createAudioPlayer.call(self, audioURL));
         }
-        clipContainer.appendChild(createAudioContainer());
+        clipContainer.appendChild(self._createAudioContainer.call(self, audioURL));
 
         self.soundClips.insertBefore(
             clipContainer,
@@ -175,6 +148,31 @@ AudioPlayer.prototype._createDeleteButton = function () {
     }
 
     return deleteButton;
+}
+
+/**
+* create easier to access audio links in DOM
+* TODO need to figure out how to get audio links from Wavesurfer...
+* TODO Firefox records audio in 32-bit float, but cannot play it back....
+* this could be used to store 32bit float audio in Firefox, while
+* 16bit wav could be sent to WaveSurfer
+*/
+AudioPlayer.prototype._createAudioContainer = function (audioURL) {
+    var audioPlayer = document.createElement('audio');
+    audioPlayer.src = audioURL;
+
+    return audioPlayer;
+}
+
+AudioPlayer.prototype._createAudioPlayer = function (audioURL) {
+    var audioPlayer = document.createElement('audio');
+    audioPlayer.classList.add('audio_player');
+    audioPlayer.setAttribute('controls', '');
+    audioPlayer.controls = true;
+    audioPlayer.src = audioURL;
+    console.log(prompt_id + " recorder stopped; audio: " + audioURL);
+
+    return audioPlayer;
 }
 
 /**
