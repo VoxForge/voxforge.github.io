@@ -272,9 +272,6 @@ Controller.prototype._displayRecordingInfoChecked = function () {
     }
 }
 
-/*
- * if too much background noise, turn off VAD
- */
 Controller.prototype._IfTooMuchBackgroundnoiseTurnOffVad = function () {
     if ( this.view.userSaysTooMuchBackgroundNoise() &&
         localStorage.getItem("vad_run") === 'true')
