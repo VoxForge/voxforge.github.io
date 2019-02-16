@@ -272,14 +272,17 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
 {
     var self = this;
     console.warn('SavedSubmissions one or more submissions not uploaded: ' + err);
-    
+
     if ( this._partialUploads() ) { 
-        this.process_reject(this._getPartialUploadsObj(err));
+        this.process_reject(
+            this._getPartialUploadsObj(err));
     } else if ( this._noUploads() ) {
         var shortNameArray = this._shortNameArray(savedSubmissionArray);
-        this.process_reject(this._getNoUploadsObj(err, shortNameArray));
+        this.process_reject(
+            this._getNoUploadsObj(err, shortNameArray));
     } else {
-        self.process_reject(this._getNotAllSubmissionsUploadedErrMsg());
+        this.process_reject(
+            this._getNotAllSubmissionsUploadedErrMsg());
     }
 }
 
