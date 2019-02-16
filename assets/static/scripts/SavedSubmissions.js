@@ -161,7 +161,7 @@ SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
         submissionObj.setPromiseReturnFunctions(resolve, reject);
 
         fetch(self.uploadURL, submissionObj.getFetchParms() )
-        .then(response=>response.text()) 
+        .then(self._convertStreamResponseToText.bind(self))
         .then(function(response_text) {
             submissionObj.setReponseText(response_text);            
             self._processUploadResponse.call(self, submissionObj);
@@ -172,6 +172,10 @@ SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
         });
 
     });
+}
+
+SavedSubmissions.prototype._convertStreamResponseToText = function(response) {
+    return response.text()
 }
 
 SavedSubmissions.prototype._uploadError = function(err, submissionObj) {
