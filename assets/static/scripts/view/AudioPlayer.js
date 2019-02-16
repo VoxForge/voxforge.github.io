@@ -63,33 +63,7 @@ AudioPlayer.prototype.display = function (obj)
 
 
 
-    /**
-    * create button to allow user to delete a prompt line
-    */
-    function createDeleteButton() {
-        var deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.className = 'delete';
 
-        //deleteButton.disabled = 'true';
-
-        /**
-        * delete a recorded prompt; which is then saved in prompt_stack so user
-        * can re-record
-        */
-        deleteButton.onclick = function(e) {
-            var evtTgt = e.target;
-            var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
-
-            self.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
-            evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
-            console.log("prompt deleted: " + prompt_id);
-
-            $('#delete_clicked').click();
-        }
-
-        return deleteButton;
-    }
 
     var audioURL = window.URL.createObjectURL(blob);
     /**
@@ -179,7 +153,7 @@ AudioPlayer.prototype.display = function (obj)
     return new Promise(function (resolve, reject) {
 
         clipContainer.appendChild(self._createClipLabel.call(self));
-        clipContainer.appendChild(createDeleteButton());
+        clipContainer.appendChild(self._createDeleteButton.call(self));
         //if (self.displayWaveform) {
         if ( self.waveformDisplayChecked() ) {        
           clipContainer.appendChild(createWaveformElement());
@@ -230,6 +204,34 @@ AudioPlayer.prototype._createClipLabel = function () {
     return clipLabel;
 }
 
+/**
+* create button to allow user to delete a prompt line
+*/
+AudioPlayer.prototype._createDeleteButton = function () {
+    var deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.className = 'delete';
+
+    //deleteButton.disabled = 'true';
+
+    /**
+    * delete a recorded prompt; which is then saved in prompt_stack so user
+    * can re-record
+    */
+    deleteButton.onclick = function(e) {
+        var evtTgt = e.target;
+        var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
+
+        self.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
+        evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+        console.log("prompt deleted: " + prompt_id);
+
+        $('#delete_clicked').click();
+    }
+
+    return deleteButton;
+}
+    
 AudioPlayer.prototype.reset = function () 
 {
     this.clip_id = 0;
