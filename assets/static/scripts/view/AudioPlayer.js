@@ -52,7 +52,6 @@ function AudioPlayer (
 */
 AudioPlayer.prototype.display = function (obj) 
 {
-    // 'self' used to save the current context when calling function
     var self = this;
     
     //var prompt_id = obj.prompt_id; // TODO not used yet...
@@ -62,17 +61,7 @@ AudioPlayer.prototype.display = function (obj)
     clipContainer.classList.add('clip');
     var prompt_id = document.querySelector('.prompt_id').innerText;
 
-    /**
-    * displays the speech recording's transcription
-    */
-    function createClipLabel() {
-        var prompt_sentence = document.querySelector('.info-display').innerText;
-        var clipLabel = document.createElement('prompt');
-        clipLabel.classList.add('clip-label');
-        clipLabel.textContent = prompt_id + " " + prompt_sentence;
 
-        return clipLabel;
-    }
 
     /**
     * create button to allow user to delete a prompt line
@@ -189,7 +178,7 @@ AudioPlayer.prototype.display = function (obj)
     // #########################################################################
     return new Promise(function (resolve, reject) {
 
-        clipContainer.appendChild(createClipLabel());
+        clipContainer.appendChild(self._createClipLabel.call(self));
         clipContainer.appendChild(createDeleteButton());
         //if (self.displayWaveform) {
         if ( self.waveformDisplayChecked() ) {        
@@ -225,6 +214,20 @@ AudioPlayer.prototype.display = function (obj)
         self.clip_id++;
 
     });//promise
+}
+
+/**
+* displays the speech recording's transcription
+*/
+AudioPlayer.prototype._createClipLabel = function () {
+    var prompt_id = document.querySelector('.prompt_id').innerText;    
+    var prompt_sentence = document.querySelector('.info-display').innerText;
+    
+    var clipLabel = document.createElement('prompt');
+    clipLabel.classList.add('clip-label');
+    clipLabel.textContent = prompt_id + " " + prompt_sentence;
+
+    return clipLabel;
 }
 
 AudioPlayer.prototype.reset = function () 
