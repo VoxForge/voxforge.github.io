@@ -62,14 +62,14 @@ SavedSubmissions.prototype.process = function() {
         self.process_resolve = resolve;
         self.process_reject = reject;
         
-        self._getSubmissions.call(self)
+        self._getSavedSubmissionArray.call(self)
         .then(self._asyncUploadOfSubmissions.bind(self))
         .then(self._waitForSubmissionsToUpload.bind(self))        
         .catch(function(err) { console.log(err) });
     });
 }
 
-SavedSubmissions.prototype._getSubmissions = function() {
+SavedSubmissions.prototype._getSavedSubmissionArray = function() {
     this._confirmBrowserHasSavedSubmissions();
     
     return this.submissionCache.keys();
@@ -114,11 +114,11 @@ SavedSubmissions.prototype._asyncUploadOfSubmissions = function(
     });
 }
 
-SavedSubmissions.prototype._uploadSubmissionPromise = function(saved_submission_name) {
+SavedSubmissions.prototype._uploadSubmissionPromise = function(savedSubmissionName) {
     var self = this;
     
     this.promises.push(
-        self._getSavedSubmissionObj.call(self, saved_submission_name)
+        self._getSavedSubmissionObj.call(self, savedSubmissionName)
         .then(self._uploadSubmission.bind(self))
         .then(self._removeSubmission.bind(self))
         //catch at Promise.all
@@ -129,14 +129,14 @@ SavedSubmissions.prototype._uploadSubmissionPromise = function(saved_submission_
 * get the submission object from browser storage
 *
 */
-SavedSubmissions.prototype._getSavedSubmissionObj = function(saved_submission_name) {
+SavedSubmissions.prototype._getSavedSubmissionObj = function(savedSubmissionName) {
     var self = this;
         
     return new Promise(function(resolve, reject) {
       
-        self.submissionCache.getItem(saved_submission_name)
+        self.submissionCache.getItem(savedSubmissionName)
         .then(function(jsonObject) {
-            var submissionObj = new Submission(saved_submission_name, jsonObject);
+            var submissionObj = new Submission(savedSubmissionName, jsonObject);
             resolve(submissionObj);
         })
         .catch(function(err) {
@@ -220,15 +220,15 @@ SavedSubmissions.prototype._submissionNotUploaded = function(submissionObj) {
 * (only remove saved submission if upload completed successfully)
 */
 SavedSubmissions.prototype._removeSubmission = function(submissionObj) {
-    this.submissionCache.removeItem(submissionObj.saved_submission_name)
+    this.submissionCache.removeItem(submissionObj.savedSubmissionName)
     .then(function() {
         console.log('Backup submission removed from browser: ' +
-            submissionObj.saved_submission_name);
+            submissionObj.savedSubmissionName);
 
     })
     .catch(function(err) {
         var m = 'Error: cannot remove saved submission: ' +
-            submissionObj.saved_submission_name +
+            submissionObj.savedSubmissionName +
             ' err: ' +
             err;
         console.error(m);
@@ -290,8 +290,8 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
  * listed in indexedDB
  */
 SavedSubmissions.prototype._shortNameArray = function(savedSubmissionArray) {
-    var short_name_array = savedSubmissionArray.map(function(saved_submission_name) {
-        return Submission.shortName(saved_submission_name);
+    var short_name_array = savedSubmissionArray.map(function(savedSubmissionName) {
+        return Submission.shortName(savedSubmissionName);
     });
 
     return short_name_array;
@@ -310,20 +310,20 @@ SavedSubmissions.prototype._noUploads = function() {
 /**
 * Class definition
 */
-function Submission (saved_submission_name, jsonObject) {
-    this.saved_submission_name = saved_submission_name;
+function Submission (savedSubmissionName, jsonObject) {
+    this.savedSubmissionName = savedSubmissionName;
     this.jsonObject = jsonObject;  
 }
 
-Submission.shortName = function(saved_submission_name) {
-    return saved_submission_name.replace(/\[.*\]/gi, '');
+Submission.shortName = function(savedSubmissionName) {
+    return savedSubmissionName.replace(/\[.*\]/gi, '');
 }
 
 /**
 * methods
 */
 Submission.prototype.shortName = function() {
-    return Submission.shortName(this.saved_submission_name);
+    return Submission.shortName(this.savedSubmissionName);
 }
 
 Submission.prototype.setPromiseReturnFunctions = function(resolve, reject) {
