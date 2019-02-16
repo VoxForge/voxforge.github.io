@@ -274,24 +274,38 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
     console.warn('SavedSubmissions one or more submissions not uploaded: ' + err);
     
     if ( this._partialUploads.call(this) ) { 
-        this.process_reject({
-            status: 'partialUpload',
-            filesNotUploaded: this.noUploadList,
-            filesUploaded: this.uploadList,
-            workertype: this.workertype,
-            err: err,
-        });
+        this.process_reject(this._getPartialUploadsObj(err));
     } else if ( this._noUploads.call(this) ) {
-        this.process_reject({
-            status: 'noneUploaded',
-            filesNotUploaded: this._shortNameArray(savedSubmissionArray),
-            err: err,
-        });
+        var shortNameArray = this._shortNameArray(savedSubmissionArray);
+        this.process_reject(this._getNoUploadsObj(err, shortNameArray));
     } else {
-        var m = 'no submissions in uploadList or noUploadList - something is wrong';
-        console.error(m);
-        self.process_reject(m);
+        self.process_reject(this._getNotAllSubmissionsUploadedErrMsg());
     }
+}
+
+SavedSubmissions.prototype._getPartialUploadsObj = function(err) {
+    return {
+        status: 'partialUpload',
+        filesNotUploaded: this.noUploadList,
+        filesUploaded: this.uploadList,
+        workertype: this.workertype,
+        err: err,
+    };
+}
+
+SavedSubmissions.prototype._getNoUploadsObj = function(err, shortNameArray) {
+    return {
+        status: 'noneUploaded',
+        filesNotUploaded: shortNameArray,
+        err: err,
+    };
+}
+
+SavedSubmissions.prototype._getNotAllSubmissionsUploadedErrMsg = function() {
+    var m = 'no submissions in uploadList or noUploadList - something is wrong';
+    console.error(m);
+
+    return m;
 }
 
 /*
