@@ -210,13 +210,13 @@ SavedSubmissions.prototype._submissionUploaded = function(submissionObj) {
 }
 
 SavedSubmissions.prototype._submissionNotUploaded = function(submissionObj) {
-        this.noUploadList[this.noUploadIdx++] = submissionObj.shortName();
+    this.noUploadList[this.noUploadIdx++] = submissionObj.shortName();
 
-        var m = 'Request failed - invalid server response: \n' +
-            submissionObj.response_text;
-        console.error(m);
-        
-        submissionObj.uploadSubmission.reject(m);
+    var m = 'Request failed - invalid server response: \n' +
+        submissionObj.response_text;
+    console.error(m);
+    
+    submissionObj.uploadSubmission.reject(m);
 }
 
 /**
@@ -224,20 +224,27 @@ SavedSubmissions.prototype._submissionNotUploaded = function(submissionObj) {
 * (only remove saved submission if upload completed successfully)
 */
 SavedSubmissions.prototype._removeSubmission = function(submissionObj) {
+    var self = this;
+    
     this.submissionCache.removeItem(submissionObj.savedSubmissionName)
-    .then(function() {
-        console.log('Backup submission removed from browser: ' +
-            submissionObj.savedSubmissionName);
-
-    })
+    .then(self._submissionRemoved.bind(self, submissionObj))
     .catch(function(err) {
-        var m = 'Error: cannot remove saved submission: ' +
-            submissionObj.savedSubmissionName +
-            ' err: ' +
-            err;
-        console.error(m);
+        self._submissionNotRemoved.call(self, err, submissionObj)
         reject(m);
     });
+}
+
+SavedSubmissions.prototype._submissionRemoved = function(submissionObj) {
+    console.log('Backup submission removed from browser: ' +
+        submissionObj.savedSubmissionName);
+}
+
+SavedSubmissions.prototype._submissionNotRemoved = function(err, submissionObj) {
+    var m = 'Error: cannot remove saved submission: ' +
+        submissionObj.savedSubmissionName +
+        ' err: ' +
+        err;
+    console.error(m);
 }
 
 // wait for all async promises to complete
@@ -255,7 +262,7 @@ SavedSubmissions.prototype._waitForSubmissionsToUpload = function(
         });
     })
     .catch(function(err) {
-        self._notAllSubmissionsUploaded(err, savedSubmissionArray);
+        self._notAllSubmissionsUploaded.call(self, err, savedSubmissionArray);
     });
 }
 
@@ -345,6 +352,15 @@ Submission.prototype.serverConfirmedSubmissionUploaded = function() {
 }
 
 Submission.prototype.getFetchParms = function() {
+    return {
+        method: 'post',
+        body: this._setupFormData(),
+        mode: 'cors',
+        /*          credentials: 'include', */
+    }
+}
+
+Submission.prototype._setupFormData = function() {
     var jsonObject = this.jsonObject;
     
     var form = new FormData();
@@ -353,12 +369,5 @@ Submission.prototype.getFetchParms = function() {
     form.append('username', jsonObject.username);
     form.append('suffix',   jsonObject.suffix);
 
-    return {
-        method: 'post',
-        body: form,
-        mode: 'cors',
-        /*          credentials: 'include', */
-    }
-}
-
-            
+    return form;
+}  
