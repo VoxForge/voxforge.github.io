@@ -55,12 +55,10 @@ AudioPlayer.prototype.display = function (obj)
     var self = this;
 
     var audioURL = window.URL.createObjectURL(obj.blob);
-    //var prompt_id = document.querySelector('.prompt_id').innerText;
     var waveformdisplay_id = "waveformContainer_" + obj.prompt_id;
     
     var clipContainer =
-        self._setUpClipContainer.call(
-            self,
+        this._setUpClipContainer(
             obj,
             audioURL,
             waveformdisplay_id);
