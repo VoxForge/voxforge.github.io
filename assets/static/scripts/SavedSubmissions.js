@@ -216,6 +216,10 @@ function UploadInfo (
     this.noUploadIdx = 0;
 }
 
+/**
+* Methods
+*/
+
 UploadInfo.prototype.addToUploadList = function(submissionName) {
     this.uploadList[this.noUploadIdx++] = submissionName;
 }
