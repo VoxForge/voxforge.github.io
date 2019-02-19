@@ -50,18 +50,16 @@ function AudioPlayer (
 * then review and if needed delete an erroneous recording, which can then be
 * re-recorded
 */
-AudioPlayer.prototype.display = function(obj) 
-{
-    var self = this;
-    
+AudioPlayer.prototype.display = function(obj) {
     this.obj = obj;
     this.audioURL = window.URL.createObjectURL(obj.blob);
     this.waveformdisplay_id = "waveformContainer_" + obj.prompt_id;
 
-    self.soundClips.insertBefore(
+    this.soundClips.insertBefore(
         this._setUpClipContainer(),
-        self.soundClips.children[0]);
-        
+        this.soundClips.children[0]);
+
+    var self = this;        
     return new Promise(function(resolve, reject) {
 
         if ( self.waveformDisplayChecked() ) {        
@@ -79,8 +77,8 @@ AudioPlayer.prototype._setUpClipContainer = function() {
     var clipContainer = document.createElement('article');
     clipContainer.classList.add('clip');
     
-    clipContainer.appendChild(this._createClipLabel());
-    clipContainer.appendChild(this._createDeleteButton());
+    clipContainer.appendChild( this._createClipLabel() );
+    clipContainer.appendChild( this._createDeleteButton() );
 
     if ( this.waveformDisplayChecked() ) {        
       clipContainer.appendChild( this._createWaveformElement() );
@@ -186,12 +184,11 @@ AudioPlayer.prototype._createAudioPlayer = function() {
 * to exist before being called, so this creates the it...
 */
 AudioPlayer.prototype._createWaveformElement = function() {    
-    var self = this;
-
     var waveformElement = document.createElement('div');
+    
     this._setHeader(waveformElement);
     this._setSpeechCharacteristics(waveformElement);
-    waveformElement.appendChild(this._createWaveSurferPlayButton());
+    this._createWaveSurferPlayButton(waveformElement)    
     
     console.log("clip_id: " + this.clip_id);
 
@@ -236,12 +233,12 @@ AudioPlayer.prototype._setSpeechCharacteristics = function(waveformElement) {
     }
 }
 
-AudioPlayer.prototype._createWaveSurferPlayButton = function() {
+AudioPlayer.prototype._createWaveSurferPlayButton = function(waveformElement) {
     var buttonDiv = document.createElement('div');
     buttonDiv.setAttribute("style", "text-align: center");
     buttonDiv.appendChild( this._createButton() );
-    
-    return buttonDiv;
+
+    waveformElement.appendChild(buttonDiv);   
 }
 
 AudioPlayer.prototype._createButton = function() {
