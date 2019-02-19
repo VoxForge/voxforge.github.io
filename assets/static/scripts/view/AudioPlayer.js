@@ -53,20 +53,16 @@ function AudioPlayer (
 AudioPlayer.prototype.display = function (obj) 
 {
     var self = this;
-    
-    //var prompt_id = obj.prompt_id; // TODO not used yet...
-    var blob = obj.blob;
 
-    var audioURL = window.URL.createObjectURL(blob);
-    var prompt_id = document.querySelector('.prompt_id').innerText;
-    var waveformdisplay_id = "waveformContainer_" + prompt_id;
+    var audioURL = window.URL.createObjectURL(obj.blob);
+    //var prompt_id = document.querySelector('.prompt_id').innerText;
+    var waveformdisplay_id = "waveformContainer_" + obj.prompt_id;
     
     var clipContainer =
         self._setUpClipContainer.call(
             self,
             obj,
             audioURL,
-            prompt_id,
             waveformdisplay_id);
 
     self.soundClips.insertBefore(
@@ -78,9 +74,9 @@ AudioPlayer.prototype.display = function (obj)
 
         if ( self.waveformDisplayChecked() ) {        
             self._setUpWaveSurfer.call(self,
-                waveformdisplay_id,
-                audioURL,
                 obj,
+                audioURL,
+                waveformdisplay_id,                
                 resolve);
         } else {
             resolve(obj);
@@ -95,9 +91,9 @@ AudioPlayer.prototype.display = function (obj)
 // add waveform to waveformElement
 // see http://wavesurfer-js.org/docs/
 AudioPlayer.prototype._setUpWaveSurfer = function(
-    waveformdisplay_id,
-    audioURL,
     obj,
+    audioURL,    
+    waveformdisplay_id,
     caller_resolve)
 {
     wavesurfer[this.clip_id] = WaveSurfer.create({
@@ -116,7 +112,6 @@ AudioPlayer.prototype._setUpWaveSurfer = function(
 AudioPlayer.prototype._setUpClipContainer = function (
     obj,
     audioURL,
-    prompt_id,
     waveformdisplay_id)
 {
     var clipContainer = document.createElement('article');
@@ -129,8 +124,7 @@ AudioPlayer.prototype._setUpClipContainer = function (
       clipContainer.appendChild(
         this._createWaveformElement(
             obj,
-            waveformdisplay_id,
-            prompt_id));
+            waveformdisplay_id));
     } else {
       clipContainer.appendChild(this._createAudioPlayer(audioURL));
     }
@@ -213,8 +207,7 @@ AudioPlayer.prototype._createAudioPlayer = function (audioURL) {
 */
 AudioPlayer.prototype._createWaveformElement = function (
     obj,
-    waveformdisplay_id,
-    prompt_id)
+    waveformdisplay_id)
 {    
     var self = this;
 
@@ -254,7 +247,7 @@ AudioPlayer.prototype._createWaveformElement = function (
     }
 
     // playbutton inside wavesurfer display
-    var display_id = "button_" + prompt_id;
+    var display_id = "button_" + obj.prompt_id;
     var button = document.createElement(display_id);
     button.className = "play btn btn-primary";
     // TODO not sure how to toggle Play/Pause text
