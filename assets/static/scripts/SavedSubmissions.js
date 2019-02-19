@@ -115,10 +115,10 @@ SavedSubmissions.prototype._uploadSubmission = function(savedSubmissionName) {
     var self = this;
 
     var submission = new Submission(
+        self.submissionCache,    
         savedSubmissionName,
         self.uploadURL,
-        self.uploadInfo,
-        self.submissionCache);
+        self.uploadInfo);
             
     this.promises.push(
         submission.upload()

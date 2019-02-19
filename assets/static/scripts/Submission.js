@@ -20,15 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * Class definition
 */
 function Submission (
+    submissionCache,
     savedSubmissionName,
     uploadURL,
-    uploadInfo,
-    submissionCache)
+    uploadInfo)
 {
+    this.submissionCache = submissionCache;
     this.savedSubmissionName = savedSubmissionName;
     this.uploadURL = uploadURL;
     this.uploadInfo = uploadInfo;
-    this.submissionCache = submissionCache;
 }
 
 /**
@@ -93,7 +93,6 @@ Submission.prototype._convertStreamResponseToText = function(response) {
 }
 
 Submission.prototype._uploadError = function(err) {
-    //this.noUploadList[this.noUploadIdx++] = this.shortName();
     this.uploadInfo.addToNoUploadList( this._shortName() );
     
     var m = 'Upload request failed for: ' +
@@ -115,7 +114,6 @@ Submission.prototype._processUploadResponse = function() {
 }
 
 Submission.prototype._submissionUploaded = function() {
-    //this.uploadList[this.uploadIdx++] = this._shortName();
     this.uploadInfo.addToUploadList( this._shortName() );
                 
     console.info("transferComplete: upload to VoxForge server " +
@@ -126,7 +124,6 @@ Submission.prototype._submissionUploaded = function() {
 }
 
 Submission.prototype._submissionNotUploaded = function() {
-    //this.noUploadList[this.noUploadIdx++] = this._shortName();
     this.uploadInfo.addToNoUploadList( this._shortName() );
     var m = 'Request failed - invalid server response: \n' +
         this.response_text;
