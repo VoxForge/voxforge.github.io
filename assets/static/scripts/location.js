@@ -33,9 +33,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * improvement in accuracy data change???
 *
 * Note: Watching for changes to a geolocation is not a free operation.
-* while you're watching a position, you are engaging the device in a lot of extra processing.
+* while you're watching a position, you are engaging the device in a lot of
+* extra processing.
 *
-* After you no longer need to track the user's position, call clearWatch to turn off the geolocation systems.
+* After you no longer need to track the user's position, call clearWatch to
+* turn off the geolocation systems.
 *
 * test geolocation in Chrome console, sensors...
 *
