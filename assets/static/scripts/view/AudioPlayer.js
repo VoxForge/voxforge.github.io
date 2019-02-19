@@ -53,29 +53,19 @@ function AudioPlayer (
 AudioPlayer.prototype.display = function (obj) 
 {
     var self = this;
-
-    var audioURL = window.URL.createObjectURL(obj.blob);
-    var waveformdisplay_id = "waveformContainer_" + obj.prompt_id;
     
-    var clipContainer =
-        this._setUpClipContainer(
-            obj,
-            audioURL,
-            waveformdisplay_id);
+    this.obj = obj;
+    this.audioURL = window.URL.createObjectURL(obj.blob);
+    this.waveformdisplay_id = "waveformContainer_" + obj.prompt_id;
 
     self.soundClips.insertBefore(
-        clipContainer,
+        this._setUpClipContainer(),
         self.soundClips.children[0]);
         
-    // #########################################################################
     return new Promise(function (resolve, reject) {
 
         if ( self.waveformDisplayChecked() ) {        
-            self._setUpWaveSurfer.call(self,
-                obj,
-                audioURL,
-                waveformdisplay_id,                
-                resolve);
+            self._setUpWaveSurfer.call(self, resolve);
         } else {
             resolve(obj);
         }
@@ -85,33 +75,27 @@ AudioPlayer.prototype.display = function (obj)
     });
 }
 
+/*
 // might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
 // add waveform to waveformElement
 // see http://wavesurfer-js.org/docs/
-AudioPlayer.prototype._setUpWaveSurfer = function(
-    obj,
-    audioURL,    
-    waveformdisplay_id,
-    caller_resolve)
-{
+*/
+AudioPlayer.prototype._setUpWaveSurfer = function(caller_resolve) {
     wavesurfer[this.clip_id] = WaveSurfer.create({
-        container: '#' + waveformdisplay_id,
+        container: '#' + this.waveformdisplay_id,
         scrollParent: true,
         waveColor : 'OliveDrab',
         minPxPerSec: 200,
     });
-    wavesurfer[this.clip_id].load(audioURL);
+    wavesurfer[this.clip_id].load(this.audioURL);
 
+    var self = this;
     wavesurfer[this.clip_id].on('ready', function() {
-      caller_resolve(obj);
+      caller_resolve(self.obj);
     });
 }
 
-AudioPlayer.prototype._setUpClipContainer = function (
-    obj,
-    audioURL,
-    waveformdisplay_id)
-{
+AudioPlayer.prototype._setUpClipContainer = function () {
     var clipContainer = document.createElement('article');
     clipContainer.classList.add('clip');
     
@@ -119,14 +103,11 @@ AudioPlayer.prototype._setUpClipContainer = function (
     clipContainer.appendChild(this._createDeleteButton());
 
     if ( this.waveformDisplayChecked() ) {        
-      clipContainer.appendChild(
-        this._createWaveformElement(
-            obj,
-            waveformdisplay_id));
+      clipContainer.appendChild( this._createWaveformElement() );
     } else {
-      clipContainer.appendChild(this._createAudioPlayer(audioURL));
+      clipContainer.appendChild( this._createAudioPlayer() );
     }
-    clipContainer.appendChild(this._createAudioContainer(audioURL));
+    clipContainer.appendChild( this._createAudioContainer() );
 
     return clipContainer;
 }
@@ -180,20 +161,21 @@ AudioPlayer.prototype._createDeleteButton = function () {
 * this could be used to store 32bit float audio in Firefox, while
 * 16bit wav could be sent to WaveSurfer
 */
-AudioPlayer.prototype._createAudioContainer = function (audioURL) {
+AudioPlayer.prototype._createAudioContainer = function () {
     var audioPlayer = document.createElement('audio');
-    audioPlayer.src = audioURL;
+    audioPlayer.src = this.audioURL;
 
     return audioPlayer;
 }
 
-AudioPlayer.prototype._createAudioPlayer = function (audioURL) {
+AudioPlayer.prototype._createAudioPlayer = function () {
     var audioPlayer = document.createElement('audio');
     audioPlayer.classList.add('audio_player');
     audioPlayer.setAttribute('controls', '');
     audioPlayer.controls = true;
-    audioPlayer.src = audioURL;
-    console.log(prompt_id + " recorder stopped; audio: " + audioURL);
+    audioPlayer.src = this.audioURL;
+    
+    console.log(prompt_id + " recorder stopped; audio: " + this.audioURL);
 
     return audioPlayer;
 }
@@ -203,49 +185,46 @@ AudioPlayer.prototype._createAudioPlayer = function (audioURL) {
 * by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
 * to exist before being called, so this creates the it...
 */
-AudioPlayer.prototype._createWaveformElement = function (
-    obj,
-    waveformdisplay_id)
-{    
+AudioPlayer.prototype._createWaveformElement = function () {    
     var self = this;
 
     var waveformElement = document.createElement('div');
     // hook for wavesurfer
-    waveformElement.setAttribute("id", waveformdisplay_id);
+    waveformElement.setAttribute("id", this.waveformdisplay_id);
     // TODO move this to css
     waveformElement.setAttribute("style", 
         "border-style: solid; min-width:100px; ");
     var style = document.createElement('div');
     style.setAttribute("style", "text-align: center");
 
-    if (obj.no_speech) {
+    if (this.obj.no_speech) {
         waveformElement.setAttribute("style", "background: #ff4500");
-        var no_speech_message = obj.app_auto_gain ?
+        var no_speech_message = this.obj.app_auto_gain ?
             self.no_speech_autogain :
             self.no_speech;
         waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
-    } else if (obj.no_trailing_silence) {
+    } else if (this.obj.no_trailing_silence) {
         waveformElement.setAttribute("style", "background: #ffA500");
         waveformElement.innerHTML = "<h4>" + self.no_trailing_silence + "</h4>";
     //TODO need confidence level for clipping
-    } else if (obj.clipping) {
+    } else if (this.obj.clipping) {
         // TODO should not be able to upload if too loud
         waveformElement.setAttribute("style", "background: #ff4500");
-        var audio_too_loud_message = obj.app_auto_gain ?
+        var audio_too_loud_message = this.obj.app_auto_gain ?
             self.audio_too_loud_autogain :
             self.audio_too_loud;
         waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
     //TODO need confidence level for soft speaker
-    } else if (obj.too_soft) {
+    } else if (this.obj.too_soft) {
         waveformElement.setAttribute("style", "background: #ff4500");
-        var audio_too_soft_message = obj.app_auto_gain ?
+        var audio_too_soft_message = this.obj.app_auto_gain ?
             self.audio_too_soft_autogain :
             self.audio_too_soft;
         waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
     }
 
     // playbutton inside wavesurfer display
-    var display_id = "button_" + obj.prompt_id;
+    var display_id = "button_" + this.obj.prompt_id;
     var button = document.createElement(display_id);
     button.className = "play btn btn-primary";
     // TODO not sure how to toggle Play/Pause text
