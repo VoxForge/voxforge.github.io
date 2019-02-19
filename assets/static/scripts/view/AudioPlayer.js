@@ -59,6 +59,10 @@ AudioPlayer.prototype.display = function(obj) {
         this._setUpClipContainer(),
         this.soundClips.children[0]);
 
+    return this._displayRecordedAudio();
+}
+
+AudioPlayer.prototype._displayRecordedAudio = function() {
     var self = this;        
     return new Promise(function(resolve, reject) {
 
