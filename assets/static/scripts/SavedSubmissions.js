@@ -35,10 +35,11 @@ function SavedSubmissions (
 {
     this.uploadURL = uploadURL;
     this.workertype = workertype;
-    this.uploadList = [];
-    this.noUploadList = [];    
-    this.uploadIdx = 0;
-    this.noUploadIdx = 0;
+    //this.uploadList = [];
+    //this.noUploadList = [];    
+    //this.uploadIdx = 0;
+    //this.noUploadIdx = 0;
+    this.uploadInfo = new UploadInfo();
 
     this.submissionCache = localforage.createInstance({
         name: "submissionCache"
@@ -119,8 +120,8 @@ SavedSubmissions.prototype._uploadSubmissionPromise = function(savedSubmissionNa
     
     this.promises.push(
         self._getSavedSubmissionObj.call(self, savedSubmissionName)
-        .then(self._uploadSubmission.bind(self))
-        .then(self._removeSubmission.bind(self))
+        //.then(self._uploadSubmission.bind(self))
+        //.then(self._removeSubmission.bind(self))
         //catch at Promise.all
     ) 
 }
@@ -136,8 +137,14 @@ SavedSubmissions.prototype._getSavedSubmissionObj = function(savedSubmissionName
       
         self.submissionCache.getItem(savedSubmissionName)
         .then(function(jsonObject) {
-            var submissionObj = new Submission(savedSubmissionName, jsonObject);
-            resolve(submissionObj);
+            var submissionObj = new Submission(
+                savedSubmissionName,
+                jsonObject,
+                self.uploadURL,
+                self.uploadInfo,
+                self.submissionCache);                
+            submissionObj.process()
+            .then(resolve);
         })
         .catch(function(err) {
             reject('checkForSavedFailedUpload err: ' + err);
@@ -146,106 +153,6 @@ SavedSubmissions.prototype._getSavedSubmissionObj = function(savedSubmissionName
     });
 }
 
-/**
-* upload the submission to the VoxForge server
-*
-* '.then(response=>response.text())': resolves the promise to get the response
-* data from network stream;
-* basically converts the voxforge server response stream to text...
-*/
-SavedSubmissions.prototype._uploadSubmission = function(submissionObj) {
-    var self = this;
-    
-    return new Promise(function(resolve, reject) {
-
-        submissionObj.setPromiseReturnFunctions(resolve, reject);
-
-        fetch(self.uploadURL, submissionObj.getFetchParms() )
-        .then(self._convertStreamResponseToText.bind(self))
-        .then(function(response_text) {
-            submissionObj.setReponseText(response_text);            
-            self._processUploadResponse.call(self, submissionObj);
-        })
-        .catch(function(err) {
-            var m = self._uploadError.call(self, err, submissionObj);
-            reject(m);
-        });
-
-    });
-}
-
-SavedSubmissions.prototype._convertStreamResponseToText = function(response) {
-    return response.text()
-}
-
-SavedSubmissions.prototype._uploadError = function(err, submissionObj) {
-    this.noUploadList[this.noUploadIdx++] = submissionObj.shortName();
-    
-    var m = 'Upload request failed for: ' +
-        submissionObj.shortName() +
-        '\n\n' +
-        '...will try again on next upload attempt.  error: ' +
-        err;
-    console.warn(m);
-
-    return m;
-}
-
-SavedSubmissions.prototype._processUploadResponse = function(submissionObj) {
-    if ( submissionObj.serverConfirmedSubmissionUploaded() ) {
-        this._submissionUploaded(submissionObj);
-    } else {
-        this._submissionNotUploaded(submissionObj);
-    }
-}
-
-SavedSubmissions.prototype._submissionUploaded = function(submissionObj) {
-    this.uploadList[this.uploadIdx++] = submissionObj.shortName();
-            
-    console.info("transferComplete: upload to VoxForge server " +
-        "successfully completed for: " +
-        submissionObj.shortName() );
-
-    submissionObj.uploadSubmission.resolve(submissionObj);
-}
-
-SavedSubmissions.prototype._submissionNotUploaded = function(submissionObj) {
-    this.noUploadList[this.noUploadIdx++] = submissionObj.shortName();
-
-    var m = 'Request failed - invalid server response: \n' +
-        submissionObj.response_text;
-    console.error(m);
-    
-    submissionObj.uploadSubmission.reject(m);
-}
-
-/**
-* delete submission from local storage
-* (only remove saved submission if upload completed successfully)
-*/
-SavedSubmissions.prototype._removeSubmission = function(submissionObj) {
-    var self = this;
-    
-    this.submissionCache.removeItem(submissionObj.savedSubmissionName)
-    .then(self._submissionRemoved.bind(self, submissionObj))
-    .catch(function(err) {
-        self._submissionNotRemoved.call(self, err, submissionObj)
-        reject(m);
-    });
-}
-
-SavedSubmissions.prototype._submissionRemoved = function(submissionObj) {
-    console.log('Backup submission removed from browser: ' +
-        submissionObj.savedSubmissionName);
-}
-
-SavedSubmissions.prototype._submissionNotRemoved = function(err, submissionObj) {
-    var m = 'Error: cannot remove saved submission: ' +
-        submissionObj.savedSubmissionName +
-        ' err: ' +
-        err;
-    console.error(m);
-}
 
 // wait for all async promises to complete
 SavedSubmissions.prototype._waitForSubmissionsToUpload = function(
@@ -257,7 +164,7 @@ SavedSubmissions.prototype._waitForSubmissionsToUpload = function(
     .then(function() { // allUploaded
         self.process_resolve({
             status: 'AllUploaded',
-            filesUploaded: self.uploadList,
+            filesUploaded: self.uploadInfo.uploadList,
             workertype: self.workertype,
         });
     })
@@ -273,10 +180,10 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
     var self = this;
     console.warn('SavedSubmissions one or more submissions not uploaded: ' + err);
 
-    if ( this._partialUploads() ) { 
+    if ( this.uploadList.partialUpload() ) { 
         this.process_reject(
             this._getPartialUploadsObj(err));
-    } else if ( this._noUploads() ) {
+    } else if ( this.uploadList.noUploads() ) {
         var shortNameArray = this._shortNameArray(savedSubmissionArray);
         this.process_reject(
             this._getNoUploadsObj(err, shortNameArray));
@@ -289,8 +196,8 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
 SavedSubmissions.prototype._getPartialUploadsObj = function(err) {
     return {
         status: 'partialUpload',
-        filesNotUploaded: this.noUploadList,
-        filesUploaded: this.uploadList,
+        filesNotUploaded: this.uploadInfo.noUploadList,
+        filesUploaded: this.uploadInfo.uploadList,
         workertype: this.workertype,
         err: err,
     };
@@ -325,66 +232,33 @@ SavedSubmissions.prototype._shortNameArray = function(savedSubmissionArray) {
     return short_name_array;
 }
 
-// since not alluploaded, check to see if some submission were uploaded
-SavedSubmissions.prototype._partialUploads = function() {
-    return this.uploadList.length > 0;
-}
-
-SavedSubmissions.prototype._noUploads = function() {
-    return this.noUploadList.length > 0 ;
-}
-
 // #############################################################################
+
 /**
 * Class definition
 */
-function Submission (savedSubmissionName, jsonObject) {
-    this.savedSubmissionName = savedSubmissionName;
-    this.jsonObject = jsonObject;  
+function UploadInfo (
+    uploadURL)
+{
+    this.uploadList = [];
+    this.noUploadList = [];    
+    this.uploadIdx = 0;
+    this.noUploadIdx = 0;
 }
 
-Submission.shortName = function(savedSubmissionName) {
-    return savedSubmissionName.replace(/\[.*\]/gi, '');
+UploadInfo.prototype.addToUploadList = function(submissionName) {
+    this.uploadList[this.noUploadIdx++] = submissionName;
 }
 
-/**
-* methods
-*/
-Submission.prototype.shortName = function() {
-    return Submission.shortName(this.savedSubmissionName);
+UploadInfo.prototype.addToNoUploadList = function(submissionName) {
+    this.noUploadList[this.noUploadIdx++] = submissionName;
 }
 
-Submission.prototype.setPromiseReturnFunctions = function(resolve, reject) {
-    this.uploadSubmission = {};
-    this.uploadSubmission.resolve = resolve;
-    this.uploadSubmission.reject = reject;
+// since not alluploaded, check to see if some submission were uploaded
+UploadInfo.prototype.partialUpload = function() {
+    return this.uploadList.length > 0;
 }
 
-Submission.prototype.setReponseText = function(response_text) {
-    this.response_text = response_text;
+UploadInfo.prototype.noUploads = function() {
+    return this.noUploadList.length > 0 ;
 }
-
-Submission.prototype.serverConfirmedSubmissionUploaded = function() {
-    return this.response_text === "submission uploaded successfully.";
-}
-
-Submission.prototype.getFetchParms = function() {
-    return {
-        method: 'post',
-        body: this._setupFormData(),
-        mode: 'cors',
-        /*          credentials: 'include', */
-    }
-}
-
-Submission.prototype._setupFormData = function() {
-    var jsonObject = this.jsonObject;
-    
-    var form = new FormData();
-    form.append('file', jsonObject.file);
-    form.append('language', jsonObject.language);
-    form.append('username', jsonObject.username);
-    form.append('suffix',   jsonObject.suffix);
-
-    return form;
-}  
