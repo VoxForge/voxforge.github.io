@@ -194,29 +194,30 @@ AudioPlayer.prototype._createWaveformElement = function () {
     // TODO move this to css
     waveformElement.setAttribute("style", 
         "border-style: solid; min-width:100px; ");
-    var style = document.createElement('div');
-    style.setAttribute("style", "text-align: center");
 
     this._setSpeechCharacteristics(waveformElement);
 
-    style.appendChild(this._createWaveSurferPlayButton());
-    waveformElement.appendChild(style);
+    waveformElement.appendChild(this._createWaveSurferPlayButton());
     
     console.log("clip_id: " + this.clip_id);
 
     return waveformElement;
 }
 
-// playbutton inside wavesurfer display
 AudioPlayer.prototype._createWaveSurferPlayButton = function() {
+    var buttonDiv = document.createElement('div');
+    buttonDiv.setAttribute("style", "text-align: center");
+        
     var display_id = "button_" + this.obj.prompt_id;
     var button = document.createElement(display_id);
     button.className = "play btn btn-primary";
     // TODO not sure how to toggle Play/Pause text
     button.textContent = this.playbuttontext; 
     button.setAttribute("onclick", "wavesurfer[" + this.clip_id + "].playPause()");
-
-    return button;
+    
+    buttonDiv.appendChild(button);
+    
+    return buttonDiv;
 }
 
 AudioPlayer.prototype._setSpeechCharacteristics = function(waveformElement) {
