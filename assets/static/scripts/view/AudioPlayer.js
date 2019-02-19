@@ -57,33 +57,19 @@ AudioPlayer.prototype.display = function (obj)
     //var prompt_id = obj.prompt_id; // TODO not used yet...
     var blob = obj.blob;
 
-    var clipContainer = document.createElement('article');
-    clipContainer.classList.add('clip');
+
     var audioURL = window.URL.createObjectURL(blob);
     var prompt_id = document.querySelector('.prompt_id').innerText;
     var waveformdisplay_id = "waveformContainer_" + prompt_id;
     
+    var clipContainer = self._setUpClipContainer.call(self, obj, audioURL)
+
+    self.soundClips.insertBefore(
+        clipContainer,
+        self.soundClips.children[0]);
+        
     // #########################################################################
     return new Promise(function (resolve, reject) {
-
-        clipContainer.appendChild(self._createClipLabel.call(self));
-        clipContainer.appendChild(self._createDeleteButton.call(self));
-        //if (self.displayWaveform) {
-        if ( self.waveformDisplayChecked() ) {        
-          clipContainer.appendChild(
-            self._createWaveformElement.call(self,
-                obj,
-                waveformdisplay_id,
-                prompt_id));
-        } else {
-          clipContainer.appendChild(self._createAudioPlayer.call(self, audioURL));
-        }
-        clipContainer.appendChild(self._createAudioContainer.call(self, audioURL));
-
-        self.soundClips.insertBefore(
-            clipContainer,
-            self.soundClips.children[0]);
-
         // might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
         // add waveform to waveformElement
         // see http://wavesurfer-js.org/docs/
@@ -106,6 +92,29 @@ AudioPlayer.prototype.display = function (obj)
         self.clip_id++;
 
     });//promise
+}
+
+AudioPlayer.prototype._setUpClipContainer = function (obj, audioURL) {
+
+
+    var clipContainer = document.createElement('article');
+    clipContainer.classList.add('clip');
+    
+    clipContainer.appendChild(self._createClipLabel.call(self));
+    clipContainer.appendChild(self._createDeleteButton.call(self));
+
+    if ( self.waveformDisplayChecked() ) {        
+      clipContainer.appendChild(
+        self._createWaveformElement.call(self,
+            obj,
+            waveformdisplay_id,
+            prompt_id));
+    } else {
+      clipContainer.appendChild(self._createAudioPlayer.call(self, audioURL));
+    }
+    clipContainer.appendChild(self._createAudioContainer.call(self, audioURL));
+
+    return clipContainer;
 }
 
 /**
