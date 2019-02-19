@@ -57,7 +57,6 @@ AudioPlayer.prototype.display = function (obj)
     //var prompt_id = obj.prompt_id; // TODO not used yet...
     var blob = obj.blob;
 
-
     var audioURL = window.URL.createObjectURL(blob);
     var prompt_id = document.querySelector('.prompt_id').innerText;
     var waveformdisplay_id = "waveformContainer_" + prompt_id;
@@ -76,28 +75,42 @@ AudioPlayer.prototype.display = function (obj)
         
     // #########################################################################
     return new Promise(function (resolve, reject) {
-        // might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
-        // add waveform to waveformElement
-        // see http://wavesurfer-js.org/docs/
-        //if (self.displayWaveform) {
-        if ( self.waveformDisplayChecked() ) {        
-            wavesurfer[self.clip_id] = WaveSurfer.create({
-              container: '#' + waveformdisplay_id,
-              scrollParent: true,
-              waveColor : 'OliveDrab',
-              minPxPerSec: 200,
-            });
-            wavesurfer[self.clip_id].load(audioURL);
 
-            wavesurfer[self.clip_id].on('ready', function () {
-              resolve(obj); // return value on completion
-            });
+        if ( self.waveformDisplayChecked() ) {        
+            self._setUpWaveSurfer.call(self,
+                waveformdisplay_id,
+                audioURL,
+                obj,
+                resolve);
         } else {
-            resolve(obj); // return value on completion
+            resolve(obj);
         }
+        
         self.clip_id++;
 
-    });//promise
+    });
+}
+
+// might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
+// add waveform to waveformElement
+// see http://wavesurfer-js.org/docs/
+AudioPlayer.prototype._setUpWaveSurfer = function(
+    waveformdisplay_id,
+    audioURL,
+    obj,
+    caller_resolve)
+{
+    wavesurfer[this.clip_id] = WaveSurfer.create({
+        container: '#' + waveformdisplay_id,
+        scrollParent: true,
+        waveColor : 'OliveDrab',
+        minPxPerSec: 200,
+    });
+    wavesurfer[this.clip_id].load(audioURL);
+
+    wavesurfer[this.clip_id].on('ready', function() {
+      caller_resolve(obj);
+    });
 }
 
 AudioPlayer.prototype._setUpClipContainer = function (
