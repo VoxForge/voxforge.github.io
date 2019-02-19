@@ -218,30 +218,46 @@ AudioPlayer.prototype._setHeader = function(waveformElement) {
 
 AudioPlayer.prototype._setSpeechCharacteristics = function(waveformElement) {
     if (this.obj.no_speech) {
-        waveformElement.setAttribute("style", "background: #ff4500");
-        var no_speech_message = this.obj.app_auto_gain ?
-            this.no_speech_autogain :
-            this.no_speech;
-        waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
+        this._noSpeech(waveformElement);
     } else if (this.obj.no_trailing_silence) {
-        waveformElement.setAttribute("style", "background: #ffA500");
-        waveformElement.innerHTML = "<h4>" + this.no_trailing_silence + "</h4>";
-    //TODO need confidence level for clipping
+        this._noTrailingSilence(waveformElement);
     } else if (this.obj.clipping) {
-        // TODO should not be able to upload if too loud
-        waveformElement.setAttribute("style", "background: #ff4500");
-        var audio_too_loud_message = this.obj.app_auto_gain ?
-            this.audio_too_loud_autogain :
-            this.audio_too_loud;
-        waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
-    //TODO need confidence level for soft speaker
+        this._clipping(waveformElement);
     } else if (this.obj.too_soft) {
-        waveformElement.setAttribute("style", "background: #ff4500");
-        var audio_too_soft_message = this.obj.app_auto_gain ?
-            this.audio_too_soft_autogain :
-            this.audio_too_soft;
-        waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
+        this._tooSoft(waveformElement);
     }
+}
+
+//TODO need confidence level for soft speaker
+AudioPlayer.prototype._tooSoft = function(waveformElement) {
+    waveformElement.setAttribute("style", "background: #ff4500");
+    var audio_too_soft_message = this.obj.app_auto_gain ?
+        this.audio_too_soft_autogain :
+        this.audio_too_soft;
+    waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
+}
+
+//TODO need confidence level for clipping
+// TODO should not be able to upload if too loud
+AudioPlayer.prototype._clipping = function(waveformElement) {
+    waveformElement.setAttribute("style", "background: #ff4500");
+    var audio_too_loud_message = this.obj.app_auto_gain ?
+        this.audio_too_loud_autogain :
+        this.audio_too_loud;
+    waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
+}
+
+AudioPlayer.prototype._noTrailingSilence = function(waveformElement) {
+    waveformElement.setAttribute("style", "background: #ffA500");
+    waveformElement.innerHTML = "<h4>" + this.no_trailing_silence + "</h4>";
+}
+
+AudioPlayer.prototype._noSpeech = function(waveformElement) {
+    waveformElement.setAttribute("style", "background: #ff4500");
+    var no_speech_message = this.obj.app_auto_gain ?
+        this.no_speech_autogain :
+        this.no_speech;
+    waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
 }
 
 AudioPlayer.prototype._createWaveSurferPlayButton = function(waveformElement) {
@@ -268,16 +284,10 @@ AudioPlayer.prototype.reset = function() {
     this.clearSoundClips();    
 }
 
-/**
-* clear sound clips
-*/
 AudioPlayer.prototype.clearSoundClips = function() {
     $( '.sound-clips' ).empty();
 }
 
-/**
-* 
-*/
 AudioPlayer.prototype.waveformDisplayChecked = function() {
     return $('#waveform_display').is(":checked");  
 }
