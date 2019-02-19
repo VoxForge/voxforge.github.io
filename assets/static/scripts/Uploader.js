@@ -43,14 +43,14 @@ Uploader.prototype._setUpWorkers = function () {
     this.zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
     this.upload_worker = new Worker('/assets/static/scripts/UploadWorker.js');
 
-    this._onPageUnloadKillBackgroundWorkerThreadsInFirefox();    
+    this._onPageUnloadKillBackgroundWorkerThreads();    
 }
 
 /**
 * if page reloaded, kill background worker threads before page reload
 * to prevent zombie worker threads in FireFox
 */
-Uploader.prototype._onPageUnloadKillBackgroundWorkerThreadsInFirefox = function () {
+Uploader.prototype._onPageUnloadKillBackgroundWorkerThreads = function () {
     var self = this;
     
     $( window ).unload(function() {
@@ -97,7 +97,7 @@ Uploader.prototype.init = function() {
 /** 
 * process messages from service worker or web worker
 */
-Uploader.prototype._workerEventMessageHandler = function(filesUploaded) {
+Uploader.prototype._workerEventMessageHandler = function(event) {
     var self = this;
       
     var returnObj = event.data;
