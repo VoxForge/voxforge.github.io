@@ -35,10 +35,6 @@ function SavedSubmissions (
 {
     this.uploadURL = uploadURL;
     this.workertype = workertype;
-    //this.uploadList = [];
-    //this.noUploadList = [];    
-    //this.uploadIdx = 0;
-    //this.noUploadIdx = 0;
     this.uploadInfo = new UploadInfo();
 
     this.submissionCache = localforage.createInstance({
@@ -120,9 +116,6 @@ SavedSubmissions.prototype._uploadSubmissionPromise = function(savedSubmissionNa
     
     this.promises.push(
         self._getSavedSubmissionObj.call(self, savedSubmissionName)
-        //.then(self._uploadSubmission.bind(self))
-        //.then(self._removeSubmission.bind(self))
-        //catch at Promise.all
     ) 
 }
 
