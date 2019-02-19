@@ -107,6 +107,7 @@ AudioPlayer.prototype._setUpClipContainer = function () {
     } else {
       clipContainer.appendChild( this._createAudioPlayer() );
     }
+    
     clipContainer.appendChild( this._createAudioContainer() );
 
     return clipContainer;
@@ -133,25 +134,26 @@ AudioPlayer.prototype._createDeleteButton = function () {
     var deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete';
     deleteButton.className = 'delete';
-
     //deleteButton.disabled = 'true';
 
-    /**
-    * delete a recorded prompt; which is then saved in prompt_stack so user
-    * can re-record
-    */
-    deleteButton.onclick = function(e) {
-        var evtTgt = e.target;
-        var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
-
-        self.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
-        evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
-        console.log("prompt deleted: " + prompt_id);
-
-        $('#delete_clicked').click();
-    }
+    deleteButton.onclick = this._deleteButtonFunc.bind(this);
 
     return deleteButton;
+}
+
+/**
+* delete a recorded prompt; which is then saved in prompt_stack so user
+* can re-record
+*/
+AudioPlayer.prototype._deleteButtonFunc = function (e) {
+    var evtTgt = e.target;
+    var prompt_id = evtTgt.parentNode.innerText.split(/(\s+)/).shift();
+
+    this.movePrompt2Stack(evtTgt.parentNode.firstChild.innerText);
+    evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+    console.log("prompt deleted: " + prompt_id);
+
+    $('#delete_clicked').click();
 }
 
 /**
