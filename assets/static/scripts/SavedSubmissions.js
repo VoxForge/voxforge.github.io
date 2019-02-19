@@ -105,47 +105,25 @@ SavedSubmissions.prototype._asyncUploadOfSubmissions = function(
         
     return new Promise(function(resolve, reject) {
         savedSubmissionArray.forEach(
-            self._uploadSubmissionPromise.bind(self));
+            self._uploadSubmission.bind(self));
 
         resolve(savedSubmissionArray);
     });
 }
 
-SavedSubmissions.prototype._uploadSubmissionPromise = function(savedSubmissionName) {
+SavedSubmissions.prototype._uploadSubmission = function(savedSubmissionName) {
     var self = this;
-    
+
+    var submission = new Submission(
+        savedSubmissionName,
+        self.uploadURL,
+        self.uploadInfo,
+        self.submissionCache);
+            
     this.promises.push(
-        self._getSavedSubmissionObj.call(self, savedSubmissionName)
+        submission.upload()
     ) 
 }
-
-/**
-* get the submission object from browser storage
-*
-*/
-SavedSubmissions.prototype._getSavedSubmissionObj = function(savedSubmissionName) {
-    var self = this;
-        
-    return new Promise(function(resolve, reject) {
-      
-        self.submissionCache.getItem(savedSubmissionName)
-        .then(function(jsonObject) {
-            var submissionObj = new Submission(
-                savedSubmissionName,
-                jsonObject,
-                self.uploadURL,
-                self.uploadInfo,
-                self.submissionCache);                
-            submissionObj.process()
-            .then(resolve);
-        })
-        .catch(function(err) {
-            reject('checkForSavedFailedUpload err: ' + err);
-        });
-
-    });
-}
-
 
 // wait for all async promises to complete
 SavedSubmissions.prototype._waitForSubmissionsToUpload = function(
@@ -170,7 +148,6 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
     err,
     savedSubmissionArray,)
 {
-    var self = this;
     console.warn('SavedSubmissions one or more submissions not uploaded: ' + err);
 
     if ( this.uploadList.partialUpload() ) { 

@@ -21,13 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 function Submission (
     savedSubmissionName,
-    jsonObject,
     uploadURL,
     uploadInfo,
     submissionCache)
 {
     this.savedSubmissionName = savedSubmissionName;
-    this.jsonObject = jsonObject;
     this.uploadURL = uploadURL;
     this.uploadInfo = uploadInfo;
     this.submissionCache = submissionCache;
@@ -45,12 +43,13 @@ Submission.shortName = function(savedSubmissionName) {
 * methods
 */
 
-Submission.prototype.process = function() {
+Submission.prototype.upload = function() {
     var self = this;
 
     return new Promise(function(resolve, reject) {
         
-        self._upload()
+        self.submissionCache.getItem(self.savedSubmissionName)
+        .then(self._upload.bind(self))
         .then(self._remove.bind(self))
         .then(resolve)
         .catch(function(err) {
@@ -67,8 +66,9 @@ Submission.prototype.process = function() {
 * data from network stream;
 * basically converts the voxforge server response stream to text...
 */
-Submission.prototype._upload = function() {
+Submission.prototype._upload = function(jsonObject) {
     var self = this;
+    this.jsonObject = jsonObject;
     
     return new Promise(function(resolve, reject) {
 
