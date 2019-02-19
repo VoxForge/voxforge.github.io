@@ -207,17 +207,20 @@ AudioPlayer.prototype._createWaveformElement = function () {
 AudioPlayer.prototype._createWaveSurferPlayButton = function() {
     var buttonDiv = document.createElement('div');
     buttonDiv.setAttribute("style", "text-align: center");
-        
+    buttonDiv.appendChild( this._createButton() );
+    
+    return buttonDiv;
+}
+
+AudioPlayer.prototype._createButton = function() {
     var display_id = "button_" + this.obj.prompt_id;
     var button = document.createElement(display_id);
     button.className = "play btn btn-primary";
     // TODO not sure how to toggle Play/Pause text
     button.textContent = this.playbuttontext; 
     button.setAttribute("onclick", "wavesurfer[" + this.clip_id + "].playPause()");
-    
-    buttonDiv.appendChild(button);
-    
-    return buttonDiv;
+
+    return button;
 }
 
 AudioPlayer.prototype._setSpeechCharacteristics = function(waveformElement) {
