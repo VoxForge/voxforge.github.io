@@ -87,15 +87,19 @@ AudioPlayer.prototype._setUpClipContainer = function() {
     clipContainer.appendChild( this._createClipLabel() );
     clipContainer.appendChild( this._createDeleteButton() );
 
+    this._determineHowToDisplayAudio(clipContainer);
+    
+    clipContainer.appendChild( this._createAudioContainer() );
+
+    return clipContainer;
+}
+
+AudioPlayer.prototype._determineHowToDisplayAudio = function(clipContainer) {
     if ( this.waveformDisplayChecked() ) {        
       clipContainer.appendChild( this._createWaveformElement() );
     } else {
       clipContainer.appendChild( this._createAudioPlayer() );
     }
-    
-    clipContainer.appendChild( this._createAudioContainer() );
-
-    return clipContainer;
 }
 
 /*
