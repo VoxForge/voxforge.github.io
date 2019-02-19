@@ -148,7 +148,7 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
     err,
     savedSubmissionArray,)
 {
-    console.warn('SavedSubmissions one or more submissions not uploaded: ' + err);
+    console.warn('SavedSubmissions: one or more submissions not uploaded: ' + err);
 
     if ( this.uploadList.partialUpload() ) { 
         this.process_reject(
