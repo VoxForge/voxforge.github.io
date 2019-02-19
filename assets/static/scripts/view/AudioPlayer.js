@@ -62,7 +62,7 @@ AudioPlayer.prototype.display = function (obj)
     var prompt_id = document.querySelector('.prompt_id').innerText;
     var waveformdisplay_id = "waveformContainer_" + prompt_id;
     
-    var clipContainer = self._setUpClipContainer.call(self, obj, audioURL)
+    var clipContainer = self._setUpClipContainer.call(self, obj, audioURL, prompt_id, waveformdisplay_id);
 
     self.soundClips.insertBefore(
         clipContainer,
@@ -94,25 +94,23 @@ AudioPlayer.prototype.display = function (obj)
     });//promise
 }
 
-AudioPlayer.prototype._setUpClipContainer = function (obj, audioURL) {
-
-
+AudioPlayer.prototype._setUpClipContainer = function (obj, audioURL, prompt_id, waveformdisplay_id) {
     var clipContainer = document.createElement('article');
     clipContainer.classList.add('clip');
     
-    clipContainer.appendChild(self._createClipLabel.call(self));
-    clipContainer.appendChild(self._createDeleteButton.call(self));
+    clipContainer.appendChild(this._createClipLabel());
+    clipContainer.appendChild(this._createDeleteButton());
 
-    if ( self.waveformDisplayChecked() ) {        
+    if ( this.waveformDisplayChecked() ) {        
       clipContainer.appendChild(
-        self._createWaveformElement.call(self,
+        this._createWaveformElement(
             obj,
             waveformdisplay_id,
             prompt_id));
     } else {
-      clipContainer.appendChild(self._createAudioPlayer.call(self, audioURL));
+      clipContainer.appendChild(this._createAudioPlayer(audioURL));
     }
-    clipContainer.appendChild(self._createAudioContainer.call(self, audioURL));
+    clipContainer.appendChild(this._createAudioContainer(audioURL));
 
     return clipContainer;
 }
