@@ -85,7 +85,7 @@ SavedSubmissions.prototype._confirmBrowserHasSavedSubmissions = function() {
     .then(function(numberOfKeys) {
         if (numberOfKeys <= 0) {
             let m = 'no submissions found in browser storage: ' + numberOfKeys;
-            console.log(m);
+            console.error(m);
             self.process_reject(m);
         } else {
             console.log('number of submissions saved in browser storage: ' +
