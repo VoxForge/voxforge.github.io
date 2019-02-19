@@ -55,14 +55,17 @@ AudioPlayer.prototype.display = function(obj) {
     this.audioURL = window.URL.createObjectURL(obj.blob);
     this.waveformdisplay_id = "waveformContainer_" + obj.prompt_id;
 
+    this._insertAudioIntoDom();
+    return this._displayUserPlayableAudio();
+}
+
+AudioPlayer.prototype._insertAudioIntoDom = function() {
     this.soundClips.insertBefore(
         this._setUpClipContainer(),
         this.soundClips.children[0]);
-
-    return this._displayRecordedAudio();
 }
 
-AudioPlayer.prototype._displayRecordedAudio = function() {
+AudioPlayer.prototype._displayUserPlayableAudio = function() {
     var self = this;        
     return new Promise(function(resolve, reject) {
 
