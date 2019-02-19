@@ -62,7 +62,13 @@ AudioPlayer.prototype.display = function (obj)
     var prompt_id = document.querySelector('.prompt_id').innerText;
     var waveformdisplay_id = "waveformContainer_" + prompt_id;
     
-    var clipContainer = self._setUpClipContainer.call(self, obj, audioURL, prompt_id, waveformdisplay_id);
+    var clipContainer =
+        self._setUpClipContainer.call(
+            self,
+            obj,
+            audioURL,
+            prompt_id,
+            waveformdisplay_id);
 
     self.soundClips.insertBefore(
         clipContainer,
@@ -94,7 +100,12 @@ AudioPlayer.prototype.display = function (obj)
     });//promise
 }
 
-AudioPlayer.prototype._setUpClipContainer = function (obj, audioURL, prompt_id, waveformdisplay_id) {
+AudioPlayer.prototype._setUpClipContainer = function (
+    obj,
+    audioURL,
+    prompt_id,
+    waveformdisplay_id)
+{
     var clipContainer = document.createElement('article');
     clipContainer.classList.add('clip');
     
