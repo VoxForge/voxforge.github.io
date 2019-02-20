@@ -24,6 +24,66 @@ function Settings () {
 
 }
 
+
+/**
+* settings pop up
+* Note: localstorage only stores strings
+*
+* see app.js, line 68, for setting of default values
+*
+* see: http://jq4you.blogspot.com/2013/04/jquery-attr-vs-prop-difference.html
+* Notes: an element’s property can be changed, because it is in the DOM and dynamic.
+* But element’s attribute is in HTML text and can not be changed! comes in name=”value” pairs
+*
+* if adding new setting element, see settings.html for layout;
+* default.yaml for text, app.js for defauls
+*/
+Settings.prototype.initPopup = function(message) {
+    this._setRecordingInformation();
+    this._setVisualizer();  
+    this._setResourceIntensive();
+    this._setSystemInformation();  
+    
+    // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
+    function setProperties(checked) {
+      $('#recording_time_reminder').prop( "disabled", ! checked );
+          $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
+          // TODO does change work with jQuery Mobile?
+          $('#recording_time_reminder').change(); // triggers change function
+
+          // only enable geolocation selection when Record Info available
+          $('#recording_geolocation_reminder').prop( "disabled", ! checked );
+          $('#recording_geolocation_reminder').change(); // triggers change function       
+    }
+    
+    function setPropertiesTrue() {
+        setProperties(true)
+        console.log("display_record_info enabled"); 
+    }
+
+    // clear certain field entries when user clicks display_record_info off
+    function clearRecordingLocationInfo() {
+        $('#recording_location').val($("select option:first").val()).change();
+        $('#recording_location_other').val("").change();
+        $('#background_noise').val($("select option:first").val()).change();
+        $('#noise_volume').val($("select option:first").val()).change();
+        $('#noise_type').val($("select option:first").val()).change();
+        $('#noise_type_other').val("").change();
+        
+        setProperties(false);
+        $('#recording_geolocation_reminder').prop('checked', false).checkboxradio("refresh");        
+        console.log("display_record_info disabled");           
+    }
+
+    this.setupDisplayRecordInfo(
+        "display_record_info",
+        "recording_information_button_display",
+        false,
+        setPropertiesTrue,
+        clearRecordingLocationInfo);
+}
+
+
 Settings.prototype.setupDisplayRecordInfo = function(
     checkbox_element,
     dependent_element,
@@ -70,66 +130,6 @@ Settings.prototype.setupDisplayRecordInfo = function(
             if (func_if_false) { func_if_false() }  
         }
     });
-}
-
-/**
-* settings pop up
-* Note: localstorage only stores strings
-*
-* see app.js, line 68, for setting of default values
-*
-* see: http://jq4you.blogspot.com/2013/04/jquery-attr-vs-prop-difference.html
-* Notes: an element’s property can be changed, because it is in the DOM and dynamic.
-* But element’s attribute is in HTML text and can not be changed! comes in name=”value” pairs
-*
-* if adding new setting element, see settings.html for layout;
-* default.yaml for text, app.js for defauls
-*/
-Settings.prototype.initPopup = function(message) {
-
-
-    this._setRecordingInformation();
-    this._setVisualizer();  
-    this._setResourceIntensive();
-    this._setSystemInformation();  
-    
-    // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
-    function setProperties(checked) {
-      $('#recording_time_reminder').prop( "disabled", ! checked );
-          $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
-          // TODO does change work with jQuery Mobile?
-          $('#recording_time_reminder').change(); // triggers change function
-
-          // only enable geolocation selection when Record Info available
-          $('#recording_geolocation_reminder').prop( "disabled", ! checked );
-          $('#recording_geolocation_reminder').change(); // triggers change function       
-    }
-    
-    function setPropertiesTrue() {
-        setProperties(true)
-        console.log("display_record_info enabled"); 
-    }
-
-    // clear certain field entries when user clicks display_record_info off
-    function clearRecordingLocationInfo() {
-        $('#recording_location').val($("select option:first").val()).change();
-        $('#recording_location_other').val("").change();
-        $('#background_noise').val($("select option:first").val()).change();
-        $('#noise_volume').val($("select option:first").val()).change();
-        $('#noise_type').val($("select option:first").val()).change();
-        $('#noise_type_other').val("").change();
-        
-        setProperties(false);
-        $('#recording_geolocation_reminder').prop('checked', false).checkboxradio("refresh");        
-        console.log("display_record_info disabled");           
-    }
-
-    this.setupDisplayRecordInfo(
-        "display_record_info",
-        "recording_information_button_display",
-        false,
-        setPropertiesTrue,
-        clearRecordingLocationInfo);
 }
 
 Settings.prototype._setSystemInformation = function() {
@@ -250,6 +250,8 @@ Checkbox.prototype._setEventFunction = function() {
     this.$element.change( function() {
         self.$element.checkboxradio('refresh');
 
+        // using 'this.checked' - it is in local context to this change 
+        // function representing whether box has been checked or not
         self._execElementDefaultFunction.call(self, this.checked);           
         self._setElementValueInLocalStorage.call(self, this.checked);
     } );
