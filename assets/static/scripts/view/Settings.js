@@ -192,22 +192,28 @@ DependentElement.prototype.setup = function() {
     var self = this;
     this.$checkbox_element.change(function() {
         if (this.checked) {
-            localStorage.setItem(self.checkbox_element, 'true');
-
-            self.$dependent_element.show();
-            localStorage.setItem(self.dependent_element, 'true');
-            //self._setPropertiesTrue();
-            self.func_on_true();            
+            self._independentElementChecked.call(self);
         } else {
-            localStorage.setItem(self.checkbox_element, 'false');
-            
-            self.$dependent_element.hide();
-            localStorage.setItem(self.dependent_element, 'false');
-            //self._clearRecordingLocationInfo.call(self);
-            self.func_on_false();             
+            self._independentElementUnchecked.call(self);          
         }
     });
 }
+
+DependentElement.prototype._independentElementChecked = function() {
+    localStorage.setItem(self.checkbox_element, 'true');
+
+    this.$dependent_element.show();
+    localStorage.setItem(self.dependent_element, 'true');
+    this.func_on_true();   
+}
+
+DependentElement.prototype._independentElementUnchecked = function() {
+    localStorage.setItem(self.checkbox_element, 'false');
+
+    this.$dependent_element.hide();
+    localStorage.setItem(self.dependent_element, 'false');
+    this.func_on_false();   
+    }
 
 DependentElement.prototype._getFromLocalStorage = function() {
     if ( localStorage.getItem(this.checkbox_element) === 'true') {
