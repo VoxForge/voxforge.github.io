@@ -141,10 +141,10 @@ Settings.prototype._setRecordingInformation = function() {
 }
 
 Settings.prototype._setResourceIntensive = function() {
-    this._geolocation();  
-    this._vadRun();   
+    this._geolocation();
+    this._setupCheckBox("vad_run", true);  
     this._audioVisualizer();
-    this._waveFormDisplay();
+    this._setupCheckBox("waveform_display", true);      
 }
 
 Settings.prototype._geolocation = function() {
@@ -154,16 +154,6 @@ Settings.prototype._geolocation = function() {
         false,
         function(){console.log(func_name + " enabled")},
         function(){console.log(func_name + " disabled")},); 
-    checkbox.setup();
-}
-
-Settings.prototype._vadRun = function() {
-    var func_name = "vad_run";
-    var checkbox = new Checkbox(
-        func_name,
-        true,
-        function(){console.log(func_name + " enabled")},
-        function(){console.log(func_name + " disabled")},);
     checkbox.setup();
 }
 
@@ -204,36 +194,12 @@ Settings.prototype._removeVisualizer = function() {
     console.log("audio_visualizer disabled");            
 }
 
-Settings.prototype._waveFormDisplay = function() {
-    var func_name = "waveform_display";
-    var checkbox = new Checkbox(
-        func_name,
-        true,
-        function(){console.log(func_name + " enabled")},
-        function(){console.log(func_name + " disabled")},);
-    checkbox.setup();  
-}
-
-
-
-
 Settings.prototype._setSystemInformation = function() {
-    this._uaString();    
-    this._debug();
+    this._setupCheckBox("ua_string", true);    
+    this._setupCheckBox("debug", true);
 }
 
-Settings.prototype._uaString = function() {
-    var func_name = "ua_string";               
-    var checkbox = new Checkbox(
-        func_name,
-        true,
-        function(){console.log(func_name + " enabled")},
-        function(){console.log(func_name + " disabled")},); 
-    checkbox.setup();
-}
-
-Settings.prototype._debug = function() {
-    var func_name = "debug";    
+Settings.prototype._setupCheckBox = function(func_name, bool) {
     var checkbox = new Checkbox(
         func_name,
         true,
@@ -241,7 +207,6 @@ Settings.prototype._debug = function() {
         function(){console.log(func_name + " disabled")},);
     checkbox.setup();
 }
-
 
 /*
  * Set up defaults for checkbox and generate an event so that any user changes
