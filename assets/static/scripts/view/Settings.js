@@ -86,86 +86,12 @@ Settings.prototype.setupDisplayRecordInfo = function(
 * default.yaml for text, app.js for defauls
 */
 Settings.prototype.initPopup = function(message) {
-    /**
-    * enable use of canvas visualizer
-    *
-    * user can disable on low resource devices
-    */
-    function addVisualizer () {
-        var vu_meter = document.querySelector('#vu-meter');
-        var visualizer = document.createElement('canvas');
-        visualizer.classList.add('visualizer');
-        vu_meter.appendChild(visualizer);
 
-        console.log("audio_visualizer enabled");         
-    }
 
-    /**
-    * see: https://dzone.com/articles/how-you-clear-your-html5
-    */
-    function removeVisualizer () {
-        var visualizer = document.querySelector('.visualizer');
-        
-        if ( visualizer ) {
-            visualizer.width = visualizer.width; // clear canvas
-            visualizer.parentNode.removeChild(visualizer); // remove from DOM
-        }
-
-        console.log("audio_visualizer disabled");            
-    }
-
-    // Recording Information
-    var checkbox = new Checkbox(
-        "recording_time_reminder",
-        false,
-        function(){console.log("recording_time_reminder enabled")},
-        function(){console.log("recording_time_reminder disabled")},); 
-    checkbox.setup();
-    
-    // Resource Intensive functions
-
-    var checkbox = new Checkbox(
-        "audio_visualizer",
-        true,
-        addVisualizer,
-        removeVisualizer);
-    checkbox.setup();
-    
-    checkbox = new Checkbox(
-        "waveform_display",
-        true,
-        function(){console.log("waveform_display enabled")},
-        function(){console.log("waveform_display disabled")},);
-    checkbox.setup();         
-
-    checkbox = new Checkbox(
-        "vad_run",
-        true,
-        function(){console.log("vad_run enabled")},
-        function(){console.log("vad_run disabled")},);
-    checkbox.setup();
-            
-    checkbox = new Checkbox(
-        "recording_geolocation_reminder",
-        false,
-        function(){console.log("recording_geolocation_reminder enabled")},
-        function(){console.log("recording_geolocation_reminder disabled")},); 
-    checkbox.setup();
-    
-    // System Information    
-    checkbox = new Checkbox(
-        "debug",
-        true,
-        function(){console.log("debug enabled")},
-        function(){console.log("debug disabled")},);
-    checkbox.setup();
-            
-    checkbox = new Checkbox(
-        "ua_string",
-        true,
-        function(){console.log("ua_string enabled")},
-        function(){console.log("ua_string disabled")},); 
-    checkbox.setup();
+    this._setRecordingInformation();
+    this._setVisualizer();  
+    this._setResourceIntensive();
+    this._setSystemInformation();  
     
     // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
     function setProperties(checked) {
@@ -206,6 +132,91 @@ Settings.prototype.initPopup = function(message) {
         clearRecordingLocationInfo);
 }
 
+Settings.prototype._setSystemInformation = function() {
+    var checkbox = new Checkbox(
+        "debug",
+        true,
+        function(){console.log("debug enabled")},
+        function(){console.log("debug disabled")},);
+    checkbox.setup();
+            
+    checkbox = new Checkbox(
+        "ua_string",
+        true,
+        function(){console.log("ua_string enabled")},
+        function(){console.log("ua_string disabled")},); 
+    checkbox.setup();
+}
+
+Settings.prototype._setResourceIntensive = function() {
+    var checkbox = new Checkbox(
+        "waveform_display",
+        true,
+        function(){console.log("waveform_display enabled")},
+        function(){console.log("waveform_display disabled")},);
+    checkbox.setup();         
+
+    checkbox = new Checkbox(
+        "vad_run",
+        true,
+        function(){console.log("vad_run enabled")},
+        function(){console.log("vad_run disabled")},);
+    checkbox.setup();
+            
+    checkbox = new Checkbox(
+        "recording_geolocation_reminder",
+        false,
+        function(){console.log("recording_geolocation_reminder enabled")},
+        function(){console.log("recording_geolocation_reminder disabled")},); 
+    checkbox.setup();
+}
+
+Settings.prototype._setVisualizer = function() {
+    var checkbox = new Checkbox(
+        "audio_visualizer",
+        true,
+        this._addVisualizer,
+        this._removeVisualizer);
+    checkbox.setup();
+}
+
+/**
+* enable use of canvas visualizer
+*
+* user can disable on low resource devices
+*/
+Settings.prototype._addVisualizer = function() {    
+    var vu_meter = document.querySelector('#vu-meter');
+    var visualizer = document.createElement('canvas');
+    visualizer.classList.add('visualizer');
+    vu_meter.appendChild(visualizer);
+
+    console.log("audio_visualizer enabled");         
+}
+
+/**
+* see: https://dzone.com/articles/how-you-clear-your-html5
+*/
+Settings.prototype._removeVisualizer = function() {       
+    var visualizer = document.querySelector('.visualizer');
+    
+    if ( visualizer ) {
+        visualizer.width = visualizer.width; // clear canvas
+        visualizer.parentNode.removeChild(visualizer); // remove from DOM
+    }
+
+    console.log("audio_visualizer disabled");            
+}
+
+Settings.prototype._setRecordingInformation = function() {
+    var checkbox = new Checkbox(
+        "recording_time_reminder",
+        false,
+        function(){console.log("recording_time_reminder enabled")},
+        function(){console.log("recording_time_reminder disabled")},); 
+    checkbox.setup();
+}
+
 /*
  * Set up defaults for checkbox and generate an event so that any user changes
  * are saved to localstorage
@@ -227,7 +238,7 @@ Checkbox.prototype.setup = function() {
     if ( this._firstTimeSetup() ) {
         this._performDefaultSetup();
     } else {    
-        this._restoreSetupFromLocalStorage();
+        this._restoreSettingsFromLocalStorage();
     }
     
     this._setEventFunction();
@@ -305,7 +316,7 @@ Checkbox.prototype._convertBooleanToString = function(bool) {
 */
 Checkbox.prototype._updateLocalStorageWithElementValue = 
 
-Checkbox.prototype._restoreSetupFromLocalStorage = function() {
+Checkbox.prototype._restoreSettingsFromLocalStorage = function() {
     var checked = localStorage.getItem(this.element) === 'true';
     
     this._setDefaultPropertyFromLocalStorage(checked);
