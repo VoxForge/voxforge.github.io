@@ -132,6 +132,8 @@ Settings.prototype.setupDisplayRecordInfo = function(
 }
 
 Settings.prototype._setRecordingInformation = function() {
+    // TODO when turn this off, recording_geolocation_reminder shows
+    // enabled even though it is off?????
     this._setupCheckBox("recording_time_reminder", false);       
 }
 
@@ -140,16 +142,6 @@ Settings.prototype._setResourceIntensive = function() {
     this._setupCheckBox("vad_run", true);  
     this._audioVisualizer();
     this._setupCheckBox("waveform_display", true);      
-}
-
-Settings.prototype._geolocation = function() {
-    var func_name = "recording_geolocation_reminder";            
-    var checkbox = new Checkbox(
-        func_name,
-        false,
-        function(){console.log(func_name + " enabled")},
-        function(){console.log(func_name + " disabled")},); 
-    checkbox.setup();
 }
 
 Settings.prototype._audioVisualizer = function() {
