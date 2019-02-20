@@ -156,7 +156,10 @@ View.prototype._turnAllButtonsOff = function () {
 }
 
 View.prototype._setupSubDialect = function () {
-    this._setDependentSelect( $('#dialect'), $('#sub_dialect'), $("#sub_dialect_display") );
+    this._setDependentSelect(
+        $('#dialect'),
+        $('#sub_dialect'),
+        $("#sub_dialect_display") );
 }
 
 /*
@@ -268,7 +271,11 @@ View.prototype._showDivBasedonValue = function (
     // only need to create event handler on first call to this function
     if ( ! handler_already_created )  {
         $(independent_div).change(function () { // creates an event handler
-            self._showDivBasedonValue(independent_div, value, dependent_div, true); 
+            self._showDivBasedonValue(
+                independent_div,
+                value,
+                dependent_div,
+                true); 
         } );
     }
 }
