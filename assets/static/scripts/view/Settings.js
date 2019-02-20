@@ -58,21 +58,91 @@ Settings.prototype.initPopup = function(message) {
     this._setResourceIntensive();
     this._setSystemInformation();  
     
-    this._setupDisplayRecordInfo(
+    var recordInfo = new RecordingInformation (
         "display_record_info",
         "recording_information_button_display",
         false,);
+    recordInfo.setup();
 }
 
-Settings.prototype._setPropertiesTrue = function() {
+
+
+
+function RecordingInformation (
+    checkbox_element,
+    dependent_element,
+    default_bool,)
+{
+    this.checkbox_element = checkbox_element;
+    this.dependent_element = dependent_element;
+    this.default_bool = default_bool;
+    this.$checkbox_element = $('#' + checkbox_element);
+    this.$dependent_element = $('#' + dependent_element);
+}
+
+RecordingInformation.prototype.setup = function() {
+    if ( this._doesNotExistInStorage(this.dependent_element) ) {
+        localStorage.setItem(
+            this.dependent_element,
+            Settings.convertBooleanToString(this.default_bool) );
+        this.$dependent_element.hide();
+
+        this.$checkbox_element.prop('checked', this.default_bool).change();
+    } else {    
+        if ( localStorage.getItem(this.checkbox_element) === 'true') {
+            this.$dependent_element.show();
+            this.$checkbox_element.prop('checked', true);
+        } else {
+            this.$dependent_element.hide();            
+            this.$checkbox_element.prop('checked', false);
+        }
+    }
+
+    var self = this;
+    this.$checkbox_element.change(function() {
+        if (this.checked) {
+            localStorage.setItem(self.checkbox_element, 'true');
+
+            self.$dependent_element.show();
+            localStorage.setItem(self.dependent_element, 'true');
+            self._setPropertiesTrue();
+        } else {
+            localStorage.setItem(self.checkbox_element, 'false');
+            
+            self.$dependent_element.hide();
+            localStorage.setItem(self.dependent_element, 'false');
+            self._clearRecordingLocationInfo.call(self);
+        }
+    });
+}
+
+RecordingInformation.prototype._doesNotExistInStorage = function(element) {
+    return ! localStorage.getItem(element)
+}
+
+RecordingInformation.prototype._setPropertiesTrue = function() {
     this._setProperties(true);
     console.log("display_record_info enabled"); 
 }
 
 /*
+// https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
+*/
+RecordingInformation.prototype._setProperties = function(checked) {        
+    $('#recording_time_reminder').prop( "disabled", ! checked );
+    $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
+    // TODO does change work with jQuery Mobile?
+    $('#recording_time_reminder').change(); // triggers change function
+
+    // only enable geolocation selection when Record Info available
+    $('#recording_geolocation_reminder').prop( "disabled", ! checked );
+    $('#recording_geolocation_reminder').change(); // triggers change function       
+}
+
+/*
 * clear certain field entries when user clicks display_record_info off
 */
-Settings.prototype._clearRecordingLocationInfo = function() {    
+RecordingInformation.prototype._clearRecordingLocationInfo = function() {    
     $('#recording_location').val($("select option:first").val()).change();
     $('#recording_location_other').val("").change();
     $('#background_noise').val($("select option:first").val()).change();
@@ -85,72 +155,10 @@ Settings.prototype._clearRecordingLocationInfo = function() {
     console.log("display_record_info disabled");           
 }
 
-/*
-// https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
-*/
-Settings.prototype._setProperties = function(checked) {        
-    $('#recording_time_reminder').prop( "disabled", ! checked );
-    $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
-    // TODO does change work with jQuery Mobile?
-    $('#recording_time_reminder').change(); // triggers change function
-
-    // only enable geolocation selection when Record Info available
-    $('#recording_geolocation_reminder').prop( "disabled", ! checked );
-    $('#recording_geolocation_reminder').change(); // triggers change function       
-}
-
-Settings.prototype._setupDisplayRecordInfo = function(
-    checkbox_element,
-    dependent_element,
-    default_bool)
-{
-    var self = this;
-    
-    var $checkbox_element = $('#' +checkbox_element);
-    var $dependent_element = $('#' + dependent_element);
-          
-    if ( this._doesNotExistInStorage(dependent_element) ) {
-        localStorage.setItem(
-            dependent_element,
-            Settings.convertBooleanToString(default_bool) );
-        $dependent_element.hide();
-
-        $checkbox_element.prop('checked', default_bool).change();
-    } else {    
-        if ( localStorage.getItem(checkbox_element) === 'true') {
-            $dependent_element.show();
-            $checkbox_element.prop('checked', true);
-        } else {
-            $dependent_element.hide();            
-            $checkbox_element.prop('checked', false);
-        }
-    }
-
-    $checkbox_element.change(function() {
-        if (this.checked) {
-            localStorage.setItem(checkbox_element, 'true');
-
-            $dependent_element.show();
-            localStorage.setItem(dependent_element, 'true');
-            self._setPropertiesTrue();
-        } else {
-            localStorage.setItem(checkbox_element, 'false');
-            
-            $dependent_element.hide();
-            localStorage.setItem(dependent_element, 'false');
-            self._clearRecordingLocationInfo.call(self);
-        }
-    });
-}
-
-Settings.prototype._doesNotExistInStorage = function(element) {
-    return ! localStorage.getItem(element)
-}
-
+// TODO when turn this off, recording_geolocation_reminder shows
+// message on console saying it is enabled on even though it is off?????
+// see: setProperties above
 Settings.prototype._setRecordingInformation = function() {
-    // TODO when turn this off, recording_geolocation_reminder shows
-    // message on console saying it is enabled on even though it is off?????
-    // see: setProperties above
     this._setupCheckBox("recording_time_reminder", false);       
 }
 
