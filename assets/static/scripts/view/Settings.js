@@ -20,10 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * setup app settings Popup for user to modify
 */
-function Settings () {
-
-}
-
+function Settings () { }
 
 /*
  * Local storage only uses strings (no booleans)
@@ -51,10 +48,10 @@ Settings.convertBooleanToString = function(bool) {
 * But element’s attribute is in HTML text and can not be changed! comes in name=”value” pairs
 *
 * if adding new setting element, see settings.html for layout;
-* default.yaml for text, app.js for defauls
+* default.yaml for text, app.js for defaults
 */
 Settings.prototype.initPopup = function(message) {
-    this._setRecordingInformation();
+    this._setRecordingInformationCheckBox();
     this._setResourceIntensive();
     this._setSystemInformation();  
     
@@ -65,8 +62,72 @@ Settings.prototype.initPopup = function(message) {
     recordInfo.setup();
 }
 
+// TODO when turn this off, recording_geolocation_reminder shows
+// message on console saying it is enabled on even though it is off?????
+// see: setProperties above
+Settings.prototype._setRecordingInformationCheckBox = function() {
+    this._setupCheckBox("recording_time_reminder", false);       
+}
 
+Settings.prototype._setResourceIntensive = function() {
+    this._setupCheckBox("recording_geolocation_reminder", false);      
+    this._setupCheckBox("vad_run", true);  
+    this._audioVisualizer();
+    this._setupCheckBox("waveform_display", true);      
+}
 
+Settings.prototype._audioVisualizer = function() {
+    var checkbox = new Checkbox(
+        "audio_visualizer",
+        true,
+        this._addVisualizer,
+        this._removeVisualizer);
+    checkbox.setup();
+}
+
+/**
+* enable use of canvas visualizer
+*
+* user can disable on low resource devices
+*/
+Settings.prototype._addVisualizer = function() {    
+    var vu_meter = document.querySelector('#vu-meter');
+    var visualizer = document.createElement('canvas');
+    visualizer.classList.add('visualizer');
+    vu_meter.appendChild(visualizer);
+
+    console.log("audio_visualizer enabled");         
+}
+
+/**
+* see: https://dzone.com/articles/how-you-clear-your-html5
+*/
+Settings.prototype._removeVisualizer = function() {       
+    var visualizer = document.querySelector('.visualizer');
+    
+    if ( visualizer ) {
+        visualizer.width = visualizer.width; // clear canvas
+        visualizer.parentNode.removeChild(visualizer); // remove from DOM
+    }
+
+    console.log("audio_visualizer disabled");            
+}
+
+Settings.prototype._setSystemInformation = function() {
+    this._setupCheckBox("ua_string", true);    
+    this._setupCheckBox("debug", true);
+}
+
+Settings.prototype._setupCheckBox = function(func_name, bool) {
+    var checkbox = new Checkbox(
+        func_name,
+        bool,
+        function(){console.log(func_name + " enabled")},
+        function(){console.log(func_name + " disabled")},);
+    checkbox.setup();
+}
+
+// #############################################################################
 
 function RecordingInformation (
     checkbox_element,
@@ -153,71 +214,6 @@ RecordingInformation.prototype._clearRecordingLocationInfo = function() {
     this._setProperties(false);
     $('#recording_geolocation_reminder').prop('checked', false).checkboxradio("refresh");        
     console.log("display_record_info disabled");           
-}
-
-// TODO when turn this off, recording_geolocation_reminder shows
-// message on console saying it is enabled on even though it is off?????
-// see: setProperties above
-Settings.prototype._setRecordingInformation = function() {
-    this._setupCheckBox("recording_time_reminder", false);       
-}
-
-Settings.prototype._setResourceIntensive = function() {
-    this._setupCheckBox("recording_geolocation_reminder", false);      
-    this._setupCheckBox("vad_run", true);  
-    this._audioVisualizer();
-    this._setupCheckBox("waveform_display", true);      
-}
-
-Settings.prototype._audioVisualizer = function() {
-    var checkbox = new Checkbox(
-        "audio_visualizer",
-        true,
-        this._addVisualizer,
-        this._removeVisualizer);
-    checkbox.setup();
-}
-
-/**
-* enable use of canvas visualizer
-*
-* user can disable on low resource devices
-*/
-Settings.prototype._addVisualizer = function() {    
-    var vu_meter = document.querySelector('#vu-meter');
-    var visualizer = document.createElement('canvas');
-    visualizer.classList.add('visualizer');
-    vu_meter.appendChild(visualizer);
-
-    console.log("audio_visualizer enabled");         
-}
-
-/**
-* see: https://dzone.com/articles/how-you-clear-your-html5
-*/
-Settings.prototype._removeVisualizer = function() {       
-    var visualizer = document.querySelector('.visualizer');
-    
-    if ( visualizer ) {
-        visualizer.width = visualizer.width; // clear canvas
-        visualizer.parentNode.removeChild(visualizer); // remove from DOM
-    }
-
-    console.log("audio_visualizer disabled");            
-}
-
-Settings.prototype._setSystemInformation = function() {
-    this._setupCheckBox("ua_string", true);    
-    this._setupCheckBox("debug", true);
-}
-
-Settings.prototype._setupCheckBox = function(func_name, bool) {
-    var checkbox = new Checkbox(
-        func_name,
-        bool,
-        function(){console.log(func_name + " enabled")},
-        function(){console.log(func_name + " disabled")},);
-    checkbox.setup();
 }
 
 // #############################################################################
