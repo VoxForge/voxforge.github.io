@@ -20,59 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * setup app settings Popup for user to modify
 */
-function Settings () {}
+function Settings () {
 
-
-/*
- * Set up defaults for checkbox and generate an event so that any user changes
- * are saved to localstorage
-*/
-Settings.prototype.setupCheckbox = function (
-    element,
-    default_bool,
-    func_if_true,
-    func_if_false)
-{
-  var $element = $('#' + element);
-
-  if ( ! localStorage.getItem(element) ) {
-      var default_string;
-      if (default_bool) {
-          default_string = 'true';
-          if (func_if_true) { func_if_true() }              
-      } else {
-          default_string = 'false';
-          if (func_if_false) { func_if_false() }                
-      }        
-      // set defaults
-      localStorage.setItem(element, default_string); 
-      $element.prop('checked', default_bool);
-      $element.prop( 'disabled', ! default_bool );
-  } else {    
-      if ( localStorage.getItem(element) === 'true') {
-         $element.prop('checked', true);
-         if (func_if_true) { func_if_true() }
-      } else {
-         $element.prop('checked', false);
-         if (func_if_false) { func_if_false() }             
-      }
-  }
-
-  $element.change( function() {
-      // if checkbox is being set based on contents of another checkbox, then
-      // need to use checkboxradio('refresh') so that it will display correctly
-      // in jQuery Mobile
-      // see: https://demos.jquerymobile.com/1.2.0/docs/forms/checkboxes/methods.html
-      $element.checkboxradio('refresh');
-              
-      if (this.checked) {
-        localStorage.setItem(element, 'true');
-        if (func_if_true) { func_if_true() }          
-      } else {
-        localStorage.setItem(element, 'false');
-        if (func_if_false) { func_if_false() }             
-      }
-  });
 }
 
 Settings.prototype.setupDisplayRecordInfo = function (
@@ -86,24 +35,24 @@ Settings.prototype.setupDisplayRecordInfo = function (
     var $dependent_element = $('#' + dependent_element);
           
     if ( ! localStorage.getItem(dependent_element) ) {
-      var default_string;
-      if (default_bool) {
+        var default_string;
+        if (default_bool) {
           default_string = 'true';
-      } else {
+        } else {
           default_string = 'false';
-      }
-      localStorage.setItem(dependent_element, default_string);
-      $dependent_element.hide();
+        }
+        localStorage.setItem(dependent_element, default_string);
+        $dependent_element.hide();
 
-      $checkbox_element.prop('checked', default_bool).change();
+        $checkbox_element.prop('checked', default_bool).change();
     } else {    
-      if ( localStorage.getItem(checkbox_element) === 'true') {
+        if ( localStorage.getItem(checkbox_element) === 'true') {
         $dependent_element.show();
         $checkbox_element.prop('checked', true);
-      } else {
+        } else {
         $dependent_element.hide();            
         $checkbox_element.prop('checked', false);
-      }
+        }
     }
 
     $checkbox_element.change(function () {
@@ -166,46 +115,58 @@ Settings.prototype.initPopup = function (message) {
     }
 
     // Recording Information
-    this.setupCheckbox(
+    var checkbox = new Checkbox(
         "recording_time_reminder",
         false,
         function(){console.log("recording_time_reminder enabled")},
         function(){console.log("recording_time_reminder disabled")},); 
-
+    checkbox.setup();
+    
     // Resource Intensive functions
-    this.setupCheckbox(
+
+    var checkbox = new Checkbox(
         "audio_visualizer",
         true,
         addVisualizer,
         removeVisualizer);
-    this.setupCheckbox(
+    checkbox.setup();
+    
+    checkbox = new Checkbox(
         "waveform_display",
         true,
         function(){console.log("waveform_display enabled")},
-        function(){console.log("waveform_display disabled")},); 
-    this.setupCheckbox(
+        function(){console.log("waveform_display disabled")},);
+    checkbox.setup();         
+
+    checkbox = new Checkbox(
         "vad_run",
         true,
         function(){console.log("vad_run enabled")},
-        function(){console.log("vad_run disabled")},); 
-    this.setupCheckbox(
+        function(){console.log("vad_run disabled")},);
+    checkbox.setup();
+            
+    checkbox = new Checkbox(
         "recording_geolocation_reminder",
         false,
         function(){console.log("recording_geolocation_reminder enabled")},
         function(){console.log("recording_geolocation_reminder disabled")},); 
-
+    checkbox.setup();
+    
     // System Information    
-    this.setupCheckbox(
+    checkbox = new Checkbox(
         "debug",
         true,
         function(){console.log("debug enabled")},
-        function(){console.log("debug disabled")},); 
-    this.setupCheckbox(
+        function(){console.log("debug disabled")},);
+    checkbox.setup();
+            
+    checkbox = new Checkbox(
         "ua_string",
         true,
         function(){console.log("ua_string enabled")},
         function(){console.log("ua_string disabled")},); 
-
+    checkbox.setup();
+    
     // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
     function setProperties(checked) {
       $('#recording_time_reminder').prop( "disabled", ! checked );
@@ -244,3 +205,128 @@ Settings.prototype.initPopup = function (message) {
         setPropertiesTrue,
         clearRecordingLocationInfo);
 }
+
+/*
+ * Set up defaults for checkbox and generate an event so that any user changes
+ * are saved to localstorage
+*/
+function Checkbox (
+    element,
+    default_bool,
+    func_if_true,
+    func_if_false)
+{
+    this.element = element;
+    this.$element = $('#' + this.element);    
+    this.default_bool = default_bool;
+    this.func_if_true = func_if_true;
+    this.func_if_false = func_if_false;
+}
+
+Checkbox.prototype.setup = function () {
+    var self = this;
+
+    if ( this._firstTimeSetup() ) {
+        this._performDefaultSetup();
+    } else {    
+        this._restoreSetupFromLocalStorage();
+    }
+
+    this.$element.change( function () {
+        self.$element.checkboxradio('refresh');
+        //if (this.checked) {
+         //   localStorage.setItem(self.element, 'true');
+        //    if (this.func_if_true) { this.func_if_true() }          
+        //} else {
+        //    localStorage.setItem(self.element, 'false');
+        //    if (this.func_if_false) { this.func_if_false() }             
+        //}
+        self._execElementDefaultFunction.call(self, this.checked);           
+        self._setElementValueInLocalStorage.call(self, this.checked);
+    } );
+}
+
+/*
+ * Nothing in local storage, therefore first time setup
+ */
+Checkbox.prototype._firstTimeSetup = function () {
+    return ! localStorage.getItem(this.element);
+}
+
+Checkbox.prototype._performDefaultSetup = function () {
+    this._execElementDefaultFunction(this.default_bool);
+    this._setElementValueInLocalStorage(this.default_bool ); 
+
+    this.$element.prop('checked', this.default_bool);
+    this.$element.prop( 'disabled', ! this.default_bool );
+}
+
+Checkbox.prototype._execElementDefaultFunction = function (test) {
+    if ( ! this._functionsExist() ) {
+        console.warn("missing default function(s)");
+        return;
+    }
+    
+    if (test) {
+        this.func_if_true();
+    } else {
+        this.func_if_false();
+    }
+}
+
+Checkbox.prototype._functionsExist = function (func) {
+    return this.func_if_true && this.func_if_false;
+}
+
+Checkbox.prototype._setElementValueInLocalStorage = function (bool) {
+    localStorage.setItem(
+        this.element,
+        this._convertBooleanToString(bool) ); 
+}
+
+/*
+ * Local storage only uses strings (no booleans)
+ */
+Checkbox.prototype._convertBooleanToString = function (bool) {
+    var default_string;
+    
+    if (bool) {
+        default_string = 'true';
+    } else {
+        default_string = 'false';
+    }
+
+    return default_string;
+}
+
+/*
+// if checkbox is being set based on contents of another checkbox, then
+// need to use checkboxradio('refresh') so that it will display correctly
+// in jQuery Mobile
+// see: https://demos.jquerymobile.com/1.2.0/docs/forms/checkboxes/methods.html
+*/
+Checkbox.prototype._updateLocalStorageWithElementValue = 
+
+Checkbox.prototype._restoreSetupFromLocalStorage = function () {
+    var checked = localStorage.getItem(this.element) === 'true';
+    
+    this._setDefaultPropertyFromLocalStorage(checked);
+    this._setDefaultFunctionFromLocalStorage(checked);    
+}
+
+Checkbox.prototype._setDefaultPropertyFromLocalStorage = function (checked) {
+    if ( checked ) {
+        this.$element.prop('checked', true);
+    } else {
+        this.$element.prop('checked', false);
+    }
+}
+
+Checkbox.prototype._setDefaultFunctionFromLocalStorage = function (checked) {
+    if ( checked ) {
+        if (this.func_if_true) { this.func_if_true() }
+    } else {
+        if (this.func_if_false) { this.func_if_false() }             
+    }
+}
+
