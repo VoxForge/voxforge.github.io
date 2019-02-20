@@ -40,7 +40,6 @@ function Settings () {
 */
 Settings.prototype.initPopup = function(message) {
     this._setRecordingInformation();
-    this._setVisualizer();  
     this._setResourceIntensive();
     this._setSystemInformation();  
     
@@ -132,46 +131,43 @@ Settings.prototype.setupDisplayRecordInfo = function(
     });
 }
 
-Settings.prototype._setSystemInformation = function() {
+Settings.prototype._setRecordingInformation = function() {
     var checkbox = new Checkbox(
-        "debug",
-        true,
-        function(){console.log("debug enabled")},
-        function(){console.log("debug disabled")},);
-    checkbox.setup();
-            
-    checkbox = new Checkbox(
-        "ua_string",
-        true,
-        function(){console.log("ua_string enabled")},
-        function(){console.log("ua_string disabled")},); 
+        "recording_time_reminder",
+        false,
+        function(){console.log("recording_time_reminder enabled")},
+        function(){console.log("recording_time_reminder disabled")},); 
     checkbox.setup();
 }
 
 Settings.prototype._setResourceIntensive = function() {
-    var checkbox = new Checkbox(
-        "waveform_display",
-        true,
-        function(){console.log("waveform_display enabled")},
-        function(){console.log("waveform_display disabled")},);
-    checkbox.setup();         
+    this._geolocation();  
+    this._vadRun();   
+    this._audioVisualizer();
+    this._waveFormDisplay();
+}
 
-    checkbox = new Checkbox(
-        "vad_run",
-        true,
-        function(){console.log("vad_run enabled")},
-        function(){console.log("vad_run disabled")},);
-    checkbox.setup();
-            
-    checkbox = new Checkbox(
-        "recording_geolocation_reminder",
+Settings.prototype._geolocation = function() {
+    var func_name = "recording_geolocation_reminder";            
+    var checkbox = new Checkbox(
+        func_name,
         false,
-        function(){console.log("recording_geolocation_reminder enabled")},
-        function(){console.log("recording_geolocation_reminder disabled")},); 
+        function(){console.log(func_name + " enabled")},
+        function(){console.log(func_name + " disabled")},); 
     checkbox.setup();
 }
 
-Settings.prototype._setVisualizer = function() {
+Settings.prototype._vadRun = function() {
+    var func_name = "vad_run";
+    var checkbox = new Checkbox(
+        func_name,
+        true,
+        function(){console.log(func_name + " enabled")},
+        function(){console.log(func_name + " disabled")},);
+    checkbox.setup();
+}
+
+Settings.prototype._audioVisualizer = function() {
     var checkbox = new Checkbox(
         "audio_visualizer",
         true,
@@ -208,14 +204,44 @@ Settings.prototype._removeVisualizer = function() {
     console.log("audio_visualizer disabled");            
 }
 
-Settings.prototype._setRecordingInformation = function() {
+Settings.prototype._waveFormDisplay = function() {
+    var func_name = "waveform_display";
     var checkbox = new Checkbox(
-        "recording_time_reminder",
-        false,
-        function(){console.log("recording_time_reminder enabled")},
-        function(){console.log("recording_time_reminder disabled")},); 
+        func_name,
+        true,
+        function(){console.log(func_name + " enabled")},
+        function(){console.log(func_name + " disabled")},);
+    checkbox.setup();  
+}
+
+
+
+
+Settings.prototype._setSystemInformation = function() {
+    this._uaString();    
+    this._debug();
+}
+
+Settings.prototype._uaString = function() {
+    var func_name = "ua_string";               
+    var checkbox = new Checkbox(
+        func_name,
+        true,
+        function(){console.log(func_name + " enabled")},
+        function(){console.log(func_name + " disabled")},); 
     checkbox.setup();
 }
+
+Settings.prototype._debug = function() {
+    var func_name = "debug";    
+    var checkbox = new Checkbox(
+        func_name,
+        true,
+        function(){console.log(func_name + " enabled")},
+        function(){console.log(func_name + " disabled")},);
+    checkbox.setup();
+}
+
 
 /*
  * Set up defaults for checkbox and generate an event so that any user changes
