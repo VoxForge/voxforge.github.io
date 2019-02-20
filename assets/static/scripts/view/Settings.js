@@ -25,6 +25,21 @@ function Settings () {
 }
 
 
+/*
+ * Local storage only uses strings (no booleans)
+ */
+Settings.convertBooleanToString = function(bool) {
+    var bool_string;
+    
+    if (bool) {
+        bool_string = 'true';
+    } else {
+        bool_string = 'false';
+    }
+
+    return bool_string;
+}
+
 /**
 * settings pop up
 * Note: localstorage only stores strings
@@ -95,13 +110,9 @@ Settings.prototype._setupDisplayRecordInfo = function(
     var $dependent_element = $('#' + dependent_element);
           
     if ( this._doesNotExistInStorage(dependent_element) ) {
-        var default_string;
-        if (default_bool) {
-          default_string = 'true';
-        } else {
-          default_string = 'false';
-        }
-        localStorage.setItem(dependent_element, default_string);
+        localStorage.setItem(
+            dependent_element,
+            Settings.convertBooleanToString(default_bool) );
         $dependent_element.hide();
 
         $checkbox_element.prop('checked', default_bool).change();
@@ -121,14 +132,12 @@ Settings.prototype._setupDisplayRecordInfo = function(
 
             $dependent_element.show();
             localStorage.setItem(dependent_element, 'true');
-            //if (func_if_true) { func_if_true() }
             self._setPropertiesTrue();
         } else {
             localStorage.setItem(checkbox_element, 'false');
             
             $dependent_element.hide();
             localStorage.setItem(dependent_element, 'false');
-            //if (func_if_false) { func_if_false() }
             self._clearRecordingLocationInfo.call(self);
         }
     });
@@ -280,22 +289,7 @@ Checkbox.prototype._functionsExist = function(func) {
 Checkbox.prototype._setElementValueInLocalStorage = function(bool) {
     localStorage.setItem(
         this.element,
-        this._convertBooleanToString(bool) ); 
-}
-
-/*
- * Local storage only uses strings (no booleans)
- */
-Checkbox.prototype._convertBooleanToString = function(bool) {
-    var default_string;
-    
-    if (bool) {
-        default_string = 'true';
-    } else {
-        default_string = 'false';
-    }
-
-    return default_string;
+        Settings.convertBooleanToString(bool) ); 
 }
 
 /*
