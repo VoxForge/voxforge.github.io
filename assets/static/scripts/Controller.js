@@ -535,7 +535,9 @@ Controller.prototype._startRecordingPromiseChain = function () {
             self.prompts.getPromptId(),
             vad_run,
             self.view.audioVisualizerChecked() )
-        .then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
+        // TODO Controller should not know about implementation inside View...
+        //.then( self.view.audioPlayer.display.bind(self.view.audioPlayer) )
+        .then( self.view.display.bind(self.view) )        
         .then( self._dealWithRecordingDebugSettings.bind(self) )
         .catch(function (err) {
             console.log(err)

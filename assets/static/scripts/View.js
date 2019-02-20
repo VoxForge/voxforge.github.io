@@ -624,3 +624,10 @@ View.prototype.updateProgress = function () {
     document.querySelector('.progress-display').innerText =
         this.getProgressDescription();
 }
+
+/**
+* Interface to AudioPLayer - hide implementation details from Controller
+*/
+View.prototype.display = function (obj) {
+    return this.audioPlayer.display.call(this.audioPlayer, obj);
+}
