@@ -72,7 +72,7 @@ AudioPlayer.prototype._displayUserPlayableAudio = function() {
         if ( self.waveformDisplayChecked() ) {        
             self._setUpWaveSurfer.call(self, resolve);
         } else {
-            resolve(obj);
+            resolve(this.obj);
         }
         
         self.clip_id++;
@@ -126,6 +126,7 @@ AudioPlayer.prototype._setUpWaveSurfer = function(display_resolve) {
 * displays the speech recording's transcription
 */
 AudioPlayer.prototype._createClipLabel = function() {
+    // TODO should this should use obj.promptId
     var prompt_id = document.querySelector('.prompt_id').innerText;    
     var prompt_sentence = document.querySelector('.info-display').innerText;
     
@@ -178,6 +179,9 @@ AudioPlayer.prototype._createAudioContainer = function() {
 }
 
 AudioPlayer.prototype._createAudioPlayer = function() {
+    // TODO this should use obj.promptId
+    var prompt_id = document.querySelector('.prompt_id').innerText;
+        
     var audioPlayer = document.createElement('audio');
     audioPlayer.classList.add('audio_player');
     audioPlayer.setAttribute('controls', '');
