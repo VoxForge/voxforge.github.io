@@ -55,7 +55,7 @@ Settings.prototype.initPopup = function(message) {
     this._setResourceIntensive();
     this._setSystemInformation();  
     
-    var recordInfo = new RecordingInformation (
+    var recordInfo = new DependentElement (
         "display_record_info",
         "recording_information_button_display",
         false,);
@@ -129,7 +129,7 @@ Settings.prototype._setupCheckBox = function(func_name, bool) {
 
 // #############################################################################
 
-function RecordingInformation (
+function DependentElement (
     checkbox_element,
     dependent_element,
     default_bool,)
@@ -141,22 +141,11 @@ function RecordingInformation (
     this.$dependent_element = $('#' + dependent_element);
 }
 
-RecordingInformation.prototype.setup = function() {
-    if ( this._doesNotExistInStorage(this.dependent_element) ) {
-        localStorage.setItem(
-            this.dependent_element,
-            Settings.convertBooleanToString(this.default_bool) );
-        this.$dependent_element.hide();
-
-        this.$checkbox_element.prop('checked', this.default_bool).change();
+DependentElement.prototype.setup = function() {
+    if ( this._dependentElementdoesNotExistInStorage() ) {
+        this._setupLocalStorage();
     } else {    
-        if ( localStorage.getItem(this.checkbox_element) === 'true') {
-            this.$dependent_element.show();
-            this.$checkbox_element.prop('checked', true);
-        } else {
-            this.$dependent_element.hide();            
-            this.$checkbox_element.prop('checked', false);
-        }
+        this._getFromLocalStorage();
     }
 
     var self = this;
@@ -177,11 +166,30 @@ RecordingInformation.prototype.setup = function() {
     });
 }
 
-RecordingInformation.prototype._doesNotExistInStorage = function(element) {
-    return ! localStorage.getItem(element)
+DependentElement.prototype._getFromLocalStorage = function() {
+    if ( localStorage.getItem(this.checkbox_element) === 'true') {
+        this.$dependent_element.show();
+        this.$checkbox_element.prop('checked', true);
+    } else {
+        this.$dependent_element.hide();            
+        this.$checkbox_element.prop('checked', false);
+    }
 }
 
-RecordingInformation.prototype._setPropertiesTrue = function() {
+DependentElement.prototype._setupLocalStorage = function() {
+    localStorage.setItem(
+        this.dependent_element,
+        Settings.convertBooleanToString(this.default_bool) );
+    this.$dependent_element.hide();
+
+    this.$checkbox_element.prop('checked', this.default_bool).change();
+}
+
+DependentElement.prototype._dependentElementdoesNotExistInStorage = function() {
+    return ! localStorage.getItem(this.dependent_element)
+}
+
+DependentElement.prototype._setPropertiesTrue = function() {
     this._setProperties(true);
     console.log("display_record_info enabled"); 
 }
@@ -189,7 +197,7 @@ RecordingInformation.prototype._setPropertiesTrue = function() {
 /*
 // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
 */
-RecordingInformation.prototype._setProperties = function(checked) {        
+DependentElement.prototype._setProperties = function(checked) {        
     $('#recording_time_reminder').prop( "disabled", ! checked );
     $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
     // TODO does change work with jQuery Mobile?
@@ -203,7 +211,7 @@ RecordingInformation.prototype._setProperties = function(checked) {
 /*
 * clear certain field entries when user clicks display_record_info off
 */
-RecordingInformation.prototype._clearRecordingLocationInfo = function() {    
+DependentElement.prototype._clearRecordingLocationInfo = function() {    
     $('#recording_location').val($("select option:first").val()).change();
     $('#recording_location_other').val("").change();
     $('#background_noise').val($("select option:first").val()).change();
