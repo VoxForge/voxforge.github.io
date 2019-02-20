@@ -224,14 +224,18 @@ function Checkbox (
 }
 
 Checkbox.prototype.setup = function() {
-    var self = this;
-
     if ( this._firstTimeSetup() ) {
         this._performDefaultSetup();
     } else {    
         this._restoreSetupFromLocalStorage();
     }
+    
+    this._setEventFunction();
+}
 
+Checkbox.prototype._setEventFunction = function() {
+    var self = this;
+        
     this.$element.change( function() {
         self.$element.checkboxradio('refresh');
 
