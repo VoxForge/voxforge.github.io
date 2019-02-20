@@ -132,16 +132,11 @@ Settings.prototype.setupDisplayRecordInfo = function(
 }
 
 Settings.prototype._setRecordingInformation = function() {
-    var checkbox = new Checkbox(
-        "recording_time_reminder",
-        false,
-        function(){console.log("recording_time_reminder enabled")},
-        function(){console.log("recording_time_reminder disabled")},); 
-    checkbox.setup();
+    this._setupCheckBox("recording_time_reminder", false);       
 }
 
 Settings.prototype._setResourceIntensive = function() {
-    this._geolocation();
+    this._setupCheckBox("recording_geolocation_reminder", false);      
     this._setupCheckBox("vad_run", true);  
     this._audioVisualizer();
     this._setupCheckBox("waveform_display", true);      
@@ -202,7 +197,7 @@ Settings.prototype._setSystemInformation = function() {
 Settings.prototype._setupCheckBox = function(func_name, bool) {
     var checkbox = new Checkbox(
         func_name,
-        true,
+        bool,
         function(){console.log(func_name + " enabled")},
         function(){console.log(func_name + " disabled")},);
     checkbox.setup();
