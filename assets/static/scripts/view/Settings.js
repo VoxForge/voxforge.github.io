@@ -54,8 +54,9 @@ Settings.prototype._setPropertiesTrue = function() {
     console.log("display_record_info enabled"); 
 }
 
-// clear certain field entries when user clicks display_record_info off
-
+/*
+* clear certain field entries when user clicks display_record_info off
+*/
 Settings.prototype._clearRecordingLocationInfo = function() {    
     $('#recording_location').val($("select option:first").val()).change();
     $('#recording_location_other').val("").change();
@@ -69,7 +70,9 @@ Settings.prototype._clearRecordingLocationInfo = function() {
     console.log("display_record_info disabled");           
 }
 
+/*
 // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
+*/
 Settings.prototype._setProperties = function(checked) {        
     $('#recording_time_reminder').prop( "disabled", ! checked );
     $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
@@ -91,7 +94,7 @@ Settings.prototype._setupDisplayRecordInfo = function(
     var $checkbox_element = $('#' +checkbox_element);
     var $dependent_element = $('#' + dependent_element);
           
-    if ( ! localStorage.getItem(dependent_element) ) {
+    if ( this._doesNotExistInStorage(dependent_element) ) {
         var default_string;
         if (default_bool) {
           default_string = 'true';
@@ -129,6 +132,10 @@ Settings.prototype._setupDisplayRecordInfo = function(
             self._clearRecordingLocationInfo.call(self);
         }
     });
+}
+
+Settings.prototype._doesNotExistInStorage = function(element) {
+    return ! localStorage.getItem(element)
 }
 
 Settings.prototype._setRecordingInformation = function() {
