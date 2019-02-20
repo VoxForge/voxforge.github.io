@@ -72,7 +72,7 @@ AudioPlayer.prototype._displayUserPlayableAudio = function() {
         if ( self.waveformDisplayChecked() ) {        
             self._setUpWaveSurfer.call(self, resolve);
         } else {
-            resolve(this.obj);
+            resolve(self.obj);
         }
         
         self.clip_id++;
