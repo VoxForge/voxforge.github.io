@@ -251,7 +251,7 @@ Checkbox.prototype._setEventFunction = function() {
         self.$element.checkboxradio('refresh');
 
         // using 'this.checked' - it is in local context to this change 
-        // function representing whether box has been checked or not
+        // function representing whether element has been checked or not
         self._execElementDefaultFunction.call(self, this.checked);           
         self._setElementValueInLocalStorage.call(self, this.checked);
     } );
