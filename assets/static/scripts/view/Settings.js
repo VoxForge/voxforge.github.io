@@ -51,7 +51,7 @@ Settings.convertBooleanToString = function(bool) {
 * default.yaml for text, app.js for defaults
 */
 Settings.prototype.initPopup = function(message) {
-    this._setRecordingInformationCheckBox();
+    this._setRecordingInformation();
     this._setResourceIntensive();
     this._setSystemInformation();  
     
@@ -64,46 +64,20 @@ Settings.prototype.initPopup = function(message) {
     recordInfo.setup();
 }
 
-Settings.prototype._setPropertiesTrue = function() {
-    this._setProperties(true);
-    console.log("display_record_info enabled"); 
-}
-
-/*
-// https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
-*/
-Settings.prototype._setProperties = function(checked) {        
-    $('#recording_time_reminder').prop( "disabled", ! checked );
-    $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
-    // TODO does change work with jQuery Mobile?
-    $('#recording_time_reminder').change(); // triggers change function
-
-    // only enable geolocation selection when Record Info available
-    $('#recording_geolocation_reminder').prop( "disabled", ! checked );
-    $('#recording_geolocation_reminder').change(); // triggers change function       
-}
-
-/*
-* clear certain field entries when user clicks display_record_info off
-*/
-Settings.prototype._clearRecordingLocationInfo = function() {    
-    $('#recording_location').val($("select option:first").val()).change();
-    $('#recording_location_other').val("").change();
-    $('#background_noise').val($("select option:first").val()).change();
-    $('#noise_volume').val($("select option:first").val()).change();
-    $('#noise_type').val($("select option:first").val()).change();
-    $('#noise_type_other').val("").change();
-    
-    this._setProperties(false);
-    $('#recording_geolocation_reminder').prop('checked', false).checkboxradio("refresh");        
-    console.log("display_record_info disabled");           
-}
-
 // TODO when turn this off, recording_geolocation_reminder shows
 // message on console saying it is enabled on even though it is off?????
 // see: setProperties above
-Settings.prototype._setRecordingInformationCheckBox = function() {
+Settings.prototype._setRecordingInformation = function() {
     this._setupCheckBox("recording_time_reminder", false);       
+}
+
+Settings.prototype._setupCheckBox = function(func_name, bool) {
+    var checkbox = new Checkbox(
+        func_name,
+        bool,
+        function(){console.log(func_name + " enabled")},
+        function(){console.log(func_name + " disabled")},);
+    checkbox.setup();
 }
 
 Settings.prototype._setResourceIntensive = function() {
@@ -155,31 +129,58 @@ Settings.prototype._setSystemInformation = function() {
     this._setupCheckBox("debug", true);
 }
 
-Settings.prototype._setupCheckBox = function(func_name, bool) {
-    var checkbox = new Checkbox(
-        func_name,
-        bool,
-        function(){console.log(func_name + " enabled")},
-        function(){console.log(func_name + " disabled")},);
-    checkbox.setup();
+Settings.prototype._setPropertiesTrue = function() {
+    this._setProperties(true);
+    console.log("display_record_info enabled"); 
+}
+
+/*
+// https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
+*/
+Settings.prototype._setProperties = function(checked) {        
+    $('#recording_time_reminder').prop( "disabled", ! checked );
+    $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
+    // TODO does change work with jQuery Mobile?
+    $('#recording_time_reminder').change(); // triggers change function
+
+    // only enable geolocation selection when Record Info available
+    $('#recording_geolocation_reminder').prop( "disabled", ! checked );
+    $('#recording_geolocation_reminder').change(); // triggers change function       
+}
+
+/*
+* clear certain field entries when user clicks display_record_info off
+*/
+Settings.prototype._clearRecordingLocationInfo = function() {    
+    $('#recording_location').val($("select option:first").val()).change();
+    $('#recording_location_other').val("").change();
+    $('#background_noise').val($("select option:first").val()).change();
+    $('#noise_volume').val($("select option:first").val()).change();
+    $('#noise_type').val($("select option:first").val()).change();
+    $('#noise_type_other').val("").change();
+    
+    this._setProperties(false);
+    $('#recording_geolocation_reminder').prop('checked', false).checkboxradio("refresh");        
+    console.log("display_record_info disabled");           
 }
 
 // #############################################################################
 
 function DependentElement (
-    checkbox_element,
+    independent_element,
     dependent_element,
     default_bool,
     func_on_true,
     func_on_false,)
 {
-    this.checkbox_element = checkbox_element;
+    this.independent_element = independent_element;
     this.dependent_element = dependent_element;
     this.default_bool = default_bool;
-    this.$checkbox_element = $('#' + checkbox_element);
-    this.$dependent_element = $('#' + dependent_element);
     this.func_on_true = func_on_true;
-    this.func_on_false = func_on_false;    
+    this.func_on_false = func_on_false;
+
+    this.$independent_element = $('#' + independent_element);
+    this.$dependent_element = $('#' + dependent_element);
 }
 
 DependentElement.prototype.setup = function() {
@@ -190,7 +191,7 @@ DependentElement.prototype.setup = function() {
     }
 
     var self = this;
-    this.$checkbox_element.change(function() {
+    this.$independent_element.change(function() {
         if (this.checked) {
             self._independentElementChecked.call(self);
         } else {
@@ -199,30 +200,8 @@ DependentElement.prototype.setup = function() {
     });
 }
 
-DependentElement.prototype._independentElementChecked = function() {
-    localStorage.setItem(self.checkbox_element, 'true');
-
-    this.$dependent_element.show();
-    localStorage.setItem(self.dependent_element, 'true');
-    this.func_on_true();   
-}
-
-DependentElement.prototype._independentElementUnchecked = function() {
-    localStorage.setItem(self.checkbox_element, 'false');
-
-    this.$dependent_element.hide();
-    localStorage.setItem(self.dependent_element, 'false');
-    this.func_on_false();   
-    }
-
-DependentElement.prototype._getFromLocalStorage = function() {
-    if ( localStorage.getItem(this.checkbox_element) === 'true') {
-        this.$dependent_element.show();
-        this.$checkbox_element.prop('checked', true);
-    } else {
-        this.$dependent_element.hide();            
-        this.$checkbox_element.prop('checked', false);
-    }
+DependentElement.prototype._dependentElementdoesNotExistInStorage = function() {
+    return ! localStorage.getItem(this.dependent_element);
 }
 
 DependentElement.prototype._setupLocalStorage = function() {
@@ -231,13 +210,36 @@ DependentElement.prototype._setupLocalStorage = function() {
         Settings.convertBooleanToString(this.default_bool) );
     this.$dependent_element.hide();
 
-    this.$checkbox_element.prop('checked', this.default_bool).change();
+    this.$independent_element.prop('checked', this.default_bool).change();
 }
 
-DependentElement.prototype._dependentElementdoesNotExistInStorage = function() {
-    return ! localStorage.getItem(this.dependent_element);
+DependentElement.prototype._getFromLocalStorage = function() {
+    if ( localStorage.getItem(this.independent_element) === 'true') {
+        this.$dependent_element.show();
+        this.$independent_element.prop('checked', true);
+    } else {
+        this.$dependent_element.hide();            
+        this.$independent_element.prop('checked', false);
+    }
 }
 
+DependentElement.prototype._independentElementChecked = function() {
+    localStorage.setItem(this.independent_element, 'true');
+
+    this.$dependent_element.show();
+    localStorage.setItem(this.dependent_element, 'true');
+    
+    this.func_on_true();   
+}
+
+DependentElement.prototype._independentElementUnchecked = function() {
+    localStorage.setItem(this.independent_element, 'false');
+
+    this.$dependent_element.hide();
+    localStorage.setItem(this.dependent_element, 'false');
+    
+    this.func_on_false();   
+}
 
 // #############################################################################
 
