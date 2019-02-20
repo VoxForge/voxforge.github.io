@@ -24,7 +24,7 @@ function Settings () {
 
 }
 
-Settings.prototype.setupDisplayRecordInfo = function (
+Settings.prototype.setupDisplayRecordInfo = function(
     checkbox_element,
     dependent_element,
     default_bool,
@@ -55,7 +55,7 @@ Settings.prototype.setupDisplayRecordInfo = function (
         }
     }
 
-    $checkbox_element.change(function () {
+    $checkbox_element.change(function() {
         if (this.checked) {
             localStorage.setItem(checkbox_element, 'true');
 
@@ -85,7 +85,7 @@ Settings.prototype.setupDisplayRecordInfo = function (
 * if adding new setting element, see settings.html for layout;
 * default.yaml for text, app.js for defauls
 */
-Settings.prototype.initPopup = function (message) {
+Settings.prototype.initPopup = function(message) {
     /**
     * enable use of canvas visualizer
     *
@@ -223,7 +223,7 @@ function Checkbox (
     this.func_if_false = func_if_false;
 }
 
-Checkbox.prototype.setup = function () {
+Checkbox.prototype.setup = function() {
     var self = this;
 
     if ( this._firstTimeSetup() ) {
@@ -232,15 +232,9 @@ Checkbox.prototype.setup = function () {
         this._restoreSetupFromLocalStorage();
     }
 
-    this.$element.change( function () {
+    this.$element.change( function() {
         self.$element.checkboxradio('refresh');
-        //if (this.checked) {
-         //   localStorage.setItem(self.element, 'true');
-        //    if (this.func_if_true) { this.func_if_true() }          
-        //} else {
-        //    localStorage.setItem(self.element, 'false');
-        //    if (this.func_if_false) { this.func_if_false() }             
-        //}
+
         self._execElementDefaultFunction.call(self, this.checked);           
         self._setElementValueInLocalStorage.call(self, this.checked);
     } );
@@ -249,19 +243,19 @@ Checkbox.prototype.setup = function () {
 /*
  * Nothing in local storage, therefore first time setup
  */
-Checkbox.prototype._firstTimeSetup = function () {
+Checkbox.prototype._firstTimeSetup = function() {
     return ! localStorage.getItem(this.element);
 }
 
-Checkbox.prototype._performDefaultSetup = function () {
+Checkbox.prototype._performDefaultSetup = function() {
     this._execElementDefaultFunction(this.default_bool);
-    this._setElementValueInLocalStorage(this.default_bool ); 
+    this._setElementValueInLocalStorage(this.default_bool); 
 
     this.$element.prop('checked', this.default_bool);
-    this.$element.prop( 'disabled', ! this.default_bool );
+    this.$element.prop( 'disabled', ! this.default_bool);
 }
 
-Checkbox.prototype._execElementDefaultFunction = function (test) {
+Checkbox.prototype._execElementDefaultFunction = function(test) {
     if ( ! this._functionsExist() ) {
         console.warn("missing default function(s)");
         return;
@@ -274,11 +268,11 @@ Checkbox.prototype._execElementDefaultFunction = function (test) {
     }
 }
 
-Checkbox.prototype._functionsExist = function (func) {
+Checkbox.prototype._functionsExist = function(func) {
     return this.func_if_true && this.func_if_false;
 }
 
-Checkbox.prototype._setElementValueInLocalStorage = function (bool) {
+Checkbox.prototype._setElementValueInLocalStorage = function(bool) {
     localStorage.setItem(
         this.element,
         this._convertBooleanToString(bool) ); 
@@ -287,7 +281,7 @@ Checkbox.prototype._setElementValueInLocalStorage = function (bool) {
 /*
  * Local storage only uses strings (no booleans)
  */
-Checkbox.prototype._convertBooleanToString = function (bool) {
+Checkbox.prototype._convertBooleanToString = function(bool) {
     var default_string;
     
     if (bool) {
@@ -307,14 +301,14 @@ Checkbox.prototype._convertBooleanToString = function (bool) {
 */
 Checkbox.prototype._updateLocalStorageWithElementValue = 
 
-Checkbox.prototype._restoreSetupFromLocalStorage = function () {
+Checkbox.prototype._restoreSetupFromLocalStorage = function() {
     var checked = localStorage.getItem(this.element) === 'true';
     
     this._setDefaultPropertyFromLocalStorage(checked);
     this._setDefaultFunctionFromLocalStorage(checked);    
 }
 
-Checkbox.prototype._setDefaultPropertyFromLocalStorage = function (checked) {
+Checkbox.prototype._setDefaultPropertyFromLocalStorage = function(checked) {
     if ( checked ) {
         this.$element.prop('checked', true);
     } else {
@@ -322,7 +316,7 @@ Checkbox.prototype._setDefaultPropertyFromLocalStorage = function (checked) {
     }
 }
 
-Checkbox.prototype._setDefaultFunctionFromLocalStorage = function (checked) {
+Checkbox.prototype._setDefaultFunctionFromLocalStorage = function(checked) {
     if ( checked ) {
         if (this.func_if_true) { this.func_if_true() }
     } else {
