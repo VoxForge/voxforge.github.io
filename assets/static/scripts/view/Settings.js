@@ -43,53 +43,51 @@ Settings.prototype.initPopup = function(message) {
     this._setResourceIntensive();
     this._setSystemInformation();  
     
-    // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
-    function setProperties(checked) {
-      $('#recording_time_reminder').prop( "disabled", ! checked );
-          $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
-          // TODO does change work with jQuery Mobile?
-          $('#recording_time_reminder').change(); // triggers change function
-
-          // only enable geolocation selection when Record Info available
-          $('#recording_geolocation_reminder').prop( "disabled", ! checked );
-          $('#recording_geolocation_reminder').change(); // triggers change function       
-    }
-    
-    function setPropertiesTrue() {
-        setProperties(true)
-        console.log("display_record_info enabled"); 
-    }
-
-    // clear certain field entries when user clicks display_record_info off
-    function clearRecordingLocationInfo() {
-        $('#recording_location').val($("select option:first").val()).change();
-        $('#recording_location_other').val("").change();
-        $('#background_noise').val($("select option:first").val()).change();
-        $('#noise_volume').val($("select option:first").val()).change();
-        $('#noise_type').val($("select option:first").val()).change();
-        $('#noise_type_other').val("").change();
-        
-        setProperties(false);
-        $('#recording_geolocation_reminder').prop('checked', false).checkboxradio("refresh");        
-        console.log("display_record_info disabled");           
-    }
-
-    this.setupDisplayRecordInfo(
+    this._setupDisplayRecordInfo(
         "display_record_info",
         "recording_information_button_display",
-        false,
-        setPropertiesTrue,
-        clearRecordingLocationInfo);
+        false,);
 }
 
+Settings.prototype._setPropertiesTrue = function() {
+    this._setProperties(true);
+    console.log("display_record_info enabled"); 
+}
 
-Settings.prototype.setupDisplayRecordInfo = function(
+// clear certain field entries when user clicks display_record_info off
+
+Settings.prototype._clearRecordingLocationInfo = function() {    
+    $('#recording_location').val($("select option:first").val()).change();
+    $('#recording_location_other').val("").change();
+    $('#background_noise').val($("select option:first").val()).change();
+    $('#noise_volume').val($("select option:first").val()).change();
+    $('#noise_type').val($("select option:first").val()).change();
+    $('#noise_type_other').val("").change();
+    
+    this._setProperties(false);
+    $('#recording_geolocation_reminder').prop('checked', false).checkboxradio("refresh");        
+    console.log("display_record_info disabled");           
+}
+
+// https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
+Settings.prototype._setProperties = function(checked) {        
+    $('#recording_time_reminder').prop( "disabled", ! checked );
+    $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
+    // TODO does change work with jQuery Mobile?
+    $('#recording_time_reminder').change(); // triggers change function
+
+    // only enable geolocation selection when Record Info available
+    $('#recording_geolocation_reminder').prop( "disabled", ! checked );
+    $('#recording_geolocation_reminder').change(); // triggers change function       
+}
+
+Settings.prototype._setupDisplayRecordInfo = function(
     checkbox_element,
     dependent_element,
-    default_bool,
-    func_if_true,
-    func_if_false)
+    default_bool)
 {
+    var self = this;
+    
     var $checkbox_element = $('#' +checkbox_element);
     var $dependent_element = $('#' + dependent_element);
           
@@ -106,11 +104,11 @@ Settings.prototype.setupDisplayRecordInfo = function(
         $checkbox_element.prop('checked', default_bool).change();
     } else {    
         if ( localStorage.getItem(checkbox_element) === 'true') {
-        $dependent_element.show();
-        $checkbox_element.prop('checked', true);
+            $dependent_element.show();
+            $checkbox_element.prop('checked', true);
         } else {
-        $dependent_element.hide();            
-        $checkbox_element.prop('checked', false);
+            $dependent_element.hide();            
+            $checkbox_element.prop('checked', false);
         }
     }
 
@@ -120,20 +118,23 @@ Settings.prototype.setupDisplayRecordInfo = function(
 
             $dependent_element.show();
             localStorage.setItem(dependent_element, 'true');
-            if (func_if_true) { func_if_true() }   
+            //if (func_if_true) { func_if_true() }
+            self._setPropertiesTrue();
         } else {
             localStorage.setItem(checkbox_element, 'false');
             
             $dependent_element.hide();
             localStorage.setItem(dependent_element, 'false');
-            if (func_if_false) { func_if_false() }  
+            //if (func_if_false) { func_if_false() }
+            self._clearRecordingLocationInfo.call(self);
         }
     });
 }
 
 Settings.prototype._setRecordingInformation = function() {
     // TODO when turn this off, recording_geolocation_reminder shows
-    // enabled even though it is off?????
+    // message on console saying it is enabled on even though it is off?????
+    // see: setProperties above
     this._setupCheckBox("recording_time_reminder", false);       
 }
 
@@ -194,6 +195,8 @@ Settings.prototype._setupCheckBox = function(func_name, bool) {
         function(){console.log(func_name + " disabled")},);
     checkbox.setup();
 }
+
+// #############################################################################
 
 /*
  * Set up defaults for checkbox and generate an event so that any user changes
