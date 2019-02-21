@@ -166,11 +166,10 @@ View.prototype._setupUsername = function() {
     //    '#anonymous_instructions_display',
     //false);
     // hide username instructions if there is something in the username field
-    var divBasedonValue = new DivBasedonValue(
+    new DivBasedonValue(
         '#username',
         '#anonymous_instructions_display',        
         true);
-    divBasedonValue.test();
 }
 
 View.prototype._setUpSpeakerCharacteristics = function() {
@@ -188,16 +187,26 @@ View.prototype._setUpSpeakerCharacteristics = function() {
     showDivBasedonValue('#native_speaker', this.localized_yes, '#sub_dialect_display', false);
  */
 View.prototype._setUpNativeSpeakerDependencies = function() {
-    this._showDivBasedonValue(
+    //this._showDivBasedonValue(
+    //    '#native_speaker',
+    //    this.localized_no,
+    //    '#first_language_display',
+    //    false);
+    new DivBasedonValue(
         '#native_speaker',
-        this.localized_no,
-        '#first_language_display',
-        false);
-    this._showDivBasedonValue(
+        '#first_language_display',       
+        this.localized_no,);
+            
+    //this._showDivBasedonValue(
+    //    '#native_speaker',
+    //    this.localized_yes,
+    //    '#dialect_display',
+    //    false);
+    new DivBasedonValue(
         '#native_speaker',
-        this.localized_yes,
-        '#dialect_display',
-        false);
+        '#dialect_display',       
+        this.localized_yes,);
+            
     this._setDefault(
         '#native_speaker',
         this.localized_yes,
@@ -326,12 +335,14 @@ View.prototype._showDivBasedonValue = function(
 
 function DivBasedonValue(
     independent_div,
-    dependent_div,    
+    dependent_div,
     value)
 {
     this.independent_div = independent_div;
     this.dependent_div = dependent_div;    
     this.value = value;
+
+    this.test();
 
     var self = this;    
     $(independent_div).change(
@@ -340,10 +351,10 @@ function DivBasedonValue(
 
 DivBasedonValue.prototype.test = function() {
     if ( this._valueIsTrue() ) { 
-        this.showBasedOnContentsOfIndependentDiv(
+        this._showBasedOnContentsOfIndependentDiv(
             ! $(this.independent_div).val() );
     } else {
-        this.showBasedOnContentsOfIndependentDiv(
+        this._showBasedOnContentsOfIndependentDiv(
             $(this.independent_div).val() === this.value );
     }
 }
@@ -353,7 +364,7 @@ DivBasedonValue.prototype._valueIsTrue = function() {
 }
 
 // show if false; hide if true
-DivBasedonValue.prototype.showBasedOnContentsOfIndependentDiv = function(
+DivBasedonValue.prototype._showBasedOnContentsOfIndependentDiv = function(
     boolean_result)
 {
     if( boolean_result ){
