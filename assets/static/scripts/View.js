@@ -40,7 +40,7 @@ function View (
  * Contructor Methods
  */
 
-View.prototype._initProperties = function () {
+View.prototype._initProperties = function() {
     this._setupButtons();
 
     // TODO this might work with delete if used class syntax (which should
@@ -51,7 +51,7 @@ View.prototype._initProperties = function () {
     this._instantiateObjectDependencies();
 }
 
-View.prototype._setupButtons = function () {
+View.prototype._setupButtons = function() {
     this.record = document.querySelector('.record');
     this.stop = document.querySelector('.stop');
     this.upload = document.querySelector('.upload');
@@ -60,7 +60,7 @@ View.prototype._setupButtons = function () {
     this.stopbuttontext = this.pageVariables.stopbuttontext;    
 }
 
-View.prototype._setupTranslations = function () {
+View.prototype._setupTranslations = function() {
     this.localized_yes = this.pageVariables.localized_yes;
     this.localized_no = this.pageVariables.localized_no;
     this.localized_other = this.pageVariables.localized_other;
@@ -72,7 +72,7 @@ View.prototype._setupTranslations = function () {
     this.uploaded_submissions = this.pageVariables.uploaded_submissions;    
 }
 
-View.prototype._instantiateObjectDependencies = function () {
+View.prototype._instantiateObjectDependencies = function() {
     this.settings = new Settings();
     this.submissionsLog = new SubmissionsLog(
          this.saved_submissions,
@@ -88,7 +88,7 @@ View.prototype._instantiateObjectDependencies = function () {
 /*
  * Static methods
  */
-View.getUserProfileInfo = function (
+View.getUserProfileInfo = function(
     localized_yes,
     localized_other,
     localized_anonymous,      
@@ -115,7 +115,7 @@ View.getUserName = ProfileView.getUserName;
 *
 * see: https://stackoverflow.com/questions/7694501/class-vs-static-method-in-javascript
 */
-View.prototype.init = function () {
+View.prototype.init = function() {
     var self = this;
     this._setupDisplayDefaults();
     this._turnAllButtonsOff();
@@ -128,15 +128,15 @@ View.prototype.init = function () {
     }
 }
 
-View.prototype._runVad = function () {
+View.prototype._runVad = function() {
     return localStorage.getItem("vad_run") === 'true';
 }
 
-View.prototype._turnAllButtonsOff = function () {
+View.prototype._turnAllButtonsOff = function() {
     this.setRSUButtonDisplay(false, false, false); 
 }
 
-View.prototype._updateProfileView = function () {
+View.prototype._updateProfileView = function() {
     var profileView = new ProfileView(
         this.localized_yes,
         this.localized_other,
@@ -147,7 +147,7 @@ View.prototype._updateProfileView = function () {
     profileView.update();
 }
 
-View.prototype._setupDisplayDefaults = function () {
+View.prototype._setupDisplayDefaults = function() {
     this._setupUsername();
     this._setUpSpeakerCharacteristics();    
     this._setUpRecordingInformation();   
@@ -158,7 +158,7 @@ View.prototype._setupDisplayDefaults = function () {
     this.submissionsLog.setupDisplay();
 }
 
-View.prototype._setupUsername = function () {
+View.prototype._setupUsername = function() {
     // true means hide if there is something in the username field
     //this._showDivBasedonValue(
     //    '#username',
@@ -170,10 +170,10 @@ View.prototype._setupUsername = function () {
         '#username',
         '#anonymous_instructions_display',        
         true);
-    divBasedonValue.setup();
+    divBasedonValue.test();
 }
 
-View.prototype._setUpSpeakerCharacteristics = function () {
+View.prototype._setUpSpeakerCharacteristics = function() {
     this._setUpNativeSpeakerDependencies();
     this._setUpFirstLanguageDependencies();
     this._setUpDialectDependencies();    
@@ -187,7 +187,7 @@ View.prototype._setUpSpeakerCharacteristics = function () {
     American dialect selected:
     showDivBasedonValue('#native_speaker', this.localized_yes, '#sub_dialect_display', false);
  */
-View.prototype._setUpNativeSpeakerDependencies = function () {
+View.prototype._setUpNativeSpeakerDependencies = function() {
     this._showDivBasedonValue(
         '#native_speaker',
         this.localized_no,
@@ -215,7 +215,7 @@ View.prototype._setUpNativeSpeakerDependencies = function () {
         false);
 }
 
-View.prototype._setUpFirstLanguageDependencies = function () {
+View.prototype._setUpFirstLanguageDependencies = function() {
     this._showDivBasedonValue(
         '#first_language',
         this.localized_other,
@@ -223,7 +223,7 @@ View.prototype._setUpFirstLanguageDependencies = function () {
         false);
 }
 
-View.prototype._setUpDialectDependencies = function () {
+View.prototype._setUpDialectDependencies = function() {
     this._showDivBasedonValue(
         '#dialect',
         this.localized_other,
@@ -231,7 +231,7 @@ View.prototype._setUpDialectDependencies = function () {
         false);
 }
 
-View.prototype._setupSubDialectDependencies = function () {
+View.prototype._setupSubDialectDependencies = function() {
     var dependentSelect = new DependentSelect(
         $('#dialect'),
         $('#sub_dialect'),
@@ -239,14 +239,14 @@ View.prototype._setupSubDialectDependencies = function () {
     dependentSelect.setup()        
 }
 
-View.prototype._setUpRecordingInformation = function () {
+View.prototype._setUpRecordingInformation = function() {
     this._setupMicrophoneDependencies();
     this._setupRecordingLocationDependencies();
     this._setupBackgroundNoiseDependencies();
     this._setupNoiseTypeDependencies();
 }
 
-View.prototype._setupMicrophoneDependencies = function () {
+View.prototype._setupMicrophoneDependencies = function() {
     this._showDivBasedonValue(
         '#microphone',
         this.localized_other,
@@ -254,7 +254,7 @@ View.prototype._setupMicrophoneDependencies = function () {
         false);
 }
 
-View.prototype._setupRecordingLocationDependencies = function () {
+View.prototype._setupRecordingLocationDependencies = function() {
     this._showDivBasedonValue(
         '#recording_location',
         this.localized_other,
@@ -262,7 +262,7 @@ View.prototype._setupRecordingLocationDependencies = function () {
         false);
 }
 
-View.prototype._setupBackgroundNoiseDependencies = function () {
+View.prototype._setupBackgroundNoiseDependencies = function() {
     this._showDivBasedonValue(
         '#background_noise',
         this.localized_yes,
@@ -270,7 +270,7 @@ View.prototype._setupBackgroundNoiseDependencies = function () {
         false);
 }
 
-View.prototype._setupNoiseTypeDependencies = function () {
+View.prototype._setupNoiseTypeDependencies = function() {
     this._showDivBasedonValue(
         '#noise_type',
         this.localized_other,
@@ -289,7 +289,7 @@ View.prototype._setupNoiseTypeDependencies = function () {
 *
 * see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
 */
-View.prototype._showDivBasedonValue = function (
+View.prototype._showDivBasedonValue = function(
     independent_div,
     value,
     dependent_div,
@@ -314,7 +314,7 @@ View.prototype._showDivBasedonValue = function (
 
     // only need to create event handler on first call to this function
     if ( ! handler_already_created )  {
-        $(independent_div).change(function () { // creates an event handler
+        $(independent_div).change(function() { // creates an event handler
             self._showDivBasedonValue(
                 independent_div,
                 value,
@@ -332,13 +332,13 @@ function DivBasedonValue(
     this.independent_div = independent_div;
     this.dependent_div = dependent_div;    
     this.value = value;
-    
-    this.handler_already_created = false;
+
+    var self = this;    
+    $(independent_div).change(
+        self.test.bind(self));
 }
 
-DivBasedonValue.prototype.setup = function () {
-    var self = this;
-            
+DivBasedonValue.prototype.test = function() {
     if ( this._valueIsTrue() ) { 
         this.showBasedOnContentsOfIndependentDiv(
             ! $(this.independent_div).val() );
@@ -346,22 +346,16 @@ DivBasedonValue.prototype.setup = function () {
         this.showBasedOnContentsOfIndependentDiv(
             $(this.independent_div).val() === this.value );
     }
-
-    // only need to create event handler on first call to this function
-    if ( ! this.handler_already_created )  {
-        this.handler_already_created = true;
-      
-        $(this.independent_div).change(
-            self.setup.bind(self));
-    }
 }
 
-DivBasedonValue.prototype._valueIsTrue = function () {
+DivBasedonValue.prototype._valueIsTrue = function() {
     return typeof(this.value) === "boolean" && this.value === true;
 }
 
 // show if false; hide if true
-DivBasedonValue.prototype.showBasedOnContentsOfIndependentDiv = function (boolean_result) {
+DivBasedonValue.prototype.showBasedOnContentsOfIndependentDiv = function(
+    boolean_result)
+{
     if( boolean_result ){
         $(this.dependent_div).show();
     } else {
@@ -373,7 +367,7 @@ DivBasedonValue.prototype.showBasedOnContentsOfIndependentDiv = function (boolea
  * compare value of independent div with passed in value and if equal, reset
  * selection option to default in dependent div
  */
-View.prototype._setDefault = function (
+View.prototype._setDefault = function(
     independent_div,
     value,
     dependent_div,
@@ -386,7 +380,7 @@ View.prototype._setDefault = function (
     }
     // only need to create event handler on first call to this function
     if ( ! handler_already_created ) {
-        $(independent_div).change(function () { // creates an event handler
+        $(independent_div).change(function() { // creates an event handler
             self._setDefault(independent_div, value, dependent_div, true); 
         } );
     }       
@@ -398,7 +392,7 @@ View.prototype._setDefault = function (
 * fill other languages select list with stringified array the names of most 
 * ISO 639-1 language names
 */
-View.prototype._setupLanguageLookup = function () {
+View.prototype._setupLanguageLookup = function() {
     var langscodes = languages.getAllLanguageCode(); // array of language codes
     var option = '<option value="' + this.default_value + '">'+ this.please_select + '</option>';
     for (var i=1;i<langscodes.length;i++){
@@ -411,7 +405,7 @@ View.prototype._setupLanguageLookup = function () {
     $('#first_language').append(option);
 }
 
-View.prototype._setupPrompts = function () {
+View.prototype._setupPrompts = function() {
     var self = this;
     
     this.maxnumpromptschanged = document.querySelector('#max_num_prompts');
@@ -424,8 +418,8 @@ View.prototype._setupPrompts = function () {
     /**
     * updates the current number of prompts that the user selected from dropdown
     */
-    //$('#max_num_prompts').click(function () { 
-    $('#max_num_prompts').change(function () { 
+    //$('#max_num_prompts').click(function() { 
+    $('#max_num_prompts').change(function() { 
       self.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
       self.updateProgress();
     });
@@ -434,7 +428,7 @@ View.prototype._setupPrompts = function () {
 /**
 * set default (device dependent) max number of prompts the user can record 
 */
-View.prototype._displayPrompts = function () {
+View.prototype._displayPrompts = function() {
     var startPrompt = 10; // min number of prompts no matter what device
     var incr = 5;
     var option = ''; // clear previous use of option var    
@@ -448,7 +442,7 @@ View.prototype._displayPrompts = function () {
 /**
 * Set up toggles for profile and direction buttons
 */
-View.prototype.speakerCharacteristics = function () {
+View.prototype.speakerCharacteristics = function() {
     $("#speaker_characteristics_display").toggle(); 
     $("#recording_information_display").hide();
 }
@@ -456,14 +450,14 @@ View.prototype.speakerCharacteristics = function () {
 /**
 * toggle to display profile info
 */
-View.prototype.profileInfo = function () {
+View.prototype.profileInfo = function() {
     $("#profile-display").toggle();
 }
 
 /**
 * toggle to display recording info
 */
-View.prototype.recordingInformation = function () {
+View.prototype.recordingInformation = function() {
     $("#recording_information_display").toggle();
     $("#speaker_characteristics_display").hide();
 }
@@ -471,14 +465,14 @@ View.prototype.recordingInformation = function () {
 /**
 * toggle to display recording info button
 */
-View.prototype.recordingInformationButtonDisplay = function () {
+View.prototype.recordingInformationButtonDisplay = function() {
     $('#display_record_info').trigger( "click" );
 }
 
 /**
 * toggle to display directions
 */
-View.prototype.directionsInfo = function () {
+View.prototype.directionsInfo = function() {
     $("#instructions-display").toggle(); 
 }
 
@@ -486,7 +480,7 @@ View.prototype.directionsInfo = function () {
 * hide profile info; otherwise recorded audio will not display properly 
 * at bottom of page
 */
-View.prototype.hideProfileInfo = function () {
+View.prototype.hideProfileInfo = function() {
     $("#profile-display").hide();
     $("#profile-button-display").show();
     $("#instructions-display").hide();
@@ -500,7 +494,7 @@ View.prototype.hideProfileInfo = function () {
 /**
 * set record, stop button display
 */
-View.prototype.setRSButtonDisplay = function (record, stop) {
+View.prototype.setRSButtonDisplay = function(record, stop) {
     this.record.disabled = ! record;
     this.stop.disabled = ! stop;
 }
@@ -508,14 +502,14 @@ View.prototype.setRSButtonDisplay = function (record, stop) {
 /**
 * set upload button display
 */
-View.prototype.setUButtonDisplay = function (upload) {
+View.prototype.setUButtonDisplay = function(upload) {
     this.upload.disabled = ! upload;
 }
 
 /**
 * set record, stop & upload button display
 */
-View.prototype.setRSUButtonDisplay = function (record, stop, upload) {
+View.prototype.setRSUButtonDisplay = function(record, stop, upload) {
     this.setRSButtonDisplay(record,stop);
     this.setUButtonDisplay(upload);
 }
@@ -523,22 +517,22 @@ View.prototype.setRSUButtonDisplay = function (record, stop, upload) {
 /**
 * hide all dynamically created delete buttons
 */
-View.prototype.disableDeleteButtons = function () {
+View.prototype.disableDeleteButtons = function() {
     $('.delete').prop('disabled', true);
 }
 
 /**
 * show all  dynamically created delete buttons
 */
-View.prototype.enableDeleteButtons = function () {
+View.prototype.enableDeleteButtons = function() {
     $('.delete').prop('disabled', false);
 }
 
-View.prototype.enableVoiceActivityDetection = function () {
+View.prototype.enableVoiceActivityDetection = function() {
     $('#vad_run').prop('checked', true); 
 }
    
-View.prototype.hideAudioPlayer = function () {
+View.prototype.hideAudioPlayer = function() {
     //only hides the first instance of audio_player, even though it is a class
     //document.querySelector('.audio_player').controls = false;
     var object_arr = $('.audio_player');
@@ -547,7 +541,7 @@ View.prototype.hideAudioPlayer = function () {
     }
 }
 
-View.prototype.showAudioPlayer = function () {
+View.prototype.showAudioPlayer = function() {
     //document.querySelector('.audio_player').controls = true;
     var object_arr = $('.audio_player');
     for (var i = 0; i < object_arr.length; i++) {
@@ -559,7 +553,7 @@ View.prototype.showAudioPlayer = function () {
 * can't just disable the play button on the lower audio player, need to hide
 * whole thing...
 */
-View.prototype.hidePlayButtons = function () {
+View.prototype.hidePlayButtons = function() {
     $('.play').hide();
 }
 
@@ -567,29 +561,29 @@ View.prototype.hidePlayButtons = function () {
 * show all  dynamically created play buttons
 * TODO disable does not seem to work with WaveSurfer
 */
-View.prototype.showPlayButtons = function () {
+View.prototype.showPlayButtons = function() {
     $('.play').show();
 }
 
 /**
 * TODO enable does not seem to work with WaveSurfer
 */
-View.prototype.hidePromptDisplay = function () {
+View.prototype.hidePromptDisplay = function() {
     $('.info-display').hide();
 }
 
-View.prototype.debugChecked = function () {
+View.prototype.debugChecked = function() {
     return $('#debug').is(":checked");
 }
 
-View.prototype.audioVisualizerChecked = function () {
+View.prototype.audioVisualizerChecked = function() {
     return $('#audio_visualizer').is(":checked");  
 }
 
 /**
 * container holding visualizer, and buttons
 */
-View.prototype.visualize = function (analyser) {
+View.prototype.visualize = function(analyser) {
     var visualizer = document.querySelector('.visualizer');
 
     if ( this.audioVisualizerChecked() ) {
@@ -597,11 +591,11 @@ View.prototype.visualize = function (analyser) {
     }
 }
 
-View.prototype.displayRecordingInfoChecked = function () {
+View.prototype.displayRecordingInfoChecked = function() {
     return $('#display_record_info').is(":checked");
 }
 
-View.prototype.timeSinceLastSubmissionChecked = function () {
+View.prototype.timeSinceLastSubmissionChecked = function() {
     return $('#recording_time_reminder').is(":checked");
 }
 
@@ -613,7 +607,7 @@ View.prototype.timeSinceLastSubmissionChecked = function () {
 * TODO use chrome geolocation api... should be ok since not saving info
 * and only using to check for changes in location
 */
-View.prototype.geolocationReminderChecked = function () {
+View.prototype.geolocationReminderChecked = function() {
     return $('#recording_geolocation_reminder').is(":checked");
 }
 
@@ -623,7 +617,7 @@ View.prototype.geolocationReminderChecked = function () {
 * 
 * TODO create user override for this
 */
-View.prototype.userSaysTooMuchBackgroundNoise = function () {
+View.prototype.userSaysTooMuchBackgroundNoise = function() {
     if ( this._userHasSelectedBackgroundNoise() &&
          this._NoiseLevelTooHighForVAD() )
     {
@@ -631,7 +625,7 @@ View.prototype.userSaysTooMuchBackgroundNoise = function () {
     }
 }
 
-View.prototype._userHasSelectedBackgroundNoise = function () {
+View.prototype._userHasSelectedBackgroundNoise = function() {
     return (  $('#background_noise').val() === this.localized_yes );
 }
 
@@ -658,7 +652,7 @@ View.prototype._getNoiseSelectValues = function() {
 /**
 * display prompt line
 */
-View.prototype.displayPrompt = function (promptId, promptSentence) {
+View.prototype.displayPrompt = function(promptId, promptSentence) {
     document.querySelector('.prompt_id').innerText = promptId;
     document.querySelector('.info-display').innerText = promptSentence;
 }
@@ -666,7 +660,7 @@ View.prototype.displayPrompt = function (promptId, promptSentence) {
 /**
 * reset DOM variables for another submission
 */
-View.prototype.reset = function () {
+View.prototype.reset = function() {
     this.audioPlayer.reset();
     this.hideProfileInfo();
     this.updateProgress();
@@ -675,7 +669,7 @@ View.prototype.reset = function () {
 /**
 * update number of prompts recorded and total number of prompts to record
 */
-View.prototype.updateProgress = function () {
+View.prototype.updateProgress = function() {
     document.querySelector('.progress-display').innerText =
         this.getProgressDescription();
 }
@@ -683,7 +677,7 @@ View.prototype.updateProgress = function () {
 /**
 * Interface to AudioPLayer - hide implementation details from Controller
 */
-View.prototype.display = function (obj) {
+View.prototype.display = function(obj) {
     return this.audioPlayer.display.call(this.audioPlayer, obj);
 }
 
@@ -726,7 +720,7 @@ function DependentSelect(
  * Methods
  */
  
-DependentSelect.prototype.setup = function () {
+DependentSelect.prototype.setup = function() {
     var self = this;
         
     this.$independent.on( 'change', function() {
@@ -735,7 +729,7 @@ DependentSelect.prototype.setup = function () {
     .trigger('change');
 }
 
-DependentSelect.prototype._filterOnDialectToFindSubdialect = function (value) {
+DependentSelect.prototype._filterOnDialectToFindSubdialect = function(value) {
     var filter =  this.$optgroup.filter( '[name="' + value + '"]' );
 
     if ( filter.length ) {
