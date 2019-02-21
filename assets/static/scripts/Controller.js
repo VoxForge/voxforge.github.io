@@ -460,14 +460,14 @@ Controller.prototype._waitForAllRecordingsToCompleteThenUpload = function () {
 Controller.prototype._uploadPromiseChain = function () {
     var self = this;
         
-    self.uploader.upload(
+    this.uploader.upload(
         self.prompts,
         self.profile,
         self.debug,
         self.appversion,
         document.querySelectorAll('.clip'), // all clips
         self.language,
-        view.debugChecked())
+        self.view.debugChecked())
     .then( self._saveProfileAndReset.bind(self) )
     .catch(function (err) {
         console.log(err.message);
@@ -543,7 +543,7 @@ Controller.prototype._startRecordingPromiseChain = function () {
 }
 
 Controller.prototype._dealWithRecordingDebugSettings = function (obj) {
-    if ( view.debugChecked() ) {
+    if ( this.view.debugChecked() ) {
         this.prompts.setAudioCharacteristics(obj);
     } else {
         this.prompts.clearAudioCharacteristics(obj);
