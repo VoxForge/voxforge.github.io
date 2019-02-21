@@ -158,14 +158,8 @@ View.prototype._setupDisplayDefaults = function() {
     this.submissionsLog.setupDisplay();
 }
 
+// hide username instructions if there is something in the username field
 View.prototype._setupUsername = function() {
-    // true means hide if there is something in the username field
-    //this._showDivBasedonValue(
-    //    '#username',
-    //    true,
-    //    '#anonymous_instructions_display',
-    //false);
-    // hide username instructions if there is something in the username field
     new DivBasedonValue(
         '#username',
         '#anonymous_instructions_display',        
@@ -174,6 +168,8 @@ View.prototype._setupUsername = function() {
 
 View.prototype._setUpSpeakerCharacteristics = function() {
     this._setUpNativeSpeakerDependencies();
+    this._setUpNativeSpeakerDefaults();    
+    
     this._setUpFirstLanguageDependencies();
     this._setUpDialectDependencies();    
     this._setupSubDialectDependencies();
@@ -187,26 +183,17 @@ View.prototype._setUpSpeakerCharacteristics = function() {
     showDivBasedonValue('#native_speaker', this.localized_yes, '#sub_dialect_display', false);
  */
 View.prototype._setUpNativeSpeakerDependencies = function() {
-    //this._showDivBasedonValue(
-    //    '#native_speaker',
-    //    this.localized_no,
-    //    '#first_language_display',
-    //    false);
     new DivBasedonValue(
         '#native_speaker',
         '#first_language_display',       
         this.localized_no,);
-            
-    //this._showDivBasedonValue(
-    //    '#native_speaker',
-    //    this.localized_yes,
-    //    '#dialect_display',
-    //    false);
     new DivBasedonValue(
         '#native_speaker',
         '#dialect_display',       
         this.localized_yes,);
-            
+}
+
+View.prototype._setUpNativeSpeakerDefaults = function() {
     this._setDefault(
         '#native_speaker',
         this.localized_yes,
