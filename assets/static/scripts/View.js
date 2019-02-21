@@ -212,19 +212,17 @@ View.prototype._setUpNativeSpeakerDefaults = function() {
 }
 
 View.prototype._setUpFirstLanguageDependencies = function() {
-    this._showDivBasedonValue(
+    new DivBasedonValue(
         '#first_language',
-        this.localized_other,
-        '#first_language_other_display',
-        false);
+        '#first_language_other_display',       
+        this.localized_other,);        
 }
 
 View.prototype._setUpDialectDependencies = function() {
-    this._showDivBasedonValue(
+    new DivBasedonValue(
         '#dialect',
-        this.localized_other,
-        '#dialect_other_display',
-        false);
+        '#dialect_other_display',       
+        this.localized_other,);           
 }
 
 View.prototype._setupSubDialectDependencies = function() {
@@ -243,35 +241,31 @@ View.prototype._setUpRecordingInformation = function() {
 }
 
 View.prototype._setupMicrophoneDependencies = function() {
-    this._showDivBasedonValue(
+    new DivBasedonValue(
         '#microphone',
-        this.localized_other,
-        '#microphone_other_display',
-        false);
+        '#microphone_other_display',       
+        this.localized_other,);          
 }
 
 View.prototype._setupRecordingLocationDependencies = function() {
-    this._showDivBasedonValue(
+    new DivBasedonValue(
         '#recording_location',
-        this.localized_other,
-        '#recording_location_other_display',
-        false);
+        '#recording_location_other_display',       
+        this.localized_other,);           
 }
 
 View.prototype._setupBackgroundNoiseDependencies = function() {
-    this._showDivBasedonValue(
+    new DivBasedonValue(
         '#background_noise',
-        this.localized_yes,
-        '#background_noise_display',
-        false);
+        '#background_noise_display',       
+        this.localized_yes,);          
 }
 
 View.prototype._setupNoiseTypeDependencies = function() {
-    this._showDivBasedonValue(
+    new DivBasedonValue(
         '#noise_type',
-        this.localized_other,
-        '#noise_type_other_display',
-        false);
+        '#noise_type_other_display',       
+        this.localized_other,);          
 }
 
 /**
@@ -285,41 +279,6 @@ View.prototype._setupNoiseTypeDependencies = function() {
 *
 * see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
 */
-View.prototype._showDivBasedonValue = function(
-    independent_div,
-    value,
-    dependent_div,
-    handler_already_created)
-{
-    var self = this;
-    
-    function test ( boolean_result ) {
-        if( boolean_result ){
-          $(dependent_div).show();
-        } else {
-          $(dependent_div).hide();
-        }
-    }
-
-    if ( typeof(value) === "boolean" && value === true ) { 
-        // show if false; hide if true
-        test( ! $(independent_div).val() );
-    } else {
-        test( $(independent_div).val()===value );
-    }
-
-    // only need to create event handler on first call to this function
-    if ( ! handler_already_created )  {
-        $(independent_div).change(function() { // creates an event handler
-            self._showDivBasedonValue(
-                independent_div,
-                value,
-                dependent_div,
-                true); 
-        } );
-    }
-}
-
 function DivBasedonValue(
     independent_div,
     dependent_div,
