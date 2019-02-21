@@ -124,7 +124,7 @@ Profile.prototype._extractFields = function (parsedLocalStorageObject) {
 * therefore if retrievedObject is null, that gets returned
 */
 Profile.prototype._getParsedLocalStorageObject = function () {
-    var retrievedObject = localStorage.getItem(self.language);
+    var retrievedObject = localStorage.getItem(this.language);
 
     return retrievedObject && JSON.parse(retrievedObject);
 }
@@ -146,7 +146,7 @@ Profile.prototype._getProfileAttributesFromViewClass = function () {
         this.default_value,
     );
 
-    return profile_hash
+    return profile_hash;
 }
 
 Profile.prototype._addProfileSpecificAttributes = function (profile_hash) {
