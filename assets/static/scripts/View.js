@@ -124,7 +124,7 @@ View.prototype.init = function () {
     }
 
     if (this.json_object) {
-        this._updateProfileView()
+        this._updateProfileView();
     }
 }
 
