@@ -27,10 +27,10 @@ function View (
 {
     this.max_numPrompts_selector = parms.max_numPrompts_selector;
     this.displayWaveform = parms.displayWaveform;
-    this.movePrompt2Stack = prompts.movePrompt2Stack.bind(prompts); // reference to method passed to variable
-    this.userChangedMaxNum = prompts.userChangedMaxNum.bind(prompts); // reference to method passed to variable
-    this.getProgressDescription = prompts.getProgressDescription.bind(prompts); // reference to method passed to variable
-    this.json_object = profile.getProfileFromBrowserStorage(); // method executed and return value is an object
+    this.movePrompt2Stack = prompts.movePrompt2Stack.bind(prompts);
+    this.userChangedMaxNum = prompts.userChangedMaxNum.bind(prompts);
+    this.getProgressDescription = prompts.getProgressDescription.bind(prompts);
+    this.json_object = profile.getProfileFromBrowserStorage();
     this.pageVariables = pageVariables;
 
     this._initProperties();
@@ -44,11 +44,11 @@ View.prototype._initProperties = function () {
     this._setupButtons();
 
     // TODO this might work with delete if used class syntax (which should
-    // pick up many elements) instead of id synstax (which only pick up one element)
+    // pick up many elements) instead of id syntax (which only pick up one element)
     this.delete_clicked = document.querySelector('#delete_clicked'); // only picks up first instance of in=delete in DOM
 
     this._setupTranslations();
-    this._instantiateClassDependencies();
+    this._instantiateObjectDependencies();
 }
 
 View.prototype._setupButtons = function () {
@@ -72,7 +72,7 @@ View.prototype._setupTranslations = function () {
     this.uploaded_submissions = this.pageVariables.uploaded_submissions;    
 }
 
-View.prototype._instantiateClassDependencies = function () {
+View.prototype._instantiateObjectDependencies = function () {
     this.settings = new Settings();
     this.submissionsLog = new SubmissionsLog(
          this.saved_submissions,
@@ -119,11 +119,21 @@ View.prototype.init = function () {
     var self = this;
     this._setupDisplayDefaults();
     this._turnAllButtonsOff();
-    if ( localStorage.getItem("vad_run") === 'true') {
+    if ( this._runVad() ) {
         this.enableVoiceActivityDetection();
     }
 
-    if (this.json_object) { this._updateProfileView() }
+    if (this.json_object) {
+        this._updateProfileView()
+    }
+}
+
+View.prototype._runVad = function () {
+    return localStorage.getItem("vad_run") === 'true';
+}
+
+View.prototype._turnAllButtonsOff = function () {
+    this.setRSUButtonDisplay(false, false, false); 
 }
 
 View.prototype._updateProfileView = function () {
@@ -138,11 +148,9 @@ View.prototype._updateProfileView = function () {
 }
 
 View.prototype._setupDisplayDefaults = function () {
-    this._setUpNativeSpeakerDefaults();
-    this._setUpOtherDefaults();   
-
-    this._setupSubDialect();
-    this._setupLanguages();
+    this._setupUsername();
+    this._setUpSpeakerCharacteristics();    
+    this._setUpRecordingInformation();   
 
     this._setupPrompts();
 
@@ -150,15 +158,22 @@ View.prototype._setupDisplayDefaults = function () {
     this.submissionsLog.setupDisplay();
 }
 
-View.prototype._turnAllButtonsOff = function () {
-    this.setRSUButtonDisplay(false, false, false); 
+View.prototype._setupUsername = function () {
+    // true means hide if there is something in the username field
+    this._showDivBasedonValue(
+        '#username',
+        true,
+        '#anonymous_instructions_display',
+        false);
 }
 
-View.prototype._setupSubDialect = function () {
-    this._setDependentSelect(
-        $('#dialect'),
-        $('#sub_dialect'),
-        $("#sub_dialect_display") );
+View.prototype._setUpSpeakerCharacteristics = function () {
+    this._setUpNativeSpeakerDependencies();
+    this._setUpFirstLanguageDependencies();
+    this._setUpDialectDependencies();    
+    this._setupSubDialectDependencies();
+    
+    this._setupLanguageLookup();    
 }
 
 /*
@@ -166,7 +181,7 @@ View.prototype._setupSubDialect = function () {
     American dialect selected:
     showDivBasedonValue('#native_speaker', this.localized_yes, '#sub_dialect_display', false);
  */
-View.prototype._setUpNativeSpeakerDefaults = function () {
+View.prototype._setUpNativeSpeakerDependencies = function () {
     this._showDivBasedonValue(
         '#native_speaker',
         this.localized_no,
@@ -194,38 +209,61 @@ View.prototype._setUpNativeSpeakerDefaults = function () {
         false);
 }
 
-View.prototype._setUpOtherDefaults = function () {
+View.prototype._setUpFirstLanguageDependencies = function () {
     this._showDivBasedonValue(
         '#first_language',
         this.localized_other,
         '#first_language_other_display',
         false);
-    // true means hide if there is something in the username field
-    this._showDivBasedonValue(
-        '#username',
-        true,
-        '#anonymous_instructions_display',
-        false);
-    this._showDivBasedonValue(
-        '#microphone',
-        this.localized_other,
-        '#microphone_other_display',
-        false);
+}
+
+View.prototype._setUpDialectDependencies = function () {
     this._showDivBasedonValue(
         '#dialect',
         this.localized_other,
         '#dialect_other_display',
         false);
+}
+
+View.prototype._setupSubDialectDependencies = function () {
+    this._setDependentSelect(
+        $('#dialect'),
+        $('#sub_dialect'),
+        $("#sub_dialect_display") );
+}
+
+View.prototype._setUpRecordingInformation = function () {
+    this._setupMicrophoneDependencies();
+    this._setupRecordingLocationDependencies();
+    this._setupBackgroundNoiseDependencies();
+    this._setupNoiseTypeDependencies();
+}
+
+View.prototype._setupMicrophoneDependencies = function () {
+    this._showDivBasedonValue(
+        '#microphone',
+        this.localized_other,
+        '#microphone_other_display',
+        false);
+}
+
+View.prototype._setupRecordingLocationDependencies = function () {
     this._showDivBasedonValue(
         '#recording_location',
         this.localized_other,
         '#recording_location_other_display',
         false);
+}
+
+View.prototype._setupBackgroundNoiseDependencies = function () {
     this._showDivBasedonValue(
         '#background_noise',
         this.localized_yes,
         '#background_noise_display',
         false);
+}
+
+View.prototype._setupNoiseTypeDependencies = function () {
     this._showDivBasedonValue(
         '#noise_type',
         this.localized_other,
@@ -349,7 +387,7 @@ View.prototype._setDependentSelect = function (
 * fill other languages select list with stringified array the names of most 
 * ISO 639-1 language names
 */
-View.prototype._setupLanguages = function () {
+View.prototype._setupLanguageLookup = function () {
     var langscodes = languages.getAllLanguageCode(); // array of language codes
     var option = '<option value="' + this.default_value + '">'+ this.please_select + '</option>';
     for (var i=1;i<langscodes.length;i++){
