@@ -72,9 +72,6 @@ View.prototype._setupTranslations = function () {
     this.uploaded_submissions = this.pageVariables.uploaded_submissions;    
 }
 
-/*
- * See also BrowserWindow.js - basically a mixin
- */
 View.prototype._instantiateClassDependencies = function () {
     this.settings = new Settings();
     this.submissionsLog = new SubmissionsLog(
@@ -123,19 +120,21 @@ View.prototype.init = function () {
     this._setupDisplayDefaults();
     this._turnAllButtonsOff();
     if ( localStorage.getItem("vad_run") === 'true') {
-      view.enableVoiceActivityDetection();
+        this.enableVoiceActivityDetection();
     }
 
-    if (this.json_object) {
-        var profileView = new ProfileView(
-            self.localized_yes,
-            self.localized_other,
-            self.localized_anonymous,      
-            self.default_value,
-            self.json_object,                
-        );               
-        profileView.update();
-    }
+    if (this.json_object) { this._updateProfileView() }
+}
+
+View.prototype._updateProfileView = function () {
+    var profileView = new ProfileView(
+        this.localized_yes,
+        this.localized_other,
+        this.localized_anonymous,      
+        this.default_value,
+        this.json_object,                
+    );               
+    profileView.update();
 }
 
 View.prototype._setupDisplayDefaults = function () {
