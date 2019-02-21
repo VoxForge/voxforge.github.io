@@ -160,11 +160,17 @@ View.prototype._setupDisplayDefaults = function () {
 
 View.prototype._setupUsername = function () {
     // true means hide if there is something in the username field
-    this._showDivBasedonValue(
+    //this._showDivBasedonValue(
+    //    '#username',
+    //    true,
+    //    '#anonymous_instructions_display',
+    //false);
+    // hide username instructions if there is something in the username field
+    var divBasedonValue = new DivBasedonValue(
         '#username',
-        true,
-        '#anonymous_instructions_display',
-        false);
+        '#anonymous_instructions_display',        
+        true);
+    divBasedonValue.setup();
 }
 
 View.prototype._setUpSpeakerCharacteristics = function () {
@@ -226,11 +232,6 @@ View.prototype._setUpDialectDependencies = function () {
 }
 
 View.prototype._setupSubDialectDependencies = function () {
-    //this._setDependentSelect(
-    //    $('#dialect'),
-    //    $('#sub_dialect'),
-    //    $("#sub_dialect_display") );
-
     var dependentSelect = new DependentSelect(
         $('#dialect'),
         $('#sub_dialect'),
@@ -323,6 +324,51 @@ View.prototype._showDivBasedonValue = function (
     }
 }
 
+function DivBasedonValue(
+    independent_div,
+    dependent_div,    
+    value)
+{
+    this.independent_div = independent_div;
+    this.dependent_div = dependent_div;    
+    this.value = value;
+    
+    this.handler_already_created = false;
+}
+
+DivBasedonValue.prototype.setup = function () {
+    var self = this;
+            
+    if ( this._valueIsTrue() ) { 
+        this.showBasedOnContentsOfIndependentDiv(
+            ! $(this.independent_div).val() );
+    } else {
+        this.showBasedOnContentsOfIndependentDiv(
+            $(this.independent_div).val() === this.value );
+    }
+
+    // only need to create event handler on first call to this function
+    if ( ! this.handler_already_created )  {
+        this.handler_already_created = true;
+      
+        $(this.independent_div).change(
+            self.setup.bind(self));
+    }
+}
+
+DivBasedonValue.prototype._valueIsTrue = function () {
+    return typeof(this.value) === "boolean" && this.value === true;
+}
+
+// show if false; hide if true
+DivBasedonValue.prototype.showBasedOnContentsOfIndependentDiv = function (boolean_result) {
+    if( boolean_result ){
+        $(this.dependent_div).show();
+    } else {
+        $(this.dependent_div).hide();
+    }
+}
+
 /*
  * compare value of independent div with passed in value and if equal, reset
  * selection option to default in dependent div
@@ -346,77 +392,7 @@ View.prototype._setDefault = function (
     }       
 }
 
-/**
-* This function changes the contents of a dependent select list based on the
-* contents of a independent select list.  This is used to set the 
-* contents of the dependent sub-dialect selection list based on the value
-* the independent dialect selection list.
-*
-* Read.md contains the entire list of possible subdialects for a language,
-* this function filters those contents based on what is contained in dialect
-* so that user only sees filtered results
-*
-* see https://stackoverflow.com/questions/10570904/use-jquery-to-change-a-second-select-list-based-on-the-first-select-list-option
-* Store all #subdialect's options in a variable, filter them according 
-* to the value of the chosen option in #dialect, and set them using 
-* .html() in #subdialect:
-*/
-// TODO when only one optgroup, first selection is not immediately selectable
-// need to select second or third option, then can select first option
-/*
-View.prototype._setDependentSelect = function (
-    $independent,
-    $dependent,
-    $dependent_display)
-{
-    var self = this;
-    
-    var $optgroup = $dependent.find( 'optgroup' );
-    var $selected = $dependent.find( ':selected' );
 
-    $independent.on( 'change', function() {
-        self._dependentSelectFilter.call(self, this.value);
-    })
-    .trigger('change');
-}
-*/
-
-function DependentSelect(
-    $independent,
-    $dependent,
-    $dependent_display)
-{
-    this.$independent = $independent;
-    this.$dependent = $dependent;
-    this.$dependent_display = $dependent_display;
-    
-    this.$optgroup = $dependent.find( 'optgroup' );
-    this.$selected = $dependent.find( ':selected' );
-}
-
-DependentSelect.prototype.setup = function () {
-    var self = this;
-        
-    this.$independent.on( 'change', function() {
-        self._dependentSelectFilter.call(self, this.value);
-    })
-    .trigger('change');
-}
-
-DependentSelect.prototype._dependentSelectFilter = function (value) {
-    var filter =  this.$optgroup.filter( '[name="' + value + '"]' );
-
-    if ( filter.length ) {
-      filter = filter.add( this.$selected );
-      this.$dependent_display.show();
-      this.$dependent.html( filter );
-    } else {
-      this.$dependent_display.hide();
-    }
-    
-    this.$dependent.val(self.default_value);                 
-    this.$dependent.prop('defaultSelected');
-}
 
 /**
 * fill other languages select list with stringified array the names of most 
@@ -709,4 +685,67 @@ View.prototype.updateProgress = function () {
 */
 View.prototype.display = function (obj) {
     return this.audioPlayer.display.call(this.audioPlayer, obj);
+}
+
+// #############################################################################
+
+/*
+ * Contructor
+ */
+/**
+* This function changes the contents of a dependent select list based on the
+* contents of a independent select list.  This is used to set the 
+* contents of the dependent sub-dialect selection list based on the value
+* the independent dialect selection list.
+*
+* Read.md contains the entire list of possible subdialects for a language,
+* this function filters those contents based on what is contained in dialect
+* so that user only sees filtered results
+*
+* see https://stackoverflow.com/questions/10570904/use-jquery-to-change-a-second-select-list-based-on-the-first-select-list-option
+* Store all #subdialect's options in a variable, filter them according 
+* to the value of the chosen option in #dialect, and set them using 
+* .html() in #subdialect:
+*/
+// TODO when only one optgroup, first selection is not immediately selectable
+// need to select second or third option, then can select first option
+function DependentSelect(
+    $independent,
+    $dependent,
+    $dependent_display)
+{
+    this.$independent = $independent;
+    this.$dependent = $dependent;
+    this.$dependent_display = $dependent_display;
+    
+    this.$optgroup = $dependent.find( 'optgroup' );
+    this.$selected = $dependent.find( ':selected' );
+}
+
+/*
+ * Methods
+ */
+ 
+DependentSelect.prototype.setup = function () {
+    var self = this;
+        
+    this.$independent.on( 'change', function() {
+        self._filterOnDialectToFindSubdialect.call(self, this.value);
+    })
+    .trigger('change');
+}
+
+DependentSelect.prototype._filterOnDialectToFindSubdialect = function (value) {
+    var filter =  this.$optgroup.filter( '[name="' + value + '"]' );
+
+    if ( filter.length ) {
+      filter = filter.add( this.$selected );
+      this.$dependent_display.show();
+      this.$dependent.html( filter );
+    } else {
+      this.$dependent_display.hide();
+    }
+    
+    this.$dependent.val(self.default_value);                 
+    this.$dependent.prop('defaultSelected');
 }
