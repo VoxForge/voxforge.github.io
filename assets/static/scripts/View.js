@@ -226,10 +226,16 @@ View.prototype._setUpDialectDependencies = function () {
 }
 
 View.prototype._setupSubDialectDependencies = function () {
-    this._setDependentSelect(
+    //this._setDependentSelect(
+    //    $('#dialect'),
+    //    $('#sub_dialect'),
+    //    $("#sub_dialect_display") );
+
+    var dependentSelect = new DependentSelect(
         $('#dialect'),
         $('#sub_dialect'),
         $("#sub_dialect_display") );
+    dependentSelect.setup()        
 }
 
 View.prototype._setUpRecordingInformation = function () {
@@ -357,30 +363,59 @@ View.prototype._setDefault = function (
 */
 // TODO when only one optgroup, first selection is not immediately selectable
 // need to select second or third option, then can select first option
+/*
 View.prototype._setDependentSelect = function (
     $independent,
     $dependent,
     $dependent_display)
 {
+    var self = this;
+    
     var $optgroup = $dependent.find( 'optgroup' );
     var $selected = $dependent.find( ':selected' );
 
     $independent.on( 'change', function() {
-        var filter =  $optgroup.filter( '[name="' + this.value + '"]' );
+        self._dependentSelectFilter.call(self, this.value);
+    })
+    .trigger('change');
+}
+*/
 
-        if ( filter.length ) {
-          filter = filter.add( $selected );
-          $dependent_display.show();
-          $dependent.html( filter );
-        }
-        else
-        {
-          $dependent_display.hide();
-        }
-        $dependent.val(self.default_value);                 
-        $dependent.prop('defaultSelected');
-   
-    } ).trigger('change');
+function DependentSelect(
+    $independent,
+    $dependent,
+    $dependent_display)
+{
+    this.$independent = $independent;
+    this.$dependent = $dependent;
+    this.$dependent_display = $dependent_display;
+    
+    this.$optgroup = $dependent.find( 'optgroup' );
+    this.$selected = $dependent.find( ':selected' );
+}
+
+DependentSelect.prototype.setup = function () {
+    var self = this;
+        
+    this.$independent.on( 'change', function() {
+        self._dependentSelectFilter.call(self, this.value);
+    })
+    .trigger('change');
+}
+
+DependentSelect.prototype._dependentSelectFilter = function (value) {
+    var filter =  this.$optgroup.filter( '[name="' + value + '"]' );
+
+    if ( filter.length ) {
+      filter = filter.add( this.$selected );
+      this.$dependent_display.show();
+      this.$dependent.html( filter );
+    } else {
+      this.$dependent_display.hide();
+    }
+    
+    this.$dependent.val(self.default_value);                 
+    this.$dependent.prop('defaultSelected');
 }
 
 /**
