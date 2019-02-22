@@ -244,6 +244,6 @@ UploadInfo.prototype.noUploads = function() {
 }
 
 
-/// code to keep helper classes inside View namespace //////////////////////////
+/// code to keep helper classes inside SavedSubmissions namespace //////////////
 return SavedSubmissions;
 }());
