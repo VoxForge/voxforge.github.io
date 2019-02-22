@@ -44,29 +44,7 @@ function SubmissionsLog (
 */
 SubmissionsLog.prototype.setupDisplay = function() {
     var self = this;
-  
-
-
-    /**
-     * returns Array containing list of submissions that were uploaded to
-     * Voxforge server
-     */
-    function getUploadedSubmissionList() {
-      return new Promise(function (resolve, reject) {
-        
-          self._getDatabaseKeys('uploaded submissions')
-          .then(function (uploadedSubmissionList) {
-              if (uploadedSubmissionList) {
-                  resolve(uploadedSubmissionList);
-              } else {
-                  resolve("");
-              }
-          })
-          .catch((err) => { console.log(err) });
-          
-      });
-    }
-
+ 
     /**
      * get list of submissions stored in browser cache
      */
@@ -85,8 +63,6 @@ SubmissionsLog.prototype.setupDisplay = function() {
 
       });
     }
-   
-
 
     // cannot call one popup from another; therefore open second one
     // after first one closes
@@ -95,13 +71,33 @@ SubmissionsLog.prototype.setupDisplay = function() {
     $( document ).on( "pageinit", function() {
         $("#popupSettings").on({
           popupafterclose: function() {
-              getUploadedSubmissionList()
+              self._getUploadedSubmissionList.call(self)
               .then(getSavedSubmissionList)
               .then( self._secondPopup.bind(self) )
               .catch(function(err) { console.log(err) });
           } // popupafterclose
         });
     });
+}
+
+/**
+ * returns Array containing list of submissions that were uploaded to
+ * Voxforge server
+ */
+SubmissionsLog.prototype._getUploadedSubmissionList = function( message) {
+  return new Promise(function (resolve, reject) {
+    
+      self._getDatabaseKeys('uploaded submissions')
+      .then(function (uploadedSubmissionList) {
+          if (uploadedSubmissionList) {
+              resolve(uploadedSubmissionList);
+          } else {
+              resolve("");
+          }
+      })
+      .catch((err) => { console.log(err) });
+      
+  });
 }
 
 /**
