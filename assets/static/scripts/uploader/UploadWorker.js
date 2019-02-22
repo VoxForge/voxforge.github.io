@@ -21,8 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // a different root, therefore localforage import must be done in calling script
 importScripts('../../lib/localforage.js'); // localforage needs to be defined before call to SavedSubmissions
 
-importScripts('../Submission.js'); 
-importScripts('../SavedSubmissions.js');
+importScripts('../common/Submission.js'); 
+importScripts('../common/SavedSubmissions.js');
 
 self.onmessage = function(event) {
   var data = event.data;

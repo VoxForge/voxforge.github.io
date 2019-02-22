@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+var SavedSubmissions = (function() { // code to keep helper classes inside View namespace //
+    
 // cannot put importScripts here even though code is being shared by 
 // voxforge_sw.js and UploadWorker.js because they are stored in different 
 // places and have different relative paths to localforage
@@ -236,3 +238,8 @@ UploadInfo.prototype.partialUpload = function() {
 UploadInfo.prototype.noUploads = function() {
     return this.noUploadList.length > 0 ;
 }
+
+
+/// code to keep helper classes inside View namespace //////////////////////////
+return SavedSubmissions;
+}());
