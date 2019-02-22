@@ -138,16 +138,16 @@ SubmissionsLog.prototype.setupDisplay = function() {
 SubmissionsLog.prototype._secondPopup = function(submissions) {
     $('#popupSubmissionList').popup(); // initialize popup before open
 
-    // TODO translate
-    var uploadedHTML = this._makeHTMLlist(
+    var uploadedHTML = new Html(
         this.uploaded_submissions,    
         submissions[0]);
-    var savedHTML = this._makeHTMLlist(
+
+    var savedHTML = new Html(
         this.saved_submissions,    
         submissions[1]);
-               
+
     if ( this._uploadedOrSaved(submissions) ) {
-        $("#submission-list").html(uploadedHTML + savedHTML);
+        $("#submission-list").html(uploadedHTML.make() + savedHTML.make());
         setTimeout(
             function() {
                 $("#popupSubmissionList").popup( "open" )
@@ -159,27 +159,44 @@ SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
     return submissions[0] ||  submissions[1];
 }
 
+// #############################################################################
+
+/*
+ * Constructor
+ */
 /**
 * helper function to wrap array in html
 *
 */
-SubmissionsLog.prototype._makeHTMLlist = function(heading, submissionList) {
+function Html(
+    heading,
+    submissionList)
+{
+    this.heading = heading;
+    this.submissionList = submissionList;
+}
 
-    if (submissionList) {
-        var html = '<h3>' + heading + '</h3>' +
-            '<ul>' + 
-            this._htmlifyArray(submissionList) +
-            '</ul>';
-        return html;
+Html.prototype.make = function() {
+    if (this.submissionList) {
+        return this._submissionList2Html();
     } else {
        return "";
     }
 }
 
-SubmissionsLog.prototype._htmlifyArray = function(submissionList) {
+Html.prototype._submissionList2Html = function() {
+    var html = '<h3>' + this.heading + '</h3>' +
+        '<ul>' + 
+        this._htmlifyArray() +
+        '</ul>';
+
+    return html;
+}
+
+Html.prototype._htmlifyArray = function() {
     var count = 1;
         
-    var result = jQuery.map(submissionList,
+    var result = jQuery.map(this.submissionList,
            function(element) {
               return( '<li>' + count++ + '. ' + element + '</li>' );
            })
