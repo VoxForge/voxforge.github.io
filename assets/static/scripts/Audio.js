@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var audioworker = new Worker('/assets/static/scripts/AudioWorker.js');
+var audioworker = new Worker('/assets/static/scripts/audio/AudioWorker.js');
 
 /**
 * if page reloaded kill background worker threads oldgain page reload
