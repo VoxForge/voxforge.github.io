@@ -14,12 +14,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-// processSavedSubmissions is called from service worker (voxforge_sw.js) 
+// SavedSubmissions is called from service worker (voxforge_sw.js) 
 // from a absolute root (as opposed to relative path) therefore localforage 
 // import must be done in calling script
-importScripts('assets/static/lib/localforage.js'); // localforage needs to be defined before call to processSavedSubmissions
+importScripts('assets/static/lib/localforage.js'); // localforage needs to be defined before call to SavedSubmissions
 
-importScripts('assets/static/scripts/processSavedSubmissions.js'); 
+importScripts('assets/static/scripts/Submission.js'); 
+importScripts('assets/static/scripts/SavedSubmissions.js');
 
 var CACHE_NAME = 'voxforge-cache-v0.1';
 var PATH = '/assets/static/';
@@ -33,26 +34,37 @@ var urlsToCache = [
   PATH + 'lib/platform.js',
   PATH + 'lib/state-machine.js',
   PATH + 'lib/visualize.js',
-  PATH + 'lib/WavAudioEncoder.js',
   PATH + 'lib/wavesurfer.js',
   PATH + 'lib/webrtc_vad.js',
 
   PATH + 'scripts/app.js',
+
   PATH + 'scripts/Audio.js',
-  PATH + 'scripts/AudioWorker.js',
+  PATH + 'scripts/audio/AudioWorker.js',  
+  PATH + 'scripts/audio/wavAudioEncoder.js',  
+  PATH + 'scripts/audio/Vad.js',  
+
   PATH + 'scripts/Controller.js',
+  PATH + 'scripts/controller/location.js',
+
   PATH + 'scripts/Debug.js',
-  PATH + 'scripts/location.js',
+
   PATH + 'scripts/Parms.js',
-  PATH + 'scripts/processSavedSubmissions.js',
+  PATH + 'scripts/SavedSubmissions.js',
   PATH + 'scripts/Profile.js',
   PATH + 'scripts/Prompts.js',
+  
   PATH + 'scripts/Uploader.js',
-  PATH + 'scripts/UploadWorker.js',
-  PATH + 'scripts/Vad.js',
+  PATH + 'scripts/uploader/ZipWorker.js',
+  PATH + 'scripts/uploader/UploadWorker.js',
+
   PATH + 'scripts/View.js',
-  PATH + 'scripts/wavAudioEncoder.js',
-  PATH + 'scripts/ZipWorker.js',
+  PATH + 'scripts/view/AudioPlayer.js',
+  PATH + 'scripts/view/ProfileView.js',
+  PATH + 'scripts/view/Settings.js',
+  PATH + 'scripts/view/SubmissionsLog.js',        
+
+
 
   PATH + 'styles/app.css',
   PATH + 'styles/jquery.mobile-1.4.5.css',
@@ -71,8 +83,8 @@ var urlsToCache = [
   '/es/read',
 
   // !!!!!! Oct 10 - no longer required with local apache server???
-  //'/en/read/', // TODO debug with Apache2 and self signed SSL certificate
-  // !!1111
+  //'/en/read/', // dev - debug with Apache2 and self signed SSL certificate
+  // !!!!!
   
   // TODO also cache links to outside websites for definitions, elaboration, etc...
 
@@ -133,9 +145,10 @@ self.addEventListener('sync', function(event) {
       console.log('voxforgeSync: background sync request received by serviceworker');
 
       let uploadURL = new URL(location).searchParams.get('uploadURL');
-
+      
+      var savedSubmissions = new SavedSubmissions(uploadURL, "serviceworker");
       event.waitUntil(
-          processSavedSubmissions(uploadURL, "serviceworker")
+          savedSubmissions.process()
           .then(function(returnObj) {
               sendMessage(returnObj);
           })
@@ -158,3 +171,49 @@ function sendMessage(returnObj) {
   });
 }
 
+/*
+ * For offline testing and testing separate front and backend servers
+ * with self signed certificates:
+ * 
+ * A. _config.yml
+ * 1. change url
+ *   prod: #url: "https://voxforge.github.io" # prod - the base hostname & protocol for your site
+ *   dev: url: "https://jekyll_voxforge.org" # dev 
+ * 
+ * you will need to use:
+ * 
+ *       https://jekyll_voxforge.org/en/read/
+ *
+ * to directly access read page
+ * 
+ * 2. add trailing slash to permalinks
+ *    #permalink: /:lang/:ref # prod - required for links to work properly on Github
+ *    permalink: /:lang/:ref/ # dev - (need to also update voxforge_sw.js and _config.yml: URL; and copy manifest file to en/read and restart jekyll...)
+ *
+ * (for debugging with Apache2 and self signed SSL certificate)
+# note: messes up manifest path, expects manifest.json at https://jekyll_voxforge.org/en/read/manifest.json
+# when it should be https://jekyll_voxforge.org/en/manifest.json
+
+# Note: In Jekyll 2, any URL constructed from the permalink: field had a 
+# trailing slash (/) added to it automatically. Jekyll 3 no longer adds a
+# trailing slash automatically to permalink: URLs
+# see: https://jekyllrb.com/docs/upgrading/2-to-3/
+
+ * B. manifest
+ * 3. temporarily move manifest to dev expected path:
+ * app expects manifest.json at:
+ *       https://jekyll_voxforge.org/en/read/manifest.json
+ * when it should be at (on github)
+ *       https://jekyll_voxforge.org/en/manifest.json
+ *
+ * C. voxforge_sw.js
+ * add entry for trailing slash on read me
+ *
+ *  // !!!!!! Oct 10 - no longer required with local apache server???
+  '/en/read/', // TODO debug with Apache2 and self signed SSL certificate
+  // !!!!!
+ *
+ * D. Fix permissions on submissions folder
+ * ~/git/voxforge.github.io/_site/submissions
+ * apache user (e.g. www-data ) needs write permissions to submissions folder
+ */
