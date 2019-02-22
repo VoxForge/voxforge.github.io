@@ -114,7 +114,7 @@ View.getUserName = ProfileView.getUserName;
 // ### METHODS #################################################################
 
 /** 
-* Initialize object with async operations (returns a promise)
+* Initialize object
 *
 * see: https://stackoverflow.com/questions/7694501/class-vs-static-method-in-javascript
 */
@@ -131,12 +131,23 @@ View.prototype.init = function() {
     }
 }
 
-View.prototype._runVad = function() {
-    return localStorage.getItem("vad_run") === 'true';
+View.prototype._setupDisplayDefaults = function() {
+    this._setupUsername();
+    this._setUpSpeakerCharacteristics();    
+    this._setUpRecordingInformation();   
+
+    this._setupPrompts();
+
+    this.settings.initPopup();
+    this.submissionsLog.setupDisplay();
 }
 
 View.prototype._turnAllButtonsOff = function() {
     this.setRSUButtonDisplay(false, false, false); 
+}
+
+View.prototype._runVad = function() {
+    return localStorage.getItem("vad_run") === 'true';
 }
 
 View.prototype._updateProfileView = function() {
@@ -148,17 +159,6 @@ View.prototype._updateProfileView = function() {
         this.json_object,                
     );               
     profileView.update();
-}
-
-View.prototype._setupDisplayDefaults = function() {
-    this._setupUsername();
-    this._setUpSpeakerCharacteristics();    
-    this._setUpRecordingInformation();   
-
-    this._setupPrompts();
-
-    this.settings.initPopup();
-    this.submissionsLog.setupDisplay();
 }
 
 // hide username instructions if there is something in the username field
@@ -197,21 +197,18 @@ View.prototype._setUpNativeSpeakerDependencies = function() {
 }
 
 View.prototype._setUpNativeSpeakerDefaults = function() {
-    this._setDefault(
+    new ElementDefault(
         '#native_speaker',
-        this.localized_yes,
-        '#first_language',
-        false);
-    this._setDefault(
+        '#first_language',  
+        this.localized_yes,);
+    new ElementDefault(
         '#native_speaker',
-        this.localized_no,
-        '#dialect',
-        false);
-    this._setDefault(
+        '#dialect',  
+        this.localized_no,);       
+    new ElementDefault(
         '#native_speaker',
-        this.localized_no,
-        '#sub_dialect',
-        false);
+        '#sub_dialect',  
+        this.localized_no,);  
 }
 
 View.prototype._setUpFirstLanguageDependencies = function() {
@@ -271,6 +268,10 @@ View.prototype._setupNoiseTypeDependencies = function() {
         this.localized_other,);          
 }
 
+
+
+
+
 /*
  * compare value of independent div with passed in value and if equal, reset
  * selection option to default in dependent div
@@ -292,6 +293,28 @@ View.prototype._setDefault = function(
             self._setDefault(independent_div, value, dependent_div, true); 
         } );
     }       
+}
+
+function ElementDefault(
+    independent_div,
+    dependent_div,    
+    value,)
+{
+    this.independent_div = independent_div;
+    this.dependent_div = dependent_div;    
+    this.value = value;
+
+    this._set();
+
+    var self = this;
+    $(independent_div).change(
+        self._set.bind(self) );    
+}
+
+ElementDefault.prototype._set = function() {
+    if ( $( this.independent_div).val() === this.value ) {
+       $(this.dependent_div).val($("select option:first").val()).change();
+    }
 }
 
 /**
