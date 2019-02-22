@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // import must be done in calling script
 importScripts('assets/static/lib/localforage.js'); // localforage needs to be defined before call to SavedSubmissions
 
-importScripts('assets/static/scripts/Submission.js'); 
-importScripts('assets/static/scripts/SavedSubmissions.js');
+importScripts('assets/static/scripts/common/Submission.js'); 
+importScripts('assets/static/scripts/common/SavedSubmissions.js');
 
 var CACHE_NAME = 'voxforge-cache-v0.1';
 var PATH = '/assets/static/';
@@ -46,11 +46,12 @@ var urlsToCache = [
 
   PATH + 'scripts/Controller.js',
   PATH + 'scripts/controller/location.js',
+  
+  PATH + 'scripts/common/Submission.js',
+  PATH + 'scripts/common/SavedSubmissions.js',  
 
   PATH + 'scripts/Debug.js',
-
   PATH + 'scripts/Parms.js',
-  PATH + 'scripts/SavedSubmissions.js',
   PATH + 'scripts/Profile.js',
   PATH + 'scripts/Prompts.js',
   
