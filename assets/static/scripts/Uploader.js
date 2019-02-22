@@ -234,7 +234,7 @@ Uploader.prototype._getPartialUploadMessage = function (returnObj) {
         m = m + "\n\nserver error message: " + returnObj.err;
     }
 
-    return m;        
+    return m;
 }
 
 /*
