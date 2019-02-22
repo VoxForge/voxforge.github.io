@@ -128,52 +128,62 @@ SubmissionsLog.prototype.setupDisplay = function() {
           popupafterclose: function() {
               getUploadedSubmissionList()
               .then(getSavedSubmissionList)
-              .then( self._popupafterclose.bind(self) )
+              .then( self._secondPopup.bind(self) )
               .catch(function(err) { console.log(err) });
           } // popupafterclose
         });
     });
 }
 
-SubmissionsLog.prototype._popupafterclose = function(
-    savedAndUploadedSubmissionArray)
-{
+SubmissionsLog.prototype._secondPopup = function(submissions) {
     $('#popupSubmissionList').popup(); // initialize popup before open
 
     // TODO translate
     var uploadedHTML = this._makeHTMLlist(
-        savedAndUploadedSubmissionArray[0],
-        this.uploaded_submissions);
+        this.uploaded_submissions,    
+        submissions[0]);
     var savedHTML = this._makeHTMLlist(
-        savedAndUploadedSubmissionArray[1],
-        this.saved_submissions);                 
-    if (savedAndUploadedSubmissionArray[0] ||
-      savedAndUploadedSubmissionArray[1]) {
+        this.saved_submissions,    
+        submissions[1]);
+               
+    if ( this._uploadedOrSaved(submissions) ) {
         $("#submission-list").html(uploadedHTML + savedHTML);
         setTimeout(
             function() {
-                $("#popupSubmissionList").popup( "open" )},
-            100 );
+                $("#popupSubmissionList").popup( "open" )
+            }, 100 );
     }
+}
+
+SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
+    return submissions[0] ||  submissions[1];
 }
 
 /**
 * helper function to wrap array in html
 *
 */
-SubmissionsLog.prototype._makeHTMLlist = function(array, heading) {
-    var count = 1;
-    if (array) {
-        return '<h3>' + heading + '</h3>' +
-           '<ul>' + 
-           jQuery.map(array,
-               function(element) {
-                  return( '<li>' + count++ + '. ' + element + '</li>' );
-               }
-           )
-           .join('') + // returns as a string
-           '</ul>';
+SubmissionsLog.prototype._makeHTMLlist = function(heading, submissionList) {
+
+    if (submissionList) {
+        var html = '<h3>' + heading + '</h3>' +
+            '<ul>' + 
+            this._htmlifyArray(submissionList) +
+            '</ul>';
+        return html;
     } else {
        return "";
     }
+}
+
+SubmissionsLog.prototype._htmlifyArray = function(submissionList) {
+    var count = 1;
+        
+    var result = jQuery.map(submissionList,
+           function(element) {
+              return( '<li>' + count++ + '. ' + element + '</li>' );
+           })
+        .join(''); // returns as a string
+
+    return result;
 }
