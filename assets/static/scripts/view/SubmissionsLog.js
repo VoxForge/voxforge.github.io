@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+var SubmissionsLog = (function() { // code to keep helper classes inside View namespace //
+    
 /**
 * setup display of log of uploaded and saved submissions
 */
@@ -43,40 +45,7 @@ function SubmissionsLog (
 SubmissionsLog.prototype.setupDisplay = function() {
     var self = this;
   
-    /**
-     * returns Array of submissions 
-     */
-    function getDatabaseKeys(database, message) {
-      return new Promise(function (resolve, reject) {
-        
-        database.length()
-        .then(function(numberOfKeys) {
-          if (numberOfKeys <= 0) {
-            console.log('no ' + message);
-            resolve("");
-          }
-        })
-        .catch(function(err) {
-            console.log(err);
-            resolve("");
-        });
 
-        database.keys()
-        .then(function(keys) {
-            // An array of all the key names.
-            if (keys.length > 0) {
-              console.log(message + ' ' + keys);
-              resolve(keys);
-            }
-        })
-        .catch(function(err) {
-            // This code runs if there were any errors
-            console.log(err);
-            resolve("");
-        });
-
-      });
-    }
 
     /**
      * returns Array containing list of submissions that were uploaded to
@@ -85,7 +54,7 @@ SubmissionsLog.prototype.setupDisplay = function() {
     function getUploadedSubmissionList() {
       return new Promise(function (resolve, reject) {
         
-          getDatabaseKeys(self.uploadedSubmissions, 'uploaded submissions')
+          self._getDatabaseKeys('uploaded submissions')
           .then(function (uploadedSubmissionList) {
               if (uploadedSubmissionList) {
                   resolve(uploadedSubmissionList);
@@ -104,7 +73,7 @@ SubmissionsLog.prototype.setupDisplay = function() {
     function getSavedSubmissionList(uploadedSubmissionList) {
       return new Promise(function (resolve, reject) {
         
-          getDatabaseKeys(self.submissionCache, 'saved submissions')
+          self._getDatabaseKeys(self.submissionCache, 'saved submissions')
           .then(function (savedSubmissionList) {
               if (savedSubmissionList) {
                   resolve([uploadedSubmissionList, savedSubmissionList]);
@@ -133,6 +102,43 @@ SubmissionsLog.prototype.setupDisplay = function() {
           } // popupafterclose
         });
     });
+}
+
+/**
+ * returns Array of submissions 
+ */
+SubmissionsLog.prototype._getDatabaseKeys = function( message) {
+    var self = this;
+    
+      return new Promise(function (resolve, reject) {
+        
+        self.uploadedSubmissions.length()
+        .then(function(numberOfKeys) {
+          if (numberOfKeys <= 0) {
+            console.log('no ' + message);
+            resolve("");
+          }
+        })
+        .catch(function(err) {
+            console.log(err);
+            resolve("");
+        });
+
+        self.uploadedSubmissions.keys()
+        .then(function(keys) {
+            // An array of all the key names.
+            if (keys.length > 0) {
+              console.log(message + ' ' + keys);
+              resolve(keys);
+            }
+        })
+        .catch(function(err) {
+            // This code runs if there were any errors
+            console.log(err);
+            resolve("");
+        });
+
+      });
 }
 
 SubmissionsLog.prototype._secondPopup = function(submissions) {
@@ -204,3 +210,8 @@ Html.prototype._htmlifyArray = function() {
 
     return result;
 }
+
+
+/// code to keep helper classes inside View namespace //////////////////////////
+return SubmissionsLog;
+}());
