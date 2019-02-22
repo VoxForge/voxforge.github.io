@@ -28,21 +28,19 @@ function SubmissionsLog (
     this.uploaded_submissions = uploaded_submissions;
     
     this.uploadedSubmissions = localforage.createInstance({
-      name: "uploadedSubmissions"
+        name: "uploadedSubmissions"
     });
     
     this.submissionCache = localforage.createInstance({
-      name: "submissionCache"
+        name: "submissionCache"
     });    
 }
 
-/**
-* 
+/*
 * TODO how to deal with n>25 submissions... only show 25 most recent submissions?
 * TODO this function is really slow on slower mobile devices, need caching
 */
-SubmissionsLog.prototype.setupDisplay = function () 
-{
+SubmissionsLog.prototype.setupDisplay = function() {
     var self = this;
   
     /**
@@ -119,26 +117,7 @@ SubmissionsLog.prototype.setupDisplay = function ()
       });
     }
    
-    /**
-    * helper function to wrap array in html
-    *
-    */
-    function makeHTMLlist (array, heading) {
-        var count = 1;
-        if (array) {
-            return '<h3>' + heading + '</h3>' +
-               '<ul>' + 
-               jQuery.map(array,
-                   function(element) {
-                      return( '<li>' + count++ + '. ' + element + '</li>' );
-                   }
-               )
-               .join('') + // returns as a string
-               '</ul>';
-        } else {
-           return "";
-        }
-    }
+
 
     // cannot call one popup from another; therefore open second one
     // after first one closes
@@ -149,25 +128,52 @@ SubmissionsLog.prototype.setupDisplay = function ()
           popupafterclose: function() {
               getUploadedSubmissionList()
               .then(getSavedSubmissionList)
-              .then(function (savedAndUploadedSubmissionArray) {
-                  $('#popupSubmissionList').popup(); // initialize popup before open
-
-                  // TODO translate
-                  var uploadedHTML = makeHTMLlist(
-                      savedAndUploadedSubmissionArray[0],
-                      self.uploaded_submissions);
-                  var savedHTML = makeHTMLlist(
-                      savedAndUploadedSubmissionArray[1],
-                      self.saved_submissions);                 
-                  if (savedAndUploadedSubmissionArray[0] ||
-                      savedAndUploadedSubmissionArray[1])
-                  {
-                    $("#submission-list").html(uploadedHTML + savedHTML);
-                    setTimeout(function() { $("#popupSubmissionList").popup( "open" ) }, 100 );
-                  }
-              })
+              .then( self._popupafterclose.bind(self) )
               .catch(function(err) { console.log(err) });
           } // popupafterclose
         });
     });
+}
+
+SubmissionsLog.prototype._popupafterclose = function(
+    savedAndUploadedSubmissionArray)
+{
+    $('#popupSubmissionList').popup(); // initialize popup before open
+
+    // TODO translate
+    var uploadedHTML = this._makeHTMLlist(
+        savedAndUploadedSubmissionArray[0],
+        this.uploaded_submissions);
+    var savedHTML = this._makeHTMLlist(
+        savedAndUploadedSubmissionArray[1],
+        this.saved_submissions);                 
+    if (savedAndUploadedSubmissionArray[0] ||
+      savedAndUploadedSubmissionArray[1]) {
+        $("#submission-list").html(uploadedHTML + savedHTML);
+        setTimeout(
+            function() {
+                $("#popupSubmissionList").popup( "open" )},
+            100 );
+    }
+}
+
+/**
+* helper function to wrap array in html
+*
+*/
+SubmissionsLog.prototype._makeHTMLlist = function(array, heading) {
+    var count = 1;
+    if (array) {
+        return '<h3>' + heading + '</h3>' +
+           '<ul>' + 
+           jQuery.map(array,
+               function(element) {
+                  return( '<li>' + count++ + '. ' + element + '</li>' );
+               }
+           )
+           .join('') + // returns as a string
+           '</ul>';
+    } else {
+       return "";
+    }
 }
