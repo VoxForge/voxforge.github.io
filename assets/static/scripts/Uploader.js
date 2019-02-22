@@ -245,6 +245,8 @@ Uploader.prototype._displayMessageToUser = function (workertype, m) {
     console.info(workertype + ": " + m);
     Promise.all(promise_list) // wait for stop click before displaying alert (if user recording)
     .then(function() {
+        // TODO Firefox says this is not supported, but then goes ahead and
+        // does it (error: NotSupportedError: Operation is not supported)
         window.alert(m);
     })
     .catch((err) => { console.log(err) });            
