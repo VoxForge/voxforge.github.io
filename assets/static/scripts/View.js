@@ -582,6 +582,8 @@ View.prototype.display = function(obj) {
 */
 // TODO when only one optgroup, first selection is not immediately selectable
 // need to select second or third option, then can select first option
+// TODO if subdialect exists for dialect in on language (e.g. Canadian) and
+// then switch to another language; subdialect does not get cleared
 function DependentSelect(
     $independent,
     $dependent,
