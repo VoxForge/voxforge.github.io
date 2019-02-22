@@ -151,11 +151,15 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
     savedSubmissionArray,)
 {
     console.warn('SavedSubmissions: one or more submissions not uploaded: ' + err);
-
-    if ( this.uploadList.partialUpload() ) { 
+// TODO error: SavedSubmissions.js:155 Uncaught (in promise) TypeError:
+// Cannot read property 'partialUpload' of undefined
+//    at SavedSubmissions._notAllSubmissionsUploaded
+// TODO recording submissions offline then uploading do not get added to
+// uploded submissions????
+    if ( this.uploadInfo.partialUpload() ) { 
         this.process_reject(
             this._getPartialUploadsObj(err));
-    } else if ( this.uploadList.noUploads() ) {
+    } else if ( this.uploadInfo.noUploads() ) {
         var shortNameArray = this._shortNameArray(savedSubmissionArray);
         this.process_reject(
             this._getNoUploadsObj(err, shortNameArray));
