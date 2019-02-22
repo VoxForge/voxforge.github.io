@@ -16,6 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 'use strict';
+
+var View = (function() { // code to keep helper classes inside View namespace //
+    
 /*
  * Contructor
  */
@@ -268,8 +271,6 @@ View.prototype._setupNoiseTypeDependencies = function() {
         this.localized_other,);          
 }
 
-
-
 /*
  * compare value of independent div with passed in value and if equal, reset
  * selection option to default in dependent div
@@ -292,8 +293,6 @@ View.prototype._setDefault = function(
         } );
     }       
 }
-
-
 
 /**
 * fill other languages select list with stringified array the names of most 
@@ -626,7 +625,6 @@ function DependentSelect(
 /*
  * Methods
  */
- 
 DependentSelect.prototype.setup = function() {
     var self = this;
         
@@ -687,10 +685,6 @@ function DivBasedonValue(
 /*
  * Methods
  */
- 
-// TODO does this make sense if value is boolean and false, then compare value
-// even though it it false??? it works because value will never be same as
-// a false boolean (therefore returning false), but confusing....
 DivBasedonValue.prototype.test = function() {
     if ( this._valueIsBoolean() ) {
         this._booleanTest();
@@ -725,3 +719,8 @@ DivBasedonValue.prototype._showBasedOnContentsOfIndependentDiv = function(
         $(this.dependent_div).hide();
     }
 }
+
+
+/// code to keep helper classes inside View namespace //////////////////////////
+return View;
+}());
