@@ -19,10 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // TODO: SavedSubmissions is called from service worker (voxforge_sw.js) from 
 // a different root, therefore localforage import must be done in calling script
-importScripts('../lib/localforage.js'); // localforage needs to be defined before call to SavedSubmissions
+importScripts('../../lib/localforage.js'); // localforage needs to be defined before call to SavedSubmissions
 
-importScripts('Submission.js'); 
-importScripts('SavedSubmissions.js');
+importScripts('../Submission.js'); 
+importScripts('../SavedSubmissions.js');
 
 self.onmessage = function(event) {
   var data = event.data;

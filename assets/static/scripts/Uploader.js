@@ -41,7 +41,7 @@ Uploader.prototype._setUpWorkers = function () {
     }
 
     this.zip_worker = new Worker('/assets/static/scripts/uploader/ZipWorker.js');
-    this.upload_worker = new Worker('/assets/static/scripts/UploadWorker.js');
+    this.upload_worker = new Worker('/assets/static/scripts/uploader/UploadWorker.js');
 
     this._onPageUnloadKillBackgroundWorkerThreads();    
 }
