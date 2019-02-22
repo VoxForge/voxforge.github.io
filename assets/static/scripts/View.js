@@ -268,57 +268,7 @@ View.prototype._setupNoiseTypeDependencies = function() {
         this.localized_other,);          
 }
 
-/**
-* The value of contents of the independent_div is compared to the passed in 
-* value, and if they are equal, then the dependent_div is displayed, otherwise
-* it is hidden 
-*
-* showDivBasedonValue makes the view of one div dependent on the value of a select 
-* field in another div, and attaches an event handler to independent div so that
-* any changes in it are reflected in dependent div
-*
-* see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
-*/
-function DivBasedonValue(
-    independent_div,
-    dependent_div,
-    value)
-{
-    this.independent_div = independent_div;
-    this.dependent_div = dependent_div;    
-    this.value = value;
 
-    this.test();
-
-    var self = this;    
-    $(independent_div).change(
-        self.test.bind(self));
-}
-
-DivBasedonValue.prototype.test = function() {
-    if ( this._valueIsTrue() ) { 
-        this._showBasedOnContentsOfIndependentDiv(
-            ! $(this.independent_div).val() );
-    } else {
-        this._showBasedOnContentsOfIndependentDiv(
-            $(this.independent_div).val() === this.value );
-    }
-}
-
-DivBasedonValue.prototype._valueIsTrue = function() {
-    return typeof(this.value) === "boolean" && this.value === true;
-}
-
-// show if false; hide if true
-DivBasedonValue.prototype._showBasedOnContentsOfIndependentDiv = function(
-    boolean_result)
-{
-    if( boolean_result ){
-        $(this.dependent_div).show();
-    } else {
-        $(this.dependent_div).hide();
-    }
-}
 
 /*
  * compare value of independent div with passed in value and if equal, reset
@@ -699,4 +649,79 @@ DependentSelect.prototype._filterOnDialectToFindSubdialect = function(value) {
     
     this.$dependent.val(self.default_value);                 
     this.$dependent.prop('defaultSelected');
+}
+
+// #############################################################################
+
+/*
+ * Contructor
+ */
+ 
+/**
+* The value of contents of the independent_div is compared to the passed in 
+* value, and if they are equal, then the dependent_div is displayed, otherwise
+* it is hidden 
+*
+* showDivBasedonValue makes the view of one div dependent on the value of a select 
+* field in another div, and attaches an event handler to independent div so that
+* any changes in it are reflected in dependent div
+*
+* see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
+*/
+function DivBasedonValue(
+    independent_div,
+    dependent_div,
+    value)
+{
+    this.independent_div = independent_div;
+    this.dependent_div = dependent_div;    
+    this.value = value;
+
+    this.test();
+
+    var self = this;    
+    $(independent_div).change(
+        self.test.bind(self));
+}
+
+/*
+ * Methods
+ */
+ 
+// TODO does this make sense if value is boolean and false, then compare value
+// even though it it false??? it works because value will never be same as
+// a false boolean (therefore returning false), but confusing....
+DivBasedonValue.prototype.test = function() {
+    if ( this._valueIsBoolean() ) {
+        this._booleanTest();
+    } else {
+        this._valueCompare();
+    }
+}
+
+DivBasedonValue.prototype._valueIsBoolean = function() {
+    return typeof(this.value) === "boolean";
+}
+
+DivBasedonValue.prototype._booleanTest = function() {
+    if ( this.value === true ) {
+        this._showBasedOnContentsOfIndependentDiv(
+            ! $(this.independent_div).val() );
+    }
+}
+
+DivBasedonValue.prototype._valueCompare = function() {
+    this._showBasedOnContentsOfIndependentDiv(
+        $(this.independent_div).val() === this.value );
+}
+
+// show if false; hide if true
+DivBasedonValue.prototype._showBasedOnContentsOfIndependentDiv = function(
+    boolean_result)
+{
+    if( boolean_result ){
+        $(this.dependent_div).show();
+    } else {
+        $(this.dependent_div).hide();
+    }
 }
