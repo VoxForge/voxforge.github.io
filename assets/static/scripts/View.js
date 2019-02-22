@@ -40,7 +40,7 @@ function View (
 }
 
 /*
- * Contructor Methods
+ * Contructor methods
  */
 
 View.prototype._initProperties = function() {
@@ -268,55 +268,6 @@ View.prototype._setupNoiseTypeDependencies = function() {
         this.localized_other,);          
 }
 
-
-
-
-
-/*
- * compare value of independent div with passed in value and if equal, reset
- * selection option to default in dependent div
- */
-View.prototype._setDefault = function(
-    independent_div,
-    value,
-    dependent_div,
-    handler_already_created)
-{
-    var self = this;
-    
-    if ( $(independent_div).val() === value ) {
-       $(dependent_div).val($("select option:first").val()).change();
-    }
-    // only need to create event handler on first call to this function
-    if ( ! handler_already_created ) {
-        $(independent_div).change(function() { // creates an event handler
-            self._setDefault(independent_div, value, dependent_div, true); 
-        } );
-    }       
-}
-
-function ElementDefault(
-    independent_div,
-    dependent_div,    
-    value,)
-{
-    this.independent_div = independent_div;
-    this.dependent_div = dependent_div;    
-    this.value = value;
-
-    this._set();
-
-    var self = this;
-    $(independent_div).change(
-        self._set.bind(self) );    
-}
-
-ElementDefault.prototype._set = function() {
-    if ( $( this.independent_div).val() === this.value ) {
-       $(this.dependent_div).val($("select option:first").val()).change();
-    }
-}
-
 /**
 * fill other languages select list with stringified array the names of most 
 * ISO 639-1 language names
@@ -527,7 +478,6 @@ View.prototype.displayRecordingInfoChecked = function() {
 View.prototype.timeSinceLastSubmissionChecked = function() {
     return $('#recording_time_reminder').is(":checked");
 }
-
 
 /**
 * get recording Reminder value; assumption being that if they
@@ -740,6 +690,36 @@ DivBasedonValue.prototype._showBasedOnContentsOfIndependentDiv = function(
         $(this.dependent_div).show();
     } else {
         $(this.dependent_div).hide();
+    }
+}
+
+// #############################################################################
+
+/*
+ * Contructor
+ */
+function ElementDefault(
+    independent_div,
+    dependent_div,    
+    value,)
+{
+    this.independent_div = independent_div;
+    this.dependent_div = dependent_div;    
+    this.value = value;
+
+    this._set();
+
+    var self = this;
+    $(independent_div).change(
+        self._set.bind(self) );    
+}
+
+/*
+ * Methods
+ */
+ElementDefault.prototype._set = function() {
+    if ( $( this.independent_div).val() === this.value ) {
+       $(this.dependent_div).val($("select option:first").val()).change();
     }
 }
 
