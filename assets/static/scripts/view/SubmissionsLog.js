@@ -45,24 +45,7 @@ function SubmissionsLog (
 SubmissionsLog.prototype.setupDisplay = function() {
     var self = this;
  
-    /**
-     * get list of submissions stored in browser cache
-     */
-    function getSavedSubmissionList(uploadedSubmissionList) {
-      return new Promise(function (resolve, reject) {
-        
-          self._getDatabaseKeys(self.submissionCache, 'saved submissions')
-          .then(function (savedSubmissionList) {
-              if (savedSubmissionList) {
-                  resolve([uploadedSubmissionList, savedSubmissionList]);
-              } else {
-                  resolve([uploadedSubmissionList, ""]);
-              }
-          })
-          .catch((err) => { console.log(err) });
 
-      });
-    }
 
     // cannot call one popup from another; therefore open second one
     // after first one closes
@@ -72,12 +55,31 @@ SubmissionsLog.prototype.setupDisplay = function() {
         $("#popupSettings").on({
           popupafterclose: function() {
               self._getUploadedSubmissionList.call(self)
-              .then(getSavedSubmissionList)
+              .then( self._getSavedSubmissionList.bind(self) )
               .then( self._secondPopup.bind(self) )
               .catch(function(err) { console.log(err) });
           } // popupafterclose
         });
     });
+}
+
+/**
+ * get list of submissions stored in browser cache
+ */
+SubmissionsLog.prototype._getSavedSubmissionList = function(message) {
+  return new Promise(function (resolve, reject) {
+    
+      self._getDatabaseKeys(self.submissionCache, 'saved submissions')
+      .then(function (savedSubmissionList) {
+          if (savedSubmissionList) {
+              resolve([uploadedSubmissionList, savedSubmissionList]);
+          } else {
+              resolve([uploadedSubmissionList, ""]);
+          }
+      })
+      .catch((err) => { console.log(err) });
+
+  });
 }
 
 /**
