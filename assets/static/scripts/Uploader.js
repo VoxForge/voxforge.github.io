@@ -40,7 +40,7 @@ Uploader.prototype._setUpWorkers = function () {
             this._registerServiceWorker );
     }
 
-    this.zip_worker = new Worker('/assets/static/scripts/ZipWorker.js');
+    this.zip_worker = new Worker('/assets/static/scripts/uploader/ZipWorker.js');
     this.upload_worker = new Worker('/assets/static/scripts/UploadWorker.js');
 
     this._onPageUnloadKillBackgroundWorkerThreads();    
