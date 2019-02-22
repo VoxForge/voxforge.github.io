@@ -45,8 +45,6 @@ function SubmissionsLog (
 SubmissionsLog.prototype.setupDisplay = function() {
     var self = this;
  
-
-
     // cannot call one popup from another; therefore open second one
     // after first one closes
     // see: http://api.jquerymobile.com/popup/
@@ -64,11 +62,35 @@ SubmissionsLog.prototype.setupDisplay = function() {
 }
 
 /**
+ * returns Array containing list of submissions that were uploaded to
+ * Voxforge server
+ */
+SubmissionsLog.prototype._getUploadedSubmissionList = function( message) {
+    var self = this;
+    
+    return new Promise(function (resolve, reject) {
+
+      self._getDatabaseKeys.call(self, 'uploaded submissions')
+      .then(function (uploadedSubmissionList) {
+          if (uploadedSubmissionList) {
+              resolve(uploadedSubmissionList);
+          } else {
+              resolve("");
+          }
+      })
+      .catch((err) => { console.log(err) });
+      
+    });
+}
+
+/**
  * get list of submissions stored in browser cache
  */
-SubmissionsLog.prototype._getSavedSubmissionList = function(message) {
-  return new Promise(function (resolve, reject) {
-    
+SubmissionsLog.prototype._getSavedSubmissionList = function(uploadedSubmissionList) {
+    var self = this;
+
+    return new Promise(function (resolve, reject) {
+
       self._getDatabaseKeys(self.submissionCache, 'saved submissions')
       .then(function (savedSubmissionList) {
           if (savedSubmissionList) {
@@ -79,28 +101,9 @@ SubmissionsLog.prototype._getSavedSubmissionList = function(message) {
       })
       .catch((err) => { console.log(err) });
 
-  });
+    });
 }
 
-/**
- * returns Array containing list of submissions that were uploaded to
- * Voxforge server
- */
-SubmissionsLog.prototype._getUploadedSubmissionList = function( message) {
-  return new Promise(function (resolve, reject) {
-    
-      self._getDatabaseKeys('uploaded submissions')
-      .then(function (uploadedSubmissionList) {
-          if (uploadedSubmissionList) {
-              resolve(uploadedSubmissionList);
-          } else {
-              resolve("");
-          }
-      })
-      .catch((err) => { console.log(err) });
-      
-  });
-}
 
 /**
  * returns Array of submissions 
@@ -108,14 +111,14 @@ SubmissionsLog.prototype._getUploadedSubmissionList = function( message) {
 SubmissionsLog.prototype._getDatabaseKeys = function( message) {
     var self = this;
     
-      return new Promise(function (resolve, reject) {
-        
+    return new Promise(function (resolve, reject) {
+
         self.uploadedSubmissions.length()
         .then(function(numberOfKeys) {
-          if (numberOfKeys <= 0) {
-            console.log('no ' + message);
-            resolve("");
-          }
+            if (numberOfKeys <= 0) {
+                console.log('no ' + message);
+                resolve("");
+            }
         })
         .catch(function(err) {
             console.log(err);
@@ -126,8 +129,8 @@ SubmissionsLog.prototype._getDatabaseKeys = function( message) {
         .then(function(keys) {
             // An array of all the key names.
             if (keys.length > 0) {
-              console.log(message + ' ' + keys);
-              resolve(keys);
+                console.log(message + ' ' + keys);
+                resolve(keys);
             }
         })
         .catch(function(err) {
@@ -136,19 +139,21 @@ SubmissionsLog.prototype._getDatabaseKeys = function( message) {
             resolve("");
         });
 
-      });
+    });
 }
 
 SubmissionsLog.prototype._secondPopup = function(submissions) {
+    var [uploadedSubmissionList, savedSubmissionList] = submissions;
+
     $('#popupSubmissionList').popup(); // initialize popup before open
 
     var uploadedHTML = new Html(
         this.uploaded_submissions,    
-        submissions[0]);
+        uploadedSubmissionList);
 
     var savedHTML = new Html(
         this.saved_submissions,    
-        submissions[1]);
+        savedSubmissionList);
 
     if ( this._uploadedOrSaved(submissions) ) {
         $("#submission-list").html(uploadedHTML.make() + savedHTML.make());
@@ -160,7 +165,9 @@ SubmissionsLog.prototype._secondPopup = function(submissions) {
 }
 
 SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
-    return submissions[0] ||  submissions[1];
+    var [uploadedSubmissionList, savedSubmissionList] = submissions;
+     
+    return uploadedSubmissionList ||  savedSubmissionList;
 }
 
 // #############################################################################
@@ -210,6 +217,6 @@ Html.prototype._htmlifyArray = function() {
 }
 
 
-/// code to keep helper classes inside View namespace //////////////////////////
+/// code to keep helper classes inside SubmissionsLog namespace ////////////////
 return SubmissionsLog;
 }());
