@@ -66,7 +66,7 @@ SubmissionsLog.prototype.setupDisplay = function() {
  * returns Array containing list of submissions that were uploaded to
  * Voxforge server
  */
-SubmissionsLog.prototype._getUploadedSubmissionList = function( message) {
+SubmissionsLog.prototype._getUploadedSubmissionList = function() {
     var self = this;
     
     return new Promise(function (resolve, reject) {
@@ -74,10 +74,9 @@ SubmissionsLog.prototype._getUploadedSubmissionList = function( message) {
       self._getDatabaseKeys.call(self, 'uploaded submissions')
       .then(function (uploadedSubmissionList) {
           if (uploadedSubmissionList) {
-              resolve(uploadedSubmissionList);
-          } else {
-              resolve("");
-          }
+              self.uploadedSubmissionList = uploadedSubmissionList;
+          } 
+          resolve();
       })
       .catch((err) => { console.log(err) });
       
@@ -87,29 +86,27 @@ SubmissionsLog.prototype._getUploadedSubmissionList = function( message) {
 /**
  * get list of submissions stored in browser cache
  */
-SubmissionsLog.prototype._getSavedSubmissionList = function(uploadedSubmissionList) {
+SubmissionsLog.prototype._getSavedSubmissionList = function() {
     var self = this;
 
     return new Promise(function (resolve, reject) {
 
-      self._getDatabaseKeys(self.submissionCache, 'saved submissions')
+      self._getDatabaseKeys.call(self, 'saved submissions')
       .then(function (savedSubmissionList) {
-          if (savedSubmissionList) {
-              resolve([uploadedSubmissionList, savedSubmissionList]);
-          } else {
-              resolve([uploadedSubmissionList, ""]);
-          }
+            if (savedSubmissionList) {
+                self.savedSubmissionList = savedSubmissionList;              
+            } 
+            resolve();
       })
       .catch((err) => { console.log(err) });
 
     });
 }
 
-
 /**
  * returns Array of submissions 
  */
-SubmissionsLog.prototype._getDatabaseKeys = function( message) {
+SubmissionsLog.prototype._getDatabaseKeys = function(message) {
     var self = this;
     
     return new Promise(function (resolve, reject) {
@@ -143,11 +140,11 @@ SubmissionsLog.prototype._getDatabaseKeys = function( message) {
     });
 }
 
-SubmissionsLog.prototype._secondPopup = function(submissions) {
-    var submissionList = this._getSubmissionListString(submissions);
+SubmissionsLog.prototype._secondPopup = function() {
+    var submissionList = this._getSubmissionListString();
 
     $('#popupSubmissionList').popup(); // initialize popup before open
-    if ( this._uploadedOrSaved(submissions) ) {
+    if ( this._uploadedOrSaved() ) {
         $("#submission-list").html(submissionList);
         setTimeout(
             function() {
@@ -156,23 +153,19 @@ SubmissionsLog.prototype._secondPopup = function(submissions) {
     }
 }
 
-SubmissionsLog.prototype._getSubmissionListString = function(submissions) {
-    var [uploadedSubmissionList, savedSubmissionList] = submissions;
-
+SubmissionsLog.prototype._getSubmissionListString = function() {
     var uploadedHTML = new Html(
         this.uploaded_submissions,    
-        uploadedSubmissionList);
+        this.uploadedSubmissionList);
     var savedHTML = new Html(
         this.saved_submissions,    
-        savedSubmissionList);
+        this.savedSubmissionList);
 
     return uploadedHTML.make() + savedHTML.make();
 }
 
 SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
-    var [uploadedSubmissionList, savedSubmissionList] = submissions;
-     
-    return uploadedSubmissionList || savedSubmissionList;
+    return this.uploadedSubmissionList || this.savedSubmissionList;
 }
 
 // #############################################################################
@@ -201,23 +194,21 @@ Html.prototype.make = function() {
 }
 
 Html.prototype._submissionList2Html = function() {
-    var html = '<h3>' + this.heading + '</h3>' +
-        '<ul>' + 
-        this._htmlifyArray() +
-        '</ul>';
-
-    return html;
+    return '<h3>' + this.heading + '</h3>' +
+        this._arrayToHtmlList();
 }
 
-Html.prototype._htmlifyArray = function() {
+Html.prototype._arrayToHtmlList = function() {
     var count = 1;
-        
-    var result = jQuery.map(this.submissionList,
+    
+    var result = '<ul>';
+    result += jQuery.map(this.submissionList,
            function(element) {
               return( '<li>' + count++ + '. ' + element + '</li>' );
            })
         .join(''); // returns as a string
-
+    result += '<ul>';
+    
     return result;
 }
 
