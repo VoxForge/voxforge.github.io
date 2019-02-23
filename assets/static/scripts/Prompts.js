@@ -283,8 +283,12 @@ Prompts.prototype._getPromptsFileFromBrowserStorage = function () {
 }
 
 Prompts.prototype._getPromptsThatUserCanUseNow = async function() {
-    var jsonObject = await this._getSavedPromptList();
-    this._extractPromptStackFromObj(jsonObject);
+    var self = this;
+    
+    //var jsonObject = await this._getSavedPromptList();
+    //this._extractPromptStackFromObj(jsonObject);
+    this._getSavedPromptList()
+    .then( self._extractPromptStackFromObj.bind(self) );    
 }
 
 Prompts.prototype._getSavedPromptList = function() {
