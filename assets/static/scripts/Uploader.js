@@ -33,7 +33,7 @@ function Uploader(parms,
     this._setUpWorkers();
 }
 
-Uploader.prototype._setUpWorkers = function () {
+Uploader.prototype._setUpWorkers = function() {
     if ('serviceWorker' in navigator) {
         window.addEventListener(
             'load',
@@ -50,7 +50,7 @@ Uploader.prototype._setUpWorkers = function () {
 * if page reloaded, kill background worker threads before page reload
 * to prevent zombie worker threads in FireFox
 */
-Uploader.prototype._onPageUnloadKillBackgroundWorkerThreads = function () {
+Uploader.prototype._onPageUnloadKillBackgroundWorkerThreads = function() {
     var self = this;
     
     $( window ).unload(function() {
@@ -59,7 +59,7 @@ Uploader.prototype._onPageUnloadKillBackgroundWorkerThreads = function () {
     });
 }
 
-Uploader.prototype._registerServiceWorker = function () {
+Uploader.prototype._registerServiceWorker = function() {
     const swUrl = '/voxforge_sw.js?uploadURL=' + encodeURIComponent(uploadURL);
     navigator.serviceWorker.register(swUrl)
     .then(
@@ -185,14 +185,14 @@ Uploader.prototype._submissionPluralized = function(numberOfSubmissions) {
 
 // ### noneUploaded
 
-Uploader.prototype._allSavedToBrowserStorage = function (returnObj) {
+Uploader.prototype._allSavedToBrowserStorage = function(returnObj) {
     var m = this.alert_message.localstorage_message + "\n" +
         this._getSavedToBrowserStorageMessage(returnObj);
         
     this._displayMessageToUser(returnObj.workertype, m);    
 }
 
-Uploader.prototype._getSavedToBrowserStorageMessage = function (returnObj) {
+Uploader.prototype._getSavedToBrowserStorageMessage = function(returnObj) {
     var filesNotUploaded =  returnObj.filesNotUploaded;
     var numberNotUploaded = filesNotUploaded.length;
     
@@ -211,7 +211,7 @@ Uploader.prototype._getSavedToBrowserStorageMessage = function (returnObj) {
  * TODO need a way for user to save these their o/s filesystem and upload
  * them to VoxForge server some other way.
 */
-Uploader.prototype._partialUpload = function (returnObj) {
+Uploader.prototype._partialUpload = function(returnObj) {
     this._setNumberOfUploadedSubmissions(returnObj.filesUploaded);
     this._saveSubmissionsToList(returnObj.filesUploaded);
     
@@ -220,7 +220,7 @@ Uploader.prototype._partialUpload = function (returnObj) {
         this._getPartialUploadMessage(returnObj));  
 }
 
-Uploader.prototype._getPartialUploadMessage = function (returnObj) {
+Uploader.prototype._getPartialUploadMessage = function(returnObj) {
     var filesUploaded = returnObj.filesUploaded;    
     var filesNotUploaded = returnObj.filesNotUploaded;
     
@@ -241,7 +241,7 @@ Uploader.prototype._getPartialUploadMessage = function (returnObj) {
  * Display message to user after recording has ended (i.e. wait for user
  * to press stop before displaying message)
  */
-Uploader.prototype._displayMessageToUser = function (workertype, m) {
+Uploader.prototype._displayMessageToUser = function(workertype, m) {
     console.info(workertype + ": " + m);
     Promise.all(promise_list) // wait for stop click before displaying alert (if user recording)
     .then(function() {
@@ -249,10 +249,10 @@ Uploader.prototype._displayMessageToUser = function (workertype, m) {
         // does it (error: NotSupportedError: Operation is not supported)
         window.alert(m);
     })
-    .catch((err) => { console.log(err) });            
+    .catch(function(err) { console.log(err) });            
 }
 
-Uploader.prototype._logWorkerType = function (returnObj) {
+Uploader.prototype._logWorkerType = function(returnObj) {
     var m;
     
     if (returnObj.workertype == "serviceworker") {
@@ -266,7 +266,7 @@ Uploader.prototype._logWorkerType = function (returnObj) {
     console.log(m + ": " + returnObj.status);
 }
 
-Uploader.prototype._getDate = function () {
+Uploader.prototype._getDate = function() {
     if (!Date.now) { // UTC timestamp in milliseconds;
         Date.now = function() { return new Date().getTime(); }
     }
@@ -278,7 +278,7 @@ Uploader.prototype._getDate = function () {
 * that calls web worker that actually creates the zip file for download
 * to VoxForge server (by another worker...)
 */
-Uploader.prototype.upload = function (
+Uploader.prototype.upload = function(
     prompts,
     profile,
     debug,
@@ -297,13 +297,13 @@ Uploader.prototype.upload = function (
     this.language = language;
     this.debugChecked = debugChecked;
       
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       
         self._processAudio()
         .then(self._callWorker2createZipFile.bind(self))
         .then(self._uploadZippedSubmission.bind(self))
         .then(resolve) // resolve needs to be passed as a reference... therefore no parms
-        .catch(function (err) {
+        .catch(function(err) {
             console.log(err.message);
             console.log(err.stack);
         });
@@ -322,7 +322,7 @@ Uploader.prototype.upload = function (
 Uploader.prototype._processAudio = function() {
     var self = this;
     
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
         self._setUpCallbackFunctions(resolve, reject);
         self._addAllClipsToAudioArray();
     });
@@ -336,7 +336,7 @@ Uploader.prototype._setUpCallbackFunctions = function(resolve, reject) {
     this.lastAudioClipFinished = function(audioArray) {
         resolve(audioArray);
     };           
-    this.onError = function () {
+    this.onError = function() {
         reject("error processing audio from DOM");
     };
 }
@@ -345,7 +345,7 @@ Uploader.prototype._addAllClipsToAudioArray = function() {
     var self = this;
     this.audioArray = [];
     
-    this.allClips.forEach(function (clip, clipIndex, allClips) {
+    this.allClips.forEach(function(clip, clipIndex, allClips) {
         self._hideClip(clip);
         var lastClip = clipIndex >= (allClips.length -1);
         self._getClipToAddToAudioArray(
@@ -354,13 +354,13 @@ Uploader.prototype._addAllClipsToAudioArray = function() {
     });
 }
 
-Uploader.prototype._hideClip = function (clip) {
+Uploader.prototype._hideClip = function(clip) {
     clip.style.display = 'None'; // hide clip from display as it is being processed
 }
 
 // Ajax is asynchronous - once the request is sent script will 
 // continue executing without waiting for the response.
-Uploader.prototype._getClipToAddToAudioArray = function (clip, lastClip) {
+Uploader.prototype._getClipToAddToAudioArray = function(clip, lastClip) {
     var self = this;
 
     var filename = this._extractPromptIDfromClip.call(self, clip) + '.wav';   
@@ -368,7 +368,7 @@ Uploader.prototype._getClipToAddToAudioArray = function (clip, lastClip) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', this._getAudioURL(clip), true); // get blob from browser memory; 
     xhr.responseType = 'blob';
-    xhr.onload =  function () {
+    xhr.onload =  function() {
         if (this.status != 200) { return } // request failed; skip
 
         self._addClipToAudioArray.call(self, filename, this.response); 
@@ -385,18 +385,18 @@ Uploader.prototype._getAudioURL = function(clip) {
     return clip.querySelector('audio').src; 
 }
 
-Uploader.prototype._extractPromptIDfromClip = function (clip) {
+Uploader.prototype._extractPromptIDfromClip = function(clip) {
     var prompt = this._extractPromptFromClip(clip);
     this.prompts.addToPromptsRecorded(prompt);
           
     return prompt.split(/(\s+)/).shift();
 }
 
-Uploader.prototype._extractPromptFromClip = function (clip) {
+Uploader.prototype._extractPromptFromClip = function(clip) {
     return clip.querySelector('prompt').innerText;
 }
 
-Uploader.prototype._addClipToAudioArray = function (filename, blob) {
+Uploader.prototype._addClipToAudioArray = function(filename, blob) {
     this.audioArray.push ({
         filename: filename, 
         audioBlob: blob,
@@ -406,14 +406,14 @@ Uploader.prototype._addClipToAudioArray = function (filename, blob) {
 /**
 * localStorage stores everything as a string
 */
-Uploader.prototype._getNumberOfUploadedSubmissions = function () {
+Uploader.prototype._getNumberOfUploadedSubmissions = function() {
   return parseInt( localStorage.getItem('numberOfUploadedSubmissions') || 0);
 }
 
 /**
 * localStorage stores everything as a string
 */
-Uploader.prototype.getNumberOfSubmissions = function () {
+Uploader.prototype.getNumberOfSubmissions = function() {
   return parseInt( localStorage.getItem('numberOfSubmissions') || 0);
 }
 
@@ -421,7 +421,7 @@ Uploader.prototype.getNumberOfSubmissions = function () {
 * use time since last submission to determine if user should be
 * asked to update recording location information
 */
-Uploader.prototype.timeSinceLastSubmission = function () {
+Uploader.prototype.timeSinceLastSubmission = function() {
     if (this._minutesSinceLastSubmission() > this.maxMinutesSinceLastSubmission) {
         return true;
     } else {
@@ -429,7 +429,7 @@ Uploader.prototype.timeSinceLastSubmission = function () {
     }
 }
 
-Uploader.prototype._minutesSinceLastSubmission = function () {
+Uploader.prototype._minutesSinceLastSubmission = function() {
     var timeOfLastSubmission = localStorage.getItem('timeOfLastSubmission');
     if ( timeOfLastSubmission ) {
       var millis = Date.now() - timeOfLastSubmission;
@@ -443,7 +443,7 @@ Uploader.prototype._minutesSinceLastSubmission = function () {
 /**
 * call web worker to create zip file and upload to VoxForge server
 */
-Uploader.prototype._callWorker2createZipFile = function (audioArray) {
+Uploader.prototype._callWorker2createZipFile = function(audioArray) {
     var self = this;
     
     this._captureDebugValues();
@@ -452,7 +452,7 @@ Uploader.prototype._callWorker2createZipFile = function (audioArray) {
     return this._processReplyFromZipWorker(audioArray);
 }
 
-Uploader.prototype._captureDebugValues = function () {
+Uploader.prototype._captureDebugValues = function() {
     if ( this.debugChecked ) {
       this.debug.setValues( 'prompts', this.prompts.getDebugValues() );
     } else {
@@ -463,7 +463,7 @@ Uploader.prototype._captureDebugValues = function () {
 // need to copy to blobs here (rather than in web worker) because if pass 
 // them as references to ZipWorker, they will be overwritten when page refreshes
 // and not be accessible within web worker
-Uploader.prototype._tellWorkerToZipFile = function (audioArray) {
+Uploader.prototype._tellWorkerToZipFile = function(audioArray) {
     var zip_worker_parms = {};
     
     zip_worker_parms.command = 'zipAndSave';    
@@ -474,7 +474,7 @@ Uploader.prototype._tellWorkerToZipFile = function (audioArray) {
     this.zip_worker.postMessage(zip_worker_parms);
 }
 
-Uploader.prototype._zipworkerProperties = function () {
+Uploader.prototype._zipworkerProperties = function() {
     return {
         speechSubmissionAppVersion: this.speechSubmissionAppVersion,
         temp_submission_name: this.profile.getTempSubmissionName(),
@@ -485,7 +485,7 @@ Uploader.prototype._zipworkerProperties = function () {
     }
 }
 
-Uploader.prototype._zipworkerBlobProperties = function () {
+Uploader.prototype._zipworkerBlobProperties = function() {
     return {
         readme_blob: new Blob(this.profile.toArray(), {type: "text/plain;charset=utf-8"}),
         prompts_blob: new Blob(this.prompts.toArray(), {type: "text/plain;charset=utf-8"}),
@@ -496,19 +496,19 @@ Uploader.prototype._zipworkerBlobProperties = function () {
     }
 }
 
-Uploader.prototype._mergeProperties = function (obj1, obj2) {
+Uploader.prototype._mergeProperties = function(obj1, obj2) {
     for (var attrname in obj2) { obj1[attrname] = obj2[attrname]; }
 }
 
 /**
 * Handler for messages coming from zip_worker web worker
 */
-Uploader.prototype._processReplyFromZipWorker = function (audioArray) {
+Uploader.prototype._processReplyFromZipWorker = function(audioArray) {
     var self = this;
 
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
 
-        self.zip_worker.onmessage = function (event) {
+        self.zip_worker.onmessage = function(event) {
             self._logSubmissionUpload();
 
             if (event.data.status === "savedInBrowserStorage") {
@@ -531,10 +531,10 @@ Uploader.prototype._processReplyFromZipWorker = function (audioArray) {
 * worker that uploads in background; or perform asynchronous upload
 * if neither is supported.
 */
-Uploader.prototype._uploadZippedSubmission = function () {
+Uploader.prototype._uploadZippedSubmission = function() {
     var self = this;
 
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
 
         if (self._serviceWorkerSupported()) {
             self._determineIfBackgroundSyncSupported();
@@ -572,7 +572,7 @@ Uploader.prototype._determineIfBackgroundSyncSupported = function() {
             self._webWorkerUpload(); // background sync not supported
         }
     })
-    .catch((err) => { console.log(err) });
+    .catch(function(err) { console.log(err) });      
 }
 
 Uploader.prototype._backgroundSyncSupported = function(swRegistration) {
@@ -599,7 +599,7 @@ Uploader.prototype._serviceWorkerUpload = function(swRegistration) {
          }, function() {
           console.error('service worker background sync failed, will retry later');
     })
-    .catch((err) => { console.log(err) });
+    .catch(function(err) { console.log(err) });   
 }
 
 /** 
@@ -638,7 +638,7 @@ Uploader.prototype._asyncMainThreadUpload = function() {
     });
 }
 
-Uploader.prototype._logSubmissionUpload = function () {
+Uploader.prototype._logSubmissionUpload = function() {
     localStorage.setItem('timeOfLastSubmission', Date.now());
     localStorage.setItem('numberOfSubmissions', this.getNumberOfSubmissions() + 1);
 }
