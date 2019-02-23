@@ -53,57 +53,23 @@ SubmissionsLog.prototype.setupDisplay = function() {
     $( document ).on( "pageinit", function() {
         $("#popupSettings").on({
           popupafterclose: function() {
-              self._getUploadedSubmissionList.call(self)
+                self._getDatabaseKeys.call(self,
+                    self.uploadedSubmissions,
+                    'uploaded submissions')
+                .then(function (uploadedSubmissionList) {
+                    self.uploadedSubmissionList = uploadedSubmissionList;
+                })
+                self._getDatabaseKeys.call(self,
+                    self.submissionCache,
+                    'saved submissions')
+                .then(function (savedSubmissionList) {
+                        self.savedSubmissionList = savedSubmissionList;              
+                })                
               .then( self._getSavedSubmissionList.bind(self) )
               .then( self._secondPopup.bind(self) )
               .catch(function(err) { console.log(err) });
           } // popupafterclose
         });
-    });
-}
-
-/**
- * returns Array containing list of submissions that were uploaded to
- * Voxforge server
- */
-SubmissionsLog.prototype._getUploadedSubmissionList = function() {
-    var self = this;
-    
-    return new Promise(function (resolve, reject) {
-
-      self._getDatabaseKeys.call(self,
-            self.uploadedSubmissions,
-            'uploaded submissions')
-      .then(function (uploadedSubmissionList) {
-          if (uploadedSubmissionList) {
-              self.uploadedSubmissionList = uploadedSubmissionList;
-          } 
-          resolve();
-      })
-      .catch((err) => { console.log(err) });
-      
-    });
-}
-
-/**
- * get list of submissions stored in browser cache
- */
-SubmissionsLog.prototype._getSavedSubmissionList = function() {
-    var self = this;
-
-    return new Promise(function (resolve, reject) {
-
-      self._getDatabaseKeys.call(self,
-        self.submissionCache,
-        'saved submissions')
-      .then(function (savedSubmissionList) {
-            if (savedSubmissionList) {
-                self.savedSubmissionList = savedSubmissionList;              
-            } 
-            resolve();
-      })
-      .catch((err) => { console.log(err) });
-
     });
 }
 
