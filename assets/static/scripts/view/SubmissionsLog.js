@@ -39,13 +39,10 @@ function SubmissionsLog (
 }
 
 /*
-* TODO how to deal with n>25 submissions... only show 25 most recent submissions?
-* TODO this function is really slow on slower mobile devices, need caching
-*
 * Note: cannot call one popup from another; therefore open second one
 * after first one closes
 * see: http://api.jquerymobile.com/popup/
-*chaining of popups
+* (chaining of popups)
 */
 SubmissionsLog.prototype.setupDisplay = function() {
     var self = this;
@@ -60,28 +57,32 @@ SubmissionsLog.prototype._popupafterclose = function() {
     var self = this;
     
     Promise.all( this._getSubmissionListPromises() )
-    .then( self._secondPopup.bind(self) )
+    .then( self._popup.bind(self) )
     .catch(function(err) { console.log(err) });
 }
 
+/*
+* TODO how to deal with n>25 submissions... only show 25 most recent submissions?
+* TODO this function is really slow on slower mobile devices, need caching
+*/
 SubmissionsLog.prototype._getSubmissionListPromises = function() {
     var self = this;
     
-    var uploadedSubmissions =
+    var uploadedSubmissionsPromise =
         this.uploadedSubmissions.keys()
         .then(function(uploadedSubmissionList) {
             self.uploadedSubmissionList = uploadedSubmissionList;
         })
-    var savedSubmissions =
+    var savedSubmissionsPromise =
         self.submissionCache.keys()
         .then(function (savedSubmissionList) {
-                self.savedSubmissionList = savedSubmissionList;              
+            self.savedSubmissionList = savedSubmissionList;              
         })
 
-    return [uploadedSubmissions, savedSubmissions];
+    return [uploadedSubmissionsPromise, savedSubmissionsPromise];
 }
 
-SubmissionsLog.prototype._secondPopup = function() {
+SubmissionsLog.prototype._popup = function() {
     var submissionList = this._submissionListToString();
 
     $('#popupSubmissionList').popup(); // initialize popup before open
