@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var SubmissionsLog = (function() { // code to keep helper classes inside View namespace //
+var SubmissionsLog = (function() { // code to keep helper classes inside SubmissionsLog namespace //
     
 /**
 * setup display of log of uploaded and saved submissions
@@ -52,11 +52,19 @@ SubmissionsLog.prototype.setupDisplay = function() {
 
     $( document ).on( "pageinit", function() {
         $("#popupSettings").on(
-            'popupafterclose', self._firstPopup.bind(self) );
+            'popupafterclose', self._popupafterclose.bind(self) );
     });
 }
 
-SubmissionsLog.prototype._firstPopup = function() {
+SubmissionsLog.prototype._popupafterclose = function() {
+    var self = this;
+    
+    Promise.all( this._getSubmissionListPromises() )
+    .then( self._secondPopup.bind(self) )
+    .catch(function(err) { console.log(err) });
+}
+
+SubmissionsLog.prototype._getSubmissionListPromises = function() {
     var self = this;
     
     var uploadedSubmissions =
@@ -69,37 +77,8 @@ SubmissionsLog.prototype._firstPopup = function() {
         .then(function (savedSubmissionList) {
                 self.savedSubmissionList = savedSubmissionList;              
         })
-    Promise.all([uploadedSubmissions, savedSubmissions])
-    .then( self._secondPopup.bind(self) )
-    .catch(function(err) { console.log(err) });
-}
 
-/**
- * returns Array of submissions 
- */
-SubmissionsLog.prototype._getDatabaseKeys = function(submissionDB, message) {
-    var self = this;
-    
-    return new Promise(function (resolve, reject) {
-
-        submissionDB.keys()
-        .then(function(keys) {
-            // An array of all the key names.
-            if (keys.length > 0) {
-                console.log(message + ' ' + keys);
-                resolve(keys);
-            } else {
-                console.log('no ' + message);
-                resolve();
-            }
-        })
-        .catch(function(err) {
-            // This code runs if there were any errors
-            console.log(err);
-            resolve();
-        });
-
-    });
+    return [uploadedSubmissions, savedSubmissions];
 }
 
 SubmissionsLog.prototype._secondPopup = function() {
