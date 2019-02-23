@@ -51,26 +51,27 @@ SubmissionsLog.prototype.setupDisplay = function() {
     var self = this;
 
     $( document ).on( "pageinit", function() {
-        $("#popupSettings").on({
-          popupafterclose: function() {
-                self._getDatabaseKeys.call(self,
-                    self.uploadedSubmissions,
-                    'uploaded submissions')
-                .then(function (uploadedSubmissionList) {
-                    self.uploadedSubmissionList = uploadedSubmissionList;
-                })
-                self._getDatabaseKeys.call(self,
-                    self.submissionCache,
-                    'saved submissions')
-                .then(function (savedSubmissionList) {
-                        self.savedSubmissionList = savedSubmissionList;              
-                })                
-              .then( self._getSavedSubmissionList.bind(self) )
-              .then( self._secondPopup.bind(self) )
-              .catch(function(err) { console.log(err) });
-          } // popupafterclose
-        });
+        $("#popupSettings").on(
+            'popupafterclose', self._firstPopup.bind(self) );
     });
+}
+
+SubmissionsLog.prototype._firstPopup = function() {
+    var self = this;
+    
+    var uploadedSubmissions =
+        this.uploadedSubmissions.keys()
+        .then(function(uploadedSubmissionList) {
+            self.uploadedSubmissionList = uploadedSubmissionList;
+        })
+    var savedSubmissions =
+        self.submissionCache.keys()
+        .then(function (savedSubmissionList) {
+                self.savedSubmissionList = savedSubmissionList;              
+        })
+    Promise.all([uploadedSubmissions, savedSubmissions])
+    .then( self._secondPopup.bind(self) )
+    .catch(function(err) { console.log(err) });
 }
 
 /**
@@ -81,30 +82,21 @@ SubmissionsLog.prototype._getDatabaseKeys = function(submissionDB, message) {
     
     return new Promise(function (resolve, reject) {
 
-        submissionDB.length()
-        .then(function(numberOfKeys) {
-            if (numberOfKeys <= 0) {
-                console.log('no ' + message);
-                resolve("");
-            }
-        })
-        .catch(function(err) {
-            console.log(err);
-            resolve("");
-        });
-
         submissionDB.keys()
         .then(function(keys) {
             // An array of all the key names.
             if (keys.length > 0) {
                 console.log(message + ' ' + keys);
                 resolve(keys);
+            } else {
+                console.log('no ' + message);
+                resolve();
             }
         })
         .catch(function(err) {
             // This code runs if there were any errors
             console.log(err);
-            resolve("");
+            resolve();
         });
 
     });
