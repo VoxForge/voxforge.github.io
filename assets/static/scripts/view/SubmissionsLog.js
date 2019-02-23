@@ -71,7 +71,9 @@ SubmissionsLog.prototype._getUploadedSubmissionList = function() {
     
     return new Promise(function (resolve, reject) {
 
-      self._getDatabaseKeys.call(self, 'uploaded submissions')
+      self._getDatabaseKeys.call(self,
+            self.uploadedSubmissions,
+            'uploaded submissions')
       .then(function (uploadedSubmissionList) {
           if (uploadedSubmissionList) {
               self.uploadedSubmissionList = uploadedSubmissionList;
@@ -91,7 +93,9 @@ SubmissionsLog.prototype._getSavedSubmissionList = function() {
 
     return new Promise(function (resolve, reject) {
 
-      self._getDatabaseKeys.call(self, 'saved submissions')
+      self._getDatabaseKeys.call(self,
+        self.submissionCache,
+        'saved submissions')
       .then(function (savedSubmissionList) {
             if (savedSubmissionList) {
                 self.savedSubmissionList = savedSubmissionList;              
@@ -106,12 +110,12 @@ SubmissionsLog.prototype._getSavedSubmissionList = function() {
 /**
  * returns Array of submissions 
  */
-SubmissionsLog.prototype._getDatabaseKeys = function(message) {
+SubmissionsLog.prototype._getDatabaseKeys = function(submissionDB, message) {
     var self = this;
     
     return new Promise(function (resolve, reject) {
 
-        self.uploadedSubmissions.length()
+        submissionDB.length()
         .then(function(numberOfKeys) {
             if (numberOfKeys <= 0) {
                 console.log('no ' + message);
@@ -123,7 +127,7 @@ SubmissionsLog.prototype._getDatabaseKeys = function(message) {
             resolve("");
         });
 
-        self.uploadedSubmissions.keys()
+        submissionDB.keys()
         .then(function(keys) {
             // An array of all the key names.
             if (keys.length > 0) {
@@ -141,7 +145,7 @@ SubmissionsLog.prototype._getDatabaseKeys = function(message) {
 }
 
 SubmissionsLog.prototype._secondPopup = function() {
-    var submissionList = this._getSubmissionListString();
+    var submissionList = this._submissionListToString();
 
     $('#popupSubmissionList').popup(); // initialize popup before open
     if ( this._uploadedOrSaved() ) {
@@ -153,7 +157,11 @@ SubmissionsLog.prototype._secondPopup = function() {
     }
 }
 
-SubmissionsLog.prototype._getSubmissionListString = function() {
+SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
+    return this.uploadedSubmissionList || this.savedSubmissionList;
+}
+
+SubmissionsLog.prototype._submissionListToString = function() {
     var uploadedHTML = new Html(
         this.uploaded_submissions,    
         this.uploadedSubmissionList);
@@ -162,10 +170,6 @@ SubmissionsLog.prototype._getSubmissionListString = function() {
         this.savedSubmissionList);
 
     return uploadedHTML.make() + savedHTML.make();
-}
-
-SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
-    return this.uploadedSubmissionList || this.savedSubmissionList;
 }
 
 // #############################################################################
