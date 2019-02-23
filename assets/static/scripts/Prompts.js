@@ -132,14 +132,7 @@ Prompts.prototype._checkForUndefinedAttributesIfNoPromptId = function (
 Prompts.prototype._initializePrompts = async function () {
     var self = this;
 
-// TODO     remove awaits from this class
-    //var browserStorageEmpty = await self._isBrowserStorageEmpty();
-    //if ( browserStorageEmpty ) {
-    //    this._getPromptsFileFromServerOrServiceWorkerCache();
-    //} else {
-    //    this._getPromptsFileFromBrowserStorage();
-    //}
-    self._isBrowserStorageEmpty()
+    this._isBrowserStorageEmpty()
     .then(function(browserStorageEmpty) {
         if ( browserStorageEmpty ) {
             self._getPromptsFileFromServerOrServiceWorkerCache.call(self);
@@ -184,13 +177,7 @@ Prompts.prototype._getPromptsFileFromServerOrServiceWorkerCache =
     async function()
 {
     var self = this;
-    //try {
-    //    var prompt_data = await self._getPromptsFileFromServer();
-    //    self._copyPromptData2Stack(prompt_data);
-    //} catch(err) {
-    //    console.log(err); 
-    //    self._getPromptsFileFromServiceWorkerCache();
-    //}
+
     this._getPromptsFileFromServer()
     .then( self._copyPromptData2Stack.bind(self) )
     .fail(function(err) {
@@ -285,8 +272,6 @@ Prompts.prototype._getPromptsFileFromBrowserStorage = function () {
 Prompts.prototype._getPromptsThatUserCanUseNow = async function() {
     var self = this;
     
-    //var jsonObject = await this._getSavedPromptList();
-    //this._extractPromptStackFromObj(jsonObject);
     this._getSavedPromptList()
     .then( self._extractPromptStackFromObj.bind(self) );    
 }
@@ -323,15 +308,9 @@ Prompts.prototype._extractPromptStackFromObj = function(jsonObject) {
 Prompts.prototype._asyncUpdateOfPromptsFileFromServer = async function () {
     var self = this;
 
-    //try {
-    //    var prompt_data = await this._getPromptsFileFromServer();
-    //    self._savePromptData2BrowserStorage(prompt_data);
-    //} catch(err) {
-    //    self._logGetPromptFileFromServerFailed(err, self.prompt_file_name);    
-    //}
     this._getPromptsFileFromServer()
     .then( self._savePromptData2BrowserStorage.bind(self) )
-    .catch( function(err) {
+    .fail( function(err) {
         self._logGetPromptFileFromServerFailed(err, self.prompt_file_name);    
     });    
 }
@@ -438,16 +417,7 @@ Prompts.prototype._createJsonPromptObject = function(id) {
 Prompts.prototype._saveObject2PromptCache = async function(jsonOnject)
 {
     var self = this;
-    
-    //try {
-    //    var result = await this.promptCache.setItem(
-    //        self._getLocalizedPromptFilename(),
-    //        jsonOnject);
-    //    console.info('saved promptfile to localforage browser storage: ' +
-    //                 self._getLocalizedPromptFilename() );
-    //} catch(err) {
-    //    console.error('save of promptfile to localforage browser storage failed!', err);
-    //}
+
     this.promptCache.setItem(
         self._getLocalizedPromptFilename.call(self),
         jsonOnject)
