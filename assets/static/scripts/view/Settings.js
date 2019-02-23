@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+var Settings = (function() { // code to keep helper classes inside Settings namespace //
+    
 /**
 * setup app settings Popup for user to modify
 */
@@ -352,3 +354,6 @@ Checkbox.prototype._setDefaultFunctionFromLocalStorage = function(checked) {
     }
 }
 
+/// code to keep helper classes inside Settings namespace //////////////////////////
+return Settings;
+}());
