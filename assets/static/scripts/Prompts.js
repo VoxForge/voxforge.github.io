@@ -131,13 +131,22 @@ Prompts.prototype._checkForUndefinedAttributesIfNoPromptId = function (
 
 Prompts.prototype._initializePrompts = async function () {
     var self = this;
-    
-    var browserStorageEmpty = await self._isBrowserStorageEmpty();
-    if ( browserStorageEmpty ) {
-        this._getPromptsFileFromServerOrServiceWorkerCache();
-    } else {
-        this._getPromptsFileFromBrowserStorage();
-    }
+
+// TODO     remove awaits from this class
+    //var browserStorageEmpty = await self._isBrowserStorageEmpty();
+    //if ( browserStorageEmpty ) {
+    //    this._getPromptsFileFromServerOrServiceWorkerCache();
+    //} else {
+    //    this._getPromptsFileFromBrowserStorage();
+    //}
+    self._isBrowserStorageEmpty()
+    .then(function(browserStorageEmpty) {
+        if ( browserStorageEmpty ) {
+            self._getPromptsFileFromServerOrServiceWorkerCache.call(self);
+        } else {
+            self._getPromptsFileFromBrowserStorage.call(self);
+        }
+    });
 }
 
 /** 
