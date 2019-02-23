@@ -439,15 +439,24 @@ Prompts.prototype._saveObject2PromptCache = async function(jsonOnject)
 {
     var self = this;
     
-    try {
-        var result = await this.promptCache.setItem(
-            self._getLocalizedPromptFilename(),
-            jsonOnject);
-        console.info('saved promptfile to localforage browser storage: ' +
-                     self._getLocalizedPromptFilename() );
-    } catch(err) {
+    //try {
+    //    var result = await this.promptCache.setItem(
+    //        self._getLocalizedPromptFilename(),
+    //        jsonOnject);
+    //    console.info('saved promptfile to localforage browser storage: ' +
+    //                 self._getLocalizedPromptFilename() );
+    //} catch(err) {
+    //    console.error('save of promptfile to localforage browser storage failed!', err);
+    //}
+    this.promptCache.setItem(
+        self._getLocalizedPromptFilename.call(self),
+        jsonOnject)
+    .catch(function(err) {
         console.error('save of promptfile to localforage browser storage failed!', err);
-    }
+        return;
+    });
+    console.info('saved promptfile to localforage browser storage: ' +
+        self._getLocalizedPromptFilename() );
 }
 
 Prompts.prototype._confirmPromptListLength = function() {
