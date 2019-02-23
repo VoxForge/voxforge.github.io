@@ -41,14 +41,15 @@ function SubmissionsLog (
 /*
 * TODO how to deal with n>25 submissions... only show 25 most recent submissions?
 * TODO this function is really slow on slower mobile devices, need caching
+*
+* Note: cannot call one popup from another; therefore open second one
+* after first one closes
+* see: http://api.jquerymobile.com/popup/
+*chaining of popups
 */
 SubmissionsLog.prototype.setupDisplay = function() {
     var self = this;
- 
-    // cannot call one popup from another; therefore open second one
-    // after first one closes
-    // see: http://api.jquerymobile.com/popup/
-    // chaining of popups
+
     $( document ).on( "pageinit", function() {
         $("#popupSettings").on({
           popupafterclose: function() {
@@ -143,20 +144,11 @@ SubmissionsLog.prototype._getDatabaseKeys = function( message) {
 }
 
 SubmissionsLog.prototype._secondPopup = function(submissions) {
-    var [uploadedSubmissionList, savedSubmissionList] = submissions;
+    var submissionList = this._initializeSubmissionList(submissions);
 
     $('#popupSubmissionList').popup(); // initialize popup before open
-
-    var uploadedHTML = new Html(
-        this.uploaded_submissions,    
-        uploadedSubmissionList);
-
-    var savedHTML = new Html(
-        this.saved_submissions,    
-        savedSubmissionList);
-
     if ( this._uploadedOrSaved(submissions) ) {
-        $("#submission-list").html(uploadedHTML.make() + savedHTML.make());
+        $("#submission-list").html(submissionList);
         setTimeout(
             function() {
                 $("#popupSubmissionList").popup( "open" )
@@ -164,10 +156,23 @@ SubmissionsLog.prototype._secondPopup = function(submissions) {
     }
 }
 
+SubmissionsLog.prototype._initializeSubmissionList = function(submissions) {
+    var [uploadedSubmissionList, savedSubmissionList] = submissions;
+
+    var uploadedHTML = new Html(
+        this.uploaded_submissions,    
+        uploadedSubmissionList);
+    var savedHTML = new Html(
+        this.saved_submissions,    
+        savedSubmissionList);
+
+    return uploadedHTML.make() + savedHTML.make();
+}
+
 SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
     var [uploadedSubmissionList, savedSubmissionList] = submissions;
      
-    return uploadedSubmissionList ||  savedSubmissionList;
+    return uploadedSubmissionList || savedSubmissionList;
 }
 
 // #############################################################################
