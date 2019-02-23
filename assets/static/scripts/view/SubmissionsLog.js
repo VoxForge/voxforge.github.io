@@ -144,7 +144,7 @@ SubmissionsLog.prototype._getDatabaseKeys = function( message) {
 }
 
 SubmissionsLog.prototype._secondPopup = function(submissions) {
-    var submissionList = this._initializeSubmissionList(submissions);
+    var submissionList = this._getSubmissionListString(submissions);
 
     $('#popupSubmissionList').popup(); // initialize popup before open
     if ( this._uploadedOrSaved(submissions) ) {
@@ -156,7 +156,7 @@ SubmissionsLog.prototype._secondPopup = function(submissions) {
     }
 }
 
-SubmissionsLog.prototype._initializeSubmissionList = function(submissions) {
+SubmissionsLog.prototype._getSubmissionListString = function(submissions) {
     var [uploadedSubmissionList, savedSubmissionList] = submissions;
 
     var uploadedHTML = new Html(
