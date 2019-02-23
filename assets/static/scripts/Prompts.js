@@ -184,15 +184,25 @@ Prompts.prototype._getPromptsFileFromServerOrServiceWorkerCache =
     async function()
 {
     var self = this;
-    try {
-        var prompt_data = await self._getPromptsFileFromServer();
-        self._copyPromptData2Stack(prompt_data);
-    } catch(err) {
+    //try {
+    //    var prompt_data = await self._getPromptsFileFromServer();
+    //    self._copyPromptData2Stack(prompt_data);
+    //} catch(err) {
+    //    console.log(err); 
+    //    self._getPromptsFileFromServiceWorkerCache();
+    //}
+    this._getPromptsFileFromServer()
+    .then( self._copyPromptData2Stack.bind(self) )
+    .fail(function(err) {
         console.log(err); 
-        self._getPromptsFileFromServiceWorkerCache();
-    }
+        self._getPromptsFileFromServiceWorkerCache.call(self);
+    });   
 }
 
+/*
+ * returns a jQuery XHR object ("jqXHR")
+ * does not have a catch, but uses fail to catch errors...
+ */
 Prompts.prototype._getPromptsFileFromServer = function() {
     return $.get(this.prompt_file_name);
 }
