@@ -45,10 +45,10 @@ function upload(self, uploadURL) {
     var savedSubmissions = new SavedSubmissions(uploadURL, "serviceworker");
     
     savedSubmissions.process()    
-    .then((returnObj) => {
-      self.postMessage(returnObj);
+    .then(function(returnObj) {
+        self.postMessage(returnObj);
     })
     .catch(function(returnObj) {
-       self.postMessage(returnObj);
+        self.postMessage(returnObj);
     })
 }

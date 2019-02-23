@@ -73,7 +73,7 @@ function createZipFile(self, data) {
       saveSubmissionLocally(data, zip_file_in_memory);
     }
   )
-  .catch((err) => { console.log(err) });
+  .catch(function(err) { console.log(err) });   
 }
 
 /** 
