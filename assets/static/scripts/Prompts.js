@@ -323,12 +323,17 @@ Prompts.prototype._extractPromptStackFromObj = function(jsonObject) {
 Prompts.prototype._asyncUpdateOfPromptsFileFromServer = async function () {
     var self = this;
 
-    try {
-        var prompt_data = await this._getPromptsFileFromServer();
-        self._savePromptData2BrowserStorage(prompt_data);
-    } catch(err) {
+    //try {
+    //    var prompt_data = await this._getPromptsFileFromServer();
+    //    self._savePromptData2BrowserStorage(prompt_data);
+    //} catch(err) {
+    //    self._logGetPromptFileFromServerFailed(err, self.prompt_file_name);    
+    //}
+    this._getPromptsFileFromServer()
+    .then( self._savePromptData2BrowserStorage.bind(self) )
+    .catch( function(err) {
         self._logGetPromptFileFromServerFailed(err, self.prompt_file_name);    
-    }
+    });    
 }
 
 Prompts.prototype._savePromptData2BrowserStorage = function(prompt_data) {
