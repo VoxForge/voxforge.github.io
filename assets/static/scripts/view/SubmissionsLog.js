@@ -35,7 +35,8 @@ function SubmissionsLog (
     
     this.submissionCache = localforage.createInstance({
         name: "submissionCache"
-    });    
+    });
+    this.maxNumberOfSubmissions2display = 20;
 }
 
 /*
@@ -62,8 +63,7 @@ SubmissionsLog.prototype._popupafterclose = function() {
 }
 
 /*
-* TODO how to deal with n>25 submissions... only show 25 most recent submissions?
-* TODO this function is really slow on slower mobile devices, need caching
+* 
 */
 SubmissionsLog.prototype._getSubmissionListPromises = function() {
     var self = this;
@@ -99,13 +99,18 @@ SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
     return this.uploadedSubmissionList || this.savedSubmissionList;
 }
 
+// TODO implement pagination of some sort...
+// display new popup for each 20 submissions,
+// with option to cancel so user can skip
 SubmissionsLog.prototype._submissionListToString = function() {
     var savedHTML = new Html(
         this.saved_submissions,    
-        this.savedSubmissionList);    
+        this.savedSubmissionList
+            .slice(0, this.maxNumberOfSubmissions2display));    
     var uploadedHTML = new Html(
         this.uploaded_submissions,    
-        this.uploadedSubmissionList);
+        this.uploadedSubmissionList
+            .slice(0, this.maxNumberOfSubmissions2display));
 
     return savedHTML.make() + uploadedHTML.make();
 }
