@@ -68,18 +68,18 @@ SubmissionsLog.prototype._popupafterclose = function() {
 SubmissionsLog.prototype._getSubmissionListPromises = function() {
     var self = this;
     
-    var uploadedSubmissionsPromise =
+    var promise1 =
         this.uploadedSubmissions.keys()
         .then(function(uploadedSubmissionList) {
             self.uploadedSubmissionList = uploadedSubmissionList;
         })
-    var savedSubmissionsPromise =
+    var promise2 =
         self.submissionCache.keys()
         .then(function (savedSubmissionList) {
             self.savedSubmissionList = savedSubmissionList;              
         })
 
-    return [uploadedSubmissionsPromise, savedSubmissionsPromise];
+    return [promise1, promise2];
 }
 
 SubmissionsLog.prototype._popup = function() {
@@ -100,14 +100,14 @@ SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
 }
 
 SubmissionsLog.prototype._submissionListToString = function() {
+    var savedHTML = new Html(
+        this.saved_submissions,    
+        this.savedSubmissionList);    
     var uploadedHTML = new Html(
         this.uploaded_submissions,    
         this.uploadedSubmissionList);
-    var savedHTML = new Html(
-        this.saved_submissions,    
-        this.savedSubmissionList);
 
-    return uploadedHTML.make() + savedHTML.make();
+    return savedHTML.make() + uploadedHTML.make();
 }
 
 // #############################################################################

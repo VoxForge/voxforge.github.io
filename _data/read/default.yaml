@@ -373,7 +373,7 @@ settings:
   vad_run: Voice Activity Detection (VAD)
   audio_visualizer: Audio visualizer
   waveform_display: Waveform display for each recording  
-  saved_submissions: Waiting to upload (saved in browser storage)
+  saved_submissions: Waiting to upload (in browser storage)
   uploaded_submissions: Uploaded submissions
   system_information_text: System information included in submission
   ua_string: User Agent String
