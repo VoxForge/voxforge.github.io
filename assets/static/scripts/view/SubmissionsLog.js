@@ -65,6 +65,7 @@ SubmissionsLog.prototype._popupafterclose = function() {
 /*
 * 
 */
+// TODO need to check for empty indexedDB - error occurs
 SubmissionsLog.prototype._getSubmissionListPromises = function() {
     var self = this;
     
@@ -132,6 +133,9 @@ function Html(
     this.submissionList = submissionList;
 }
 
+/*
+ * Methods
+ */
 Html.prototype.make = function() {
     if (this.submissionList) {
         return this._submissionList2Html();
@@ -145,6 +149,7 @@ Html.prototype._submissionList2Html = function() {
         this._arrayToHtmlList();
 }
 
+// TODO need some way of return translated "None" if no submissions
 Html.prototype._arrayToHtmlList = function() {
     var count = 1;
     
