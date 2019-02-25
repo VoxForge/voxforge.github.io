@@ -65,18 +65,10 @@ var view;  // needs to be global so can be accessible to index.html
     }
 
     // #############################################################################
-    const appversion = "0.2.1";
+    const appversion = "0.3";
 
     var parms = new Parms();
-
-    var debug
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      console.log('display-mode is standalone');
-      debug = new Debug(true);
-    } else {
-      debug = new Debug(false);
-    }
-    
+    var debug = new Debug();
     var prompts = new Prompts(
         parms.prompts,
         pageVariables); 

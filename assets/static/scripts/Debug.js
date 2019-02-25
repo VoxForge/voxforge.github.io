@@ -20,13 +20,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Class definition
 */
-function Debug (standalone) 
+function Debug (parms) 
 {
-  this.audio = {};
-  this.prompts = {};
-  this.app = {
-      'standalone' : standalone,
-  };
+    this.audio = {};
+    this.prompts = {};
+  
+    this.appType = this._getAppType();
+}
+
+Debug.prototype._getAppType = function () {
+    var appType = window.matchMedia('(display-mode: standalone)').matches;
+    //console.log('display-mode standalone is: ' + appType);    
+
+    return { 'standalone' : appType };
 }
 
 // ### Methods #################################################################
@@ -82,7 +88,7 @@ Debug.prototype.toHash = function () {
 
     debug_hash["audio"] = this.audio;
     debug_hash["prompts"] = this.prompts;
-    debug_hash["app"] = this.app;
+    debug_hash["appType"] = this.appType;
     
     return debug_hash;
 };
