@@ -146,12 +146,14 @@ Audio.prototype._setupAudioNodes = function(stream) {
 Audio.prototype._createAudioNodes = function(stream) {
     this.microphone = this.audioCtx.createMediaStreamSource(stream);
     this.gainNode = this.audioCtx.createGain();
+    
     var numInputChannels = 1;
     var numOuputChannels = 1;    
     this.processor = this.audioCtx.createScriptProcessor(
         this.parms.audioNodebufferSize,
         numInputChannels,
         numOuputChannels);
+
     this.analyser = this.audioCtx.createAnalyser();
     this.mediaStreamOutput = this.audioCtx.destination;
 }
@@ -286,7 +288,9 @@ Audio.prototype._clearAndInitializeAudioBuffer = function (prompt_id) {
 
 Audio.prototype._getBitDepth = function () {
     var bitDepth = this.parms.bitDepth;
-    
+
+    // TODO create subclasses for 16 and 32 bit audio
+    // to keep primitive conditionals at 'edge' of app
     if ( ! (bitDepth === 16 || bitDepth === "32bit-float") ) {
     console.warn("invalid bit depth: " +
         data.bitDepth +
@@ -305,6 +309,8 @@ Audio.prototype._enableVisualizer = function () {
  * is this a VAD recording or not
  */
 Audio.prototype._setRecordingType = function (vad_run) {
+    // TODO do you also need to create 16 and 32 bit classes with vad/no Vad...
+    // i.e. 4 subclasses, or can state pattern address this
     if (vad_run) {
         this._recordWithVAD();
     } else {
@@ -344,7 +350,8 @@ Audio.prototype._sendAudioToWorkerForRecording = function (event) {
     });
 
     if (typeof this.debugValues.device_event_buffer_size  == 'undefined') {
-        this.debugValues.device_event_buffer_size = event.inputBuffer.getChannelData(0).length;
+        this.debugValues.device_event_buffer_size =
+            event.inputBuffer.getChannelData(0).length;
     }      
 }
 

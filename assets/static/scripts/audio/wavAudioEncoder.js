@@ -42,9 +42,6 @@ function float2int16(buffer) {
     return view;
 }
 
-/**
-*
-*/
 // TODO use the output from WAVAudioEncoder
 function floatTo16BitPCM(buffer) {
   var buffer_pcm = new Int16Array(buffer.length);
