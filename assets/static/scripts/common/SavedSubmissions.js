@@ -183,6 +183,7 @@ SavedSubmissions.prototype._getNoUploadsObj = function(err, shortNameArray) {
     return {
         status: 'noneUploaded',
         filesNotUploaded: shortNameArray,
+        workertype: this.workertype,        
         err: err,
     };
 }
