@@ -49,11 +49,6 @@ function Prompts(parms,
 }
 
 /**
-* ### Functions / static methods ##############################################
-*/
-
-
-/**
 * ### METHODS ##############################################
 */
     
@@ -179,11 +174,7 @@ Prompts.prototype._getPromptsFileFromServerOrServiceWorkerCache =
     var self = this;
 
     this._getPromptsFileFromServer()
-    .then( self._copyPromptData2Stack.bind(self) )
-    .fail(function(err) {
-        console.log(err); 
-        self._getPromptsFileFromServiceWorkerCache.call(self);
-    });   
+    .then( self._copyPromptData2Stack.bind(self) );   
 }
 
 /*
@@ -191,7 +182,16 @@ Prompts.prototype._getPromptsFileFromServerOrServiceWorkerCache =
  * does not have a catch, but uses fail to catch errors...
  */
 Prompts.prototype._getPromptsFileFromServer = function() {
-    return $.get(this.prompt_file_name);
+    var self = this;
+    
+    var jqXHR =
+        $.get(this.prompt_file_name)
+        .fail(function(err) {
+            console.log(err); 
+            self._getPromptsFileFromServiceWorkerCache.call(self);
+        });
+        
+    return jqXHR;
 }
 
 Prompts.prototype._copyPromptData2Stack = function(prompt_data)
@@ -309,10 +309,7 @@ Prompts.prototype._asyncUpdateOfPromptsFileFromServer = async function () {
     var self = this;
 
     this._getPromptsFileFromServer()
-    .then( self._savePromptData2BrowserStorage.bind(self) )
-    .fail( function(err) {
-        self._logGetPromptFileFromServerFailed(err, self.prompt_file_name);    
-    });    
+    .then( self._savePromptData2BrowserStorage.bind(self) );    
 }
 
 Prompts.prototype._savePromptData2BrowserStorage = function(prompt_data) {
