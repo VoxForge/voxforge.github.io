@@ -25,7 +25,6 @@ function AudioPlayer (
     pageVariables,)
 {
     this.movePrompt2Stack = movePrompt2Stack;
-
     this._setAlertMessages(pageVariables.alert_message);
 
     this.playbuttontext = pageVariables.playbuttontext;
@@ -75,7 +74,7 @@ AudioPlayer.prototype._setUpClipContainer = function() {
     clipContainer.appendChild( this._createClipLabel() );
     clipContainer.appendChild( this._createDeleteButton() );
 
-    this._determineHowToDisplayAudio(clipContainer);
+    this._displayAudioBasedOnUserSelection(clipContainer);
     
     clipContainer.appendChild( this._createAudioContainer() );
 
@@ -124,12 +123,44 @@ AudioPlayer.prototype._deleteButtonFunc = function(e) {
     $('#delete_clicked').click();
 }
 
-AudioPlayer.prototype._determineHowToDisplayAudio = function(clipContainer) {
+AudioPlayer.prototype._displayAudioBasedOnUserSelection = function(clipContainer) {
     if ( this.waveformDisplayChecked() ) {        
       clipContainer.appendChild( this._createWaveformElement() );
     } else {
       clipContainer.appendChild( this._createAudioPlayer() );
     }
+}
+
+/**
+* this creates the container (i.e. element in the shadow DOM) to be used
+* by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
+* to exist before being called, so this creates the it...
+*/
+AudioPlayer.prototype._createWaveformElement = function() {    
+    var waveformElement = document.createElement('div');
+    
+    this._setHeader(waveformElement);
+    this._setSpeechCharacteristics(waveformElement);
+    this._createWaveSurferPlayButton(waveformElement)    
+    
+    console.log("clip_id: " + this.clip_id);
+
+    return waveformElement;
+}
+
+AudioPlayer.prototype._createAudioPlayer = function() {
+    // TODO this should use obj.promptId
+    var prompt_id = document.querySelector('.prompt_id').innerText;
+        
+    var audioPlayer = document.createElement('audio');
+    audioPlayer.classList.add('audio_player');
+    audioPlayer.setAttribute('controls', '');
+    audioPlayer.controls = true;
+    audioPlayer.src = this.audioURL;
+    
+    console.log(prompt_id + " recorder stopped; audio: " + this.audioURL);
+
+    return audioPlayer;
 }
 
 /**
@@ -147,15 +178,15 @@ AudioPlayer.prototype._createAudioContainer = function() {
 }
 
 AudioPlayer.prototype._displayUserPlayableAudio = function() {
-    var self = this;        
+    var self = this;
     return new Promise(function(resolve, reject) {
 
-        if ( self.waveformDisplayChecked() ) {        
+        if ( self.waveformDisplayChecked() ) {  
             self._setUpWaveSurfer.call(self, resolve);
         } else {
             resolve(self.obj);
         }
-        
+
         self.clip_id++;
 
     });
@@ -181,38 +212,6 @@ AudioPlayer.prototype._setUpWaveSurfer = function(display_resolve) {
     });
 }
 
-AudioPlayer.prototype._createAudioPlayer = function() {
-    // TODO this should use obj.promptId
-    var prompt_id = document.querySelector('.prompt_id').innerText;
-        
-    var audioPlayer = document.createElement('audio');
-    audioPlayer.classList.add('audio_player');
-    audioPlayer.setAttribute('controls', '');
-    audioPlayer.controls = true;
-    audioPlayer.src = this.audioURL;
-    
-    console.log(prompt_id + " recorder stopped; audio: " + this.audioURL);
-
-    return audioPlayer;
-}
-
-/**
-* this creates the container (i.e. element in the shadow DOM) to be used
-* by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
-* to exist before being called, so this creates the it...
-*/
-AudioPlayer.prototype._createWaveformElement = function() {    
-    var waveformElement = document.createElement('div');
-    
-    this._setHeader(waveformElement);
-    this._setSpeechCharacteristics(waveformElement);
-    this._createWaveSurferPlayButton(waveformElement)    
-    
-    console.log("clip_id: " + this.clip_id);
-
-    return waveformElement;
-}
-
 AudioPlayer.prototype._setHeader = function(waveformElement) {
     // hook for wavesurfer
     waveformElement.setAttribute("id", this.waveformdisplay_id);
@@ -235,13 +234,17 @@ AudioPlayer.prototype._setSpeechCharacteristics = function(waveformElement) {
     }
 }
 
-//TODO need confidence level for soft speaker
-AudioPlayer.prototype._tooSoft = function(waveformElement) {
+AudioPlayer.prototype._noSpeech = function(waveformElement) {
     waveformElement.setAttribute("style", "background: #ff4500");
-    var audio_too_soft_message = this.obj.app_auto_gain ?
-        this.audio_too_soft_autogain :
-        this.audio_too_soft;
-    waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
+    var no_speech_message = this.obj.app_auto_gain ?
+        this.no_speech_autogain :
+        this.no_speech;
+    waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
+}
+
+AudioPlayer.prototype._noTrailingSilence = function(waveformElement) {
+    waveformElement.setAttribute("style", "background: #ffA500");
+    waveformElement.innerHTML = "<h4>" + this.no_trailing_silence + "</h4>";
 }
 
 //TODO need confidence level for clipping
@@ -254,17 +257,13 @@ AudioPlayer.prototype._clipping = function(waveformElement) {
     waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
 }
 
-AudioPlayer.prototype._noTrailingSilence = function(waveformElement) {
-    waveformElement.setAttribute("style", "background: #ffA500");
-    waveformElement.innerHTML = "<h4>" + this.no_trailing_silence + "</h4>";
-}
-
-AudioPlayer.prototype._noSpeech = function(waveformElement) {
+//TODO need confidence level for soft speaker
+AudioPlayer.prototype._tooSoft = function(waveformElement) {
     waveformElement.setAttribute("style", "background: #ff4500");
-    var no_speech_message = this.obj.app_auto_gain ?
-        this.no_speech_autogain :
-        this.no_speech;
-    waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
+    var audio_too_soft_message = this.obj.app_auto_gain ?
+        this.audio_too_soft_autogain :
+        this.audio_too_soft;
+    waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
 }
 
 AudioPlayer.prototype._createWaveSurferPlayButton = function(waveformElement) {
@@ -272,7 +271,7 @@ AudioPlayer.prototype._createWaveSurferPlayButton = function(waveformElement) {
     buttonDiv.setAttribute("style", "text-align: center");
     buttonDiv.appendChild( this._createButton() );
 
-    waveformElement.appendChild(buttonDiv);   
+    waveformElement.appendChild(buttonDiv);
 }
 
 AudioPlayer.prototype._createButton = function() {
