@@ -61,6 +61,7 @@ function Controller(
  onEnter<STATE> - fired when entering a specific STATE
 
 */
+// TODO look at converting to State pattern - i.e. use objects for each state
 Controller.prototype.start = function () {
     var self = this;
 
@@ -120,8 +121,8 @@ Controller.prototype.start = function () {
         onMaxpromptsrecorded: self._maxpromptsrecorded.bind(self),
 
         // Action States
-        onRecordingfirst:  self._recordingfirst.bind(self),
-        onRecordingmid:  self._recordingMidLast.bind(self),
+        onRecordingfirst: self._recordingfirst.bind(self),
+        onRecordingmid: self._recordingMidLast.bind(self),
         onRecordinglast: self._recordingMidLast.bind(self),
         onUploading: self._uploading.bind(self),
       }
@@ -136,7 +137,7 @@ Controller.prototype.start = function () {
  */
 Controller.prototype._setUpButtonClicksWithFsmTransitions = function () {
     this._setUpRecordButtonEventWithFsmTransition();
-    this._setUpStopButtonEventWithFsmTransitionm();
+    this._setUpStopButtonEventWithFsmTransition();
     this._setUpUploadButtonEventWithFsmTransition();
     this._setUpDeleteButtonEventWithFsmTransition();
 }
@@ -156,7 +157,7 @@ Controller.prototype._setUpRecordButtonEventWithFsmTransition = function () {
     }
 }
 
-Controller.prototype._setUpStopButtonEventWithFsmTransitionm = function () {
+Controller.prototype._setUpStopButtonEventWithFsmTransition = function () {
     var self = this;
     
     this.view.stop.onclick = function() {

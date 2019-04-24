@@ -17,8 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-// ### static methods ##########################################################
-
 /**
 * update user display from passed json object
 

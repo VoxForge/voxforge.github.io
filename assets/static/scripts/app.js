@@ -47,13 +47,11 @@ var view;  // needs to be global so can be accessible to index.html
 
     // ### Confirm app can run on browser ######################################
 
-    if( ! window.Worker )
-    {
+    if( ! window.Worker ) {
       window.alert( pageVariables.browser_support.no_worker_message );           
     }
 
-    if( ! window.indexedDB )
-    {
+    if( ! window.indexedDB ) {
       window.alert( pageVariables.browser_support.no_indexedDB_message );          
     }
 
@@ -65,6 +63,7 @@ var view;  // needs to be global so can be accessible to index.html
     }
 
     // #############################################################################
+    // TODO add version number to bottom of settings page
     const appversion = "0.3";
 
     var parms = new Parms();
@@ -86,11 +85,11 @@ var view;  // needs to be global so can be accessible to index.html
     var audio = new Audio(
         parms.audio,
         pageVariables);
-        
+
     var uploader = new Uploader(
         parms.uploader,
         pageVariables.alert_message);
-    
+
     var controller =  new Controller(
         parms.controller,
         prompts, 

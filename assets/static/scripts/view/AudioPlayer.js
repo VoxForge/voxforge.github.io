@@ -26,14 +26,7 @@ function AudioPlayer (
 {
     this.movePrompt2Stack = movePrompt2Stack;
 
-    var a = pageVariables.alert_message;
-    this.no_speech = a.no_speech,      
-    this.no_speech_autogain = a.no_speech_autogain,
-    this.no_trailing_silence = a.no_trailing_silence,
-    this.audio_too_soft = a.audio_too_soft,
-    this.audio_too_soft_autogain = a.audio_too_soft_autogain,    
-    this.audio_too_loud = a.audio_too_loud,
-    this.audio_too_loud_autogain = a.audio_too_loud_autogain,
+    this._setAlertMessages(pageVariables.alert_message);
 
     this.playbuttontext = pageVariables.playbuttontext;
     this.stopbuttontext = pageVariables.stopbuttontext;
@@ -42,6 +35,16 @@ function AudioPlayer (
     this.soundClips = document.querySelector('.sound-clips');
     // unique id for wavesurfer objects in DOM
     this.clip_id = 0;    
+}
+
+AudioPlayer.prototype._setAlertMessages = function(alert) {
+    this.no_speech = alert.no_speech;  
+    this.no_speech_autogain = alert.no_speech_autogain;
+    this.no_trailing_silence = alert.no_trailing_silence;
+    this.audio_too_soft = alert.audio_too_soft;
+    this.audio_too_soft_autogain = alert.audio_too_soft_autogain;
+    this.audio_too_loud = alert.audio_too_loud;
+    this.audio_too_loud_autogain = alert.audio_too_loud_autogain;
 }
 
 /**
@@ -65,21 +68,6 @@ AudioPlayer.prototype._insertAudioIntoDom = function() {
         this.soundClips.children[0]);
 }
 
-AudioPlayer.prototype._displayUserPlayableAudio = function() {
-    var self = this;        
-    return new Promise(function(resolve, reject) {
-
-        if ( self.waveformDisplayChecked() ) {        
-            self._setUpWaveSurfer.call(self, resolve);
-        } else {
-            resolve(self.obj);
-        }
-        
-        self.clip_id++;
-
-    });
-}
-
 AudioPlayer.prototype._setUpClipContainer = function() {
     var clipContainer = document.createElement('article');
     clipContainer.classList.add('clip');
@@ -92,34 +80,6 @@ AudioPlayer.prototype._setUpClipContainer = function() {
     clipContainer.appendChild( this._createAudioContainer() );
 
     return clipContainer;
-}
-
-AudioPlayer.prototype._determineHowToDisplayAudio = function(clipContainer) {
-    if ( this.waveformDisplayChecked() ) {        
-      clipContainer.appendChild( this._createWaveformElement() );
-    } else {
-      clipContainer.appendChild( this._createAudioPlayer() );
-    }
-}
-
-/*
-// might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
-// add waveform to waveformElement
-// see http://wavesurfer-js.org/docs/
-*/
-AudioPlayer.prototype._setUpWaveSurfer = function(display_resolve) {
-    wavesurfer[this.clip_id] = WaveSurfer.create({
-        container: '#' + this.waveformdisplay_id,
-        scrollParent: true,
-        waveColor : 'OliveDrab',
-        minPxPerSec: 200,
-    });
-    wavesurfer[this.clip_id].load(this.audioURL);
-
-    var self = this;
-    wavesurfer[this.clip_id].on('ready', function() {
-      display_resolve(self.obj);
-    });
 }
 
 /**
@@ -164,6 +124,14 @@ AudioPlayer.prototype._deleteButtonFunc = function(e) {
     $('#delete_clicked').click();
 }
 
+AudioPlayer.prototype._determineHowToDisplayAudio = function(clipContainer) {
+    if ( this.waveformDisplayChecked() ) {        
+      clipContainer.appendChild( this._createWaveformElement() );
+    } else {
+      clipContainer.appendChild( this._createAudioPlayer() );
+    }
+}
+
 /**
 * create easier to access audio links in DOM
 * TODO need to figure out how to get audio links from Wavesurfer...
@@ -176,6 +144,41 @@ AudioPlayer.prototype._createAudioContainer = function() {
     audioPlayer.src = this.audioURL;
 
     return audioPlayer;
+}
+
+AudioPlayer.prototype._displayUserPlayableAudio = function() {
+    var self = this;        
+    return new Promise(function(resolve, reject) {
+
+        if ( self.waveformDisplayChecked() ) {        
+            self._setUpWaveSurfer.call(self, resolve);
+        } else {
+            resolve(self.obj);
+        }
+        
+        self.clip_id++;
+
+    });
+}
+
+/*
+// might be able to simplify this with: https://github.com/cwilso/Audio-Buffer-Draw
+// add waveform to waveformElement
+// see http://wavesurfer-js.org/docs/
+*/
+AudioPlayer.prototype._setUpWaveSurfer = function(display_resolve) {
+    wavesurfer[this.clip_id] = WaveSurfer.create({
+        container: '#' + this.waveformdisplay_id,
+        scrollParent: true,
+        waveColor : 'OliveDrab',
+        minPxPerSec: 200,
+    });
+    wavesurfer[this.clip_id].load(this.audioURL);
+
+    var self = this;
+    wavesurfer[this.clip_id].on('ready', function() {
+      display_resolve(self.obj);
+    });
 }
 
 AudioPlayer.prototype._createAudioPlayer = function() {

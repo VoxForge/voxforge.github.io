@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 function Uploader(parms,
-                  alert_message)
+    alert_message)
 {
     this.maxMinutesSinceLastSubmission = parms.maxMinutesSinceLastSubmission;
     this.alert_message = alert_message;
@@ -84,6 +84,7 @@ Uploader.prototype._registerServiceWorker = function() {
 Uploader.prototype.init = function() {
     var self = this;
 
+// TODO replace comments with calls to functions of the same name
     // web worker
     self.upload_worker.onmessage =
         self._workerEventMessageHandler.bind(self);
@@ -103,6 +104,7 @@ Uploader.prototype._workerEventMessageHandler = function(event) {
     var returnObj = event.data;
     this._logWorkerType(returnObj);
 
+    // TODO shuold this be broken up into subclasses?
     switch (returnObj.status) {
       case 'AllUploaded': this._allUploadedToServer(returnObj);
         break;
@@ -278,6 +280,7 @@ Uploader.prototype._getDate = function() {
 * that calls web worker that actually creates the zip file for download
 * to VoxForge server (by another worker...)
 */
+// TODO this should be an object
 Uploader.prototype.upload = function(
     prompts,
     profile,

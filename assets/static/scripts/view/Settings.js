@@ -22,6 +22,8 @@ var Settings = (function() { // code to keep helper classes inside Settings name
 /**
 * setup app settings Popup for user to modify
 */
+// TODO need to split the display for advanced and easy modes for selecting
+// things
 function Settings () { }
 
 /*

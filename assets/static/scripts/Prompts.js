@@ -119,7 +119,6 @@ Prompts.prototype._checkForUndefinedAttributesIfNoPromptId = function (
     if (typeof plf.prefix === 'undefined') {
         console.warn("prompt_list_files[" + i + "].prefix " + notDefined);
     }
-
 }
 
 // #############################################################################
