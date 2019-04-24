@@ -62,9 +62,6 @@ SubmissionsLog.prototype._popupafterclose = function() {
     .catch(function(err) { console.log(err) });
 }
 
-/*
-* 
-*/
 // TODO need to check for empty indexedDB - error occurs
 SubmissionsLog.prototype._getSubmissionListPromises = function() {
     var self = this;

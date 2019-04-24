@@ -300,8 +300,8 @@ View.prototype._setupPrompts = function() {
     */
     //$('#max_num_prompts').click(function() { 
     $('#max_num_prompts').change(function() { 
-      self.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
-      self.updateProgress();
+        self.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
+        self.updateProgress();
     });
 }
 
@@ -312,7 +312,7 @@ View.prototype._displayPrompts = function() {
     var startPrompt = 10; // min number of prompts no matter what device
     var incr = 5;
     var option = ''; // clear previous use of option var    
-    for (var i=startPrompt; i <= this.max_numPrompts_selector; i = i + incr){
+    for (var i=startPrompt; i <= this.max_numPrompts_selector; i = i + incr) {
        option += '<option value="'+ i + '">' + i +  '</option>';
     }
     $('#max_num_prompts').append(option);
@@ -672,6 +672,7 @@ DivBasedonValue.prototype._valueIsBoolean = function() {
     return typeof(this.value) === "boolean";
 }
 
+// show if false; hide if true
 DivBasedonValue.prototype._booleanTest = function() {
     if ( this.value === true ) {
         this._showBasedOnContentsOfIndependentDiv(
@@ -684,7 +685,6 @@ DivBasedonValue.prototype._valueCompare = function() {
         $(this.independent_div).val() === this.value );
 }
 
-// show if false; hide if true
 DivBasedonValue.prototype._showBasedOnContentsOfIndependentDiv = function(
     boolean_result)
 {

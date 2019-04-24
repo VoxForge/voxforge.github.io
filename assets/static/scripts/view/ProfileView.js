@@ -280,7 +280,7 @@ ProfileView.prototype._otherFirstLanguage = function() {
 
 ProfileView.prototype._getDialect = function() {
     this.profile_hash["dialect"] = $("#dialect").val();
-    if ( this._otheDialect() ) {
+    if ( this._otherDialect() ) {
         this.profile_hash["dialect_other"] =
             Profile.cleanUserInput( $("#dialect_other").val() );        
     } else {
@@ -290,7 +290,7 @@ ProfileView.prototype._getDialect = function() {
     this.profile_hash["sub_dialect"] = $("#sub_dialect").val();
 }
 
-ProfileView.prototype._otheDialect = function() {
+ProfileView.prototype._otherDialect = function() {
     return ($('#dialect').val() === this.localized_other);
 }
 
