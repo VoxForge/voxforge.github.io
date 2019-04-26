@@ -19,17 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 importScripts('wavAudioEncoder.js'); 
 importScripts('Vad.js'); 
 
-function AudioWorker(data) {
-    this.sampleRate = data.sampleRate;
-    this.bitDepth = data.bitDepth;
-    this.vad_parms = data.vad_parms;
-    this.prompt_id = data.prompt_id;
-
-    this.buffers = [];    
-    this.dataViews = [];
-    this.numSamples = 0;
-}
-
 var audioWorker;
 
 self.onmessage = function(event) {
@@ -37,52 +26,61 @@ self.onmessage = function(event) {
     
   switch (data.command) {
     case 'start':
-      audioWorker = new AudioWorker(data);
+        if (data.vad_run) {
+            audioWorker = new VadAudioWorker(data);            
+        } else {
+            audioWorker = new AudioWorker(data);
+        }
       break;
 
     case 'init_vad':
-      audioWorker._initVad();
+      audioWorker.initVad();
       break;
 
     case 'kill_vad':
-      audioWorker._killVad();
+      audioWorker.killVad();
       break;
 
     // no encoding while collecting audio for low powered devices
     case 'record':
-      audioWorker._record(data);
+      audioWorker.record(data);
       break;
 
     case 'finish':
-      audioWorker._finish();
+      audioWorker.finish();
       break;
 
     case 'record_vad':
-      audioWorker._recordVad(data);
+      audioWorker.record(data);
       break;
 
     case 'finish_vad':
-      audioWorker._finishVad();
+      audioWorker.finish();
       break;
   }
 };
 
-AudioWorker.prototype._initVad = function () {
-    this.vad = new Vad(
-        this.sampleRate,
-        this.vad_parms);
+// #############################################################################
+
+// Superclass
+function AudioWorker(data) {
+    this.prompt_id = data.prompt_id;
+    this.vad_run = data.vad_run;
+    this.vad_parms = data.vad_parms;
+    this.sampleRate = data.sampleRate;
+    this.bitDepth = data.bitDepth;
+    
+    this.buffers = [];    
+    this.dataViews = [];
+    this.numSamples = 0;
 }
 
-AudioWorker.prototype._killVad = function () {
-    this.vad = null;
-}
-
-AudioWorker.prototype._record = function (data) {
+AudioWorker.prototype.record = function (data) {
     this.buffers.push(data.event_buffer); // array of buffer arrays
     this.numSamples += data.event_buffer.length;
 }
 
-AudioWorker.prototype._finish = function () {
+AudioWorker.prototype.finish = function () {
     self.postMessage({
         status: 'finished',
         obj : { 
@@ -128,15 +126,42 @@ AudioWorker.prototype._addWavHeaderToDataView = function () {
     this.dataViews.unshift(header);
 }
 
+// TODO need a cleaner way to do this....
+// might not be needed if subclass cleanly...
+AudioWorker.prototype.killVad = function () {
+    this.vad = null;
+}
+
+// https://eli.thegreenplace.net/2013/10/22/classical-inheritance-in-javascript-es5
+// #############################################################################
+// subclass
+
+function VadAudioWorker(data) {
+    // Call constructor of superclass to initialize superclass-derived members.
+    AudioWorker.call(this, data);
+}
+
+// VadAudioWorker derives from AudioWorker
+VadAudioWorker.prototype = Object.create(AudioWorker.prototype);
+VadAudioWorker.prototype.constructor = AudioWorker;
+
+VadAudioWorker.prototype.initVad = function () {
+    this.vad = new Vad(
+        this.sampleRate,
+        this.vad_parms);
+}
+
+
+/*
 // TODO VAD currently only works with 16-bit audio.
 // So no matter what device you are using, if using vad,
 // there will always be a conversion to 16-bit audio
-/*
+ *
  * VAD can only process 16-bit audio, with sampling rates of 8/16/32/48kHz;
  * we are fudging a bit so can process 44.1kHz...
  * so split buffer up into smaller chunks that VAD can digest
  */ 
-AudioWorker.prototype._recordVad = function (data) {
+VadAudioWorker.prototype.record = function (data) {
     this.buffers.push(data.event_buffer); // array of buffer arrays
     this.numSamples += data.event_buffer.length;
 
@@ -148,7 +173,7 @@ AudioWorker.prototype._recordVad = function (data) {
     }
 }
 
-AudioWorker.prototype._performVadOnChunk = function(
+VadAudioWorker.prototype._performVadOnChunk = function(
     data,
     i,
     cutoff,
@@ -168,7 +193,7 @@ AudioWorker.prototype._performVadOnChunk = function(
         chunk_index);
 }
 
-AudioWorker.prototype._finishVad = function () {
+VadAudioWorker.prototype.finish = function () {
     var speech_array, no_speech, no_trailing_silence, clipping, too_soft;
     
     [speech_array,

@@ -120,7 +120,7 @@ Audio.prototype._setupGetUserMedia = function() {
         .then( self._setupAudioNodes.bind(self) )
         .then( self._setProfileAudioProperties.bind(self) )
         .catch(function(err) {
-            window.alert( self.alert_message.getUserMedia_error + " " + err);
+            window.alert(self.alert_message.getUserMedia_error + " " + err);
             console.error(self.alert_message.getUserMedia_error + " " + err);
         });
 
@@ -264,7 +264,7 @@ Audio.prototype.record = function (
 {
     var self = this;
 
-    this._clearAndInitializeAudioBuffer(prompt_id);
+    this._clearAndInitializeAudioBuffer(prompt_id, vad_run);
     if (audio_visualizer_checked) {
         this._enableVisualizer();
     }
@@ -275,10 +275,11 @@ Audio.prototype.record = function (
     return this._processResultsFromAudioWorkerWhenAvailable();
 }
 
-Audio.prototype._clearAndInitializeAudioBuffer = function (prompt_id) {
+Audio.prototype._clearAndInitializeAudioBuffer = function (prompt_id, vad_run) {
     audioworker.postMessage({
         command: 'start',
         prompt_id: prompt_id,
+        vad_run: vad_run,    
         vad_parms: this.parms.vad,
         sampleRate: this.audioCtx.sampleRate,
         bitDepth: this._getBitDepth(),
