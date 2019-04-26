@@ -489,7 +489,7 @@ Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
     var self = this;
 
     audioworker.postMessage({ 
-        command: this._getEndRecordingCommand(vad_run),
+        command: 'finish',
     });
 
     this.processor.onaudioprocess = null;
@@ -497,16 +497,4 @@ Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
     if (audio_visualizer_checked) {
         self.gainNode.disconnect(self.analyser);
     }
-}
-
-Audio.prototype._getEndRecordingCommand = function (vad_run) {
-    var command;
-        
-    if (vad_run) {
-        command = 'finish_vad';
-    } else {
-        command = 'finish';
-    }
-
-    return command;
 }

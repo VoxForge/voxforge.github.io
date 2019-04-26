@@ -54,9 +54,6 @@ self.onmessage = function(event) {
       audioWorker.record(data);
       break;
 
-    case 'finish_vad':
-      audioWorker.finish();
-      break;
   }
 };
 
