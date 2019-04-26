@@ -40,10 +40,13 @@ var wavesurfer = [];
 function Audio (parms,
                 pageVariables) 
 {
-    // 'self' used to save current context when calling function references
-    var self = this;
-
     this.parms = parms;
+    this.alert_message = pageVariables.alert_message;
+    
+    this._setDefaultProperties();
+}
+
+Audio.prototype._setDefaultProperties = function() {
     this.audioCtx = new (window.AudioContext || webkitAudioContext)();
     this.microphone = null;
     this.processor = null;  
@@ -54,16 +57,12 @@ function Audio (parms,
 
     // rule is to collect speech audio that best reflects the user's environment, therefore
     // take whatever defaults user's device supports
-    this.constraints = { audio: true };
-
-    this.alert_message = pageVariables.alert_message;
+    this.constraints = { audio: true };    
 }
 
 // ### Methods #################################################################
 
 Audio.prototype.init = function () {
-    var self = this;
-
     /**
     * Older browsers might not implement mediaDevices at all, so we set an empty 
     * object first
