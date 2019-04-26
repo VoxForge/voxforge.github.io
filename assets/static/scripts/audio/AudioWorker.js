@@ -33,14 +33,6 @@ self.onmessage = function(event) {
         }
       break;
 
-    case 'init_vad':
-      audioWorker.initVad();
-      break;
-
-    case 'kill_vad':
-      audioWorker.killVad();
-      break;
-
     // no encoding while collecting audio for low powered devices
     case 'record':
       audioWorker.record(data);
@@ -49,11 +41,6 @@ self.onmessage = function(event) {
     case 'finish':
       audioWorker.finish();
       break;
-
-    case 'record_vad':
-      audioWorker.record(data);
-      break;
-
   }
 };
 
@@ -123,31 +110,21 @@ AudioWorker.prototype._addWavHeaderToDataView = function () {
     this.dataViews.unshift(header);
 }
 
-// TODO need a cleaner way to do this....
-// might not be needed if subclass cleanly...
-AudioWorker.prototype.killVad = function () {
-    this.vad = null;
-}
-
 // https://eli.thegreenplace.net/2013/10/22/classical-inheritance-in-javascript-es5
 // #############################################################################
 // subclass
-
 function VadAudioWorker(data) {
     // Call constructor of superclass to initialize superclass-derived members.
     AudioWorker.call(this, data);
+    
+    this.vad = new Vad(
+        this.sampleRate,
+        this.vad_parms);    
 }
 
 // VadAudioWorker derives from AudioWorker
 VadAudioWorker.prototype = Object.create(AudioWorker.prototype);
 VadAudioWorker.prototype.constructor = AudioWorker;
-
-VadAudioWorker.prototype.initVad = function () {
-    this.vad = new Vad(
-        this.sampleRate,
-        this.vad_parms);
-}
-
 
 /*
 // TODO VAD currently only works with 16-bit audio.

@@ -268,7 +268,6 @@ Audio.prototype.record = function (
     if (audio_visualizer_checked) {
         this._enableVisualizer();
     }
-    this._setRecordingType(vad_run);
     
     this.processor.onaudioprocess =
         this._sendAudioToWorkerForRecording.bind(this);
@@ -306,37 +305,6 @@ Audio.prototype._enableVisualizer = function () {
 }
 
 /*
- * is this a VAD recording or not
- */
-Audio.prototype._setRecordingType = function (vad_run) {
-    // TODO do you also need to create 16 and 32 bit classes with vad/no Vad...
-    // i.e. 4 subclasses, or can state pattern address this
-    if (vad_run) {
-        this._recordWithVAD();
-    } else {
-        this._recordNoVad();
-    }
-}
-
-Audio.prototype._recordWithVAD = function (event) {
-    audioworker.postMessage({ 
-        command: 'init_vad',
-    });
-    
-    this.command = 'record_vad';
-}
-
-Audio.prototype._recordNoVad = function (event) {
-    audioworker.postMessage({ 
-        command: 'kill_vad',
-    });
-
-    this.command = 'record';
-
-    console.log('VAD disabled');             
-}
-
-/*
  * event.inputBuffer.getChannelData(0) = left channel (mono)
  * event.inputBuffer.getChannelData(0) is a floatArray_time_domain
  * 
@@ -345,7 +313,7 @@ Audio.prototype._recordNoVad = function (event) {
  */
 Audio.prototype._sendAudioToWorkerForRecording = function (event) {
     audioworker.postMessage({ 
-        command: this.command, 
+        command: 'record', 
         event_buffer: event.inputBuffer.getChannelData(0),
     });
 
