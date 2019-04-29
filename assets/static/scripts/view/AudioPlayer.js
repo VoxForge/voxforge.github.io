@@ -123,6 +123,7 @@ AudioPlayer.prototype._deleteButtonFunc = function(e) {
     $('#delete_clicked').click();
 }
 
+// TODO create subclass of AudioPlayer which allows display of waveform
 AudioPlayer.prototype._displayAudioBasedOnUserSelection = function(clipContainer) {
     if ( this.waveformDisplayChecked() ) {        
       clipContainer.appendChild( this._createWaveformElement() );
@@ -134,7 +135,7 @@ AudioPlayer.prototype._displayAudioBasedOnUserSelection = function(clipContainer
 /**
 * this creates the container (i.e. element in the shadow DOM) to be used
 * by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
-* to exist before being called, so this creates the it...
+* to exist before being called, so this creates it...
 */
 AudioPlayer.prototype._createWaveformElement = function() {    
     var waveformElement = document.createElement('div');

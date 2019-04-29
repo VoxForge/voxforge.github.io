@@ -415,9 +415,10 @@ function AudioLevels(parms, obj, autoGainSupported, gainNode, audioCtx, debugVal
     this.debugValues = debugValues;   
     
     this._setGainConstants();
+    this._setBooleans();    
     this._updateRecordingResultsObject();
-
-    this.gainValue = this.gainNode.gain.value;    
+    
+    this.gainValue = this.gainNode.gain.value;
 }
 
 AudioLevels.prototype._setGainConstants = function () {
@@ -427,6 +428,14 @@ AudioLevels.prototype._setGainConstants = function () {
 
     this.gain_minValue = -3.4; // most-negative-single-float	Approximately -3.4028235e38
     this.gain_maxValue = 3.4; // most-positive-single-float	Approximately 3.4028235e38
+}
+
+AudioLevels.prototype._setBooleans = function () {
+    if (this.obj.platform == 'smartphone') {
+        this.adjustRecordVolume = true;
+    } else {
+        this.adjustRecordVolume = false;
+    }
 }
 
 AudioLevels.prototype._updateRecordingResultsObject = function () {
@@ -453,7 +462,7 @@ AudioLevels.prototype._updateRecordingResultsObject = function () {
  *      b. if not: use Voxforge software gain adjustment
  */
 AudioLevels.prototype.adjust = function () {
-    if ( this.obj.platform == 'smartphone' ) {
+    if ( this.adjustRecordVolume ) {
         this._adjustVolume(); 
     }
 }
