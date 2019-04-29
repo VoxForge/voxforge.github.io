@@ -391,7 +391,7 @@ Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
     }); // promise
 }
 
-Audio.prototype.setGainAndAndAdjustVolumeIfNeeded = function (obj) {
+Audio.prototype.adjustVolumeIfNeeded = function (obj) {
     var audioLevels = new AudioLevels(
         this.parms,    
         obj,
@@ -407,23 +407,31 @@ Audio.prototype.setGainAndAndAdjustVolumeIfNeeded = function (obj) {
 // #############################################################################
 // TODO user needs to be able to disable automatic recording volume adjuster
 function AudioLevels(parms, obj, autoGainSupported, gainNode, audioCtx, debugValues) {
-    this.gain_decrement_factor = parms.gain_decrement_factor;
-    this.gain_increment_factor = parms.gain_increment_factor;
-    this.gain_max_increment_factor = parms.gain_max_increment_factor;
-
+    this.parms = parms;        
+    this.obj = obj;
     this.autoGainSupported = autoGainSupported;
+    this.gainNode = gainNode;      
     this.currentTime = audioCtx.currentTime;
+    this.debugValues = debugValues;   
     
-    this.gainNode = gainNode;           
-    this.gainValue = this.gainNode.gain.value;  
+    this._setGainConstants();
+    this._updateRecordingResultsObject();
+
+    this.gainValue = this.gainNode.gain.value;    
+}
+
+AudioLevels.prototype._setGainConstants = function () {
+    this.gain_decrement_factor = this.parms.gain_decrement_factor;
+    this.gain_increment_factor = this.parms.gain_increment_factor;
+    this.gain_max_increment_factor = this.parms.gain_max_increment_factor;
+
     this.gain_minValue = -3.4; // most-negative-single-float	Approximately -3.4028235e38
     this.gain_maxValue = 3.4; // most-positive-single-float	Approximately 3.4028235e38
+}
 
-    this.obj = obj;
-    this.obj.platform = parms.platform;
-    this.obj.gain = gainNode.gain.value;
-
-    this.debugValues = debugValues;
+AudioLevels.prototype._updateRecordingResultsObject = function () {
+    this.obj.platform = this.parms.platform;
+    this.obj.gain = this.gainNode.gain.value;
 }
 
 /**
