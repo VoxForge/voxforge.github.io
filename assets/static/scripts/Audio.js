@@ -17,15 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var audioworker = new Worker('/assets/static/scripts/audio/AudioWorker.js');
-
-/**
-* if page reloaded kill background worker threads oldgain page reload
-* to prevent zombie worker threads in FireFox
-*/
-$( window ).unload(function() {
-   audioworker.terminate();
-});
 
 /**
 * Global variable declaration
@@ -42,8 +33,24 @@ function Audio (parms,
 {
     this.parms = parms;
     this.alert_message = pageVariables.alert_message;
-    
+
+    this._setUpWorkers();    
     this._setDefaultProperties();
+}
+
+Audio.prototype._setUpWorkers = function() {
+    var self = this;
+    
+    this.audioworker = new Worker('/assets/static/scripts/audio/AudioWorker.js');
+
+    /**
+    * if page reloaded kill background worker threads oldgain page reload
+    * to prevent zombie worker threads in FireFox
+    */
+    $( window ).unload(function() {
+       self.audioworker.terminate();
+    });
+
 }
 
 Audio.prototype._setDefaultProperties = function() {
@@ -273,7 +280,7 @@ Audio.prototype.record = function (
 }
 
 Audio.prototype._clearAndInitializeAudioBuffer = function (prompt_id, vad_run) {
-    audioworker.postMessage({
+    this.audioworker.postMessage({
         command: 'start',
         prompt_id: prompt_id,
         vad_run: vad_run,    
@@ -310,7 +317,7 @@ Audio.prototype._enableVisualizer = function () {
     // if so, then dont need this!!
  */
 Audio.prototype._sendAudioToWorkerForRecording = function (event) {
-    audioworker.postMessage({ 
+    this.audioworker.postMessage({ 
         command: 'record', 
         event_buffer: event.inputBuffer.getChannelData(0),
     });
@@ -347,7 +354,7 @@ Audio.prototype._sendAudioToWorkerForRecording = function (event) {
 Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
     var self = this;
 
-    audioworker.postMessage({ 
+    this.audioworker.postMessage({ 
         command: 'finish',
     });
 
@@ -372,7 +379,7 @@ Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
 
     return new Promise(function (resolve, reject) {
 
-      audioworker.onmessage = function(returnObj) { 
+      self.audioworker.onmessage = function(returnObj) { 
         var obj = returnObj.data.obj;
         switch (returnObj.data.status) {
             case 'finished':
