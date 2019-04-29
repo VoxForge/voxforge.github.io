@@ -52,8 +52,6 @@ Audio.prototype._setDefaultProperties = function() {
     this.processor = null;  
     this.mediaStreamOutput = null;
     this.analyser = null;
-    this.gain_minValue = -3.4; // most-negative-single-float	Approximately -3.4028235e38
-    this.gain_maxValue = 3.4; // most-positive-single-float	Approximately 3.4028235e38
 
     // rule is to collect speech audio that best reflects the user's environment, therefore
     // take whatever defaults user's device supports
@@ -324,113 +322,6 @@ Audio.prototype._sendAudioToWorkerForRecording = function (event) {
 }
 
 /**
-* reply from audio worker
-* creates new function every time record is pressed
-* why? needed a promise to resolve so could create promise chain in call
-* to audio record
-*
-* after this process sends a request to the worker to 'finish' recording,
-* worker sends back the recorded data as an audio blob in return object
-*/
-Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
-    var self = this;
-
-    return new Promise(function (resolve, reject) {
-
-      audioworker.onmessage = function(returnObj) { 
-        var obj = returnObj.data.obj;
-        switch (returnObj.data.status) {
-            case 'finished':
-                self._setGainAndAdjustVolumeIfNeeded.bind(this, obj);
-                resolve(obj);
-            break;
-
-            default:
-                let m = 'message from audio worker: audio error: ' +
-                    returnObj.status;
-                console.error(m);
-                reject(m);
-        }
-      };
-
-    }); // promise
-}
-
-Audio.prototype._setGainAndAdjustVolumeIfNeeded = function (obj) {
-    obj.gain = self.gainNode.gain.value;
-    obj.app_auto_gain = self.parms.app_auto_gain;
-
-    // some phones have their own (hardware/software?) auto gain implemented.
-    // Where device has own auto gain, do not use adjustVolume() function
-    if (obj.app_auto_gain && ! this.autoGainSupported) {
-        self._adjustVolume(obj); 
-    }
-}
-
-/**
-* app auto gain - changes gain for *following* recording (not the current one)
-*
-* changing gain also increases noise in what were silence portions
-* and this might mess up VAD
-*
-* tells user that audio is too loud or soft, adjusts
-* gain (volume) up or down, then tells them to delete the 
-* prompt and re-record at new gain level
-*/
-Audio.prototype._adjustVolume = function (obj) {
-    if (obj.clipping) {
-        this._reduceVolume("too loud (clipping)", obj.gain);
-    } else if (obj.too_soft && this._volumeLessThanMaxValue(obj.gain) ) {
-        this._increaseVolume("volume too low", obj.gain);
-    } else if (obj.no_speech && this._volumeLessThanMaxValue(obj.gain) ) {
-        this._increaseMaxVolume("no speech",obj.gain);
-    }
-}
-
-Audio.prototype._volumeLessThanMaxValue = function (gain) {
-    return Math.abs(gain) < this.gain_maxValue;
-}
-
-Audio.prototype._reduceVolume = function (m, oldgain) {
-    var newgain = Math.max(
-        this.gainNode.gain.value * this.parms.gain_decrement_factor,
-        this.gain_minValue);
-    this.gainNode.gain.setValueAtTime(
-        newgain,
-        this.audioCtx.currentTime + 1);
-
-    this._logVolumeChange(m, oldgain, newgain);        
-}
-
-Audio.prototype._increaseVolume = function (m, oldgain) {
-    var newgain = Math.min(
-        this.gainNode.gain.value * this.parms.gain_increment_factor,
-        this.gain_maxValue);
-    this.gainNode.gain.setValueAtTime(
-        newgain,
-        this.audioCtx.currentTime + 1);
-
-    this._logVolumeChange(m, oldgain, newgain);        
-}
-
-Audio.prototype._increaseMaxVolume = function (m, oldgain) {
-    var newgain = Math.min(
-        this.gainNode.gain.value * this.parms.gain_max_increment_factor,
-        this.gain_maxValue);
-    this.gainNode.gain.setValueAtTime(
-        newgain,
-        this.audioCtx.currentTime + 1);
-
-    this._logVolumeChange(m, oldgain, newgain);
-}
-
-Audio.prototype._logVolumeChange = function (m, oldgain, newgain) {
-    console.log (m + "; volume changed from: " + oldgain + " to: " + newgain);
-    
-    this.debugValues.gainNode_gain_value = newgain;
-}
-
-/**
 * disconnect audio nodes; send message to audio worker to stop recording
 *
 * see: https://stackoverflow.com/questions/17648819/how-can-i-stop-a-web-audio-script-processor-and-clear-the-buffer
@@ -465,4 +356,156 @@ Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
     if (audio_visualizer_checked) {
         self.gainNode.disconnect(self.analyser);
     }
+}
+
+/**
+* reply from audio worker
+* creates new function every time record is pressed
+* why? needed a promise to resolve so could create promise chain in call
+* to audio record
+*
+* after this process sends a request to the worker to 'finish' recording,
+* worker sends back the recorded data as an audio blob in return object
+*/
+Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
+    var self = this;
+
+    return new Promise(function (resolve, reject) {
+
+      audioworker.onmessage = function(returnObj) { 
+        var obj = returnObj.data.obj;
+        switch (returnObj.data.status) {
+            case 'finished':
+                //self._setGainAndAdjustVolumeIfNeeded.bind(self, obj); // TODO does not ever get called
+                resolve(obj);
+            break;
+
+            default:
+                let m = 'message from audio worker: audio error: ' +
+                    returnObj.status;
+                console.error(m);
+                reject(m);
+        }
+      };
+
+    }); // promise
+}
+
+Audio.prototype.setGainAndAndAdjustVolumeIfNeeded = function (obj) {
+    var audioLevels = new AudioLevels(
+        this.parms,    
+        obj,
+        this.autoGainSupported,
+        this.gainNode,
+        this.audioCtx,
+        this.debugValues, );        
+    audioLevels.adjust();
+
+    return obj;
+}
+
+// #############################################################################
+// TODO user needs to be able to disable automatic recording volume adjuster
+function AudioLevels(parms, obj, autoGainSupported, gainNode, audioCtx, debugValues) {
+    this.gain_decrement_factor = parms.gain_decrement_factor;
+    this.gain_increment_factor = parms.gain_increment_factor;
+    this.gain_max_increment_factor = parms.gain_max_increment_factor;
+
+    this.autoGainSupported = autoGainSupported;
+    this.currentTime = audioCtx.currentTime;
+    
+    this.gainNode = gainNode;           
+    this.gainValue = this.gainNode.gain.value;  
+    this.gain_minValue = -3.4; // most-negative-single-float	Approximately -3.4028235e38
+    this.gain_maxValue = 3.4; // most-positive-single-float	Approximately 3.4028235e38
+
+    this.obj = obj;
+    this.obj.platform = parms.platform;
+    this.obj.gain = gainNode.gain.value;
+
+    this.debugValues = debugValues;
+}
+
+/**
+ * Problem: user cannot adjust volume on smartphones; need some way to do so:
+ * Solution:
+ *      A. Voxforge app automatic recording volume control
+ *      B. allow user to adjust recording volume using slider
+ * TODO: allow user to disable VF software auto recorder volume adjust
+ * 
+ * I. on Desktops
+ *      a. will always let user manually adjust volume;
+ *      b. browser may have software auto ajust of recording volume (autogain);
+ *   If browser has autogain or not: don't use VoxForge volume adjuster
+ * 
+ * II. on Smartphones
+ *      a. smartphone has software/hardware automatic microphone adjuster
+ *      (does not matter whether it is in O/S/ or browser)
+ *          - don't use VoxForge volume adjuster
+ *      b. if not: use Voxforge software gain adjustment
+ */
+AudioLevels.prototype.adjust = function () {
+    if ( this.obj.platform == 'smartphone' ) {
+        this._adjustVolume(); 
+    }
+}
+
+/**
+* app auto gain - changes gain for the *next* recording (not the current one)
+*
+* changing gain also increases noise in what were silence portions
+* and this might mess up VAD
+*
+* tells user that audio is too loud or soft, adjusts
+* gain (volume) up or down, then tells them to delete the 
+* prompt and re-record at new gain level
+*/
+AudioLevels.prototype._adjustVolume = function () {
+    if (this.obj.clipping) {
+        this._reduceVolume();
+    } else if (this.obj.too_soft && this._volumeLessThanMaxValue() ) {
+        this._increaseVolume();
+    } else if (this.obj.no_speech && this._volumeLessThanMaxValue() ) {
+        this._increaseMaxVolume();
+    }
+}
+
+AudioLevels.prototype._volumeLessThanMaxValue = function () {
+    return Math.abs(this.obj.gain) < this.gain_maxValue;
+}
+
+AudioLevels.prototype._reduceVolume = function () {
+    var newgain = Math.max(
+        this.gainValue * this.gain_decrement_factor, this.gain_minValue);
+    this._setGain(newgain);
+
+    this._logGainChange("gainChange: too loud (clipping)", newgain);        
+}
+
+AudioLevels.prototype._increaseVolume = function () {
+    var newgain = Math.min(
+        this.gainValue * this.gain_increment_factor, this.gain_maxValue);
+    this._setGain(newgain);
+
+    this._logGainChange("gainChange: volume too low", newgain);        
+}
+
+AudioLevels.prototype._increaseMaxVolume = function () {
+    var newgain = Math.min(
+        this.gainValue * this.gain_max_increment_factor, this.gain_maxValue);
+    this._setGain(newgain);
+
+    this._logGainChange("gainChange: no speech", newgain);
+}
+
+AudioLevels.prototype._setGain = function (newgain) {
+    this.gainNode.gain.setValueAtTime(
+        newgain,
+        this.currentTime + 1);
+}
+
+AudioLevels.prototype._logGainChange = function (m, newgain) {
+    console.log (m + "; volume changed from: " + this.obj.gain + " to: " + newgain);
+    
+    this.debugValues.gainNode_gain_value = newgain;
 }

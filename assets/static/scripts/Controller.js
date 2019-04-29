@@ -536,6 +536,7 @@ Controller.prototype._startRecordingPromiseChain = function () {
             self.prompts.getPromptId(),
             vad_run,
             self.view.audioVisualizerChecked() )
+        .then( self.audio.setGainAndAndAdjustVolumeIfNeeded.bind(self.audio) )             
         .then( self.view.display.bind(self.view) )        
         .then( self._dealWithRecordingDebugSettings.bind(self) )
         .catch(function (err) {

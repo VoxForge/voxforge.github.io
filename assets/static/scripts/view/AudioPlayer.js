@@ -236,7 +236,7 @@ AudioPlayer.prototype._setSpeechCharacteristics = function(waveformElement) {
 
 AudioPlayer.prototype._noSpeech = function(waveformElement) {
     waveformElement.setAttribute("style", "background: #ff4500");
-    var no_speech_message = this.obj.app_auto_gain ?
+    var no_speech_message = (this.obj.platform == 'smartphone') ?
         this.no_speech_autogain :
         this.no_speech;
     waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
@@ -251,7 +251,8 @@ AudioPlayer.prototype._noTrailingSilence = function(waveformElement) {
 // TODO should not be able to upload if too loud
 AudioPlayer.prototype._clipping = function(waveformElement) {
     waveformElement.setAttribute("style", "background: #ff4500");
-    var audio_too_loud_message = this.obj.app_auto_gain ?
+    //var audio_too_loud_message = this.obj.platformHasAutoGain ?    
+    var audio_too_loud_message = (this.obj.platform == 'smartphone') ?
         this.audio_too_loud_autogain :
         this.audio_too_loud;
     waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
@@ -260,7 +261,7 @@ AudioPlayer.prototype._clipping = function(waveformElement) {
 //TODO need confidence level for soft speaker
 AudioPlayer.prototype._tooSoft = function(waveformElement) {
     waveformElement.setAttribute("style", "background: #ff4500");
-    var audio_too_soft_message = this.obj.app_auto_gain ?
+    var audio_too_soft_message = (this.obj.platform == 'smartphone') ?
         this.audio_too_soft_autogain :
         this.audio_too_soft;
     waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";

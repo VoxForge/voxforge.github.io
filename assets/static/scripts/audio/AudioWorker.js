@@ -23,7 +23,7 @@ var audioWorker;
 
 self.onmessage = function(event) {
   var data = event.data;
-    
+
   switch (data.command) {
     case 'start':
         if (data.vad_run) {
