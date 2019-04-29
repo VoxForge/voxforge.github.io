@@ -333,7 +333,7 @@ alert_message:
   no_speech_autogain: >
     No Speech or recording volume too low.<br>
     Please delete this recording and re-record the prompt.<br>    
-    Microphone volume automatically increased for nextr recording.<br>
+    Microphone volume automatically increased for next recording.<br>
 
   getUserMedia_error: >
     Could not get audio input... make sure your microphone is connected to your 
