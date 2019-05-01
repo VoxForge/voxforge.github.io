@@ -530,7 +530,11 @@ AudioLevels.prototype._setGain = function (newgain) {
 }
 
 AudioLevels.prototype._logGainChange = function (m, newgain) {
-    console.log (m + "; volume changed from: " + this.obj.gain + " to: " + newgain);
+    console.log (m +
+        "; volume changed from: " +
+        parseFloat(this.obj.gain).toFixed(2) +
+        " to: " +
+        parseFloat(newgain).toFixed(2));
     
     this.debugValues.gainNode_gain_value = newgain;
 }
