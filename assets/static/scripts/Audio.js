@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-
 /**
 * Global variable declaration
 */
@@ -60,8 +59,8 @@ Audio.prototype._setDefaultProperties = function() {
     this.mediaStreamOutput = null;
     this.analyser = null;
 
-    // rule is to collect speech audio that best reflects the user's environment, therefore
-    // take whatever defaults user's device supports
+    // rule is to collect speech audio that best reflects the user's environment,
+    // therefore take whatever defaults user's device supports
     this.constraints = { audio: true };    
 }
 
@@ -438,7 +437,7 @@ AudioLevels.prototype._setGainConstants = function () {
 }
 
 AudioLevels.prototype._setBooleans = function () {
-    if (this.obj.platform == 'smartphone') {
+    if (this.parms.platform == 'smartphone') {
         this.adjustRecordVolume = true;
     } else {
         this.adjustRecordVolume = false;
@@ -484,6 +483,8 @@ AudioLevels.prototype.adjust = function () {
 * gain (volume) up or down, then tells them to delete the 
 * prompt and re-record at new gain level
 */
+// TODO make audio level notification higher priority than no trailing silcense
+// message
 AudioLevels.prototype._adjustVolume = function () {
     if (this.obj.clipping) {
         this._reduceVolume();
