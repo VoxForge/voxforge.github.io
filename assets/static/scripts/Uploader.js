@@ -102,8 +102,8 @@ Uploader.prototype._workerEventMessageHandler = function(event) {
     var returnObj = event.data;
     this._logWorkerType(returnObj);
 
+/*
     switch (returnObj.status) {
-      //case 'AllUploaded': this._allUploadedToServer(returnObj);
       case 'AllUploaded':
             new AllUploaded(
                 returnObj,
@@ -111,16 +111,14 @@ Uploader.prototype._workerEventMessageHandler = function(event) {
                 this.uploadedSubmissions);
         break;
 
-      //case 'noneUploaded': this._allSavedToBrowserStorage(returnObj);
-      case 'noneUploaded': 
+      case 'NoneUploaded': 
             new NoneUploaded(
                 returnObj,
                 this.alert_message,
                 this.uploadedSubmissions);   
         break;
 
-      //case 'partialUpload': this._partialUpload(returnObj);
-      case 'partialUpload': 
+      case 'PartialUpload': 
             new Partial(
                 returnObj,
                 this.alert_message,
@@ -131,6 +129,18 @@ Uploader.prototype._workerEventMessageHandler = function(event) {
         console.error('message from upload worker: transfer error: ' +
                       returnObj.status + " " + returnObj.message);
     } 
+*/
+    //see: https://stackoverflow.com/questions/34655616/create-an-instance-of-a-class-in-es6-with-a-dynamic-name
+    const classMapping = {
+        'AllUploaded' : AllUploaded,
+        'NoneUploaded' : NoneUploaded,
+        'PartialUpload' : PartialUpload,
+    }
+
+    new classMapping[returnObj.status](
+            returnObj,
+            this.alert_message,
+            this.uploadedSubmissions);
 }
 
 Uploader.prototype._logWorkerType = function(returnObj) {
@@ -290,8 +300,6 @@ NoneUploaded.prototype._allSavedToBrowserStorage = function() {
 }
 
 
-// ### partial
-
 /*
  * if there is an error with one submission (usually server side check - e.g.
  * file too big for server settings), then other submissions will upload, but
@@ -300,24 +308,24 @@ NoneUploaded.prototype._allSavedToBrowserStorage = function() {
  * them to VoxForge server some other way.
 */
 // Subclass
-function Partial(returnObj, alert_message, uploadedSubmissions) {
+function PartialUpload(returnObj, alert_message, uploadedSubmissions) {
     // Call constructor of superclass to initialize superclass-derived members.
     UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions);
 
     this._partialUpload();
 }
 // Partial inherits from UploadMessage
-Partial.prototype = Object.create(UploadMessage.prototype);
-Partial.prototype.constructor = UploadMessage;
+PartialUpload.prototype = Object.create(UploadMessage.prototype);
+PartialUpload.prototype.constructor = UploadMessage;
 
-Partial.prototype._partialUpload = function() {
+PartialUpload.prototype._partialUpload = function() {
     this.setNumberOfUploadedSubmissions();
     this.saveSubmissionsToList();
     
     this.displayMessageToUser(this._getPartialUploadMessage());  
 }
 
-Partial.prototype._getPartialUploadMessage = function() {
+PartialUpload.prototype._getPartialUploadMessage = function() {
     var m = "Partial Upload:\n\n" +
         this.getUploadedToServerMessage(returnObj) +
         "\n========================\n" +
