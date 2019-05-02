@@ -152,7 +152,6 @@ NoneUploaded.prototype._allSavedToBrowserStorage = function() {
         this.getSavedToBrowserStorageMessage());    
 }
 
-
 // #############################################################################
 
 /*

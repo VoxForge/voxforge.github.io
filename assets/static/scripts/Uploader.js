@@ -106,13 +106,15 @@ Uploader.prototype._workerEventMessageHandler = function(event) {
       
     var returnObj = event.data;
     this._logWorkerType(returnObj);
-    
+
+    // children of UploadMessage parent class
     const classMapping = {
         'AllUploaded' : AllUploaded,
         'NoneUploaded' : NoneUploaded,
         'PartialUpload' : PartialUpload,
     }
 
+    // call subclass based on content of returnObj.status
     new classMapping[returnObj.status](
             returnObj,
             this.alert_message,
@@ -132,7 +134,6 @@ Uploader.prototype._logWorkerType = function(returnObj) {
     
     console.log(m + ": " + returnObj.status);
 }
-
 
 /**
 * collect all recorded audio into an array (audioArray) then call function 
@@ -215,8 +216,9 @@ Uploader.prototype._addAllClipsToAudioArray = function() {
     });
 }
 
+// hide clip from display as it is being processed
 Uploader.prototype._hideClip = function(clip) {
-    clip.style.display = 'None'; // hide clip from display as it is being processed
+    clip.style.display = 'None'; 
 }
 
 // Ajax is asynchronous - once the request is sent script will 
@@ -241,8 +243,8 @@ Uploader.prototype._getClipToAddToAudioArray = function(clip, lastClip) {
     xhr.send();
 }
 
+// TODO this should be in view?    
 Uploader.prototype._getAudioURL = function(clip) {
-    // TODO this should be in view?    
     return clip.querySelector('audio').src; 
 }
 
@@ -253,6 +255,7 @@ Uploader.prototype._extractPromptIDfromClip = function(clip) {
     return prompt.split(/(\s+)/).shift();
 }
 
+// TODO this should be in view?    
 Uploader.prototype._extractPromptFromClip = function(clip) {
     return clip.querySelector('prompt').innerText;
 }
@@ -263,7 +266,6 @@ Uploader.prototype._addClipToAudioArray = function(filename, blob) {
         audioBlob: blob,
     });
 }
-
 
 /**
 * localStorage stores everything as a string
@@ -392,7 +394,7 @@ Uploader.prototype._uploadZippedSubmission = function() {
     return new Promise(function(resolve, reject) {
 
         if (self._serviceWorkerSupported()) {
-            self._determineIfBackgroundSyncSupported();
+            self._tryBackgroundSync();
         } else { // service workers not supported
             if( self._webworkerSupported() ) {
                 self._webWorkerUpload();
@@ -414,7 +416,7 @@ Uploader.prototype._webworkerSupported = function() {
     return !! window.Worker;
 }
 
-Uploader.prototype._determineIfBackgroundSyncSupported = function() {
+Uploader.prototype._tryBackgroundSync = function() {
     var self = this;
         
     navigator.serviceWorker.ready
