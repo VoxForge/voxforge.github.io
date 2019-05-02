@@ -21,9 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * ### Contructor ##############################################
 */
 
-function Uploader(parms,
-    alert_message)
-{
+function Uploader(parms, alert_message) {
     this.maxMinutesSinceLastSubmission = parms.maxMinutesSinceLastSubmission;
     this.alert_message = alert_message;
     this.uploadedSubmissions = localforage.createInstance({
@@ -104,154 +102,35 @@ Uploader.prototype._workerEventMessageHandler = function(event) {
     var returnObj = event.data;
     this._logWorkerType(returnObj);
 
-    // TODO shuold this be broken up into subclasses?
     switch (returnObj.status) {
-      case 'AllUploaded': this._allUploadedToServer(returnObj);
+      //case 'AllUploaded': this._allUploadedToServer(returnObj);
+      case 'AllUploaded':
+            new AllUploaded(
+                returnObj,
+                this.alert_message,
+                this.uploadedSubmissions);
         break;
 
-      case 'noneUploaded': this._allSavedToBrowserStorage(returnObj);     
+      //case 'noneUploaded': this._allSavedToBrowserStorage(returnObj);
+      case 'noneUploaded': 
+            new NoneUploaded(
+                returnObj,
+                this.alert_message,
+                this.uploadedSubmissions);   
         break;
 
-      case 'partialUpload': this._partialUpload(returnObj);     
+      //case 'partialUpload': this._partialUpload(returnObj);
+      case 'partialUpload': 
+            new Partial(
+                returnObj,
+                this.alert_message,
+                this.uploadedSubmissions);           
         break;
 
       default:
         console.error('message from upload worker: transfer error: ' +
                       returnObj.status + " " + returnObj.message);
     } 
-}
-
-// ### AllUploaded
-
-Uploader.prototype._allUploadedToServer = function(returnObj) {
-    var filesUploaded = returnObj.filesUploaded;
-    
-    this._saveSubmissionsToList(filesUploaded);
-    this._setNumberOfUploadedSubmissions(filesUploaded);
-            
-    this._displayMessageToUser(
-        returnObj.workertype,
-        this._getUploadedToServerMessage(filesUploaded));
-}
-
-/*
- * iterate through list of saved submissions and call function
- * to save each one
- */
-Uploader.prototype._saveSubmissionsToList = function(filesUploaded) {
-    filesUploaded.forEach(
-        this._saveSubmissionNameToList.bind(this));
-}
-
-/*
- * save name of uploaded submission in localstorage with timestamp
- */
-Uploader.prototype._saveSubmissionNameToList = function(submissionName) {
-    var jsonOnject = {};
-
-    jsonOnject['timestamp'] = this._getDate();
-    
-    this.uploadedSubmissions.setItem(submissionName, jsonOnject)
-    .catch(function(err) {
-        console.error('save of uploaded submission name to localforage browser storage failed!', err);
-    });
-}
-
-/*
- * save count of uploaded submissions
- */
-Uploader.prototype._setNumberOfUploadedSubmissions = function(filesUploaded) {
-    var numberOfUploadedSubmissions =
-        this._getNumberOfUploadedSubmissions() +
-        filesUploaded.length;
-        
-    localStorage.setItem(
-        'numberOfUploadedSubmissions',
-        numberOfUploadedSubmissions);
-}
-
-Uploader.prototype._getUploadedToServerMessage = function(filesUploaded) {
-    var numberUploaded = filesUploaded.length;
-    
-    return numberUploaded + " " + 
-        this._submissionPluralized(numberUploaded) + " " +
-        this.alert_message.uploaded_message  + "\n    " +
-        filesUploaded.join("\n    ");
-}
-
-Uploader.prototype._submissionPluralized = function(numberOfSubmissions) {
-    return (numberOfSubmissions > 1 ?
-        this.alert_message.submission_plural :
-        this.alert_message.submission_singular);
-}
-
-// ### noneUploaded
-
-Uploader.prototype._allSavedToBrowserStorage = function(returnObj) {
-    var m = this.alert_message.localstorage_message + "\n" +
-        this._getSavedToBrowserStorageMessage(returnObj);
-        
-    this._displayMessageToUser(returnObj.workertype, m);    
-}
-
-Uploader.prototype._getSavedToBrowserStorageMessage = function(returnObj) {
-    var filesNotUploaded =  returnObj.filesNotUploaded;
-    var numberNotUploaded = filesNotUploaded.length;
-    
-    return this.alert_message.browsercontains_message.trim() + " " + // remove newline
-        numberNotUploaded + " " + 
-        this._submissionPluralized(numberNotUploaded) + ":\n    " + 
-        filesNotUploaded.join("\n    ");
-}
-
-// ### partial
-
-/*
- * if there is an error with one submission (usually server side check - e.g.
- * file too big for server settings), then other submissions will upload, but
- * erroneous one will stay in browser storage.
- * TODO need a way for user to save these their o/s filesystem and upload
- * them to VoxForge server some other way.
-*/
-Uploader.prototype._partialUpload = function(returnObj) {
-    this._setNumberOfUploadedSubmissions(returnObj.filesUploaded);
-    this._saveSubmissionsToList(returnObj.filesUploaded);
-    
-    this._displayMessageToUser(
-        returnObj.workertype,
-        this._getPartialUploadMessage(returnObj));  
-}
-
-Uploader.prototype._getPartialUploadMessage = function(returnObj) {
-    var filesUploaded = returnObj.filesUploaded;    
-    var filesNotUploaded = returnObj.filesNotUploaded;
-    
-    var m = "Partial Upload:\n\n" +
-        this._getUploadedToServerMessage(returnObj) +
-        "\n========================\n" +
-        this._getSavedToBrowserStorageMessage(returnObj) ;
-        
-    if (returnObj.err) {
-        m = m + "\n========================\n";
-        m = m + "\n\nserver error message: " + returnObj.err;
-    }
-
-    return m;
-}
-
-/*
- * Display message to user after recording has ended (i.e. wait for user
- * to press stop before displaying message)
- */
-Uploader.prototype._displayMessageToUser = function(workertype, m) {
-    console.info(workertype + ": " + m);
-    Promise.all(promise_list) // wait for stop click before displaying alert (if user recording)
-    .then(function() {
-        // TODO Firefox says this is not supported, but then goes ahead and
-        // does it (error: NotSupportedError: Operation is not supported)
-        window.alert(m);
-    })
-    .catch(function(err) { console.log(err) });            
 }
 
 Uploader.prototype._logWorkerType = function(returnObj) {
@@ -268,19 +147,197 @@ Uploader.prototype._logWorkerType = function(returnObj) {
     console.log(m + ": " + returnObj.status);
 }
 
-Uploader.prototype._getDate = function() {
+// #############################################################################
+// Superclass
+function UploadMessage(returnObj, alert_message, uploadedSubmissions) {
+    var self = this;
+    this.returnObj = returnObj;
+    this.alert_message = alert_message;
+    this.uploadedSubmissions = uploadedSubmissions;
+}
+
+UploadMessage.prototype.submissionPluralized = function(numberOfSubmissions) {
+    return (numberOfSubmissions > 1 ?
+        this.alert_message.submission_plural :
+        this.alert_message.submission_singular);
+}
+
+UploadMessage.prototype.getDate = function() {
     if (!Date.now) { // UTC timestamp in milliseconds;
         Date.now = function() { return new Date().getTime(); }
     }
     return Date.now();
 }
 
+UploadMessage.prototype.getUploadedToServerMessage = function() {
+    var numberUploaded = this.returnObj.filesUploaded.length;
+    
+    return numberUploaded + " " + 
+        this.submissionPluralized(numberUploaded) + " " +
+        this.alert_message.uploaded_message  + "\n    " +
+        this.returnObj.filesUploaded.join("\n    ");
+}
+
+/*
+ * Display message to user after recording has ended (i.e. wait for user
+ * to press stop before displaying message)
+ */
+UploadMessage.prototype.displayMessageToUser = function(m) {
+    console.info(this.returnObj.workertype + ": " + m);
+    Promise.all(promise_list) // wait for stop click before displaying alert (if user recording)
+    .then(function() {
+        // TODO Firefox says this is not supported, but then goes ahead and
+        // does it (error: NotSupportedError: Operation is not supported)
+        window.alert(m);
+    })
+    .catch(function(err) { console.log(err) });            
+}
+
+UploadMessage.prototype.getSavedToBrowserStorageMessage = function() {
+    var filesNotUploaded =  this.returnObj.filesNotUploaded;
+    var numberNotUploaded = filesNotUploaded.length;
+    
+    return this.alert_message.browsercontains_message.trim() + " " + // remove newline
+        numberNotUploaded + " " + 
+        this.submissionPluralized(numberNotUploaded) + ":\n    " + 
+        filesNotUploaded.join("\n    ");
+}
+
+/*
+ * save count of uploaded submissions
+ */
+UploadMessage.prototype.setNumberOfUploadedSubmissions = function() {
+    var numberOfUploadedSubmissions =
+        this._getNumberOfUploadedSubmissions() +
+        this.returnObj.filesUploaded.length;
+
+    localStorage.setItem(
+        'numberOfUploadedSubmissions',
+        numberOfUploadedSubmissions);
+}
+
+/**
+* localStorage stores everything as a string
+*/
+UploadMessage.prototype._getNumberOfUploadedSubmissions = function() {
+  return parseInt( localStorage.getItem('numberOfUploadedSubmissions') || 0);
+}
+
+/*
+ * iterate through list of saved submissions and call function
+ * to save each one
+ */
+UploadMessage.prototype.saveSubmissionsToList = function() {
+    this.returnObj.filesUploaded.forEach(
+        this._saveSubmissionNameToList.bind(this));
+}
+
+/*
+ * save name of uploaded submission in localstorage with timestamp
+ */
+UploadMessage.prototype._saveSubmissionNameToList = function(submissionName) {
+    var jsonOnject = {};
+
+    jsonOnject['timestamp'] = this.getDate();
+    
+    this.uploadedSubmissions.setItem(submissionName, jsonOnject)
+    .catch(function(err) {
+        console.error('save of uploaded submission name to localforage browser storage failed!', err);
+    });
+}
+
+
+// #############################################################################
+// Subclass
+function AllUploaded(returnObj, alert_message, uploadedSubmissions) {
+    // Call constructor of superclass to initialize superclass-derived members.
+    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions);
+
+    this._allUploadedToServer();
+}
+
+// AllUploaded inherits from UploadMessage
+AllUploaded.prototype = Object.create(UploadMessage.prototype);
+AllUploaded.prototype.constructor = UploadMessage;
+
+// ### AllUploaded
+AllUploaded.prototype._allUploadedToServer = function() {
+    this.saveSubmissionsToList();
+    this.setNumberOfUploadedSubmissions();
+
+    this.displayMessageToUser(
+        this.getUploadedToServerMessage());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// Subclass
+function NoneUploaded(returnObj, alert_message, uploadedSubmissions) {
+    // Call constructor of superclass to initialize superclass-derived members.
+    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions);
+
+    this._allSavedToBrowserStorage();
+}
+
+// NoneUploaded inherits from UploadMessage
+NoneUploaded.prototype = Object.create(UploadMessage.prototype);
+NoneUploaded.prototype.constructor = UploadMessage;
+
+NoneUploaded.prototype._allSavedToBrowserStorage = function() {
+    this.displayMessageToUser(
+        this.alert_message.localstorage_message + "\n" +
+        this.getSavedToBrowserStorageMessage());    
+}
+
+
+// ### partial
+
+/*
+ * if there is an error with one submission (usually server side check - e.g.
+ * file too big for server settings), then other submissions will upload, but
+ * erroneous one will stay in browser storage.
+ * TODO need a way for user to save these their o/s filesystem and upload
+ * them to VoxForge server some other way.
+*/
+// Subclass
+function Partial(returnObj, alert_message, uploadedSubmissions) {
+    // Call constructor of superclass to initialize superclass-derived members.
+    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions);
+
+    this._partialUpload();
+}
+// Partial inherits from UploadMessage
+Partial.prototype = Object.create(UploadMessage.prototype);
+Partial.prototype.constructor = UploadMessage;
+
+Partial.prototype._partialUpload = function() {
+    this.setNumberOfUploadedSubmissions();
+    this.saveSubmissionsToList();
+    
+    this.displayMessageToUser(this._getPartialUploadMessage());  
+}
+
+Partial.prototype._getPartialUploadMessage = function() {
+    var m = "Partial Upload:\n\n" +
+        this.getUploadedToServerMessage(returnObj) +
+        "\n========================\n" +
+        this.getSavedToBrowserStorageMessage(returnObj) ;
+        
+    if (returnObj.err) {
+        m = m + "\n========================\n";
+        m = m + "\n\nserver error message: " + returnObj.err;
+    }
+
+    return m;
+}
+
+// #############################################################################
+
 /**
 * collect all recorded audio into an array (audioArray) then call function 
 * that calls web worker that actually creates the zip file for download
 * to VoxForge server (by another worker...)
 */
-// TODO this should be an object
 Uploader.prototype.upload = function(
     prompts,
     profile,
@@ -406,12 +463,6 @@ Uploader.prototype._addClipToAudioArray = function(filename, blob) {
     });
 }
 
-/**
-* localStorage stores everything as a string
-*/
-Uploader.prototype._getNumberOfUploadedSubmissions = function() {
-  return parseInt( localStorage.getItem('numberOfUploadedSubmissions') || 0);
-}
 
 /**
 * localStorage stores everything as a string
