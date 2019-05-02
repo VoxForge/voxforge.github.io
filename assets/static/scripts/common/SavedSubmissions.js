@@ -171,7 +171,7 @@ SavedSubmissions.prototype._notAllSubmissionsUploaded = function(
 
 SavedSubmissions.prototype._getPartialUploadsObj = function(err) {
     return {
-        status: 'partialUpload',
+        status: 'PartialUpload',
         filesNotUploaded: this.uploadInfo.noUploadList,
         filesUploaded: this.uploadInfo.uploadList,
         workertype: this.workertype,
@@ -181,7 +181,7 @@ SavedSubmissions.prototype._getPartialUploadsObj = function(err) {
 
 SavedSubmissions.prototype._getNoUploadsObj = function(err, shortNameArray) {
     return {
-        status: 'noneUploaded',
+        status: 'NoneUploaded',
         filesNotUploaded: shortNameArray,
         workertype: this.workertype,        
         err: err,
