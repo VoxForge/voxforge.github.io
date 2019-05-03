@@ -174,7 +174,6 @@ Profile.prototype.toJsonString = function () {
 * Convert profile object to Array
 */
 Profile.prototype.toArray = function () {
-    //return this.toTextArray();
     var profile_hash = this._getProfileAttributesFromViewClass();     
     var profileArray = new ProfileArray(
         profile_hash,
@@ -379,28 +378,25 @@ ProfileArray.prototype.toTextArray = function () {
 };
 
 ProfileArray.prototype._setUserInformation = function () {
-    var i = this.profile_array.length;
-        
-    this.profile_array[i++] = 'User Name: ' + this.profile_hash["username"] + '\n';
+    this.profile_array.push('User Name: ' + this.profile_hash["username"] + '\n');
 
-    this.profile_array[i++] = '\nSpeaker Characteristics: \n\n';
+    this.profile_array.push('\nSpeaker Characteristics: \n\n');
 
-    this.profile_array[i++] = 'Gender: ' +  this.profile_hash["gender"] + '\n';
+    this.profile_array.push('Gender: ' +  this.profile_hash["gender"] + '\n');
 
     if (this.profile_hash["age_old_value"]) {
-      this.profile_array[i++] = 'Age Range: ' + this.profile_hash["age_old_value"] + '\n';
+        this.profile_array.push('Age Range: ' +
+            this.profile_hash["age_old_value"] + '\n');
     } else {
-      this.profile_array[i++] = 'Age Range: ' +  this.profile_hash["age"] + '\n';
+        this.profile_array.push('Age Range: ' +  this.profile_hash["age"] + '\n');
     }
 }
 
 ProfileArray.prototype._setLanguageInfo = function () {
-    var i = this.profile_array.length;
-    
-    this.profile_array[i++] = 'Language: ' +  this.language + '\n';
+    this.profile_array.push('Language: ' +  this.language + '\n');
 
-    this.profile_array[i++] = 'Native Speaker: ' +
-        this.profile_hash["native_speaker"] + '\n';
+    this.profile_array.push('Native Speaker: ' +
+        this.profile_hash["native_speaker"] + '\n');
     if (this.profile_hash["native_speaker"] !== "No") {  // is a native speaker - default
         this._nativeSpeaker();
     } else { 
@@ -409,38 +405,32 @@ ProfileArray.prototype._setLanguageInfo = function () {
 }
 
 ProfileArray.prototype._nativeSpeaker = function () {
-    var i = this.profile_array.length;
-
     if (this.profile_hash["dialect"] !== this.localized_other) {
-        this.profile_array[i++] = 'Pronunciation dialect: ' +
-            this.profile_hash["dialect"] + '\n';
+        this.profile_array.push('Pronunciation dialect: ' +
+            this.profile_hash["dialect"] + '\n');
         if ( this.profile_hash["sub_dialect"] ) {
-            this.profile_array[i++] = '  sub-dialect: ' +
-                this.profile_hash["sub_dialect"] + '\n';
+            this.profile_array.push('  sub-dialect: ' +
+                this.profile_hash["sub_dialect"] + '\n');
         }
     } else {
-        this.profile_array[i++] =  'Pronunciation dialect: Other - ' +
-            this.profile_hash["dialect_other"] + '\n';
+        this.profile_array.push('Pronunciation dialect: Other - ' +
+            this.profile_hash["dialect_other"] + '\n');
     }
 }
 
 ProfileArray.prototype._nonNativeSpeaker = function () {
-    var i = this.profile_array.length;
-
     if ( this.profile_hash["first_language"] !== this.localized_other) {
         var langId = this.profile_hash["first_language"];
-        this.profile_array[i++] = '  first language: ' +
-            languages.getLanguageInfo(langId).name + '\n';
+        this.profile_array.push('  first language: ' +
+            languages.getLanguageInfo(langId).name + '\n');
     } else {
-        this.profile_array[i++] = '  first language: ' +
-            this.profile_hash["first_language_other"];
+        this.profile_array.push('  first language: ' +
+            this.profile_hash["first_language_other"]);
     }
 }
 
 ProfileArray.prototype._setRecordingInformation = function () {
-    var i = this.profile_array.length;
-        
-    this.profile_array[i++] = '\nRecording Information: \n\n';
+    this.profile_array.push('\nRecording Information: \n\n');
 
     this._setMic();
     this._setLocation();
@@ -451,79 +441,72 @@ ProfileArray.prototype._setRecordingInformation = function () {
 }
 
 ProfileArray.prototype._setMic = function () {
-    var i = this.profile_array.length;
-        
     if (this.profile_hash["microphone"] !== this.localized_other) {
-        this.profile_array[i++] = 'Microphone Type: ' +
-            this.profile_hash["microphone"] + '\n';
+        this.profile_array.push('Microphone Type: ' +
+            this.profile_hash["microphone"] + '\n');
     } else {
-        this.profile_array[i++] = 'Microphone Type: Other - ' +
-            this.profile_hash["microphone_other"]  + '\n';
+        this.profile_array.push('Microphone Type: Other - ' +
+            this.profile_hash["microphone_other"]  + '\n');
     }
 }
 
 ProfileArray.prototype._setLocation = function () {
-    var i = this.profile_array.length;
-        
     if ( this.profile_hash["recording_location"] !== this.localized_other) {
-      this.profile_array[i++] = 'Recording Location: ' +
-        this.profile_hash["recording_location"] + '\n';
+      this.profile_array.push('Recording Location: ' +
+        this.profile_hash["recording_location"] + '\n');
     } else {
-      this.profile_array[i++] = 'Recording Location: Other - ' +
-        this.profile_hash["recording_location_other"] + '\n';
+      this.profile_array.push('Recording Location: Other - ' +
+        this.profile_hash["recording_location_other"] + '\n');
     }
-
 }
 
 ProfileArray.prototype._setNoise = function () {
-    var i = this.profile_array.length;
-        
-    this.profile_array[i++] = 'Background Noise: ' +
-        this.profile_hash["background_noise"] + '\n';
+    this.profile_array.push('Background Noise: ' +
+        this.profile_hash["background_noise"] + '\n');
     if (this.profile_hash["background_noise"] === this.localized_yes) {
-        this.profile_array[i++] = 'Noise Volume: ' + this.profile_hash["noise_volume"] + '\n';
-        if (this.profile_hash["noise_type"] !== this.localized_other) {
-            profile_array[i++] = 'Noise Type: ' + this.profile_hash["noise_type"]  + '\n';
-        } else {
-            profile_array[i++] = 'Noise Type: Other - ' + this.profile_hash["noise_type_other"] + '\n';
-        }
+        this.profile_array.push('Noise Volume: ' +
+            this.profile_hash["noise_volume"] + '\n');
+        this._setNoiseType();
+    }
+}
+
+ProfileArray.prototype._setNoiseType = function () {
+    if (this.profile_hash["noise_type"] !== this.localized_other) {
+        profile_array.push('Noise Type: ' +
+            this.profile_hash["noise_type"]  + '\n');
+    } else {
+        profile_array.push('Noise Type: Other - ' +
+            this.profile_hash["noise_type_other"] + '\n');
     }
 }
 
 ProfileArray.prototype._setBrowserInfo = function () {
-    var i = this.profile_array.length;
-
-    this.profile_array[i++] =
-        'Audio Recording Software: VoxForge Javascript speech submission application\n';
+    this.profile_array.push(
+        'Audio Recording Software: VoxForge Javascript speech submission application\n');
         
-    this.profile_array[i++] = 'O/S: ' +  platform.os.toString() + '\n';
-    this.profile_array[i++] = 'Browser: ' +
+    this.profile_array.push('O/S: ' +  platform.os.toString() + '\n');
+    this.profile_array.push('Browser: ' +
         platform.name + ' ' +
-        platform.version + '\n';
+        platform.version + '\n');
     if (platform.product) { // smartphone product name
-        profile_array[i++] = 'Product: ' + platform.product + '\n';
+        profile_array.push('Product: ' + platform.product + '\n');
     }
     if (platform.manufacturer) { // smartphone manufacturer
-        this.profile_array[i++] = 'Manufacturer: ' +
-            platform.manufacturer + '\n';
+        this.profile_array.push('Manufacturer: ' +
+            platform.manufacturer + '\n');
     }
 }
 
 ProfileArray.prototype._setAudioInfo = function () {
-    var i = this.profile_array.length;
-        
-    this.profile_array[i++] = '\nFile Info: \n\n';
-    this.profile_array[i++] = 'File type: wav\n';
-    this.profile_array[i++] = 'Sample Rate: ' + this.sample_rate + '\n';
-    this.profile_array[i++] = 'Sample Rate Format (bit depth): ' +
-        this.bit_depth + '\n';
-    this.profile_array[i++] = 'Number of channels: ' + this.channels + '\n';
+    this.profile_array.push('\nFile Info: \n\n');
+    this.profile_array.push('File type: wav\n');
+    this.profile_array.push('Sample Rate: ' + this.sample_rate + '\n');
+    this.profile_array.push('Sample Rate Format (bit depth): ' +
+        this.bit_depth + '\n');
+    this.profile_array.push('Number of channels: ' + this.channels + '\n');
 }
 
 ProfileArray.prototype._setLicense = function (profile_hash, profile_array) {
-    var i = this.profile_array.length;
-    
-    this.profile_array[i++] = '\nLicense: ' +
-        this.profile_hash["license"]  + '\n';        
+    this.profile_array.push('\nLicense: ' +
+        this.profile_hash["license"]  + '\n');        
 }
-
