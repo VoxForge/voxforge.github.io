@@ -17,9 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-/**
-* Class declaration
-*/
 function Profile (appversion, pageVariables) {
     this.appversion = appversion;
 
@@ -178,6 +175,7 @@ Profile.prototype.toJsonString = function () {
 * TODO View.getUserProfileInfo gets called twice to get same info
 * everytime a user uploads... cache info somehow...
 */
+// TODO this should be a class
 Profile.prototype.toTextArray = function () {
     // TODO this method assumes that toHash was called before it... 
     var profile_hash = this._getProfileAttributesFromViewClass();                                                
@@ -243,6 +241,7 @@ Profile.prototype._nonNativeSpeaker = function (profile_hash, profile_array) {
     }
 }
 
+// TODO this should be a class
 Profile.prototype._setRecordingInformation = function (profile_hash, profile_array) {
     var i = profile_array.length;
         

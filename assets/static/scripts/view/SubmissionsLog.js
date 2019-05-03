@@ -70,12 +70,12 @@ SubmissionsLog.prototype._getSubmissionListPromises = function() {
         this.uploadedSubmissions.keys()
         .then(function(uploadedSubmissionList) {
             self.uploadedSubmissionList = uploadedSubmissionList;
-        })
+        });
     var promise2 =
         self.submissionCache.keys()
         .then(function (savedSubmissionList) {
             self.savedSubmissionList = savedSubmissionList;              
-        })
+        });
 
     return [promise1, promise2];
 }
@@ -115,9 +115,6 @@ SubmissionsLog.prototype._submissionListToString = function() {
 
 // #############################################################################
 
-/*
- * Constructor
- */
 /**
 * helper function to wrap array in html
 *
