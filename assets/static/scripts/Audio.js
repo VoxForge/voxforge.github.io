@@ -382,7 +382,6 @@ Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
         var obj = returnObj.data.obj;
         switch (returnObj.data.status) {
             case 'finished':
-                //self._setGainAndAdjustVolumeIfNeeded.bind(self, obj); // TODO does not ever get called
                 resolve(obj);
             break;
 
@@ -457,7 +456,7 @@ AudioLevels.prototype._updateRecordingResultsObject = function () {
  * TODO: allow user to disable VF software auto recorder volume adjust
  * 
  * I. on Desktops
- *      a. will always let user manually adjust volume;
+ *      a. O/S will always let user manually adjust volume;
  *      b. browser may have software auto ajust of recording volume (autogain);
  *   If browser has autogain or not: don't use VoxForge volume adjuster
  * 
@@ -467,6 +466,9 @@ AudioLevels.prototype._updateRecordingResultsObject = function () {
  *          - don't use VoxForge volume adjuster
  *      b. if not: use Voxforge software gain adjustment
  */
+// TODO automatic volume adjustment not user friendly if user misses recording
+// first prompt; make it optional
+// just set up volume slider in settings...
 AudioLevels.prototype.adjust = function () {
     if ( this.adjustRecordVolume ) {
         this._adjustVolume(); 
