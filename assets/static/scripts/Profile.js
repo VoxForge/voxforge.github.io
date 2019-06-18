@@ -181,7 +181,8 @@ Profile.prototype.toArray = function () {
         this.localized_yes,
         this.sample_rate,
         this.bit_depth,
-        this.channels,);
+        this.channels,
+        this.language,);
     return profileArray.toTextArray();
 }
 
@@ -357,7 +358,8 @@ function ProfileArray(
     localized_yes,
     sample_rate,
     bit_depth,
-    channels,)
+    channels,
+    language)
 {
     this.profile_hash = profile_hash;
     this.localized_other = localized_other;
@@ -365,7 +367,8 @@ function ProfileArray(
     this.sample_rate = sample_rate;
     this.bit_depth = bit_depth;
     this.channels = channels;
-
+    this.language = language;
+    
     this.profile_array = [];    
 }
 
