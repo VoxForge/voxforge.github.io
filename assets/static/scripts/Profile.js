@@ -472,10 +472,10 @@ ProfileArray.prototype._setNoise = function () {
 
 ProfileArray.prototype._setNoiseType = function () {
     if (this.profile_hash["noise_type"] !== this.localized_other) {
-        profile_array.push('Noise Type: ' +
+        this.profile_array.push('Noise Type: ' +
             this.profile_hash["noise_type"]  + '\n');
     } else {
-        profile_array.push('Noise Type: Other - ' +
+        this.profile_array.push('Noise Type: Other - ' +
             this.profile_hash["noise_type_other"] + '\n');
     }
 }
@@ -506,7 +506,7 @@ ProfileArray.prototype._setAudioInfo = function () {
     this.profile_array.push('Number of channels: ' + this.channels + '\n');
 }
 
-ProfileArray.prototype._setLicense = function (profile_hash, profile_array) {
+ProfileArray.prototype._setLicense = function () {
     this.profile_array.push('\nLicense: ' +
         this.profile_hash["license"]  + '\n');        
 }
