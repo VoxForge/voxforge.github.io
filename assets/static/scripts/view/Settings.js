@@ -64,7 +64,7 @@ Settings.prototype.initPopup = function(message) {
         "recording_information_button_display",
         false,
         this._setPropertiesTrue.bind(this),
-        this._clearRecordingLocationInfo.bind(this),);
+        this._clearLocationSpecificRecordingInformation.bind(this),);
     recordInfo.setup();
 }
 
@@ -155,7 +155,7 @@ Settings.prototype._setProperties = function(checked) {
 /*
 * clear certain field entries when user clicks display_record_info off
 */
-Settings.prototype._clearRecordingLocationInfo = function() {    
+Settings.prototype._clearLocationSpecificRecordingInformation = function() {    
     $('#recording_location').val($("select option:first").val()).change();
     $('#recording_location_other').val("").change();
     $('#background_noise').val($("select option:first").val()).change();
