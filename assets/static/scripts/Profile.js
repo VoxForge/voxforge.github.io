@@ -92,7 +92,7 @@ Profile.prototype.updateRandomStrings = function () {
 /**
 * refresh displayed user information with info stored in offline storage.
 * Note: not using cookies... no need to pass this info back to the server
-* with each call (which is what cookies do...)
+* with each call (which is what cookies are for...)
 */
 Profile.prototype.getProfileFromBrowserStorage = function () {
     var object = this._getParsedLocalStorageObject();
@@ -126,7 +126,7 @@ Profile.prototype._getParsedLocalStorageObject = function () {
     return retrievedObject && JSON.parse(retrievedObject);
 }
 
-// TODO View.getUserProfileInfo gets called twice to get same info
+// TODO gets called twice to get same info
 // everytime a user uploads...
 Profile.prototype.toHash = function () {
     var profile_hash = this._getProfileAttributesFromViewClass();
@@ -347,7 +347,7 @@ Profile.prototype.licensetoArray = function () {
 // #############################################################################
 
 /**
-* Read HTML Form Data to convert profile data to array
+* convert profile hash data to array
 *
 * TODO View.getUserProfileInfo gets called twice to get same info
 * everytime a user uploads... cache info somehow...

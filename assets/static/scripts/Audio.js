@@ -138,6 +138,7 @@ Audio.prototype._setupGetUserMedia = function() {
 * a destination audiocontext to capture audio
 *
 */
+// This should be a class
 Audio.prototype._setupAudioNodes = function(stream) {
     this._createAudioNodes(stream);
     this._setAllAudioNodesToMono(stream);
