@@ -274,6 +274,12 @@ Checkbox.prototype.setup = function() {
     this._setEventFunction();
 }
 
+/*
+// if checkbox is being set based on contents of another checkbox, then
+// need to use checkboxradio('refresh') so that it will display correctly
+// in jQuery Mobile
+// see: https://demos.jquerymobile.com/1.2.0/docs/forms/checkboxes/methods.html
+*/
 Checkbox.prototype._setEventFunction = function() {
     var self = this;
         
@@ -324,14 +330,6 @@ Checkbox.prototype._setElementValueInLocalStorage = function(bool) {
         this.element,
         Settings.convertBooleanToString(bool) ); 
 }
-
-/*
-// if checkbox is being set based on contents of another checkbox, then
-// need to use checkboxradio('refresh') so that it will display correctly
-// in jQuery Mobile
-// see: https://demos.jquerymobile.com/1.2.0/docs/forms/checkboxes/methods.html
-*/
-Checkbox.prototype._updateLocalStorageWithElementValue = 
 
 Checkbox.prototype._restoreSettingsFromLocalStorage = function() {
     var checked = localStorage.getItem(this.element) === 'true';
