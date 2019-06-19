@@ -694,7 +694,7 @@ Prompts.prototype.userChangedMaxNum = function (new_max_prompts) {
 
     // promptId start point will be randomized and not be consecutive
     // to previous prompt IDs.
-    this.prompt_stack = this.initPromptStack(this.list);
+    this.prompt_stack = this._initPromptStack(this.list);
 
     console.log('max_num_prompts:' + new_max_prompts);
 }
