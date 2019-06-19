@@ -97,7 +97,7 @@ Uploader.prototype.init = function() {
 * process messages from service worker or web worker
 *
 * create classMapping map to link string to Class declarations, so can
-* dynamically call correct message subclass based on reutrn message from
+* dynamically call correct message subclass based on return message from
 * SavedSubmission class.
 * (see: //see: https://stackoverflow.com/questions/34655616/create-an-instance-of-a-class-in-es6-with-a-dynamic-name)
 */
