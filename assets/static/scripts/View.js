@@ -274,14 +274,17 @@ View.prototype._setupNoiseTypeDependencies = function() {
 */
 View.prototype._setupLanguageLookup = function() {
     var langscodes = languages.getAllLanguageCode(); // array of language codes
-    var option = '<option value="' + this.default_value + '">'+ this.please_select + '</option>';
+    var option = '<option value="' + this.default_value +
+        '">'+ this.please_select + '</option>';
     for (var i=1;i<langscodes.length;i++){
        option += '<option value="'+ langscodes[i] + '">' +
        languages.getLanguageInfo(langscodes[i]).name + " (" +
        languages.getLanguageInfo(langscodes[i]).nativeName + ")" +
        '</option>';
     }
-    option += '<option value="' + this.localized_other + '">' + this.localized_other + '</option>'; 
+    option += '<option value="' + this.localized_other + '">' +
+        this.localized_other + '</option>';
+        
     $('#first_language').append(option);
 }
 
