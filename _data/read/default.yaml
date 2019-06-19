@@ -366,7 +366,7 @@ settings:
   recording_time_reminder: >
     use the time since your last recording to determine when to remind.
   recording_geolocation_reminder: >
-    use change in location to determine when to remind (resource intensive).
+    use GPS to monitor for change in location to determine when to remind (resource intensive).
   resource_intensive_text: >
     Resource intensive functions (disable these to improve recording
     quality on low powered devices)
