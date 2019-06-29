@@ -1,8 +1,11 @@
 /**
-* uses created an audio analyser so can display graph that approximates a view 
-* meter so that user knows that app can hear his voice.
+* draw an "oscilloscope style" output of the current audio input so that user
+* knows that app can hear their voice.
 * 
 * see https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getFloatTimeDomainData
+*
+* TODO: realtime waveform display
+* https://sonoport.github.io/visualising-waveforms-with-web-audio.html
 */
 
 function visualize(visualizer, analyser) {

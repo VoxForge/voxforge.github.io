@@ -465,6 +465,10 @@ View.prototype.audioVisualizerChecked = function() {
 
 /**
 * container holding visualizer, and buttons
+*
+*
+* TODO: need better waveform display so can show user in realtime if audio
+* too loud or too soft or in not enough leading or trailing silence
 */
 View.prototype.visualize = function(analyser) {
     var visualizer = document.querySelector('.visualizer');
