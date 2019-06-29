@@ -203,7 +203,7 @@ Audio.prototype._setProfileAudioProperties = function (stream) {
 
     this._setAudioPropertiesAndContraints();
     var track = stream.getAudioTracks()[0];
-    //this._setDebugValues(track);
+
     this.debugValues = new AudioDebug(this.parms, track);
     this.debugValues.set();
 
@@ -217,8 +217,6 @@ Audio.prototype._setAudioPropertiesAndContraints = function () {
         'channels' : this.mediaStreamOutput.channelCount,
     };
 }
-
-
 
 Audio.prototype.getAudioPropertiesAndContraints = function () {
     return this.audioPropertiesAndContraints;
