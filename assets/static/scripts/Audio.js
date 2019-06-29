@@ -203,7 +203,9 @@ Audio.prototype._setProfileAudioProperties = function (stream) {
 
     this._setAudioPropertiesAndContraints();
     var track = stream.getAudioTracks()[0];
-    this._setDebugValues(track);
+    //this._setDebugValues(track);
+    this.debugValues = new AudioDebug(this.parms, track);
+    this.debugValues.set();
 
     console.log('audioCtx.sampleRate: ' + this.audioCtx.sampleRate);
 }
@@ -216,58 +218,7 @@ Audio.prototype._setAudioPropertiesAndContraints = function () {
     };
 }
 
-Audio.prototype._setDebugValues = function (track) {
-    var c = navigator.mediaDevices.getSupportedConstraints();
-    var s = track.getSettings();
-    this.debugValues = {};
-    
-    this._browserSupportedProperties(c,s);
-    this._propertiesActuallyTurnedOn(c,s);
-    this._audioProperties(c,s);
-    this._appRecordingProperties(c,s);     
-}
 
-Audio.prototype._browserSupportedProperties = function (c,s) {
-    var d = this.debugValues;
-    d.browser_supports_echoCancellation =
-        (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation;
-    d.browser_supports_noiseSuppression =
-        (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression;
-    d.browser_supports_autoGain =
-        (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported;
-}
-
-Audio.prototype._propertiesActuallyTurnedOn = function (c,s) {
-    var d = this.debugValues;    
-    d.echoCancellation =
-        (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation;
-    d.noiseSuppression =
-        (typeof s.noiseSuppression == 'undefined') ? 'undefined' : s.noiseSuppression;              
-    d.autoGainControl =
-        (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl;
-}
-
-Audio.prototype._audioProperties = function (c,s) {
-    var d = this.debugValues;    
-    d.channelCount =
-        (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount;
-    d.latency =
-        (typeof s.latency == 'undefined') ? 'undefined' : s.latency;
-    d.volume =
-        (typeof s.volume == 'undefined') ? 'undefined' : s.volume;
-}
-
-Audio.prototype._appRecordingProperties = function (c,s) {
-    var d = this.debugValues;
-    
-    d.vad_maxsilence = this.parms.vad.maxsilence;
-    d.vad_minvoice = this.parms.vad.minvoice;
-    d.vad_bufferSize = this.parms.vad.buffersize;
-    d.audioNode_bufferSize = this.parms.audioNodebufferSize || 'undefined';
-
-    // TODO is audioNodebufferSize always same device_event_buffer_size??    
-    //d.device_event_buffer_size = this.device_event_buffer_size || 'undefined';
-}
 
 Audio.prototype.getAudioPropertiesAndContraints = function () {
     return this.audioPropertiesAndContraints;
