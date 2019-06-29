@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * see also: https://webaudioapi.com/samples/volume/
  */
 // TODO user needs to be able to disable automatic recording volume adjuster
-function AudioLevels(parms, obj, autoGainSupported, gainNode, audioCtx, debugValues) {
+function MicVolume(parms, obj, autoGainSupported, gainNode, audioCtx, debugValues) {
     this.parms = parms;        
     this.obj = obj;
     this.autoGainSupported = autoGainSupported;
@@ -36,7 +36,7 @@ function AudioLevels(parms, obj, autoGainSupported, gainNode, audioCtx, debugVal
     this.gainValue = this.gainNode.gain.value;
 }
 
-AudioLevels.prototype._setGainConstants = function () {
+MicVolume.prototype._setGainConstants = function () {
     this.gain_decrement_factor = this.parms.gain_decrement_factor;
     this.gain_increment_factor = this.parms.gain_increment_factor;
     this.gain_max_increment_factor = this.parms.gain_max_increment_factor;
@@ -45,7 +45,7 @@ AudioLevels.prototype._setGainConstants = function () {
     this.gain_minValue = -1 * this.gain_maxValue; 
 }
 
-AudioLevels.prototype._setBooleans = function () {
+MicVolume.prototype._setBooleans = function () {
     if (this.parms.platform == 'smartphone') {
         this.adjustRecordVolume = true;
     } else {
@@ -53,13 +53,13 @@ AudioLevels.prototype._setBooleans = function () {
     }
 }
 
-AudioLevels.prototype._updateRecordingResultsObject = function () {
+MicVolume.prototype._updateRecordingResultsObject = function () {
     this.obj.platform = this.parms.platform;
     this.obj.gain = this.gainNode.gain.value;
 }
 
 /**
- * Problem: user cannot adjust volume on smartphones; need some way to do so:
+ * Problem: user cannot adjust mic volume on smartphones; need some way to do so:
  * Solution:
  *      A. Voxforge app automatic mic volume control; or
  *      B. allow user to adjust recording volume using slider
@@ -83,7 +83,7 @@ AudioLevels.prototype._updateRecordingResultsObject = function () {
 // first prompt; make it optional
 // TODO just set up volume slider in settings... see: https://webaudioapi.com/samples/volume/
 // see also: http://cwestblog.com/2017/08/17/html5-getting-more-volume-from-the-web-audio-api/
-AudioLevels.prototype.adjust = function () {
+MicVolume.prototype.adjust = function () {
     if ( this.adjustRecordVolume ) {
         this._adjustVolume(); 
     }
@@ -108,7 +108,7 @@ AudioLevels.prototype.adjust = function () {
 */
 // TODO make audio level notification higher priority than no trailing silence
 // message
-AudioLevels.prototype._adjustVolume = function () {
+MicVolume.prototype._adjustVolume = function () {
     if (this.obj.clipping) {
         this._reduceVolume();
     } else if (this.obj.too_soft && this._volumeLessThanMaxValue() ) {
@@ -121,11 +121,11 @@ AudioLevels.prototype._adjustVolume = function () {
 /*
  * gain is always a positive number (audio signals can vary between [-1, 1]
  */
-AudioLevels.prototype._volumeLessThanMaxValue = function () {
+MicVolume.prototype._volumeLessThanMaxValue = function () {
     return this.obj.gain < this.gain_maxValue;
 }
 
-AudioLevels.prototype._reduceVolume = function () {
+MicVolume.prototype._reduceVolume = function () {
     var newgain = Math.max(
         this.gainValue * this.gain_decrement_factor, this.gain_minValue);
     this._setGain(newgain);
@@ -133,7 +133,7 @@ AudioLevels.prototype._reduceVolume = function () {
     this._logGainChange("gainChange: too loud (clipping); gain reduced to: ", newgain);        
 }
 
-AudioLevels.prototype._increaseVolume = function () {
+MicVolume.prototype._increaseVolume = function () {
     var newgain = Math.min(
         this.gainValue * this.gain_increment_factor, this.gain_maxValue);
     this._setGain(newgain);
@@ -141,7 +141,7 @@ AudioLevels.prototype._increaseVolume = function () {
     this._logGainChange("gainChange: volume too low; gain increased to: ", newgain);        
 }
 
-AudioLevels.prototype._increaseMaxVolume = function () {
+MicVolume.prototype._increaseMaxVolume = function () {
     var newgain = Math.min(
         this.gainValue * this.gain_max_increment_factor, this.gain_maxValue);
     this._setGain(newgain);
@@ -184,13 +184,13 @@ AudioLevels.prototype._increaseMaxVolume = function () {
  *
  * (see also: http://teropa.info/blog/2016/08/30/amplitude-and-loudness.html)
  */
-AudioLevels.prototype._setGain = function (newgain) {
+MicVolume.prototype._setGain = function (newgain) {
     this.gainNode.gain.setValueAtTime(
         newgain,
         this.currentTime + 1);
 }
 
-AudioLevels.prototype._logGainChange = function (m, newgain) {
+MicVolume.prototype._logGainChange = function (m, newgain) {
     console.log (m +
         "; volume changed from: " +
         parseFloat(this.obj.gain).toFixed(2) +

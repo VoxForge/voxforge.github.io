@@ -416,7 +416,7 @@ Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
 }
 
 Audio.prototype.adjustVolumeIfNeeded = function (obj) {
-    var audioLevels = new AudioLevels(
+    var audioLevels = new MicVolume(
         this.parms,    
         obj,
         this.autoGainSupported,
