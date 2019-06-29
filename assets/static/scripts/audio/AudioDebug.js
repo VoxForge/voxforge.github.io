@@ -18,21 +18,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 function AudioDebug(parms, track) {
     this.parms = parms;       
     this.track = track;
-    this.debugValues = {};    
+    
+    this.debugValues = {};
 }
 
 AudioDebug.prototype.set = function () {
-    var c = navigator.mediaDevices.getSupportedConstraints();
-    var s = this.track.getSettings();
-    
-    this._browserSupportedProperties(c,s);
-    this._propertiesActuallyTurnedOn(c,s);
-    this._audioProperties(c,s);
-    this._appRecordingProperties(c,s);     
+    this._browserSupportedProperties();
+    this._propertiesActuallyTurnedOn();
+    this._audioProperties();
+    this._appRecordingProperties();     
 }
 
-AudioDebug.prototype._browserSupportedProperties = function (c,s) {
+AudioDebug.prototype._browserSupportedProperties = function () {
     var d = this.debugValues;
+    var c = navigator.mediaDevices.getSupportedConstraints();
+    
     d.browser_supports_echoCancellation =
         (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation;
     d.browser_supports_noiseSuppression =
@@ -41,8 +41,10 @@ AudioDebug.prototype._browserSupportedProperties = function (c,s) {
         (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported;
 }
 
-AudioDebug.prototype._propertiesActuallyTurnedOn = function (c,s) {
-    var d = this.debugValues;    
+AudioDebug.prototype._propertiesActuallyTurnedOn = function () {
+    var d = this.debugValues;
+    var s = this.track.getSettings();
+       
     d.echoCancellation =
         (typeof s.echoCancellation == 'undefined') ? 'undefined' : s.echoCancellation;
     d.noiseSuppression =
@@ -51,8 +53,10 @@ AudioDebug.prototype._propertiesActuallyTurnedOn = function (c,s) {
         (typeof s.autoGainControl == 'undefined') ? 'undefined' : s.autoGainControl;
 }
 
-AudioDebug.prototype._audioProperties = function (c,s) {
-    var d = this.debugValues;    
+AudioDebug.prototype._audioProperties = function () {
+    var d = this.debugValues;
+    var s = this.track.getSettings();
+        
     d.channelCount =
         (typeof s.channelCount == 'undefined') ? 'undefined' : s.channelCount;
     d.latency =
@@ -61,7 +65,7 @@ AudioDebug.prototype._audioProperties = function (c,s) {
         (typeof s.volume == 'undefined') ? 'undefined' : s.volume;
 }
 
-AudioDebug.prototype._appRecordingProperties = function (c,s) {
+AudioDebug.prototype._appRecordingProperties = function () {
     var d = this.debugValues;
     
     d.vad_maxsilence = this.parms.vad.maxsilence;
