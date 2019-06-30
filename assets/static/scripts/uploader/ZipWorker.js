@@ -80,6 +80,17 @@ function createZipFile(self, data) {
 * save the submission as a JSON object in user's browser 
 * InnoDB database using LocalForage 
 */
+// TODO timestamp should include timezone
+/*
+ *  see: https://stackoverflow.com/questions/1091372/getting-the-clients-timezone-offset-in-javascript
+ * 
+ * The time-zone offset is the difference, in minutes, between UTC and local
+ * time. Note that this means that the offset is positive if the local
+ * timezone is behind UTC and negative if it is ahead.
+ * For example, if your time zone is UTC+10 (Australian Eastern Standard Time),
+ * -600 will be returned. Daylight savings time prevents this value from being
+ * a constant even for a given locale
+ */
 function saveSubmissionLocally(data, zip_file_in_memory) {
   var jsonOnject = {};
   jsonOnject['short_submission_name'] = data.short_submission_name;
@@ -91,6 +102,7 @@ function saveSubmissionLocally(data, zip_file_in_memory) {
       Date.now = function() { return new Date().getTime(); }
   }
   jsonOnject['timestamp'] = Date.now();
+  jsonOnject['timezoneOffset'] = Date().getTimezoneOffset();
   jsonOnject['file'] = zip_file_in_memory;
 
   submissionCache.setItem(data.temp_submission_name, jsonOnject)
