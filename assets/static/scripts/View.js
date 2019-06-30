@@ -634,7 +634,7 @@ DependentSelect.prototype._filterOnDialectToFindSubdialect = function(value) {
 // #############################################################################
 
 /*
- * Contructor
+ * Constructor
  */
  
 /**
