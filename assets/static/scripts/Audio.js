@@ -170,11 +170,11 @@ Audio.prototype._createAudioNodes = function(stream) {
     this.gainNode = this.audioCtx.createGain();
     
     var numInputChannels = 1;
-    var numOuputChannels = 1;    
+    var numOutputChannels = 1;    
     this.processor = this.audioCtx.createScriptProcessor(
         this.parms.audioNodebufferSize,
         numInputChannels,
-        numOuputChannels);
+        numOutputChannels);
 
     this.analyser = this.audioCtx.createAnalyser();
     this.mediaStreamOutput = this.audioCtx.destination;
@@ -365,15 +365,25 @@ Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
 }
 
 Audio.prototype.adjustVolumeIfNeeded = function (obj) {
-    var audioLevels = new MicVolume(
-        this.parms,    
-        obj,
-        this.autoGainSupported,
-        this.gainNode,
-        this.audioCtx,
-        this.debugValues, );        
-    audioLevels.adjust();
-
+    //var audioLevels = new MicVolume(
+    //    this.parms,    
+    //    obj,
+    //    this.autoGainSupported,
+    //    this.gainNode,
+    //    this.audioCtx,
+    //    this.debugValues, );        
+    //audioLevels.adjust();
+    if (this.parms.platform == 'smartphone') {
+        var audioLevels = new MicVolume(
+            this.parms,    
+            obj,
+            this.autoGainSupported,
+            this.gainNode,
+            this.audioCtx,
+            this.debugValues, );        
+        audioLevels.adjust();
+    }
+    
     return obj;
 }
 
