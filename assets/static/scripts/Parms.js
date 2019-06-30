@@ -38,11 +38,14 @@ function Parms() {
 
       blockDisplayOfRecordButton: false, // on slower devices, allowing user to record while display is still working can cause dropout/scratches
       //platform: 'desktop', // only needed for smartphones where you cannot adjust recording volume; desktops allow you to adjust recording volume
-      platform: 'smartphone', // debug
-      
-      gain_increment_factor: 1.25, // speech detected, but volume too low, use this factor to increase volume
-      gain_max_increment_factor: 2.0, // no speech detected, assume volume set really low, double volume
-      gain_decrement_factor: 0.75, // if clipping, reduce volume
+      platform: 'smartphone', // !!!!!! debug
+
+      gain: {
+        maxValue: 2.5,       
+        increment_factor: 1.2, // speech detected, but volume too low, use this factor to increase volume
+        max_increment_factor: 2.0, // no speech detected, assume volume set really low, double gain factor
+        decrement_factor: 0.8, // if clipping, multiply gain by this factor to reduce volume
+      }
     }
 
     this.view = {
