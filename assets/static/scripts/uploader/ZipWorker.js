@@ -70,7 +70,7 @@ function createZipFile(self, data) {
   zip.generateAsync({type:"blob"})
   .then(
     function(zip_file_in_memory) {
-      saveSubmissionLocally(data, zip_file_in_memory);
+      _saveSubmissionLocally(data, zip_file_in_memory);
     }
   )
   .catch(function(err) { console.log(err) });   
@@ -91,23 +91,23 @@ function createZipFile(self, data) {
  * -600 will be returned. Daylight savings time prevents this value from being
  * a constant even for a given locale
  */
-function saveSubmissionLocally(data, zip_file_in_memory) {
+function _saveSubmissionLocally(data, zip_file_in_memory) {
   var jsonOnject = {};
   jsonOnject['short_submission_name'] = data.short_submission_name;
   jsonOnject['username'] = data.username;
   jsonOnject['language'] = data.language;
   jsonOnject['suffix'] = data.suffix;
   jsonOnject['speechSubmissionAppVersion'] = data.speechSubmissionAppVersion;
-  if (!Date.now) { // UTC timestamp in milliseconds;
-      Date.now = function() { return new Date().getTime(); }
-  }
-  jsonOnject['timestamp'] = Date.now();
-  jsonOnject['timezoneOffset'] = Date().getTimezoneOffset();
+
+  var date = new Date();  
+  jsonOnject['timestamp'] = date.getTime(); // UTC timestamp in milliseconds;
+  jsonOnject['timezoneOffset'] = date.getTimezoneOffset();
+  
   jsonOnject['file'] = zip_file_in_memory;
 
   submissionCache.setItem(data.temp_submission_name, jsonOnject)
   .then(function (value) {
-    console.info('saveSubmissionLocally: saved submission to localforage browser storage using this key: ' + data.temp_submission_name);
+    console.info('saved submission to localforage browser storage using this key: ' + data.temp_submission_name);
 
     self.postMessage({ 
       status: "savedInBrowserStorage"
