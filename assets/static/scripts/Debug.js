@@ -90,6 +90,11 @@ Debug.prototype.toHash = function () {
     debug_hash["prompts"] = this.prompts;
     debug_hash["appType"] = this.appType;
     
+    var date = new Date();
+    debug_hash.timestamp = date.getTime(); // UTC timestamp in milliseconds;
+    debug_hash.timezoneOffset = date.getTimezoneOffset();
+    debug_hash.dateAndTime = date.toString();
+        
     return debug_hash;
 };
 
