@@ -203,6 +203,11 @@ Uploader.prototype._setUpCallbackFunctions = function(resolve, reject) {
     };
 }
 
+/*
+ * TODO: on some occasions, only 2 of 3 prompt recordings get saved to zip file
+ * and uploaded to server... why???
+ *
+ */
 Uploader.prototype._addAllClipsToAudioArray = function() {
     var self = this;
     this.audioArray = [];
