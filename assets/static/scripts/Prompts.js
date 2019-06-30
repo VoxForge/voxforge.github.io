@@ -646,7 +646,6 @@ Prompts.prototype.clearAudioCharacteristics = function () {
 * true when max number of prompts user wants to record is reached
 */
 Prompts.prototype.lastone = function () {
-    //return this.prompt_count >= this.max_num_prompts - 1;
     return this.prompt_count >= this.max_num_prompts;
 }
 
@@ -697,4 +696,8 @@ Prompts.prototype.userChangedMaxNum = function (new_max_prompts) {
     this.prompt_stack = this._initPromptStack(this.list);
 
     console.log('max_num_prompts:' + new_max_prompts);
+}
+
+Prompts.prototype.getPromptCount = function () {
+    return this.prompt_count;
 }
