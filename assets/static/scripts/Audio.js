@@ -365,14 +365,6 @@ Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
 }
 
 Audio.prototype.adjustVolumeIfNeeded = function (obj) {
-    //var audioLevels = new MicVolume(
-    //    this.parms,    
-    //    obj,
-    //    this.autoGainSupported,
-    //    this.gainNode,
-    //    this.audioCtx,
-    //    this.debugValues, );        
-    //audioLevels.adjust();
     if (this.parms.platform == 'smartphone') {
         var audioLevels = new MicVolume(
             this.parms,    
