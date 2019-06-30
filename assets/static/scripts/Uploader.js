@@ -158,6 +158,13 @@ Uploader.prototype.upload = function(
     this.allClips = allClips;
     this.language = language;
     this.debugChecked = debugChecked;
+
+    if ( this.allClips.length != this.prompts.getPromptCount() ) {
+        console.err( "number of audio recordings (" +
+            this.allClips.length +
+            ") not equal to number of prompt files (" +
+            this.prompts.getPromptCount() + ")" );
+    }
       
     return new Promise(function(resolve, reject) {
       
