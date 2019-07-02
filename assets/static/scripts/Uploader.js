@@ -211,18 +211,21 @@ Uploader.prototype._setUpCallbackFunctions = function(resolve, reject) {
 }
 
 /*
- * TODO: on some occasions, only 2 of 3 prompt recordings get saved to zip file
- * and uploaded to server... why???
- *
+ * TODO: in test mode with only 3 prompts, if second prompt is really long, its
+ * gets dropped and only shorter first and last recordings get saved to zip
+ * file and uploaded to server; difficult to debug because any breakpoint gives
+ * script enough time to process the longer second file, so everything looks OK...
+ * 
  */
 Uploader.prototype._addAllClipsToAudioArray = function() {
     var self = this;
     this.audioArray = [];
-    
+
     this.allClips.forEach(function(clip, clipIndex, allClips) {
         self._hideClip(clip);
         var lastClip = clipIndex >= (allClips.length -1);
-        self._getClipToAddToAudioArray(
+
+        self._convertAudioClipToBlob_and_AddToAudioArray(
             clip,
             lastClip);
     });
@@ -235,7 +238,10 @@ Uploader.prototype._hideClip = function(clip) {
 
 // Ajax is asynchronous - once the request is sent script will 
 // continue executing without waiting for the response.
-Uploader.prototype._getClipToAddToAudioArray = function(clip, lastClip) {
+
+// TODO should use promise syntax to resolve when all audio has been added
+// to audioArray!!!!!!
+Uploader.prototype._convertAudioClipToBlob_and_AddToAudioArray = function(clip, lastClip) {
     var self = this;
 
     var filename = this._extractPromptIDfromClip.call(self, clip) + '.wav';   
@@ -246,7 +252,11 @@ Uploader.prototype._getClipToAddToAudioArray = function(clip, lastClip) {
     xhr.onload =  function() {
         if (this.status != 200) { return } // request failed; skip
 
-        self._addClipToAudioArray.call(self, filename, this.response); 
+        self._addClipToAudioArray.call(self, filename, this.response);
+
+        // because each call is async, this approach does not take into account
+        // the case where the previous audio file
+        // is really long and has not finished being read....
         if ( lastClip )  {
             self.lastAudioClipFinished.call(self, self.audioArray);
         }
@@ -354,6 +364,7 @@ Uploader.prototype._zipworkerProperties = function() {
     }
 }
 
+// TODO should blob creation be done inside ZipWorker?
 Uploader.prototype._zipworkerBlobProperties = function() {
     return {
         readme_blob: new Blob(this.profile.toArray(), {type: "text/plain;charset=utf-8"}),
