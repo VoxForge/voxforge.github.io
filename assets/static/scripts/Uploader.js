@@ -103,7 +103,7 @@ Uploader.prototype.init = function() {
 */
 Uploader.prototype._workerEventMessageHandler = function(event) {
     var self = this;
-      
+
     var returnObj = event.data;
     this._logWorkerType(returnObj);
 
@@ -158,13 +158,6 @@ Uploader.prototype.upload = function(
     this.allClips = allClips;
     this.language = language;
     this.debugChecked = debugChecked;
-
-    if ( this.allClips.length != this.prompts.getPromptCount() ) {
-        console.err( "number of audio recordings (" +
-            this.allClips.length +
-            ") not equal to number of prompt files (" +
-            this.prompts.getPromptCount() + ")" );
-    }
       
     return new Promise(function(resolve, reject) {
       
@@ -190,79 +183,78 @@ Uploader.prototype.upload = function(
 */
 Uploader.prototype._processAudio = function() {
     var self = this;
+    this.audioArray = [];
     
     return new Promise(function(resolve, reject) {
-        self._setUpCallbackFunctions(resolve, reject);
-        self._addAllClipsToAudioArray();
+
+        // convert audio into blob and add to array
+        var audioProcessing_promises = [];
+        self.allClips.forEach(function(clip) {
+            audioProcessing_promises.push(
+                self._convertAudioClipToBlob.call(self, clip)
+                .then(self._addClipToAudioArray.bind(self))                
+                .catch(function (err) {
+                    console.log(err)
+                })
+            );
+            self._hideClip(clip);            
+        });
+
+        // wait for all audio to be processed
+        Promise.all(audioProcessing_promises)
+        .then(function() {
+                resolve("OK");
+              },
+              function(reason) {
+                reject("error processing audio from DOM - reason:" + reason);
+              });
     });
   
 };
 
-/*
-* setup callback functions in Promise context
-*/
-Uploader.prototype._setUpCallbackFunctions = function(resolve, reject) {
-    this.lastAudioClipFinished = function(audioArray) {
-        resolve(audioArray);
-    };           
-    this.onError = function() {
-        reject("error processing audio from DOM");
-    };
+Uploader.prototype._convertAudioClipToBlob = function(clip) {
+    var self = this;
+    var filename = this._extractPromptIDfromClip.call(self, clip) + '.wav';
+    
+    return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', self._getAudioURL(clip), true); // get blob from browser memory; 
+        xhr.responseType = 'blob';
+        xhr.onload =  function() {
+            if (this.status == 200) {
+                var result = [ filename, this.response ];
+                resolve(result);
+            } else {
+                reject({
+                  status: this.status,
+                  statusText: xhr.statusText
+                });
+            }
+        };
+        xhr.onerror = function () {
+            reject({
+                status: this.status,
+                statusText: xhr.statusText
+            });
+        };
+        xhr.send();
+
+    }); // promise 
 }
 
-/*
- * TODO: in test mode with only 3 prompts, if second prompt is really long, its
- * gets dropped and only shorter first and last recordings get saved to zip
- * file and uploaded to server; difficult to debug because any breakpoint gives
- * script enough time to process the longer second file, so everything looks OK...
- * 
- */
-Uploader.prototype._addAllClipsToAudioArray = function() {
-    var self = this;
-    this.audioArray = [];
-
-    this.allClips.forEach(function(clip, clipIndex, allClips) {
-        self._hideClip(clip);
-        var lastClip = clipIndex >= (allClips.length -1);
-
-        self._convertAudioClipToBlob_and_AddToAudioArray(
-            clip,
-            lastClip);
+Uploader.prototype._addClipToAudioArray = function(result) {
+    var filename = result[0];
+    var blob = result[1];
+     
+    this.audioArray.push ({
+        filename: filename,
+        audioBlob: blob,
     });
 }
 
 // hide clip from display as it is being processed
 Uploader.prototype._hideClip = function(clip) {
     clip.style.display = 'None'; 
-}
-
-// Ajax is asynchronous - once the request is sent script will 
-// continue executing without waiting for the response.
-
-// TODO should use promise syntax to resolve when all audio has been added
-// to audioArray!!!!!!
-Uploader.prototype._convertAudioClipToBlob_and_AddToAudioArray = function(clip, lastClip) {
-    var self = this;
-
-    var filename = this._extractPromptIDfromClip.call(self, clip) + '.wav';   
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', this._getAudioURL(clip), true); // get blob from browser memory; 
-    xhr.responseType = 'blob';
-    xhr.onload =  function() {
-        if (this.status != 200) { return } // request failed; skip
-
-        self._addClipToAudioArray.call(self, filename, this.response);
-
-        // because each call is async, this approach does not take into account
-        // the case where the previous audio file
-        // is really long and has not finished being read....
-        if ( lastClip )  {
-            self.lastAudioClipFinished.call(self, self.audioArray);
-        }
-    };
-    xhr.onerror = self.onError;
-    xhr.send();
 }
 
 // TODO this should be in view?    
@@ -280,13 +272,6 @@ Uploader.prototype._extractPromptIDfromClip = function(clip) {
 // TODO this should be in view?    
 Uploader.prototype._extractPromptFromClip = function(clip) {
     return clip.querySelector('prompt').innerText;
-}
-
-Uploader.prototype._addClipToAudioArray = function(filename, blob) {
-    this.audioArray.push ({
-        filename: filename, 
-        audioBlob: blob,
-    });
 }
 
 /**
@@ -322,13 +307,13 @@ Uploader.prototype._minutesSinceLastSubmission = function() {
 /**
 * call web worker to create zip file and upload to VoxForge server
 */
-Uploader.prototype._callWorker2createZipFile = function(audioArray) {
+Uploader.prototype._callWorker2createZipFile = function() {
     var self = this;
     
     this._captureDebugValues();
-    this._tellWorkerToZipFile(audioArray);
+    this._tellWorkerToZipFile();
     
-    return this._processReplyFromZipWorker(audioArray);
+    return this._processReplyFromZipWorker();
 }
 
 Uploader.prototype._captureDebugValues = function() {
@@ -342,13 +327,13 @@ Uploader.prototype._captureDebugValues = function() {
 // need to copy to blobs here (rather than in web worker) because if pass 
 // them as references to ZipWorker, they will be overwritten when page refreshes
 // and not be accessible within web worker
-Uploader.prototype._tellWorkerToZipFile = function(audioArray) {
+Uploader.prototype._tellWorkerToZipFile = function() {
     var zip_worker_parms = {};
     
     zip_worker_parms.command = 'zipAndSave';    
     this._mergeProperties(zip_worker_parms, this._zipworkerProperties());
     this._mergeProperties(zip_worker_parms, this._zipworkerBlobProperties());
-    zip_worker_parms.audio = audioArray;
+    zip_worker_parms.audio = this.audioArray;
     
     this.zip_worker.postMessage(zip_worker_parms);
 }
@@ -383,7 +368,7 @@ Uploader.prototype._mergeProperties = function(obj1, obj2) {
 /**
 * Handler for messages coming from zip_worker web worker
 */
-Uploader.prototype._processReplyFromZipWorker = function(audioArray) {
+Uploader.prototype._processReplyFromZipWorker = function() {
     var self = this;
 
     return new Promise(function(resolve, reject) {
