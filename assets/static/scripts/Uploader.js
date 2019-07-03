@@ -184,24 +184,13 @@ Uploader.prototype.upload = function(
 Uploader.prototype._processAudio = function() {
     var self = this;
     this.audioArray = [];
-    
+
     return new Promise(function(resolve, reject) {
-
-        // convert audio into blob and add to array
-        var audioProcessing_promises = [];
-        self.allClips.forEach(function(clip) {
-            audioProcessing_promises.push(
-                self._convertAudioClipToBlob.call(self, clip)
-                .then(self._addClipToAudioArray.bind(self))                
-                .catch(function (err) {
-                    console.log(err)
-                })
-            );
-            self._hideClip(clip);            
-        });
-
+        var audioProcessingPromises =
+            self._convertAllAudioClipsToBlobsThenAddToAudioArray.call(self);
+            
         // wait for all audio to be processed
-        Promise.all(audioProcessing_promises)
+        Promise.all(audioProcessingPromises)
         .then(function() {
                 resolve("OK");
               },
@@ -211,6 +200,25 @@ Uploader.prototype._processAudio = function() {
     });
   
 };
+
+// convert audio into blob and add to array
+Uploader.prototype._convertAllAudioClipsToBlobsThenAddToAudioArray = function() {
+    var self = this;
+    var audioProcessingPromises = [];
+    
+    this.allClips.forEach(function(clip) {
+        audioProcessingPromises.push(
+            self._convertAudioClipToBlob.call(self, clip)
+            .then(self._addClipToAudioArray.bind(self))                
+            .catch(function (err) {
+                console.log(err)
+            })
+        );
+        self._hideClip(clip);            
+    });
+
+    return audioProcessingPromises;
+}
 
 Uploader.prototype._convertAudioClipToBlob = function(clip) {
     var self = this;
