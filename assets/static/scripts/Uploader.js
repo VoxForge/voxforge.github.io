@@ -173,6 +173,14 @@ Uploader.prototype.upload = function(
     }); // Promise
 }
 
+
+// no done
+// create new class: AudioProcessor and break audio processing into it...
+
+
+
+
+
 /**
 * function that loops over audio clips and asynchronously
 * loads them into audioArray.  This can cause some timing issues if
@@ -186,6 +194,7 @@ Uploader.prototype._processAudio = function() {
     this.audioArray = [];
 
     return new Promise(function(resolve, reject) {
+        
         var audioProcessingPromises =
             self._convertAllAudioClipsToBlobsThenAddToAudioArray.call(self);
             
@@ -197,6 +206,7 @@ Uploader.prototype._processAudio = function() {
               function(reason) {
                 reject("error processing audio from DOM - reason:" + reason);
               });
+              
     });
   
 };
@@ -225,6 +235,7 @@ Uploader.prototype._convertAudioClipToBlob = function(clip) {
     var filename = this._extractPromptIDfromClip.call(self, clip) + '.wav';
     
     return new Promise(function (resolve, reject) {
+        
         var xhr = new XMLHttpRequest();
         xhr.open('GET', self._getAudioURL(clip), true); // get blob from browser memory; 
         xhr.responseType = 'blob';
@@ -358,6 +369,9 @@ Uploader.prototype._zipworkerProperties = function() {
 }
 
 // TODO should blob creation be done inside ZipWorker?
+// TODO transferrable object is faster... is like a copy by refence
+//     see: https://developers.google.com/web/updates/2011/12/Transferable-Objects-Lightning-Fast
+// but the toArray code will have to be in web worker
 Uploader.prototype._zipworkerBlobProperties = function() {
     return {
         readme_blob: new Blob(this.profile.toArray(), {type: "text/plain;charset=utf-8"}),
@@ -418,6 +432,7 @@ Uploader.prototype._uploadZippedSubmission = function() {
                 self._asyncMainThreadUpload.call(self); 
             }
         }
+        // TODO this resolve does not wait for service worker or webworker to finish!!!!
         resolve("uploadZippedSubmission");
 
     }); // Promise
