@@ -138,13 +138,14 @@ Audio.prototype._setupGetUserMedia = function() {
 * a destination audiocontext to capture audio
 *
 */
-// This should be a class
 Audio.prototype._setupAudioNodes = function(stream) {
-    this._createAudioNodes(stream);
-    this._setAllAudioNodesToMono(stream);
-    this._connectAudioNodes(stream);   
+    this.stream = stream;
+    
+    this._createAudioNodes();
+    this._setAllAudioNodesToMono();
+    this._connectAudioNodes();   
 
-    return(stream);
+    return("OK");
 }
 
 /*
@@ -165,8 +166,8 @@ Audio.prototype._setupAudioNodes = function(stream) {
  *
  * FireFox and Edge: https://github.com/GoogleChromeLabs/audioworklet-polyfill
  */
-Audio.prototype._createAudioNodes = function(stream) {
-    this.microphone = this.audioCtx.createMediaStreamSource(stream);
+Audio.prototype._createAudioNodes = function() {
+    this.microphone = this.audioCtx.createMediaStreamSource(this.stream);
     this.gainNode = this.audioCtx.createGain();
     
     var numInputChannels = 1;
@@ -180,7 +181,7 @@ Audio.prototype._createAudioNodes = function(stream) {
     this.mediaStreamOutput = this.audioCtx.destination;
 }
 
-Audio.prototype._setAllAudioNodesToMono = function(stream) {
+Audio.prototype._setAllAudioNodesToMono = function() {
     this.microphone.channelCount = 1;
     this.gainNode.channelCount = 1;
     this.processor.channelCount = 1;
@@ -188,21 +189,19 @@ Audio.prototype._setAllAudioNodesToMono = function(stream) {
     this.mediaStreamOutput.channelCount = 1;
 }
 
-Audio.prototype._connectAudioNodes = function(stream) {
+Audio.prototype._connectAudioNodes = function() {
     this.microphone.connect(this.gainNode);    
     this.gainNode.connect(this.processor);
     this.processor.connect(this.audioCtx.destination);
     this.gainNode.connect(this.analyser);    
 }
 
-Audio.prototype._setProfileAudioProperties = function (stream) {
-    this.stream = stream;
-    
+Audio.prototype._setProfileAudioProperties = function () {
     this.autoGainSupported =
         navigator.mediaDevices.getSupportedConstraints().autoGainSupported;
 
     this._setAudioPropertiesAndContraints();
-    var track = stream.getAudioTracks()[0];
+    var track = this.stream.getAudioTracks()[0];
 
     this.debugValues = new AudioDebug(this.parms, track);
     this.debugValues.set();
