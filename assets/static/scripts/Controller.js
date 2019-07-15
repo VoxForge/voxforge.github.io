@@ -388,6 +388,9 @@ Controller.prototype._maxpromptsrecorded = function () {
 
 Controller.prototype._recordingfirst = function () {
     this.view.setRSButtonDisplay(false, true);
+    
+    promise_list = []; // !!!!!!
+    
     this._recordAudio();
 }
 
@@ -447,6 +450,12 @@ Controller.prototype._captureAudioPropertiesForDebugging = function () {
 make sure all promises complete before trying to gather audio
 from shadow DOM before upload, otherwise will miss some audio 
 recordings...
+*
+* promise_list only waits for recordings to finish, but does not wait for
+* recording to get placed in DOM... problem is that zip file creation worker
+* copies its audio for inclusion in zip file from the DOM, so even though
+* all recordings are completed, upload also needs to wait for DOM to finish
+* processing before copying audio to zip file.
 */
 Controller.prototype._waitForAllRecordingsToCompleteThenUpload = function () {
     var self = this;
@@ -458,6 +467,17 @@ Controller.prototype._waitForAllRecordingsToCompleteThenUpload = function () {
     });
 }
 
+/*
+ * need to wait until all recorded audio is actually displayed before trying
+ * to save it (because the audio is copied from the DOM for display, but then is
+ * copied from DOM to send to zip creation script) otherwise will miss recording
+ *
+ * but also need to wait for all audio to be uploaded to document so that
+ * querySelectorAll returns all audio.  Longer audio files take longer to process,
+ * so that if user records 10sec ish prompt in penultimate recording then a
+ * short recording as last one and uploads right away, the longer one will
+ * not get added to zipped submission...
+ */
 Controller.prototype._uploadPromiseChain = function () {
     var self = this;
         
@@ -531,13 +551,14 @@ Controller.prototype._startRecordingPromiseChain = function () {
     var self = this;
         
     var vad_run = localStorage.getItem("vad_run") === 'true';
+    // TODO use push onto promise_list array rather than keeping track of index
     promise_list[self.promise_index++] = 
         self.audio.record(
             self.prompts.getPromptId(),
             vad_run,
             self.view.audioVisualizerChecked() )
         .then( self.audio.adjustVolumeIfNeeded.bind(self.audio) )             
-        .then( self.view.display.bind(self.view) )        
+        .then( self.view.display.bind(self.view) )  // TODO not waiting for AudioPlayer.display to finish on long, then short/upload submissions...   
         .then( self._dealWithRecordingDebugSettings.bind(self) )
         .catch(function (err) {
             console.log(err)
