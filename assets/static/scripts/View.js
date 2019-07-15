@@ -573,8 +573,8 @@ View.prototype.display = function(obj) {
  * Contructor
  */
 /**
-* This function changes the contents of a dependent select list based on the
-* contents of a independent select list.  This is used to set the 
+* This function changes the contents of a 'dependent' select list based on the
+* contents of a 'independent' select list.  This is used to set the 
 * contents of the dependent sub-dialect selection list based on the value
 * the independent dialect selection list.
 *
