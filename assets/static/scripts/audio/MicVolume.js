@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * see also: https://webaudioapi.com/samples/volume/
  */
-// TODO user needs to be able to disable automatic recording volume adjuster
+// TODO user should be able to disable automatic recording volume adjuster
 function MicVolume(parms, obj, autoGainSupported, gainNode, audioCtx, debugValues) {
     this.parms = parms;        
     this.obj = obj;
@@ -30,27 +30,17 @@ function MicVolume(parms, obj, autoGainSupported, gainNode, audioCtx, debugValue
     this.debugValues = debugValues;   
     
     this._setGainConstants();
-    this._setBooleans();    
     this._updateRecordingResultsObject();
     
     this.gainValue = this.gainNode.gain.value;
 }
 
 MicVolume.prototype._setGainConstants = function () {
-    this.gain_decrement_factor = this.parms.gain_decrement_factor;
-    this.gain_increment_factor = this.parms.gain_increment_factor;
-    this.gain_max_increment_factor = this.parms.gain_max_increment_factor;
+    this.gain_maxValue = this.parms.gain.maxValue;
 
-    this.gain_maxValue = 1.0; 
-    this.gain_minValue = -1 * this.gain_maxValue; 
-}
-
-MicVolume.prototype._setBooleans = function () {
-    if (this.parms.platform == 'smartphone') {
-        this.adjustRecordVolume = true;
-    } else {
-        this.adjustRecordVolume = false;
-    }
+    this.gain_decrement_factor = this.parms.gain.decrement_factor;
+    this.gain_increment_factor = this.parms.gain.increment_factor;
+    this.gain_max_increment_factor = this.parms.gain.max_increment_factor;
 }
 
 MicVolume.prototype._updateRecordingResultsObject = function () {
@@ -83,12 +73,9 @@ MicVolume.prototype._updateRecordingResultsObject = function () {
 // first prompt; make it optional
 // TODO just set up volume slider in settings... see: https://webaudioapi.com/samples/volume/
 // see also: http://cwestblog.com/2017/08/17/html5-getting-more-volume-from-the-web-audio-api/
-MicVolume.prototype.adjust = function () {
-    if ( this.adjustRecordVolume ) {
-        this._adjustVolume(); 
-    }
-}
-
+// TODO make audio level notification higher priority than no trailing silence
+// message
+// TODO only change levels if valid recording with speech
 /**
 * app auto gain - changes gain for the *next* recording (not the current one)
 *
@@ -106,14 +93,12 @@ MicVolume.prototype.adjust = function () {
 * higher gain will have the best audio quality (least noise) but the one with
 * the lower gain is insurance in case the first one clips.
 */
-// TODO make audio level notification higher priority than no trailing silence
-// message
-MicVolume.prototype._adjustVolume = function () {
+MicVolume.prototype.adjust = function () {
     if (this.obj.clipping) {
         this._reduceVolume();
-    } else if (this.obj.too_soft && this._volumeLessThanMaxValue() ) {
+    } else if (this.obj.too_soft && this._gainFactorLessThanMaxValue() ) {
         this._increaseVolume();
-    } else if (this.obj.no_speech && this._volumeLessThanMaxValue() ) {
+    } else if (this.obj.no_speech && this._gainFactorLessThanMaxValue() ) {
         this._increaseMaxVolume();
     }     
 }
@@ -121,16 +106,19 @@ MicVolume.prototype._adjustVolume = function () {
 /*
  * gain is always a positive number (audio signals can vary between [-1, 1]
  */
-MicVolume.prototype._volumeLessThanMaxValue = function () {
+MicVolume.prototype._gainFactorLessThanMaxValue = function () {
     return this.obj.gain < this.gain_maxValue;
 }
 
+/*
+ * gain is always a positive number, and a fraction of a positive real number will
+ * always be positive, just really small...
+ */
 MicVolume.prototype._reduceVolume = function () {
-    var newgain = Math.max(
-        this.gainValue * this.gain_decrement_factor, this.gain_minValue);
+    var newgain = this.gainValue * this.gain_decrement_factor;
     this._setGain(newgain);
 
-    this._logGainChange("gainChange: too loud (clipping); gain reduced to: ", newgain);        
+    this._logGainChange("gainChange: too loud (clipping)", newgain);        
 }
 
 MicVolume.prototype._increaseVolume = function () {
@@ -138,7 +126,7 @@ MicVolume.prototype._increaseVolume = function () {
         this.gainValue * this.gain_increment_factor, this.gain_maxValue);
     this._setGain(newgain);
 
-    this._logGainChange("gainChange: volume too low; gain increased to: ", newgain);        
+    this._logGainChange("gainChange: volume too low", newgain);        
 }
 
 MicVolume.prototype._increaseMaxVolume = function () {
@@ -192,12 +180,10 @@ MicVolume.prototype._setGain = function (newgain) {
 
 MicVolume.prototype._logGainChange = function (m, newgain) {
     console.log (m +
-        "; volume changed from: " +
+        "; gain changed from: " +
         parseFloat(this.obj.gain).toFixed(2) +
         " to: " +
         parseFloat(newgain).toFixed(2));
     
     this.debugValues.gainNode_gain_value = newgain;
 }
-
-
