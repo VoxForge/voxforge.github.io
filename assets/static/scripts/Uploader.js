@@ -161,7 +161,12 @@ Uploader.prototype.upload = function(
       
     return new Promise(function(resolve, reject) {
       
-        self._processAudio()
+        //self._processAudio()
+        var audioProcessor = new AudioProcessor(
+            self.allClips,
+            self.prompts);
+
+        audioProcessor.start()
         .then(self._callWorker2createZipFile.bind(self))
         .then(self._uploadZippedSubmission.bind(self))
         .then(resolve) // resolve needs to be passed as a reference... therefore no parms
@@ -178,7 +183,10 @@ Uploader.prototype.upload = function(
 // create new class: AudioProcessor and break audio processing into it...
 
 
-
+function AudioProcessor(allClips, prompts) {
+    this.allClips = allClips;
+    this.prompts = prompts;
+}
 
 
 /**
@@ -189,7 +197,7 @@ Uploader.prototype.upload = function(
 *
 * uses xhr internally to collect read audio samples from shadow DOM
 */
-Uploader.prototype._processAudio = function() {
+AudioProcessor.prototype.start = function() {
     var self = this;
     this.audioArray = [];
 
@@ -201,18 +209,17 @@ Uploader.prototype._processAudio = function() {
         // wait for all audio to be processed
         Promise.all(audioProcessingPromises)
         .then(function() {
-                resolve("OK");
+                resolve(self.audioArray);
               },
               function(reason) {
                 reject("error processing audio from DOM - reason:" + reason);
               });
-              
     });
   
 };
 
 // convert audio into blob and add to array
-Uploader.prototype._convertAllAudioClipsToBlobsThenAddToAudioArray = function() {
+AudioProcessor.prototype._convertAllAudioClipsToBlobsThenAddToAudioArray = function() {
     var self = this;
     var audioProcessingPromises = [];
     
@@ -230,7 +237,7 @@ Uploader.prototype._convertAllAudioClipsToBlobsThenAddToAudioArray = function() 
     return audioProcessingPromises;
 }
 
-Uploader.prototype._convertAudioClipToBlob = function(clip) {
+AudioProcessor.prototype._convertAudioClipToBlob = function(clip) {
     var self = this;
     var filename = this._extractPromptIDfromClip.call(self, clip) + '.wav';
     
@@ -261,7 +268,7 @@ Uploader.prototype._convertAudioClipToBlob = function(clip) {
     }); // promise 
 }
 
-Uploader.prototype._addClipToAudioArray = function(result) {
+AudioProcessor.prototype._addClipToAudioArray = function(result) {
     var filename = result[0];
     var blob = result[1];
      
@@ -272,16 +279,16 @@ Uploader.prototype._addClipToAudioArray = function(result) {
 }
 
 // hide clip from display as it is being processed
-Uploader.prototype._hideClip = function(clip) {
+AudioProcessor.prototype._hideClip = function(clip) {
     clip.style.display = 'None'; 
 }
 
 // TODO this should be in view?    
-Uploader.prototype._getAudioURL = function(clip) {
+AudioProcessor.prototype._getAudioURL = function(clip) {
     return clip.querySelector('audio').src; 
 }
 
-Uploader.prototype._extractPromptIDfromClip = function(clip) {
+AudioProcessor.prototype._extractPromptIDfromClip = function(clip) {
     var prompt = this._extractPromptFromClip(clip);
     this.prompts.addToPromptsRecorded(prompt);
           
@@ -289,7 +296,7 @@ Uploader.prototype._extractPromptIDfromClip = function(clip) {
 }
 
 // TODO this should be in view?    
-Uploader.prototype._extractPromptFromClip = function(clip) {
+AudioProcessor.prototype._extractPromptFromClip = function(clip) {
     return clip.querySelector('prompt').innerText;
 }
 
@@ -326,9 +333,11 @@ Uploader.prototype._minutesSinceLastSubmission = function() {
 /**
 * call web worker to create zip file and upload to VoxForge server
 */
-Uploader.prototype._callWorker2createZipFile = function() {
+Uploader.prototype._callWorker2createZipFile = function(audioArray) {
+    this.audioArray = audioArray;
+        
     var self = this;
-    
+
     this._captureDebugValues();
     this._tellWorkerToZipFile();
     
