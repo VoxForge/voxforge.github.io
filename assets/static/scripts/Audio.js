@@ -59,6 +59,8 @@ Audio.prototype._setDefaultProperties = function() {
     this.mediaStreamOutput = null;
     this.analyser = null;
 
+    this.stream = null;
+
     // rule is to collect speech audio that best reflects the user's environment,
     // therefore take whatever defaults user's device supports
     this.constraints = { audio: true };    
