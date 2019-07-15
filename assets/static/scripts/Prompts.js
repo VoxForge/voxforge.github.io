@@ -59,20 +59,18 @@ function Prompts(parms,
 Prompts.prototype.init = function () {
     var self = this;
 
-    this._validateParmsAndLog();
+    this._validateReadmdParmsAndLog();
     this._initializePrompts();
 }
 
-Prompts.prototype._validateParmsAndLog = function () {
-    //this.validate_Readmd_file();
+Prompts.prototype._validateReadmdParmsAndLog = function () {
     var readmd = new Readmd(
         this.prompt_list_files,
-        this.language);
+        this.language,
+        this.plf,
+        this.prompt_file_index);
     readmd.validate();
-     
-    this._logPromptFileInformation();
 }
-
 
 Prompts.prototype._initializePrompts = async function () {
     var self = this;
@@ -317,28 +315,6 @@ Prompts.prototype._initPromptStack = function(list)
     while (n--) addPromptToFrontOfStack();
 
     return prompt_stack;
-}
-
-Prompts.prototype._logPromptFileInformation = function() {
-    var m = this._addPromptIDToMessageifMissing();
-
-    console.log("prompt file id: " +
-        this.plf.id + 
-        " (prompt file array index: " +
-        this.prompt_file_index + ") " +
-        m);
-}
-
-Prompts.prototype._addPromptIDToMessageifMissing = function() {
-    var m = "";
-    
-    if ( ! this.plf.contains_promptid ) {
-        let end = this.plf.start + this.plf.number_of_prompts;
-        m = "promptId start: " + this.plf.start +
-            "; end: " + end;
-    }
-
-    return m;
 }
 
 /*
