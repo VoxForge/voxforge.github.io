@@ -52,25 +52,6 @@ function Prompts(parms,
 * ### METHODS ##############################################
 */
 
-
-
-
-
-
-
-TODO there is a mix of two things in here...
-Prompts collection ,and promptLine items
-Need to break these out into two seperate classes
-
-could create a readmd object that validates it...
-
-
-
-
-
-
-
-
 /** 
 * get prompts file for given language from server; used cached version of 
 * prompt file if no network connection...
@@ -83,64 +64,15 @@ Prompts.prototype.init = function () {
 }
 
 Prompts.prototype._validateParmsAndLog = function () {
-    this.validate_Readmd_file();
+    //this.validate_Readmd_file();
+    var readmd = new Readmd(
+        this.prompt_list_files,
+        this.language);
+    readmd.validate();
+     
     this._logPromptFileInformation();
 }
 
-/**
-* verify that read.md entries contain valid prompt related data;
-* iterates through all prompt_list_files attributes defined in read.md files
-*/
-Prompts.prototype.validate_Readmd_file = function () {
-    var self = this;
-    var num_prompts_calc = 0;
-
-    this.prompt_list_files.forEach(
-        this._checkForUndefinedAttributesInGivenPromptListEntry.bind(this));
-}
-
-Prompts.prototype._checkForUndefinedAttributesInGivenPromptListEntry =
-    function (plf, i)
-{
-    var notDefined = "not defined in read.md for language: " + 
-        this.language;
-        
-    this._checkForUndefinedAttributes(plf, i, notDefined);
-    if ( !  plf.contains_promptid ) {
-        this._checkForUndefinedAttributesIfNoPromptId(plf, i, notDefined);
-    }
-}
-
-Prompts.prototype._checkForUndefinedAttributes = function (plf, i, notDefined) {  
-    if (typeof plf.id === 'undefined') {
-        console.warn("prompt_list_files[" + i + "].id " + notDefined);
-    }
-    if (typeof plf.file_location === 'undefined') {
-        console.warn("prompt_list_files[" + i + "].file_location " + notDefined);
-    }
-    if (typeof plf.number_of_prompts === 'undefined') {
-        console.warn("prompt_list_files[" + i + "].number_of_prompts " + notDefined);
-    }
-    if (typeof plf.contains_promptid === 'undefined') {
-        console.warn("prompt_list_files[" + i + "].contains_promptid " + notDefined);
-    }    
-}
-
-// if prompt lines already have promptid, then don't need start or prefix
-// fields in read.md front matter
-Prompts.prototype._checkForUndefinedAttributesIfNoPromptId =
-    function (plf, i, notDefined)
-{
-    if (typeof plf.start === 'undefined') {
-        console.warn("prompt_list_files[" + i + "].start " + notDefined);
-    }
-
-    if (typeof plf.prefix === 'undefined') {
-        console.warn("prompt_list_files[" + i + "].prefix " + notDefined);
-    }
-}
-
-// #############################################################################
 
 Prompts.prototype._initializePrompts = async function () {
     var self = this;
