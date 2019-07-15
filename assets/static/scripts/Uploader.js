@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+var Uploader = (function() { // code to keep helper classes inside Uploader namespace //
+
 /**
 * ### Contructor ##############################################
 */
@@ -96,8 +98,8 @@ Uploader.prototype.init = function() {
 /** 
 * process messages from service worker or web worker
 *
-* create classMapping map to link string to Class declarations, so can
-* dynamically call correct message subclass based on return message from
+* create class map to link string to Class declarations (i.e. classMapping), so 
+* can dynamically call correct message subclass based on return message from
 * SavedSubmission class.
 * (see: //see: https://stackoverflow.com/questions/34655616/create-an-instance-of-a-class-in-es6-with-a-dynamic-name)
 */
@@ -161,7 +163,6 @@ Uploader.prototype.upload = function(
       
     return new Promise(function(resolve, reject) {
       
-        //self._processAudio()
         var audioProcessor = new AudioProcessor(
             self.allClips,
             self.prompts);
@@ -176,128 +177,6 @@ Uploader.prototype.upload = function(
         });
         
     }); // Promise
-}
-
-
-// no done
-// create new class: AudioProcessor and break audio processing into it...
-
-
-function AudioProcessor(allClips, prompts) {
-    this.allClips = allClips;
-    this.prompts = prompts;
-}
-
-
-/**
-* function that loops over audio clips and asynchronously
-* loads them into audioArray.  This can cause some timing issues if
-* there are many audio files... therefore only reset user facing display
-* after all text and audio is sent to web worker for background processing
-*
-* uses xhr internally to collect read audio samples from shadow DOM
-*/
-AudioProcessor.prototype.start = function() {
-    var self = this;
-    this.audioArray = [];
-
-    return new Promise(function(resolve, reject) {
-        
-        var audioProcessingPromises =
-            self._convertAllAudioClipsToBlobsThenAddToAudioArray.call(self);
-            
-        // wait for all audio to be processed
-        Promise.all(audioProcessingPromises)
-        .then(function() {
-                resolve(self.audioArray);
-              },
-              function(reason) {
-                reject("error processing audio from DOM - reason:" + reason);
-              });
-    });
-  
-};
-
-// convert audio into blob and add to array
-AudioProcessor.prototype._convertAllAudioClipsToBlobsThenAddToAudioArray = function() {
-    var self = this;
-    var audioProcessingPromises = [];
-    
-    this.allClips.forEach(function(clip) {
-        audioProcessingPromises.push(
-            self._convertAudioClipToBlob.call(self, clip)
-            .then(self._addClipToAudioArray.bind(self))                
-            .catch(function (err) {
-                console.log(err)
-            })
-        );
-        self._hideClip(clip);            
-    });
-
-    return audioProcessingPromises;
-}
-
-AudioProcessor.prototype._convertAudioClipToBlob = function(clip) {
-    var self = this;
-    var filename = this._extractPromptIDfromClip.call(self, clip) + '.wav';
-    
-    return new Promise(function (resolve, reject) {
-        
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', self._getAudioURL(clip), true); // get blob from browser memory; 
-        xhr.responseType = 'blob';
-        xhr.onload =  function() {
-            if (this.status == 200) {
-                var result = [ filename, this.response ];
-                resolve(result);
-            } else {
-                reject({
-                  status: this.status,
-                  statusText: xhr.statusText
-                });
-            }
-        };
-        xhr.onerror = function () {
-            reject({
-                status: this.status,
-                statusText: xhr.statusText
-            });
-        };
-        xhr.send();
-
-    }); // promise 
-}
-
-AudioProcessor.prototype._addClipToAudioArray = function(result) {
-    var filename = result[0];
-    var blob = result[1];
-     
-    this.audioArray.push ({
-        filename: filename,
-        audioBlob: blob,
-    });
-}
-
-// hide clip from display as it is being processed
-AudioProcessor.prototype._hideClip = function(clip) {
-    clip.style.display = 'None'; 
-}
-
-// TODO this should be in view?    
-AudioProcessor.prototype._getAudioURL = function(clip) {
-    return clip.querySelector('audio').src; 
-}
-
-AudioProcessor.prototype._extractPromptIDfromClip = function(clip) {
-    var prompt = this._extractPromptFromClip(clip);
-    this.prompts.addToPromptsRecorded(prompt);
-          
-    return prompt.split(/(\s+)/).shift();
-}
-
-// TODO this should be in view?    
-AudioProcessor.prototype._extractPromptFromClip = function(clip) {
-    return clip.querySelector('prompt').innerText;
 }
 
 /**
@@ -377,8 +256,8 @@ Uploader.prototype._zipworkerProperties = function() {
     }
 }
 
-// TODO should blob creation be done inside ZipWorker?
-// TODO transferrable object is faster... is like a copy by refence
+// TODO blob creation should be done inside ZipWorker.
+// TODO transferrable object is faster... is like a copy by reference
 //     see: https://developers.google.com/web/updates/2011/12/Transferable-Objects-Lightning-Fast
 // but the toArray code will have to be in web worker
 Uploader.prototype._zipworkerBlobProperties = function() {
@@ -539,3 +418,131 @@ Uploader.prototype._logSubmissionUpload = function() {
     localStorage.setItem('timeOfLastSubmission', Date.now());
     localStorage.setItem('numberOfSubmissions', this.getNumberOfSubmissions() + 1);
 }
+
+/**
+* ### Helper Classes ##############################################
+*/
+
+/**
+* collect all recorded audio into an array (audioArray) 
+*/
+function AudioProcessor(allClips, prompts) {
+    this.allClips = allClips;
+    this.prompts = prompts;
+}
+
+/**
+* function that loops over audio clips and asynchronously
+* loads them into audioArray.  This can cause some timing issues if
+* there are many audio files... therefore only reset user facing display
+* after all text and audio is sent to web worker for background processing
+*
+* uses xhr internally to collect read audio samples from shadow DOM
+*/
+AudioProcessor.prototype.start = function() {
+    var self = this;
+    this.audioArray = [];
+
+    return new Promise(function(resolve, reject) {
+        
+        var audioProcessingPromises =
+            self._convertAllAudioClipsToBlobsThenAddToAudioArray.call(self);
+            
+        // wait for all audio to be processed
+        Promise.all(audioProcessingPromises)
+        .then(function() {
+                resolve(self.audioArray);
+              },
+              function(reason) {
+                reject("error processing audio from DOM - reason:" + reason);
+              });
+    });
+  
+};
+
+AudioProcessor.prototype._convertAllAudioClipsToBlobsThenAddToAudioArray = function() {
+    var self = this;
+    var audioProcessingPromises = [];
+    
+    this.allClips.forEach(function(clip) {
+        audioProcessingPromises.push(
+            self._convertAudioClipToBlob.call(self, clip)
+            .then(self._addClipToAudioArray.bind(self))                
+            .catch(function (err) {
+                console.log(err)
+            })
+        );
+        self._hideClip(clip);            
+    });
+
+    return audioProcessingPromises;
+}
+
+AudioProcessor.prototype._convertAudioClipToBlob = function(clip) {
+    var self = this;
+    var filename = this._extractPromptIDfromClip.call(self, clip) + '.wav';
+    
+    return new Promise(function (resolve, reject) {
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', self._getAudioURL(clip), true); // get blob from browser memory; 
+        xhr.responseType = 'blob';
+        xhr.onload =  function() {
+            if (this.status == 200) {
+                var result = [ filename, this.response ];
+                resolve(result);
+            } else {
+                reject({
+                  status: this.status,
+                  statusText: xhr.statusText
+                });
+            }
+        };
+        xhr.onerror = function () {
+            reject({
+                status: this.status,
+                statusText: xhr.statusText
+            });
+        };
+        xhr.send();
+
+    }); // promise 
+}
+
+AudioProcessor.prototype._addClipToAudioArray = function(result) {
+    var filename = result[0];
+    var blob = result[1];
+     
+    this.audioArray.push ({
+        filename: filename,
+        audioBlob: blob,
+    });
+}
+
+// hide clip from display as it is being processed
+AudioProcessor.prototype._hideClip = function(clip) {
+    clip.style.display = 'None'; 
+}
+
+// TODO this should be in view?    
+AudioProcessor.prototype._getAudioURL = function(clip) {
+    return clip.querySelector('audio').src; 
+}
+
+AudioProcessor.prototype._extractPromptIDfromClip = function(clip) {
+    var prompt = this._extractPromptFromClip(clip);
+    this.prompts.addToPromptsRecorded(prompt);
+          
+    return prompt.split(/(\s+)/).shift();
+}
+
+// TODO this should be in view?    
+AudioProcessor.prototype._extractPromptFromClip = function(clip) {
+    return clip.querySelector('prompt').innerText;
+}
+
+
+
+/// code to keep helper classes inside Uploader namespace //////////////////////
+return Uploader;
+}());
