@@ -59,11 +59,11 @@ function Prompts(parms,
 Prompts.prototype.init = function () {
     var self = this;
 
-    this._validateReadmdParmsAndLog();
+    this._validateReadmd();
     this._initializePrompts();
 }
 
-Prompts.prototype._validateReadmdParmsAndLog = function () {
+Prompts.prototype._validateReadmd = function () {
     var readmd = new Readmd(
         this.prompt_list_files,
         this.language,
