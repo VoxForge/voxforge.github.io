@@ -51,7 +51,26 @@ function Prompts(parms,
 /**
 * ### METHODS ##############################################
 */
-    
+
+
+
+
+
+
+
+TODO there is a mix of two things in here...
+Prompts collection ,and promptLine items
+Need to break these out into two seperate classes
+
+could create a readmd object that validates it...
+
+
+
+
+
+
+
+
 /** 
 * get prompts file for given language from server; used cached version of 
 * prompt file if no network connection...
@@ -109,8 +128,8 @@ Prompts.prototype._checkForUndefinedAttributes = function (plf, i, notDefined) {
 
 // if prompt lines already have promptid, then don't need start or prefix
 // fields in read.md front matter
-Prompts.prototype._checkForUndefinedAttributesIfNoPromptId = function (
-    plf, i, notDefined)
+Prompts.prototype._checkForUndefinedAttributesIfNoPromptId =
+    function (plf, i, notDefined)
 {
     if (typeof plf.start === 'undefined') {
         console.warn("prompt_list_files[" + i + "].start " + notDefined);
@@ -317,6 +336,9 @@ Prompts.prototype._savePromptData2BrowserStorage = function(prompt_data) {
     console.log("updating saved prompts file with new one from VoxForge server");
 }
 
+
+// TODO function not being called from anywhere???
+/*
 Prompts.prototype._logGetPromptFileFromServerFailed = function(
     err,
     prompt_file_name)
@@ -328,6 +350,10 @@ Prompts.prototype._logGetPromptFileFromServerFailed = function(
         "err = " + err;
     console.warn(m);
 }
+*/
+
+
+// #############################################################################
 
 /**
 * initialize prompt stack with number of prompts chosen by user
@@ -374,7 +400,7 @@ Prompts.prototype._logPromptFileInformation = function() {
 Prompts.prototype._addPromptIDToMessageifMissing = function() {
     var m = "";
     
-    if ( ! this.plf.contains_promptid) {
+    if ( ! this.plf.contains_promptid ) {
         let end = this.plf.start + this.plf.number_of_prompts;
         m = "promptId start: " + this.plf.start +
             "; end: " + end;
@@ -394,8 +420,7 @@ Prompts.prototype._getLocalizedPromptFilename = function() {
 /** 
 * save the prompt file as a JSON object in user's browser's Local Storage
 */
-Prompts.prototype._save2BrowserStorage = function() 
-{
+Prompts.prototype._save2BrowserStorage = function() {
     var jsonOnject = this._createJsonPromptObject(this.plf.id);
     this._saveObject2PromptCache(jsonOnject);
 }
@@ -410,8 +435,7 @@ Prompts.prototype._createJsonPromptObject = function(id) {
     return jsonOnject;
 }
 
-Prompts.prototype._saveObject2PromptCache = async function(jsonOnject)
-{
+Prompts.prototype._saveObject2PromptCache = async function(jsonOnject) {
     var self = this;
 
     this.promptCache.setItem(
@@ -533,7 +557,6 @@ Prompts.prototype.getPromptId = function () {
 Prompts.prototype.getPromptSentence = function () {
    return this._splitPromptLine(this.current_promptLine)[1];
 }
-
 
 /**
 * helper function to return prompt id and prompt sentence in an array
@@ -662,10 +685,6 @@ Prompts.prototype.maxnumpromptsincreased = function () {
 */
 Prompts.prototype.recordedmorethancurrentmaxprompts = function () {
     return this.prompt_count >= this.max_num_prompts;
-}
-
-Prompts.prototype.oneleft = function () {
-    return this.prompt_count == 1;
 }
 
 Prompts.prototype.atmid = function () {
