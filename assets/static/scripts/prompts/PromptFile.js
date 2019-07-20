@@ -19,26 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * get prompts file for given language from server; used cached version of 
 * prompt file if no network connection...
 */
-function PromptFile(
-    language,
-    prompt_list_files, )
-{
+function PromptFile(language, prompt_list_files, ) {
     this.language = language;
     this.prompt_list_files = prompt_list_files;
-
-    this.promptList = [];
+        
     this.promptCache = localforage.createInstance({
         name: this.language + "_promptCache"
     });
-
+    
+    this._selectRandomPromptFile();
     this._validateReadmd();  
-
-    this.prompt_file_index =
-        Math.floor((Math.random() * this.prompt_list_files.length)); // zero indexed
-    this.plf = this.prompt_list_files[this.prompt_file_index];
-    this.prompt_file_name = this.plf['file_location'];
-
-    this.jsonOnject = null;
 }
 
 PromptFile.prototype._validateReadmd = function () {
@@ -50,6 +40,17 @@ PromptFile.prototype._validateReadmd = function () {
     readmd.validate();
 }
 
+PromptFile.prototype._selectRandomPromptFile = function () {
+    this.prompt_file_index =
+        Math.floor((Math.random() * this.prompt_list_files.length)); // zero indexed
+    this.plf = this.prompt_list_files[this.prompt_file_index];
+    this.prompt_file_name = this.plf['file_location'];
+}
+
+/**
+* ### METHODS ##############################################
+*/
+
 /*
  * I. prompt file exists in browser storage
  * 
@@ -57,27 +58,26 @@ PromptFile.prototype._validateReadmd = function () {
  * Give user prompt file that is stored in browser storage,
  *
  * 2. in background
- * a. network up
+ * a. if network up
  * perform an async replace of browser prompt file with random prompt file
  * from the server.
  *
- * b. network down
+ * b. if network down
  * If no connection to server, then got to service worker cache to use the
  * default prompt file (first prompt file in configuration list).
  * 
  * II. no prompt file in browser storage
  *
  * 1. for reponsiveness
- * First check the service worker cache to get default prompt file
+ * give user service worker cache to get default prompt file
  *
  * 2. in background
- * a. network up
+ * a. if network up
  * perform an async replace of browser prompt file with random prompt file
  * from the server.
  *
- * b. network down
- * do nothing, already have prompt list
- * 
+ * b. if network down
+ * do nothing, already have default prompt list
  * 
  */
 PromptFile.prototype.get = function () {
@@ -91,34 +91,81 @@ PromptFile.prototype.get = function () {
     * tells you if prompt file was already locally cached in promptCache 
     * for that language
     */
-    function isBrowserStorageEmpty() {  
+    function checkPromptFileCache() {  
         var promise =
             self.promptCache.length()
             .then(function(length) {
-                return (length == 0) // true or false value
+                return (length > 0) // true or false value
             })
             .catch(function(err) {
-                return true; // no browser storage file exists
+                return false; // no promptFile in browser storage exists
             });
             
         return promise;
     }
 
-    isBrowserStorageEmpty()
-    .then(function(browserStorageEmpty) {
-        if ( browserStorageEmpty ) {
-            self._getPromptsFileFromServerOrServiceWorkerCache.call(self);
-        } else {
-            self._getPromptsFileFromBrowserStorage.call(self);
-        }
+    return new Promise(function(resolve, reject) {
 
-        return this.promptList; // TODO confirm this actuall works re: timing issues
-    });
+        checkPromptFileCache()
+        .then(function(foundPromptInCache) {
+            if ( foundPromptInCache ) {
+                self._getPromptsFileFromBrowserStorage.call(self)
+                .then(function(promptList) {
+                    resolve(promptList);
+                });                
+            } else { // promptCache is empty
+                self._getPromptsFileFromServer.call(self)
+                .then(function(promptList) {
+                    resolve(promptList);
+                });
+            }
+        });
+
+    }); // promise
 }
 
+/**
+  1. use localstorage prompts to start with,
+  2. then asynchronously try to download updated prompt file...
 
+  this prevents hang of app when user records offline (when using a 
+  promise chain) or timing issues with no promise chain when app starts
+  up offline and prompts file 'get' is hanging...
 
-// #############################################################################
+ * doing prompt stack update at beginning means that the prompt stack 
+ * is always one behind the call to VoxForge server... 
+ * why? for reponsiveness when user is recording offline.  
+ * If were to try to access server while offline,
+ * there would be a delay with user being able to 
+ * start recording - $.get hangs trying to access server while
+ * offline, so give the user a stack of prompts (using current
+ * prompt list file), then asynchronously try to access server to update current
+ * prompt file stored in browser.
+ * if no internet access, then user using stored prompt file, 
+ * if there is Internet access, then user will get updated 
+ * random prompts on subsequent submission.
+ */
+PromptFile.prototype._getPromptsFileFromBrowserStorage = function() {
+    var self = this;
+
+    return new Promise(function(resolve, reject) {
+
+        // Async call that return a JSON object containing prompt list
+        self.promptCache.getItem( self._getLocalizedPromptFilename() )
+        .then ( function(jsonObject) {
+            console.log("updating saved prompts file with new one from VoxForge server");
+            self._getPromptsFileFromServer(); // background update of promptsFile from server; discard returned jsonObject
+            
+            resolve(jsonObject);
+        })
+        .catch(function(err) {
+            console.err(
+                "cannot get saved PromptList file from browser: " +
+                err);
+        });        
+
+    });
+}
 
 /**
  * No good way to detect if online or offline.
@@ -137,30 +184,38 @@ PromptFile.prototype.get = function () {
  * selected small section of the total prompt set.
  * 
  */
-PromptFile.prototype._getPromptsFileFromServerOrServiceWorkerCache = function() {
-    var self = this;
-
-    this._getPromptsFileFromServer()
-    .then( self._save2BrowserStorage.bind(self) );   
-}
-
-/*
- * returns a jQuery XHR object ("jqXHR")
- * does not have a catch, but uses fail to catch errors...
- */
 PromptFile.prototype._getPromptsFileFromServer = function() {
     var self = this;
     
-    var jqXHR =
-        $.get(this.prompt_file_name)
-        .fail(function(err) {
-            console.log(err); 
-            self._getPromptsFileFromServiceWorkerCache.call(self);
+    return new Promise(function(resolve, reject) {
+        
+        self._getFromServer()
+        .then( self._save2BrowserStorage.bind(self) )
+        .then( function(promptList) {
+            resolve(promptList);
         });
         
-    return jqXHR;
+    }); 
 }
 
+/*
+ * returns a jQuery XHR object ("jqXHR") - similar to a promise, but missing stuff
+ * does not have a catch, but uses fail to catch errors...
+ */
+PromptFile.prototype._getFromServer = function() {
+    var self = this;
+    
+    var promise =
+        $.get(this.prompt_file_name)
+        .fail(function(err) {
+            console.log(err);
+            // TODO need to test to prevent infinite loops
+            // test to make sure that have not already cheacked for index=0
+            self._getDefaultPromptsFileFromServiceWorkerCache.call(self);
+        });
+        
+    return promise;
+}
 
 /** 
 * save the prompt file as a JSON object in user's browser's Local Storage
@@ -197,6 +252,7 @@ PromptFile.prototype._save2BrowserStorage = function(prompt_data) {
             return prompt_id  + " " + sentence;
         }
 
+
         var sentences = prompt_data.split('\n');      
         var list = sentences.filter(removeEmptyStrings);
         if ( ! self.plf.contains_promptid ) {
@@ -206,33 +262,31 @@ PromptFile.prototype._save2BrowserStorage = function(prompt_data) {
         return list;
     }
 
-    function confirmPromptListLength() {
-        if (self.plf.number_of_prompts !=  self.promptList.length) {
+    function confirmPromptListLength(promptList) {
+        if (self.plf.number_of_prompts !=  promptList.length) {
             console.warn(
                 "number of prompts in prompt_list_files[" +
                 self.prompt_file_index + "] = " + 
                 self.plf.number_of_prompts + 
                 " in read.md, not same as prompt file line counts for language: " + 
-                self.language + "= " + self.promptList.length );
+                self.language + "= " + promptList.length );
         }
     }
 
-    function createJsonPromptObject () {
+    function createJsonPromptObject (promptList) {
         var jsonOnject = {};
 
         jsonOnject['language'] = self.language;
         jsonOnject['id'] = self.plf.id;
-        jsonOnject['list'] = self.promptList;
+        jsonOnject['list'] = promptList;
 
         return jsonOnject;
     }
 
-    function saveObject2PromptCache() {
-        var self = this;
-
+    function saveObject2PromptCache(jsonObject) {
         self.promptCache.setItem(
             self._getLocalizedPromptFilename.call(self),
-            self.jsonOnject)
+            jsonObject)
         .catch(function(err) {
             console.error('save of promptfile to localforage browser storage failed!', err);
             return;
@@ -242,11 +296,13 @@ PromptFile.prototype._save2BrowserStorage = function(prompt_data) {
     }
 
 
-    this.promptList = convertToArray(prompt_data);
-    confirmPromptListLength();
+    var promptList = convertToArray(prompt_data);
+    confirmPromptListLength(promptList);
         
-    this.jsonObject = createJsonPromptObject();
-    saveObject2PromptCache();
+    var jsonObject = createJsonPromptObject(promptList);
+    saveObject2PromptCache(jsonObject);
+
+    return promptList; // parameter for next in chain
 }
 
 /*
@@ -262,7 +318,7 @@ PromptFile.prototype._getLocalizedPromptFilename = function() {
  * in prompt_list_files.
  * so try get again with default prompt file
 */
-PromptFile.prototype._getPromptsFileFromServiceWorkerCache = function() {
+PromptFile.prototype._getDefaultPromptsFileFromServiceWorkerCache = function() {
     var self = this;
     
     /*
@@ -274,8 +330,8 @@ PromptFile.prototype._getPromptsFileFromServiceWorkerCache = function() {
     }
     
     /*
-     * service worker caches the first prompt file in list in prompt_list_files
-     * in read.md
+     * service worker caches the first prompt file (index=0) in list in
+     * prompt_list_files in read.md
      */
     function resetPromptFileIndex2Default() {
         self.prompt_file_index = 0;
@@ -295,78 +351,15 @@ PromptFile.prototype._getPromptsFileFromServiceWorkerCache = function() {
         return m; 
     }
 
-
     if ( notDefaultPromptFile() ) {
         resetPromptFileIndex2Default();
-        this._getPromptsFileFromServerOrServiceWorkerCache();
+        this._getPromptsFileFromServer();
     } else { // self.prompt_file_index = 0 and does not exist... user deleted?
         logNoServiceWorkerCache();
     }   
 }
 
 // #############################################################################
-
-/**
-  1. use localstorage prompts to start with,
-  2. then asynchronously try to download updated prompt file...
-
-  this prevents hang of app when user records offline (when using a 
-  promise chain) or timing issues with no promise chain when app starts
-  up offline and prompts file 'get' is hanging...
-
- * doing prompt stack update at beginning means that the prompt stack 
- * is always one behind the call to VoxForge server... 
- * why? for reponsiveness when user is recording offline.  
- * If were to try to access server while offline,
- * there would be a delay with user being able to 
- * start recording - $.get hangs trying to access server while
- * offline, so give the user a stack of prompts (using current
- * prompt list file), then asynchronously try to access server to update current
- * prompt file stored in browser.
- * if no internet access, then user using stored prompt file, 
- * if there is Internet access, then user will get updated 
- * random prompts on subsequent submission.
- */
-PromptFile.prototype._getPromptsFileFromBrowserStorage = function() {
-    var self = this;
-
-    /*
-     * Async call that return a JSON object containing prompt list
-     */
-    function getSavedPromptList() {
-        var promise =
-            self.promptCache.getItem( self._getLocalizedPromptFilename() )
-            .then(function(jsonOnject) {
-                return(jsonOnject);
-            })
-            .catch(function(err) {
-                console.err("cannot get saved PromptList file from browser: " +
-                err);
-            });
-
-        return promise;
-    }
-
-    /*
-     * check if can get random prompt file from server
-     */
-    function asyncUpdateOfPromptsFileFromServer() {
-        self._getPromptsFileFromServer()
-        .then( savePromptData2BrowserStorage );    
-    }
-
-    // TODO is just for the console message???
-    function savePromptData2BrowserStorage(prompt_data) {
-        this._save2BrowserStorage(prompt_data);
-        console.log("updating saved prompts file with new one from VoxForge server");
-    }
-
-    getSavedPromptList()
-    .then ( function(jsonObject) {
-        self.jsonObject = jsonObject;
-        asyncUpdateOfPromptsFileFromServer();
-    });
-}
 
 
 
@@ -418,7 +411,7 @@ Readmd.prototype.validate = function () {
     this._logPromptFileInformation();        
 }
 
-Readmd.prototype._checkForUndefinedAttributesInGivenPromptListEntry =
+Readmd.prototype._checkForUndefinedAttributesInGivenPromptListEntry = 
     function (plf, i)
 {
     this._checkForUndefinedAttributes(plf, i);
