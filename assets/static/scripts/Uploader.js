@@ -23,9 +23,11 @@ var Uploader = (function() { // code to keep helper classes inside Uploader name
 * ### Contructor ##############################################
 */
 
-function Uploader(parms, alert_message) {
+function Uploader(parms, alert_message, appversion,) {
     this.maxMinutesSinceLastSubmission = parms.maxMinutesSinceLastSubmission;
     this.alert_message = alert_message;
+    this.appversion = appversion;
+    
     this.uploadedSubmissions = localforage.createInstance({
       name: "uploadedSubmissions"
     });
@@ -118,9 +120,10 @@ Uploader.prototype._workerEventMessageHandler = function(event) {
 
     // call subclass based on content of returnObj.status
     new classMapping[returnObj.status](
-            returnObj,
-            this.alert_message,
-            this.uploadedSubmissions);
+        returnObj,
+        self.alert_message,
+        self.uploadedSubmissions,
+        self.appversion);
 }
 
 Uploader.prototype._logWorkerType = function(returnObj) {

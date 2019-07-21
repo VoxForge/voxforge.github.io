@@ -15,11 +15,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-function UploadMessage(returnObj, alert_message, uploadedSubmissions) {
+function UploadMessage(
+    returnObj,
+    alert_message,
+    uploadedSubmissions,
+    appversion)
+{
     var self = this;
     this.returnObj = returnObj;
     this.alert_message = alert_message;
     this.uploadedSubmissions = uploadedSubmissions;
+    this.appversion = appversion;
 }
 
 UploadMessage.prototype.submissionPluralized = function(numberOfSubmissions) {
@@ -28,12 +34,12 @@ UploadMessage.prototype.submissionPluralized = function(numberOfSubmissions) {
         this.alert_message.submission_singular);
 }
 
-UploadMessage.prototype.getDate = function() {
-    if (!Date.now) { // UTC timestamp in milliseconds;
-        Date.now = function() { return new Date().getTime(); }
-    }
-    return Date.now();
-}
+//UploadMessage.prototype.getDate = function() {
+//    if (!Date.now) { // UTC timestamp in milliseconds;
+//        Date.now = function() { return new Date().getTime(); }
+//    }
+//    return Date.now();
+//}
 
 UploadMessage.prototype.getUploadedToServerMessage = function() {
     var numberUploaded = this.returnObj.filesUploaded.length;
@@ -104,8 +110,12 @@ UploadMessage.prototype.saveSubmissionsToList = function() {
 UploadMessage.prototype._saveSubmissionNameToList = function(submissionName) {
     var jsonOnject = {};
 
-    jsonOnject['timestamp'] = this.getDate();
-    
+    //jsonOnject['timestamp'] = this.getDate();
+    var date = new Date();  
+    jsonOnject['timestamp'] = date.getTime(); // UTC timestamp in milliseconds;
+    jsonOnject['timezoneOffset'] = date.getTimezoneOffset();
+    jsonOnject['speechSubmissionAppVersion'] = this.appversion;
+              
     this.uploadedSubmissions.setItem(submissionName, jsonOnject)
     .catch(function(err) {
         console.error('save of uploaded submission name to localforage browser storage failed!', err);
@@ -114,9 +124,14 @@ UploadMessage.prototype._saveSubmissionNameToList = function(submissionName) {
 
 
 // #############################################################################
-function AllUploaded(returnObj, alert_message, uploadedSubmissions) {
+function AllUploaded(
+    returnObj,
+    alert_message,
+    uploadedSubmissions,
+    appversion)
+{
     // Call constructor of superclass to initialize superclass-derived members.
-    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions);
+    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions, appversion);
 
     this._allUploadedToServer();
 }
@@ -136,9 +151,14 @@ AllUploaded.prototype._allUploadedToServer = function() {
 
 // #############################################################################
 
-function NoneUploaded(returnObj, alert_message, uploadedSubmissions) {
+function NoneUploaded(
+    returnObj,
+    alert_message,
+    uploadedSubmissions,
+    appversion)
+{
     // Call constructor of superclass to initialize superclass-derived members.
-    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions);
+    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions, appversion);
 
     this._allSavedToBrowserStorage();
 }
@@ -162,9 +182,14 @@ NoneUploaded.prototype._allSavedToBrowserStorage = function() {
  * them to VoxForge server some other way.
 */
 // Subclass
-function PartialUpload(returnObj, alert_message, uploadedSubmissions) {
+function PartialUpload(
+    returnObj,
+    alert_message,
+    uploadedSubmissions,
+    appversion)
+{
     // Call constructor of superclass to initialize superclass-derived members.
-    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions);
+    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions, appversion);
 
     this._partialUpload();
 }

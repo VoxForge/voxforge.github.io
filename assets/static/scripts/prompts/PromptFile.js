@@ -15,15 +15,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// TODO prompt file should have app version, date and timezone saved with it
+// TODO saved/cached prompt file should have app version, date and timezone saved with it
 
 /** 
 * get prompts file for given language from server; used cached version of 
 * prompt file if no network connection...
 */
-function PromptFile(language, prompt_list_files, ) {
+function PromptFile(language, prompt_list_files, appversion) {
     this.language = language;
     this.prompt_list_files = prompt_list_files;
+    this.appversion = appversion;
         
     this.promptCache = localforage.createInstance({
         name: this.language + "_promptCache"
@@ -281,7 +282,12 @@ PromptFile.prototype._save2BrowserStorage = function(prompt_data) {
         jsonOnject['language'] = self.language;
         jsonOnject['id'] = self.plf.id;
         jsonOnject['list'] = promptList;
-
+        
+        jsonOnject['speechSubmissionAppVersion'] = self.appversion;
+        var date = new Date();  
+        jsonOnject['timestamp'] = date.getTime(); // UTC timestamp in milliseconds;
+        jsonOnject['timezoneOffset'] = date.getTimezoneOffset();
+        
         return jsonOnject;
     }
 

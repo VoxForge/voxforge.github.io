@@ -21,7 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * ### Contructor ##############################################
 */
 function Prompts(parms,
-                 pageVariables)
+                 pageVariables,
+                 appversion)
 {
     this.max_num_prompts = parms.num_prompts_to_trigger_upload;
     this.prompt_list = []; // list of prompts to be recorded by user
@@ -34,7 +35,9 @@ function Prompts(parms,
     this.current_promptLine = null; // need to keep track of current prompt since no longer tracking index
 
     this.language = pageVariables.language;
-    this.prompt_list_files = pageVariables.prompt_list_files;   
+    this.prompt_list_files = pageVariables.prompt_list_files;
+
+    this.appversion = appversion;
 }
 
 /**
@@ -45,7 +48,8 @@ Prompts.prototype.init = function () {
     var self = this;      
     var promptFile = new PromptFile(
         this.language,
-        this.prompt_list_files);
+        this.prompt_list_files,
+        this.appversion);
         
     promptFile.get()
     .then( function(prompt_list) {self.prompt_list = prompt_list} )

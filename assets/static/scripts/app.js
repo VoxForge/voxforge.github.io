@@ -70,7 +70,8 @@ var view;  // needs to be global so can be accessible to index.html
     var debug = new Debug();
     var prompts = new Prompts(
         parms.prompts,
-        pageVariables); 
+        pageVariables,
+        appversion,); 
     var profile = new Profile(
         appversion,
         pageVariables);
@@ -88,7 +89,8 @@ var view;  // needs to be global so can be accessible to index.html
 
     var uploader = new Uploader(
         parms.uploader,
-        pageVariables.alert_message);
+        pageVariables.alert_message,
+        appversion,);
 
     var controller =  new Controller(
         parms.controller,
