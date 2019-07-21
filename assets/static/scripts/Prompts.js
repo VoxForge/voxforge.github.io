@@ -48,6 +48,7 @@ Prompts.prototype.init = function () {
         this.prompt_list_files);
         
     promptFile.get()
+    .then( function(prompt_list) {self.prompt_list = prompt_list} )
     .then( self._initPromptStack.bind(self) );
 }
 
@@ -63,9 +64,9 @@ Prompts.prototype.init = function () {
 *
 * Note: using unshift (rather than push) to keep prompt elements in order
 */
-Prompts.prototype._initPromptStack = function(prompt_list) {
+Prompts.prototype._initPromptStack = function() {
     var self = this;    
-    this.prompt_list = prompt_list;
+
     this.prompt_stack = [];
 
     var i = Math.floor((Math.random() * this.prompt_list.length));
