@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// TODO prompt file should have app version, date and timezone saved with it
+
 /** 
 * get prompts file for given language from server; used cached version of 
 * prompt file if no network connection...
@@ -27,8 +29,15 @@ function PromptFile(language, prompt_list_files, ) {
         name: this.language + "_promptCache"
     });
     
-    this._selectRandomPromptFile();
+    this._identifyPromptFileToSelect();
     this._validateReadmd();  
+}
+
+PromptFile.prototype._identifyPromptFileToSelect = function () {
+    this.prompt_file_index =
+        Math.floor((Math.random() * this.prompt_list_files.length)); // zero indexed
+    this.plf = this.prompt_list_files[this.prompt_file_index];
+    this.prompt_file_name = this.plf['file_location'];
 }
 
 PromptFile.prototype._validateReadmd = function () {
@@ -38,13 +47,6 @@ PromptFile.prototype._validateReadmd = function () {
         this.plf,
         this.prompt_file_index);
     readmd.validate();
-}
-
-PromptFile.prototype._selectRandomPromptFile = function () {
-    this.prompt_file_index =
-        Math.floor((Math.random() * this.prompt_list_files.length)); // zero indexed
-    this.plf = this.prompt_list_files[this.prompt_file_index];
-    this.prompt_file_name = this.plf['file_location'];
 }
 
 /**
@@ -156,7 +158,7 @@ PromptFile.prototype._getPromptsFileFromBrowserStorage = function() {
             console.log("updating saved prompts file with new one from VoxForge server");
             self._getPromptsFileFromServer(); // background update of promptsFile from server; discard returned jsonObject
             
-            resolve(jsonObject);
+            resolve(jsonObject.list);
         })
         .catch(function(err) {
             console.err(
