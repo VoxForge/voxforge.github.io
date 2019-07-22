@@ -189,11 +189,18 @@ PromptFile.prototype._getFromBrowserStorage = function() {
  */
 PromptFile.prototype._getFromServer = function() {
     var self = this;
-
+    
+    browserStorage = new BrowserStorage(
+        this.plf,
+        this.prompt_file_index,
+        this.language,
+        this.appversion, );
+        
     return new Promise(function(resolve, reject) {
-
+   
         $.get(self.prompt_file_name)
-        .then( self._save2BrowserStorage.bind(self) )
+        //.then( self._save2BrowserStorage.bind(self) )
+        .then( browserStorage.save.bind(self) )        
         .then( function(promptList) {
             resolve(promptList);
         })
@@ -205,10 +212,85 @@ PromptFile.prototype._getFromServer = function() {
     }); 
 }
 
+/*
+ * local_prompt_file_name - name of prompt file when stored in user's browser
+ * storage
+ */
+PromptFile.prototype._getLocalizedPromptFilename = function() {
+    return this.language + '_prompt_file';
+}
+
+/*
+ * service worker caches the first prompt file (default prompt file) shown
+ * in prompt_list_files.
+ * so try get again with default prompt file
+*/
+PromptFile.prototype._getDefaultPromptsFileFromServiceWorkerCache = function() {
+    var self = this;
+    
+    /*
+     * default prompt file is the first prompt file in a language configuration -
+     * it gets automatically cached in browser storage by the service worker.
+     */
+    function notDefaultPromptFile() {
+        return self.prompt_file_index > 0;
+    }
+    
+    /*
+     * service worker caches the first prompt file (index=0) in list in
+     * prompt_list_files in read.md
+     */
+    function resetPromptFileIndex2Default() {
+        self.prompt_file_index = 0;
+        self.plf = self.prompt_list_files[self.prompt_file_index];
+        self.prompt_file_name = self.plf['file_location'];
+        
+        console.log("using service worker cached prompt file id: " +
+            self.prompt_list_files[self.prompt_file_index].id);
+    }  
+
+    function logNoServiceWorkerCache() {
+        var m = "Error: cannot find prompts file on VoxForge server: " +
+                this.prompt_file_name + 
+                "or in service worker cache....\n " +
+                "retry later.";
+        console.error(m);
+        return m; 
+    }
+
+    if ( notDefaultPromptFile() ) {
+        resetPromptFileIndex2Default();
+        this._getPromptsFileFromServer();
+    } else { // self.prompt_file_index = 0 and does not exist... user deleted?
+        logNoServiceWorkerCache();
+    }   
+}
+
+
+// #############################################################################
+
+/*
+ * Supporting classes
+ */
+
+
 /** 
 * save the prompt file as a JSON object in user's browser's Local Storage
 */
-PromptFile.prototype._save2BrowserStorage = function(prompt_data) {
+
+function BrowserStorage(
+    plf,
+    prompt_file_index,
+    language,
+    appversion)
+{
+    this.plf = plf;
+    this.prompt_file_index = prompt_file_index;
+    this.language = language;
+    this.appversion = appversion;
+}
+
+BrowserStorage.prototype.save = function(prompt_data) {
     var self = this;
 
     /**
@@ -278,7 +360,7 @@ PromptFile.prototype._save2BrowserStorage = function(prompt_data) {
 
     function saveObject2PromptCache(jsonObject) {
         self.promptCache.setItem(
-            self._getLocalizedPromptFilename.call(self),
+            self._getLocalizedPromptFilename(),
             jsonObject)
         .catch(function(err) {
             console.error('save of promptfile to localforage browser storage failed!', err);
@@ -298,66 +380,12 @@ PromptFile.prototype._save2BrowserStorage = function(prompt_data) {
     return promptList; // parameter for next in chain
 }
 
-/*
- * local_prompt_file_name - name of prompt file when stored in user's browser
- * storage
- */
-PromptFile.prototype._getLocalizedPromptFilename = function() {
+BrowserStorage.prototype._getLocalizedPromptFilename = function() {
     return this.language + '_prompt_file';
 }
 
-/*
- * service worker caches the first prompt file (default prompt file) shown
- * in prompt_list_files.
- * so try get again with default prompt file
-*/
-PromptFile.prototype._getDefaultPromptsFileFromServiceWorkerCache = function() {
-    var self = this;
-    
-    /*
-     * default prompt file is the first prompt file in a language configuration -
-     * it gets automatically cached in browser storage by the service worker.
-     */
-    function notDefaultPromptFile() {
-        return self.prompt_file_index > 0;
-    }
-    
-    /*
-     * service worker caches the first prompt file (index=0) in list in
-     * prompt_list_files in read.md
-     */
-    function resetPromptFileIndex2Default() {
-        self.prompt_file_index = 0;
-        self.plf = self.prompt_list_files[self.prompt_file_index];
-        self.prompt_file_name = self.plf['file_location'];
-        
-        console.log("using service worker cached prompt file id: " +
-            self.prompt_list_files[self.prompt_file_index].id);
-    }  
-
-    function logNoServiceWorkerCache() {
-        var m = "Error: cannot find prompts file on VoxForge server: " +
-                this.prompt_file_name + 
-                "or in service worker cache....\n " +
-                "retry later.";
-        console.error(m);
-        return m; 
-    }
-
-    if ( notDefaultPromptFile() ) {
-        resetPromptFileIndex2Default();
-        this._getPromptsFileFromServer();
-    } else { // self.prompt_file_index = 0 and does not exist... user deleted?
-        logNoServiceWorkerCache();
-    }   
-}
-
-
 // #############################################################################
-
-/*
- * Supporting classes
- */
+ 
 function Readmd(prompt_list_files, language, plf, prompt_file_index) {
     this.prompt_list_files = prompt_list_files;
     this.language = language;
