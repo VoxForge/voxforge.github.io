@@ -149,7 +149,11 @@ PromptFile.prototype.get = function () {
 PromptFile.prototype._getFromBrowserStorage = function() {
     var self = this;
 
-    function backgroundServerUpdateOfPromptsFile() {
+    /*
+     * User is using app with cached prompt file; try to get a new one (random)
+     * from server asynchornously
+     */
+    function backgroundUpdateOfPromptsFileFromServer() {
         console.log("updating saved prompts file with new one from VoxForge server");
         self._getPromptsFileFromServer(); // discard returned jsonObject
     }
@@ -158,7 +162,7 @@ PromptFile.prototype._getFromBrowserStorage = function() {
 
         self.promptCache.getItem( self._getLocalizedPromptFilename() )
         .then ( function(jsonObject) {
-            backgroundServerUpdateOfPromptsFile();
+            backgroundUpdateOfPromptsFileFromServer();
             resolve(jsonObject.list);
         })
         .catch(function(err) {
@@ -194,13 +198,14 @@ PromptFile.prototype._getFromServer = function() {
         this.plf,
         this.prompt_file_index,
         this.language,
-        this.appversion, );
+        this.appversion,
+        this.promptCache);
         
     return new Promise(function(resolve, reject) {
    
         $.get(self.prompt_file_name)
         //.then( self._save2BrowserStorage.bind(self) )
-        .then( browserStorage.save.bind(self) )        
+        .then( browserStorage.save.bind(browserStorage) )        
         .then( function(promptList) {
             resolve(promptList);
         })
@@ -266,7 +271,6 @@ PromptFile.prototype._getDefaultPromptsFileFromServiceWorkerCache = function() {
     }   
 }
 
-
 // #############################################################################
 
 /*
@@ -277,107 +281,108 @@ PromptFile.prototype._getDefaultPromptsFileFromServiceWorkerCache = function() {
 /** 
 * save the prompt file as a JSON object in user's browser's Local Storage
 */
-
 function BrowserStorage(
     plf,
     prompt_file_index,
     language,
-    appversion)
+    appversion,
+    promptCache)
 {
     this.plf = plf;
     this.prompt_file_index = prompt_file_index;
     this.language = language;
     this.appversion = appversion;
+    this.promptCache = promptCache;    
 }
 
 BrowserStorage.prototype.save = function(prompt_data) {
     var self = this;
 
-    /**
-    * split prompt file from server into an array and decide if it needs a 
-    * prompt ID added;
-    *
-    * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
-    */
-    function convertToArray(prompt_data) {
-        function removeEmptyStrings(sentence) {
-            return sentence.trim() != "";
-        }
-
-        function addPromptIdsToSentences(list) {
-            return list.map(addPromptIdToSentence);
-        }
-
-        function addPromptIdToSentence(sentence, i) {
-            function pad(num, size) {
-                var s = num+"";
-                while (s.length <= size) s = "0" + s;
-                return s;
-            }
-            
-            var prompt_id =
-                self.plf.prefix +
-                pad( i + self.plf.start, 5 );
-                
-            return prompt_id  + " " + sentence;
-        }
-
-
-        var sentences = prompt_data.split('\n');      
-        var list = sentences.filter(removeEmptyStrings);
-        if ( ! self.plf.contains_promptid ) {
-            list = addPromptIdsToSentences(list);
-        }
-
-        return list;
-    }
-
-    function confirmPromptListLength(promptList) {
-        if (self.plf.number_of_prompts !=  promptList.length) {
-            console.warn(
-                "number of prompts in prompt_list_files[" +
-                self.prompt_file_index + "] = " + 
-                self.plf.number_of_prompts + 
-                " in read.md, not same as prompt file line counts for language: " + 
-                self.language + "= " + promptList.length );
-        }
-    }
-
-    function createJsonPromptObject (promptList) {
-        var jsonOnject = {};
-
-        jsonOnject['language'] = self.language;
-        jsonOnject['id'] = self.plf.id;
-        jsonOnject['list'] = promptList;
+    var promptList = this._convertToArray(prompt_data);
+    this._confirmPromptListLength(promptList);
         
-        jsonOnject['speechSubmissionAppVersion'] = self.appversion;
-        var date = new Date();  
-        jsonOnject['timestamp'] = date.getTime(); // UTC timestamp in milliseconds;
-        jsonOnject['timezoneOffset'] = date.getTimezoneOffset();
-        
-        return jsonOnject;
-    }
-
-    function saveObject2PromptCache(jsonObject) {
-        self.promptCache.setItem(
-            self._getLocalizedPromptFilename(),
-            jsonObject)
-        .catch(function(err) {
-            console.error('save of promptfile to localforage browser storage failed!', err);
-            return;
-        });
-        console.info('saved promptfile to localforage browser storage: ' +
-            self._getLocalizedPromptFilename() );
-    }
-
-
-    var promptList = convertToArray(prompt_data);
-    confirmPromptListLength(promptList);
-        
-    var jsonObject = createJsonPromptObject(promptList);
-    saveObject2PromptCache(jsonObject);
+    var jsonObject = this._createJsonPromptObject(promptList);
+    this._saveObject2PromptCache(jsonObject);
 
     return promptList; // parameter for next in chain
+}
+
+BrowserStorage.prototype._confirmPromptListLength = function(promptList) {
+    if (this.plf.number_of_prompts !=  promptList.length) {
+        console.warn(
+            "number of prompts in prompt_list_files[" +
+            this.prompt_file_index + "] = " + 
+            this.plf.number_of_prompts + 
+            " in read.md, not same as prompt file line counts for language: " + 
+            this.language + "= " + promptList.length );
+    }
+}
+
+/**
+* split prompt file from server into an array and decide if it needs a 
+* prompt ID added;
+*
+* see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
+*/
+BrowserStorage.prototype._convertToArray = function(prompt_data) {
+    var self = this;
+    
+    function removeEmptyStrings(sentence) {
+        return sentence.trim() != "";
+    }
+
+    function addPromptIdsToSentences(list) {
+        return list.map(addPromptIdToSentence);
+    }
+
+    function addPromptIdToSentence(sentence, i) {
+        function pad(num, size) {
+            var s = num+"";
+            while (s.length <= size) s = "0" + s;
+            return s;
+        }
+        
+        var prompt_id =
+            self.plf.prefix +
+            pad( i + self.plf.start, 5 );
+            
+        return prompt_id  + " " + sentence;
+    }
+
+
+    var sentences = prompt_data.split('\n');      
+    var list = sentences.filter(removeEmptyStrings);
+    if ( ! self.plf.contains_promptid ) {
+        list = addPromptIdsToSentences(list);
+    }
+
+    return list;
+}
+BrowserStorage.prototype._createJsonPromptObject = function(promptList) {
+    var jsonOnject = {};
+
+    jsonOnject['language'] = this.language;
+    jsonOnject['id'] = this.plf.id;
+    jsonOnject['list'] = promptList;
+    
+    jsonOnject['speechSubmissionAppVersion'] = this.appversion;
+    var date = new Date();  
+    jsonOnject['timestamp'] = date.getTime(); // UTC timestamp in milliseconds;
+    jsonOnject['timezoneOffset'] = date.getTimezoneOffset();
+    
+    return jsonOnject;
+}
+
+BrowserStorage.prototype._saveObject2PromptCache = function(jsonObject) {
+    this.promptCache.setItem(
+        this._getLocalizedPromptFilename(),
+        jsonObject)
+    .catch(function(err) {
+        console.error('save of promptfile to localforage browser storage failed!', err);
+        return;
+    });
+    console.info('saved promptfile to localforage browser storage: ' +
+        this._getLocalizedPromptFilename() );
 }
 
 BrowserStorage.prototype._getLocalizedPromptFilename = function() {
