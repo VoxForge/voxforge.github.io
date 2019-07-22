@@ -199,12 +199,12 @@ PromptFile.prototype._getFromServer = function() {
         this.prompt_file_index,
         this.language,
         this.appversion,
-        this.promptCache);
+        this.promptCache,
+        this._getLocalizedPromptFilename);
         
     return new Promise(function(resolve, reject) {
    
         $.get(self.prompt_file_name)
-        //.then( self._save2BrowserStorage.bind(self) )
         .then( browserStorage.save.bind(browserStorage) )        
         .then( function(promptList) {
             resolve(promptList);
@@ -286,13 +286,15 @@ function BrowserStorage(
     prompt_file_index,
     language,
     appversion,
-    promptCache)
+    promptCache,
+    getLocalizedPromptFilename)
 {
     this.plf = plf;
     this.prompt_file_index = prompt_file_index;
     this.language = language;
     this.appversion = appversion;
-    this.promptCache = promptCache;    
+    this.promptCache = promptCache;
+    this.getLocalizedPromptFilename = getLocalizedPromptFilename;      
 }
 
 BrowserStorage.prototype.save = function(prompt_data) {
@@ -375,18 +377,14 @@ BrowserStorage.prototype._createJsonPromptObject = function(promptList) {
 
 BrowserStorage.prototype._saveObject2PromptCache = function(jsonObject) {
     this.promptCache.setItem(
-        this._getLocalizedPromptFilename(),
+        this.getLocalizedPromptFilename(),
         jsonObject)
     .catch(function(err) {
         console.error('save of promptfile to localforage browser storage failed!', err);
         return;
     });
     console.info('saved promptfile to localforage browser storage: ' +
-        this._getLocalizedPromptFilename() );
-}
-
-BrowserStorage.prototype._getLocalizedPromptFilename = function() {
-    return this.language + '_prompt_file';
+        this.getLocalizedPromptFilename() );
 }
 
 // #############################################################################
