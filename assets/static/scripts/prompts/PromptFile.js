@@ -15,8 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// TODO saved/cached prompt file should have app version, date and timezone saved with it
-
 /** 
 * get prompts file for given language from server; used cached version of 
 * prompt file if no network connection...
@@ -151,14 +149,16 @@ PromptFile.prototype.get = function () {
 PromptFile.prototype._getPromptsFileFromBrowserStorage = function() {
     var self = this;
 
+    function backgroundServerUpdateOfPromptsFile() {
+        console.log("updating saved prompts file with new one from VoxForge server");
+        self._getPromptsFileFromServer(); // discard returned jsonObject
+    }
+
     return new Promise(function(resolve, reject) {
 
-        // Async call that return a JSON object containing prompt list
         self.promptCache.getItem( self._getLocalizedPromptFilename() )
         .then ( function(jsonObject) {
-            console.log("updating saved prompts file with new one from VoxForge server");
-            self._getPromptsFileFromServer(); // background update of promptsFile from server; discard returned jsonObject
-            
+            backgroundServerUpdateOfPromptsFile();
             resolve(jsonObject.list);
         })
         .catch(function(err) {
@@ -189,35 +189,20 @@ PromptFile.prototype._getPromptsFileFromBrowserStorage = function() {
  */
 PromptFile.prototype._getPromptsFileFromServer = function() {
     var self = this;
-    
+
     return new Promise(function(resolve, reject) {
-        
-        self._getFromServer()
+
+        $.get(self.prompt_file_name)
         .then( self._save2BrowserStorage.bind(self) )
         .then( function(promptList) {
             resolve(promptList);
-        });
-        
-    }); 
-}
-
-/*
- * returns a jQuery XHR object ("jqXHR") - similar to a promise, but missing stuff
- * does not have a catch, but uses fail to catch errors...
- */
-PromptFile.prototype._getFromServer = function() {
-    var self = this;
-    
-    var promise =
-        $.get(this.prompt_file_name)
+        })
         .fail(function(err) {
             console.log(err);
-            // TODO need to test to prevent infinite loops
-            // test to make sure that have not already cheacked for index=0
             self._getDefaultPromptsFileFromServiceWorkerCache.call(self);
-        });
-        
-    return promise;
+        });        
+
+    }); 
 }
 
 /** 
