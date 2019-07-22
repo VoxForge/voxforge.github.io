@@ -110,12 +110,12 @@ PromptFile.prototype.get = function () {
         checkPromptFileCache()
         .then(function(foundPromptInCache) {
             if ( foundPromptInCache ) {
-                self._getPromptsFileFromBrowserStorage.call(self)
+                self._getFromBrowserStorage.call(self)
                 .then(function(promptList) {
                     resolve(promptList);
                 });                
-            } else { // promptCache is empty
-                self._getPromptsFileFromServer.call(self)
+            } else { 
+                self._getFromServer.call(self)
                 .then(function(promptList) {
                     resolve(promptList);
                 });
@@ -146,7 +146,7 @@ PromptFile.prototype.get = function () {
  * if there is Internet access, then user will get updated 
  * random prompts on subsequent submission.
  */
-PromptFile.prototype._getPromptsFileFromBrowserStorage = function() {
+PromptFile.prototype._getFromBrowserStorage = function() {
     var self = this;
 
     function backgroundServerUpdateOfPromptsFile() {
@@ -187,7 +187,7 @@ PromptFile.prototype._getPromptsFileFromBrowserStorage = function() {
  * selected small section of the total prompt set.
  * 
  */
-PromptFile.prototype._getPromptsFileFromServer = function() {
+PromptFile.prototype._getFromServer = function() {
     var self = this;
 
     return new Promise(function(resolve, reject) {
