@@ -122,7 +122,6 @@ UploadMessage.prototype._saveSubmissionNameToList = function(submissionName) {
     });
 }
 
-
 // #############################################################################
 function AllUploaded(
     returnObj,
