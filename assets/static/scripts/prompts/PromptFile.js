@@ -26,10 +26,6 @@ function PromptFile(language, prompt_list_files, appversion) {
     this.prompt_list_files = prompt_list_files;
     this.appversion = appversion;
     this.previousPlf_id = "not defined";
-    
-    this.promptCache = localforage.createInstance({
-        name: this.language + "_promptCache"
-    });
 
     this._identifyPromptFileToSelect();
     this._validateReadmd();
@@ -59,7 +55,6 @@ PromptFile.prototype._initializeHelperClass = function () {
         this.prompt_file_index,
         this.language,
         this.appversion,
-        this.promptCache,
         this._getLocalizedPromptFilename);
 }
 
@@ -104,7 +99,8 @@ PromptFile.prototype.get = function () {
     */
     function isInBrowserStorage() {  
         var promise =
-            self.promptCache.length()
+            //self.promptCache.length()
+            self.browserStorage.length.call(self.browserStorage)            
             .then(function(length) {
                 return (length > 0) // true or false value
             })
@@ -174,8 +170,9 @@ PromptFile.prototype._getFromBrowserStorage = function() {
 
     return new Promise(function(resolve, reject) {
 
-        self.promptCache.getItem( self._getLocalizedPromptFilename() )
-        .then ( function(jsonObject) {
+        //self.promptCache.getItem( self._getLocalizedPromptFilename() )
+        self.browserStorage.getItem.call(self.browserStorage, self._getLocalizedPromptFilename() )        
+        .then( function(jsonObject) {
             self.previousPlf_id = jsonObject.id;
             backgroundUpdateOfPromptsFileFromServer(); // discard reply
             resolve(jsonObject.list);
@@ -285,7 +282,6 @@ PromptFile.prototype._getDefaultFromServiceWorkerCache = function() {
  * Supporting classes
  */
 
-
 /** 
 * save the prompt file as a JSON object in user's browser's Local Storage
 */
@@ -294,15 +290,17 @@ function BrowserStorage(
     prompt_file_index,
     language,
     appversion,
-    promptCache,
     getLocalizedPromptFilename)
 {
     this.plf = plf;
     this.prompt_file_index = prompt_file_index;
     this.language = language;
     this.appversion = appversion;
-    this.promptCache = promptCache;
-    this.getLocalizedPromptFilename = getLocalizedPromptFilename;      
+    this.getLocalizedPromptFilename = getLocalizedPromptFilename;
+
+    this.promptCache = localforage.createInstance({
+        name: this.language + "_promptCache"
+    });       
 }
 
 BrowserStorage.prototype.save = function(prompt_data) {
@@ -315,6 +313,19 @@ BrowserStorage.prototype.save = function(prompt_data) {
     this._saveObject2PromptCache(jsonObject);
 
     return promptList; // parameter for next in chain
+}
+
+BrowserStorage.prototype.getItem = function(item) {
+    return this.promptCache.getItem( item );
+}
+
+/*
+ * Each language has its own prefixed prompt file, so counting keys
+ * tells you if prompt file was already locally cached in promptCache 
+ * for that language
+ */
+BrowserStorage.prototype.length = function() {
+    return this.promptCache.length();
 }
 
 BrowserStorage.prototype._confirmPromptListLength = function(promptList) {
