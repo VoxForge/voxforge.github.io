@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+//var PromptFile = (function() { // code to keep helper classes inside Uploader namespace //
+
 /** 
 * get prompts file for given language from server; used cached version of 
 * prompt file if no network connection...
@@ -23,7 +25,8 @@ function PromptFile(language, prompt_list_files, appversion) {
     this.language = language;
     this.prompt_list_files = prompt_list_files;
     this.appversion = appversion;
-        
+    this.previousPlf_id = "not defined";
+    
     this.promptCache = localforage.createInstance({
         name: this.language + "_promptCache"
     });
@@ -44,7 +47,8 @@ PromptFile.prototype._validateReadmd = function () {
         this.prompt_list_files,
         this.language,
         this.plf,
-        this.prompt_file_index);
+        this.prompt_file_index,
+        this.previousPlf_id);
     readmd.validate();
 }
 
@@ -92,7 +96,7 @@ PromptFile.prototype.get = function () {
     * tells you if prompt file was already locally cached in promptCache 
     * for that language
     */
-    function checkPromptFileCache() {  
+    function isInBrowserStorage() {  
         var promise =
             self.promptCache.length()
             .then(function(length) {
@@ -107,20 +111,24 @@ PromptFile.prototype.get = function () {
 
     return new Promise(function(resolve, reject) {
 
-        checkPromptFileCache()
-        .then(function(foundPromptInCache) {
-            if ( foundPromptInCache ) {
+        isInBrowserStorage()
+        .then(function(foundInCache) {
+            if ( foundInCache ) {
                 self._getFromBrowserStorage.call(self)
                 .then(function(promptList) {
                     resolve(promptList);
-                });                
+                });             
             } else { 
                 self._getFromServer.call(self)
                 .then(function(promptList) {
                     resolve(promptList);
-                });
+                })
+                .catch(function(err) {
+                    self._getDefaultFromServiceWorkerCache.call(self);
+                });                
             }
-        });
+        })
+
 
     }); // promise
 }
@@ -150,25 +158,27 @@ PromptFile.prototype._getFromBrowserStorage = function() {
     var self = this;
 
     /*
-     * User is using app with cached prompt file; try to get a new one (random)
-     * from server asynchornously
+     * User is using app with cached prompt file; try to get a new one
+     * from server asynchronously in background
      */
     function backgroundUpdateOfPromptsFileFromServer() {
         console.log("updating saved prompts file with new one from VoxForge server");
-        self._getPromptsFileFromServer(); // discard returned jsonObject
+        self._getFromServer(); // discard returned jsonObject
     }
 
     return new Promise(function(resolve, reject) {
 
         self.promptCache.getItem( self._getLocalizedPromptFilename() )
         .then ( function(jsonObject) {
+            self.previousPlf_id = jsonObject.id;
             backgroundUpdateOfPromptsFileFromServer();
             resolve(jsonObject.list);
         })
         .catch(function(err) {
-            console.err(
+            console.error(
                 "cannot get saved PromptList file from browser: " +
                 err);
+            // TODO should we try to get promptfile from server?
         });        
 
     });
@@ -194,7 +204,7 @@ PromptFile.prototype._getFromBrowserStorage = function() {
 PromptFile.prototype._getFromServer = function() {
     var self = this;
     
-    browserStorage = new BrowserStorage(
+    var browserStorage = new BrowserStorage(
         this.plf,
         this.prompt_file_index,
         this.language,
@@ -210,8 +220,7 @@ PromptFile.prototype._getFromServer = function() {
             resolve(promptList);
         })
         .fail(function(err) {
-            console.log(err);
-            self._getDefaultPromptsFileFromServiceWorkerCache.call(self);
+            reject(err);
         });        
 
     }); 
@@ -226,18 +235,19 @@ PromptFile.prototype._getLocalizedPromptFilename = function() {
 }
 
 /*
- * service worker caches the first prompt file (default prompt file) shown
- * in prompt_list_files.
- * so try get again with default prompt file
+ * Get Default Prompt File from service worker cache.
+ *
+ * (service worker caches the first prompt file (default prompt file) shown
+ * in prompt_list_files.)
 */
-PromptFile.prototype._getDefaultPromptsFileFromServiceWorkerCache = function() {
+PromptFile.prototype._getDefaultFromServiceWorkerCache = function() {
     var self = this;
     
     /*
      * default prompt file is the first prompt file in a language configuration -
      * it gets automatically cached in browser storage by the service worker.
      */
-    function notDefaultPromptFile() {
+    function currentPromptFileNotDefault() {
         return self.prompt_file_index > 0;
     }
     
@@ -256,16 +266,16 @@ PromptFile.prototype._getDefaultPromptsFileFromServiceWorkerCache = function() {
 
     function logNoServiceWorkerCache() {
         var m = "Error: cannot find prompts file on VoxForge server: " +
-                this.prompt_file_name + 
+                self.prompt_file_name + 
                 "or in service worker cache....\n " +
                 "retry later.";
         console.error(m);
         return m; 
     }
 
-    if ( notDefaultPromptFile() ) {
+    if ( currentPromptFileNotDefault() ) {
         resetPromptFileIndex2Default();
-        this._getPromptsFileFromServer();
+        return this._getFromServer();
     } else { // self.prompt_file_index = 0 and does not exist... user deleted?
         logNoServiceWorkerCache();
     }   
@@ -389,11 +399,18 @@ BrowserStorage.prototype._saveObject2PromptCache = function(jsonObject) {
 
 // #############################################################################
  
-function Readmd(prompt_list_files, language, plf, prompt_file_index) {
+function Readmd(
+    prompt_list_files,
+    language,
+    plf,
+    prompt_file_index,
+    previousPlf_id)
+{
     this.prompt_list_files = prompt_list_files;
     this.language = language;
     this.plf = plf;
     this.prompt_file_index = prompt_file_index;
+    this.previousPlf_id =  previousPlf_id;
     
     this.notDefined = "not defined in read.md for language: " + language;    
 }
@@ -452,7 +469,9 @@ Readmd.prototype._checkForUndefinedAttributesIfNoPromptId = function (plf, i) {
 Readmd.prototype._logPromptFileInformation = function() {
     var m = this._addPromptIDToMessageifMissing();
 
-    console.log("prompt file id: " +
+    console.log("Using cached prompt file (id =" +
+        this.previousPlf_id + 
+        "); next prompt file id: " +
         this.plf.id + 
         " (prompt file array index: " +
         this.prompt_file_index + ") " +
@@ -470,3 +489,7 @@ Readmd.prototype._addPromptIDToMessageifMissing = function() {
 
     return m;
 }
+
+/// code to keep helper classes inside PromptFile namespace ////////////////////
+//return PromptFile;
+//}());
