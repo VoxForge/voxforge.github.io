@@ -77,7 +77,7 @@ PromptFile.prototype._validateReadmd = function () {
  * the server.
  *
  * b. if network down
- * use service worker cach default prompt file (id == 001)
+ * use service worker cache default prompt file (id == 001)
  * 
  */
 PromptFile.prototype.get = function () {
