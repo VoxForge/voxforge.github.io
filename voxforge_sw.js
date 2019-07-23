@@ -40,32 +40,35 @@ var urlsToCache = [
   PATH + 'scripts/app.js',
 
   PATH + 'scripts/Audio.js',
-  PATH + 'scripts/audio/AudioWorker.js',  
-  PATH + 'scripts/audio/wavAudioEncoder.js',  
+  PATH + 'scripts/audio/AudioDebug.js',  
+  PATH + 'scripts/audio/AudioWorker.js',
+  PATH + 'scripts/audio/MicVolume.js',
   PATH + 'scripts/audio/Vad.js',  
+  PATH + 'scripts/audio/wavAudioEncoder.js',  
+
+  PATH + 'scripts/common/SavedSubmissions.js',   
+  PATH + 'scripts/common/Submission.js',
 
   PATH + 'scripts/Controller.js',
   PATH + 'scripts/controller/location.js',
   
-  PATH + 'scripts/common/Submission.js',
-  PATH + 'scripts/common/SavedSubmissions.js',  
-
   PATH + 'scripts/Debug.js',
   PATH + 'scripts/Parms.js',
   PATH + 'scripts/Profile.js',
-  PATH + 'scripts/Prompts.js',
   
+  PATH + 'scripts/Prompts.js',
+  PATH + 'scripts/prompts/PromptFile.js',
+    
   PATH + 'scripts/Uploader.js',
-  PATH + 'scripts/uploader/ZipWorker.js',
+  PATH + 'scripts/uploader/UploadMessage.js',
   PATH + 'scripts/uploader/UploadWorker.js',
-
+  PATH + 'scripts/uploader/ZipWorker.js',
+  
   PATH + 'scripts/View.js',
   PATH + 'scripts/view/AudioPlayer.js',
   PATH + 'scripts/view/ProfileView.js',
   PATH + 'scripts/view/Settings.js',
   PATH + 'scripts/view/SubmissionsLog.js',        
-
-
 
   PATH + 'styles/app.css',
   PATH + 'styles/jquery.mobile-1.4.5.css',
@@ -201,20 +204,34 @@ function sendMessage(returnObj) {
 # see: https://jekyllrb.com/docs/upgrading/2-to-3/
 
  * B. manifest
- * 3. temporarily move manifest to dev expected path:
+ * 3. i) temporarily move manifest to dev expected path:
  * app expects manifest.json at:
  *       https://jekyll_voxforge.org/en/read/manifest.json
  * when it should be at (on github)
  *       https://jekyll_voxforge.org/en/manifest.json
  *
+ * ii) en/read/manifest.json:
+ *  "start_url": "/en/read", # github
+ *  "start_url": "/en/read/", # dev 
+ * 
  * C. voxforge_sw.js
  * add entry for trailing slash on read me
  *
  *  // !!!!!! Oct 10 - no longer required with local apache server???
+ *  // required for offline testing of app on local server
   '/en/read/', // TODO debug with Apache2 and self signed SSL certificate
   // !!!!!
  *
  * D. Fix permissions on submissions folder
  * ~/git/voxforge.github.io/_site/submissions
  * apache user (e.g. www-data ) needs write permissions to submissions folder
+ *
+ * or change user in /etc/apache2/envvars:
+ * # !!!!!!
+    #export APACHE_RUN_USER=www-data
+    #export APACHE_RUN_GROUP=www-data
+    export APACHE_RUN_USER=daddy
+    export APACHE_RUN_GROUP=daddy
+    # !!!!!!
+ * 
  */
