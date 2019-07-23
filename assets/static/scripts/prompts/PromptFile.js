@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//var PromptFile = (function() { // code to keep helper classes inside Uploader namespace //
+var PromptFile = (function() { // code to keep helper classes inside Uploader namespace //
 
 /** 
 * get prompts file for given language from server; used cached version of 
@@ -60,7 +60,7 @@ PromptFile.prototype._validateReadmd = function () {
  * I. prompt file exists in browser storage
  * 
  * 1. for reponsiveness
- * Give user prompt file that is stored in browser storage,
+ * Immediately give user the prompt file that is stored in browser storage,
  *
  * 2. in background
  * a. if network up
@@ -68,8 +68,7 @@ PromptFile.prototype._validateReadmd = function () {
  * from the server.
  *
  * b. if network down
- * If no connection to server, then got to service worker cache to use the
- * default prompt file (first prompt file in configuration list).
+ * do not update update browser storage prompt file.
  * 
  * II. no prompt file in browser storage
  *
@@ -112,8 +111,8 @@ PromptFile.prototype.get = function () {
     return new Promise(function(resolve, reject) {
 
         isInBrowserStorage()
-        .then(function(foundInCache) {
-            if ( foundInCache ) {
+        .then(function(foundInBrowserStorage) {
+            if ( foundInBrowserStorage ) {
                 self._getFromBrowserStorage.call(self)
                 .then(function(promptList) {
                     resolve(promptList);
@@ -123,7 +122,7 @@ PromptFile.prototype.get = function () {
                 .then(function(promptList) {
                     resolve(promptList);
                 })
-                .catch(function(err) {
+                .catch(function(err) { // no network connection
                     self._getDefaultFromServiceWorkerCache.call(self);
                 });                
             }
@@ -147,7 +146,7 @@ PromptFile.prototype.get = function () {
  * If were to try to access server while offline,
  * there would be a delay with user being able to 
  * start recording - $.get hangs trying to access server while
- * offline, so give the user a stack of prompts (using current
+ * offline, so give the user a stack of prompts immediately (using current
  * prompt list file), then asynchronously try to access server to update current
  * prompt file stored in browser.
  * if no internet access, then user using stored prompt file, 
@@ -171,7 +170,7 @@ PromptFile.prototype._getFromBrowserStorage = function() {
         self.promptCache.getItem( self._getLocalizedPromptFilename() )
         .then ( function(jsonObject) {
             self.previousPlf_id = jsonObject.id;
-            backgroundUpdateOfPromptsFileFromServer();
+            backgroundUpdateOfPromptsFileFromServer(); // discard reply
             resolve(jsonObject.list);
         })
         .catch(function(err) {
@@ -490,6 +489,6 @@ Readmd.prototype._addPromptIDToMessageifMissing = function() {
     return m;
 }
 
-/// code to keep helper classes inside PromptFile namespace ////////////////////
-//return PromptFile;
-//}());
+// code to keep helper classes inside PromptFile namespace /////////////////////
+return PromptFile;
+}());

@@ -59,7 +59,7 @@ Prompts.prototype.init = function () {
 /**
 * initialize prompt stack with number of prompts chosen by user
 *
-* User's set of prompts to be read in contained in a stack, that way
+* User's set of prompts to be read contained in a stack, that way
 * if a user wants to re-read a prompt, they delete it, and it gets
 * placed in the stack and re-displayed to the user to record again.
 *
