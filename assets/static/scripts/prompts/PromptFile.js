@@ -99,8 +99,7 @@ PromptFile.prototype.get = function () {
     */
     function isInBrowserStorage() {  
         var promise =
-            //self.promptCache.length()
-            self.browserStorage.length.call(self.browserStorage)            
+            self.browserStorage.length()            
             .then(function(length) {
                 return (length > 0) // true or false value
             })
@@ -169,9 +168,7 @@ PromptFile.prototype._getFromBrowserStorage = function() {
     }
 
     return new Promise(function(resolve, reject) {
-
-        //self.promptCache.getItem( self._getLocalizedPromptFilename() )
-        self.browserStorage.getItem.call(self.browserStorage, self._getLocalizedPromptFilename() )        
+        self.browserStorage.getItem(self._getLocalizedPromptFilename() )        
         .then( function(jsonObject) {
             self.previousPlf_id = jsonObject.id;
             backgroundUpdateOfPromptsFileFromServer(); // discard reply
