@@ -30,9 +30,10 @@ function PromptFile(language, prompt_list_files, appversion) {
     this.promptCache = localforage.createInstance({
         name: this.language + "_promptCache"
     });
-    
+
     this._identifyPromptFileToSelect();
-    this._validateReadmd();  
+    this._validateReadmd();
+    this._initializeHelperClass();      
 }
 
 PromptFile.prototype._identifyPromptFileToSelect = function () {
@@ -50,6 +51,16 @@ PromptFile.prototype._validateReadmd = function () {
         this.prompt_file_index,
         this.previousPlf_id);
     readmd.validate();
+}
+
+PromptFile.prototype._initializeHelperClass = function () {
+    this.browserStorage = new BrowserStorage(
+        this.plf,
+        this.prompt_file_index,
+        this.language,
+        this.appversion,
+        this.promptCache,
+        this._getLocalizedPromptFilename);
 }
 
 /**
@@ -198,19 +209,11 @@ PromptFile.prototype._getFromBrowserStorage = function() {
  */
 PromptFile.prototype._getFromServer = function() {
     var self = this;
-    
-    var browserStorage = new BrowserStorage(
-        this.plf,
-        this.prompt_file_index,
-        this.language,
-        this.appversion,
-        this.promptCache,
-        this._getLocalizedPromptFilename);
         
     return new Promise(function(resolve, reject) {
    
         $.get(self.prompt_file_name)
-        .then( browserStorage.save.bind(browserStorage) )        
+        .then( self.browserStorage.save.bind(self.browserStorage) )        
         .then( function(promptList) {
             resolve(promptList);
         })
