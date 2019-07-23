@@ -72,16 +72,11 @@ PromptFile.prototype._validateReadmd = function () {
  * 
  * II. no prompt file in browser storage
  *
- * 1. for reponsiveness
- * give user service worker cache to get default prompt file
- *
- * 2. in background
- * a. if network up
- * perform an async replace of browser prompt file with random prompt file
- * from the server.
+ * usually the case when starting the app for the first time - get ramdom
+ * prompt file from the server.
  *
  * b. if network down
- * do nothing, already have default prompt list
+ * use service worker cach default prompt file (id == 001)
  * 
  */
 PromptFile.prototype.get = function () {
