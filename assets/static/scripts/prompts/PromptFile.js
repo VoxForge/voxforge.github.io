@@ -72,8 +72,9 @@ PromptFile.prototype._validateReadmd = function () {
  * 
  * II. no prompt file in browser storage
  *
- * usually the case when starting the app for the first time - get ramdom
- * prompt file from the server.
+ * a. first time setup
+ * user strarting app for first time - therefore get random prompt file from
+ * the server.
  *
  * b. if network down
  * use service worker cach default prompt file (id == 001)
