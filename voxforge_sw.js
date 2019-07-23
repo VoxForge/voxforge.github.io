@@ -86,7 +86,7 @@ var urlsToCache = [
   '/fr/read',
   '/es/read',
 
-  // !!!!!! Oct 10 - no longer required with local apache server???
+  // !!!!!! required for offline testing of app
   //'/en/read/', // dev - debug with Apache2 and self signed SSL certificate
   // !!!!!
   
