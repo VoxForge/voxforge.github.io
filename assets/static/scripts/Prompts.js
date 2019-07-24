@@ -158,44 +158,6 @@ Prompts.prototype._splitPromptLine = function(promptLine) {
     return [promptId, promptSentence.trim()];
 }
 
-/**
-* Convert prompt array to sorted (by prompt ID) prompt array
-*
-* prompts need to be sorted because recordings are displayed in reverse order 
-* so that most recent one was displayed first (less scrolling for user
-* to see most recent recording); and prompt deletion and re-recording 
-* messes up ordering also...
-*/
-Prompts.prototype.toArray = function () {
-    var temp_array = this.prompts_recorded.sort();
-    // need to reverse array because recordings are displayed in reverse order 
-    // so that most recent one was displayed first
-    return temp_array;
-}
-
-/**
-* Convert prompt array to sorted (by prompt ID) JSON string
-*/
-Prompts.prototype.toJsonString = function () {
-    var self = this;
-
-    function addPromptlineToObject(obj, promptLine) {
-        var prompt_id = self._extractPromptIdFromPromptLine(promptLine);
-        var prompt_sentence = self._extractPromptSentencePromptLine(promptLine);
-
-        obj[prompt_id] = prompt_sentence;
-    }
-    
-    var obj = {};    
-    var arr = this.prompts_recorded.sort();
-
-    arr.forEach(function(promptLine) {
-        addPromptlineToObject(obj, promptLine);
-    });
-
-    return JSON.stringify(obj,null,"  ");
-}
-
 Prompts.prototype._extractPromptIdFromPromptLine = function (promptLine) {
     var prompt_line = promptLine.split(/\s+/);
     return prompt_line.shift(); // return first element
@@ -210,50 +172,6 @@ Prompts.prototype._extractPromptSentencePromptLine = function (promptLine) {
 
 Prompts.prototype.addToPromptsRecorded = function (prompt) {
     this.prompts_recorded.push(prompt + '\n');
-}
-
-/**
-* return debug values as obj
-*/
-Prompts.prototype.getDebugValues = function () {
-    var self = this;
-    
-    function addPromptlineToDebugObject(obj, promptLine) {
-        var prompt_id = self._extractPromptIdFromPromptLine(promptLine);
-        var prompt_sentence = self._extractPromptSentencePromptLine(promptLine);
-
-        obj[prompt_id] = {
-            sentence : prompt_sentence, 
-            audio: self.audio_characteristics[prompt_id],
-        }
-    }
-    
-    var obj = {};    
-    var arr = this.prompts_recorded.sort();
-
-    arr.forEach(function(promptLine) {
-        addPromptlineToDebugObject(obj, promptLine);
-    });
-    
-    return obj;
-}
-
-Prompts.prototype.setAudioCharacteristics = function (obj) {
-    this.audio_characteristics[obj.prompt_id] = {
-        no_trailing_silence : obj.no_trailing_silence,
-        no_speech : obj.no_speech,
-        clipping : obj.clipping,
-        too_soft : obj.too_soft,
-        gain : obj.gain,
-        vad_run : obj.vad_run,
-    };
-}
-
-/**
-* removes debug properties from prompts
-*/
-Prompts.prototype.clearAudioCharacteristics = function () {
-  this.audio_characteristics = {};
 }
 
 /**
@@ -310,4 +228,88 @@ Prompts.prototype.userChangedMaxNum = function (new_max_prompts) {
 
 Prompts.prototype.getPromptCount = function () {
     return this.prompt_count;
+}
+
+/**
+* Convert prompt array to sorted (by prompt ID) prompt array
+*
+* prompts need to be sorted because recordings are displayed in reverse order 
+* so that most recent one was displayed first (less scrolling for user
+* to see most recent recording); and prompt deletion and re-recording 
+* messes up ordering also...
+*/
+Prompts.prototype.toArray = function () {
+    var temp_array = this.prompts_recorded.sort();
+    // need to reverse array because recordings are displayed in reverse order 
+    // so that most recent one was displayed first
+    return temp_array;
+}
+
+/**
+* Convert prompt array to sorted (by prompt ID) JSON string
+*/
+Prompts.prototype.toJsonString = function () {
+    var self = this;
+
+    function addPromptlineToObject(obj, promptLine) {
+        var prompt_id = self._extractPromptIdFromPromptLine(promptLine);
+        var prompt_sentence = self._extractPromptSentencePromptLine(promptLine);
+
+        obj[prompt_id] = prompt_sentence;
+    }
+    
+    var obj = {};    
+    var arr = this.prompts_recorded.sort();
+
+    arr.forEach(function(promptLine) {
+        addPromptlineToObject(obj, promptLine);
+    });
+
+    return JSON.stringify(obj,null,"  ");
+}
+
+// #############################################################################
+
+/**
+* return debug values as obj
+*/
+Prompts.prototype.getDebugValues = function () {
+    var self = this;
+    
+    function addPromptlineToDebugObject(obj, promptLine) {
+        var prompt_id = self._extractPromptIdFromPromptLine(promptLine);
+        var prompt_sentence = self._extractPromptSentencePromptLine(promptLine);
+
+        obj[prompt_id] = {
+            sentence : prompt_sentence, 
+            audio: self.audio_characteristics[prompt_id],
+        }
+    }
+    
+    var obj = {};    
+    var arr = this.prompts_recorded.sort();
+
+    arr.forEach(function(promptLine) {
+        addPromptlineToDebugObject(obj, promptLine);
+    });
+    
+    return obj;
+}
+
+Prompts.prototype.setDebugAudioCharacteristics = function (obj) {
+    this.audio_characteristics[obj.prompt_id] = {
+        no_trailing_silence : obj.no_trailing_silence,
+        no_speech : obj.no_speech,
+        clipping : obj.clipping,
+        too_soft : obj.too_soft,
+        gain : obj.gain,
+        vad_run : obj.vad_run,
+    };
+}
+
+/**
+* removes debug properties from prompts
+*/
+Prompts.prototype.clearDebugAudioCharacteristics = function () {
+  this.audio_characteristics = {};
 }
