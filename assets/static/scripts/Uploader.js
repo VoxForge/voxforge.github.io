@@ -17,8 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var Uploader = (function() { // code to keep helper classes inside Uploader namespace //
-
 /**
 * ### Contructor ##############################################
 */
@@ -113,9 +111,9 @@ Uploader.prototype._workerEventMessageHandler = function(event) {
 
     // children of UploadMessage parent class
     const classMapping = {
-        'AllUploaded' : AllUploaded,
-        'NoneUploaded' : NoneUploaded,
-        'PartialUpload' : PartialUpload,
+        'AllUploaded' : Uploader.AllUploaded,
+        'NoneUploaded' : Uploader.NoneUploaded,
+        'PartialUpload' : Uploader.PartialUpload,
     }
 
     // call subclass based on content of returnObj.status
@@ -166,7 +164,7 @@ Uploader.prototype.upload = function(
       
     return new Promise(function(resolve, reject) {
       
-        var audioProcessor = new AudioProcessor(
+        var audioProcessor = new Uploader.AudioProcessor(
             self.allClips,
             self.prompts);
 
@@ -429,7 +427,7 @@ Uploader.prototype._logSubmissionUpload = function() {
 /**
 * collect all recorded audio into an array (audioArray) 
 */
-function AudioProcessor(allClips, prompts) {
+Uploader.AudioProcessor = function (allClips, prompts) {
     this.allClips = allClips;
     this.prompts = prompts;
 }
@@ -442,7 +440,7 @@ function AudioProcessor(allClips, prompts) {
 *
 * uses xhr internally to collect read audio samples from shadow DOM
 */
-AudioProcessor.prototype.start = function() {
+Uploader.AudioProcessor.prototype.start = function() {
     var self = this;
     this.audioArray = [];
 
@@ -463,7 +461,7 @@ AudioProcessor.prototype.start = function() {
   
 };
 
-AudioProcessor.prototype._convertAllAudioClipsToBlobsThenAddToAudioArray = function() {
+Uploader.AudioProcessor.prototype._convertAllAudioClipsToBlobsThenAddToAudioArray = function() {
     var self = this;
     var audioProcessingPromises = [];
     
@@ -481,7 +479,7 @@ AudioProcessor.prototype._convertAllAudioClipsToBlobsThenAddToAudioArray = funct
     return audioProcessingPromises;
 }
 
-AudioProcessor.prototype._convertAudioClipToBlob = function(clip) {
+Uploader.AudioProcessor.prototype._convertAudioClipToBlob = function(clip) {
     var self = this;
     var filename = this._extractPromptIDfromClip.call(self, clip) + '.wav';
     
@@ -512,7 +510,7 @@ AudioProcessor.prototype._convertAudioClipToBlob = function(clip) {
     }); // promise 
 }
 
-AudioProcessor.prototype._addClipToAudioArray = function(result) {
+Uploader.AudioProcessor.prototype._addClipToAudioArray = function(result) {
     var filename = result[0];
     var blob = result[1];
      
@@ -523,16 +521,16 @@ AudioProcessor.prototype._addClipToAudioArray = function(result) {
 }
 
 // hide clip from display as it is being processed
-AudioProcessor.prototype._hideClip = function(clip) {
+Uploader.AudioProcessor.prototype._hideClip = function(clip) {
     clip.style.display = 'None'; 
 }
 
 // TODO this should be in view?    
-AudioProcessor.prototype._getAudioURL = function(clip) {
+Uploader.AudioProcessor.prototype._getAudioURL = function(clip) {
     return clip.querySelector('audio').src; 
 }
 
-AudioProcessor.prototype._extractPromptIDfromClip = function(clip) {
+Uploader.AudioProcessor.prototype._extractPromptIDfromClip = function(clip) {
     var prompt = this._extractPromptFromClip(clip);
     this.prompts.addToPromptsRecorded(prompt);
           
@@ -540,12 +538,7 @@ AudioProcessor.prototype._extractPromptIDfromClip = function(clip) {
 }
 
 // TODO this should be in view?    
-AudioProcessor.prototype._extractPromptFromClip = function(clip) {
+Uploader.AudioProcessor.prototype._extractPromptFromClip = function(clip) {
     return clip.querySelector('prompt').innerText;
 }
 
-
-
-/// code to keep helper classes inside Uploader namespace //////////////////////
-return Uploader;
-}());

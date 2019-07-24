@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-function UploadMessage(
+Uploader.UploadMessage = function (
     returnObj,
     alert_message,
     uploadedSubmissions,
@@ -28,20 +28,20 @@ function UploadMessage(
     this.appversion = appversion;
 }
 
-UploadMessage.prototype.submissionPluralized = function(numberOfSubmissions) {
+Uploader.UploadMessage.prototype.submissionPluralized = function(numberOfSubmissions) {
     return (numberOfSubmissions > 1 ?
         this.alert_message.submission_plural :
         this.alert_message.submission_singular);
 }
 
-//UploadMessage.prototype.getDate = function() {
+//Uploader.UploadMessage.prototype.getDate = function() {
 //    if (!Date.now) { // UTC timestamp in milliseconds;
 //        Date.now = function() { return new Date().getTime(); }
 //    }
 //    return Date.now();
 //}
 
-UploadMessage.prototype.getUploadedToServerMessage = function() {
+Uploader.UploadMessage.prototype.getUploadedToServerMessage = function() {
     var numberUploaded = this.returnObj.filesUploaded.length;
     
     return numberUploaded + " " + 
@@ -54,7 +54,7 @@ UploadMessage.prototype.getUploadedToServerMessage = function() {
  * Display message to user after recording has ended (i.e. wait for user
  * to press stop before displaying message)
  */
-UploadMessage.prototype.displayMessageToUser = function(m) {
+Uploader.UploadMessage.prototype.displayMessageToUser = function(m) {
     console.info(this.returnObj.workertype + ": " + m);
     Promise.all(promise_list) // wait for stop click before displaying alert (if user recording)
     .then(function() {
@@ -65,7 +65,7 @@ UploadMessage.prototype.displayMessageToUser = function(m) {
     .catch(function(err) { console.log(err) });            
 }
 
-UploadMessage.prototype.getSavedToBrowserStorageMessage = function() {
+Uploader.UploadMessage.prototype.getSavedToBrowserStorageMessage = function() {
     var filesNotUploaded =  this.returnObj.filesNotUploaded;
     var numberNotUploaded = filesNotUploaded.length;
     
@@ -78,7 +78,7 @@ UploadMessage.prototype.getSavedToBrowserStorageMessage = function() {
 /*
  * save count of uploaded submissions
  */
-UploadMessage.prototype.setNumberOfUploadedSubmissions = function() {
+Uploader.UploadMessage.prototype.setNumberOfUploadedSubmissions = function() {
     var numberOfUploadedSubmissions =
         this._getNumberOfUploadedSubmissions() +
         this.returnObj.filesUploaded.length;
@@ -91,7 +91,7 @@ UploadMessage.prototype.setNumberOfUploadedSubmissions = function() {
 /**
 * localStorage stores everything as a string
 */
-UploadMessage.prototype._getNumberOfUploadedSubmissions = function() {
+Uploader.UploadMessage.prototype._getNumberOfUploadedSubmissions = function() {
   return parseInt( localStorage.getItem('numberOfUploadedSubmissions') || 0);
 }
 
@@ -99,7 +99,7 @@ UploadMessage.prototype._getNumberOfUploadedSubmissions = function() {
  * iterate through list of saved submissions and call function
  * to save each one
  */
-UploadMessage.prototype.saveSubmissionsToList = function() {
+Uploader.UploadMessage.prototype.saveSubmissionsToList = function() {
     this.returnObj.filesUploaded.forEach(
         this._saveSubmissionNameToList.bind(this));
 }
@@ -107,7 +107,7 @@ UploadMessage.prototype.saveSubmissionsToList = function() {
 /*
  * save name of uploaded submission in localstorage with timestamp
  */
-UploadMessage.prototype._saveSubmissionNameToList = function(submissionName) {
+Uploader.UploadMessage.prototype._saveSubmissionNameToList = function(submissionName) {
     var jsonOnject = {};
 
     //jsonOnject['timestamp'] = this.getDate();
@@ -123,23 +123,23 @@ UploadMessage.prototype._saveSubmissionNameToList = function(submissionName) {
 }
 
 // #############################################################################
-function AllUploaded(
+Uploader.AllUploaded = function (
     returnObj,
     alert_message,
     uploadedSubmissions,
     appversion)
 {
     // Call constructor of superclass to initialize superclass-derived members.
-    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions, appversion);
+    Uploader.UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions, appversion);
 
     this._allUploadedToServer();
 }
 // AllUploaded inherits from UploadMessage
-AllUploaded.prototype = Object.create(UploadMessage.prototype);
-AllUploaded.prototype.constructor = UploadMessage;
+Uploader.AllUploaded.prototype = Object.create(Uploader.UploadMessage.prototype);
+Uploader.AllUploaded.prototype.constructor = Uploader.UploadMessage;
 
 // ### AllUploaded
-AllUploaded.prototype._allUploadedToServer = function() {
+Uploader.AllUploaded.prototype._allUploadedToServer = function() {
     this.saveSubmissionsToList();
     this.setNumberOfUploadedSubmissions();
 
@@ -150,22 +150,22 @@ AllUploaded.prototype._allUploadedToServer = function() {
 
 // #############################################################################
 
-function NoneUploaded(
+Uploader.NoneUploaded = function (
     returnObj,
     alert_message,
     uploadedSubmissions,
     appversion)
 {
     // Call constructor of superclass to initialize superclass-derived members.
-    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions, appversion);
+    Uploader.UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions, appversion);
 
     this._allSavedToBrowserStorage();
 }
 // NoneUploaded inherits from UploadMessage
-NoneUploaded.prototype = Object.create(UploadMessage.prototype);
-NoneUploaded.prototype.constructor = UploadMessage;
+Uploader.NoneUploaded.prototype = Object.create(Uploader.UploadMessage.prototype);
+Uploader.NoneUploaded.prototype.constructor = Uploader.UploadMessage;
 
-NoneUploaded.prototype._allSavedToBrowserStorage = function() {
+Uploader.NoneUploaded.prototype._allSavedToBrowserStorage = function() {
     this.displayMessageToUser(
         this.alert_message.localstorage_message + "\n" +
         this.getSavedToBrowserStorageMessage());    
@@ -180,30 +180,29 @@ NoneUploaded.prototype._allSavedToBrowserStorage = function() {
  * TODO need a way for user to save these their o/s filesystem and upload
  * them to VoxForge server some other way.
 */
-// Subclass
-function PartialUpload(
+Uploader.PartialUpload = function (
     returnObj,
     alert_message,
     uploadedSubmissions,
     appversion)
 {
     // Call constructor of superclass to initialize superclass-derived members.
-    UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions, appversion);
+    Uploader.UploadMessage.call(this, returnObj, alert_message, uploadedSubmissions, appversion);
 
     this._partialUpload();
 }
 // Partial inherits from UploadMessage
-PartialUpload.prototype = Object.create(UploadMessage.prototype);
-PartialUpload.prototype.constructor = UploadMessage;
+Uploader.PartialUpload.prototype = Object.create(Uploader.UploadMessage.prototype);
+Uploader.PartialUpload.prototype.constructor = Uploader.UploadMessage;
 
-PartialUpload.prototype._partialUpload = function() {
+Uploader.PartialUpload.prototype._partialUpload = function() {
     this.setNumberOfUploadedSubmissions();
     this.saveSubmissionsToList();
     
     this.displayMessageToUser(this._getPartialUploadMessage());  
 }
 
-PartialUpload.prototype._getPartialUploadMessage = function() {
+Uploader.PartialUpload.prototype._getPartialUploadMessage = function() {
     var m = "Partial Upload:\n\n" +
         this.getUploadedToServerMessage(returnObj) +
         "\n========================\n" +
