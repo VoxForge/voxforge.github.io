@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 'use strict';
-
-var SavedSubmissions = (function() { // code to keep helper classes inside View namespace //
     
 // cannot put importScripts here even though code is being shared by 
 // voxforge_sw.js and UploadWorker.js because they are stored in different 
@@ -37,7 +35,7 @@ function SavedSubmissions (
 {
     this.uploadURL = uploadURL;
     this.workertype = workertype;
-    this.uploadInfo = new UploadInfo();
+    this.uploadInfo = new SavedSubmissions.UploadInfo();
 
     this.submissionCache = localforage.createInstance({
         name: "submissionCache"
@@ -214,9 +212,7 @@ SavedSubmissions.prototype._shortNameArray = function(savedSubmissionArray) {
 /**
 * Class definition
 */
-function UploadInfo (
-    uploadURL)
-{
+SavedSubmissions.UploadInfo = function (uploadURL) {
     this.uploadList = [];
     this.noUploadList = [];    
     this.uploadIdx = 0;
@@ -227,24 +223,19 @@ function UploadInfo (
 * Methods
 */
 
-UploadInfo.prototype.addToUploadList = function(submissionName) {
+SavedSubmissions.UploadInfo.prototype.addToUploadList = function(submissionName) {
     this.uploadList[this.noUploadIdx++] = submissionName;
 }
 
-UploadInfo.prototype.addToNoUploadList = function(submissionName) {
+SavedSubmissions.UploadInfo.prototype.addToNoUploadList = function(submissionName) {
     this.noUploadList[this.noUploadIdx++] = submissionName;
 }
 
 // since not alluploaded, check to see if some submission were uploaded
-UploadInfo.prototype.partialUpload = function() {
+SavedSubmissions.UploadInfo.prototype.partialUpload = function() {
     return this.uploadList.length > 0;
 }
 
-UploadInfo.prototype.noUploads = function() {
+SavedSubmissions.UploadInfo.prototype.noUploads = function() {
     return this.noUploadList.length > 0 ;
 }
-
-
-/// code to keep helper classes inside SavedSubmissions namespace //////////////
-return SavedSubmissions;
-}());
