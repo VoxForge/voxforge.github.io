@@ -52,15 +52,6 @@ View.prototype._initProperties = function() {
     this._instantiateObjectDependencies();
 }
 
-View.prototype._setupButtons = function() {
-    this.record = document.querySelector('.record');
-    this.stop = document.querySelector('.stop');
-    this.upload = document.querySelector('.upload');
-
-    this.playbuttontext = this.pageVariables.playbuttontext;
-    this.stopbuttontext = this.pageVariables.stopbuttontext;    
-}
-
 View.prototype._setupTranslations = function() {
     this.localized_yes = this.pageVariables.localized_yes;
     this.localized_no = this.pageVariables.localized_no;
@@ -105,10 +96,6 @@ View.getUserProfileInfo = function(
 
     return profileView.getUserProfileInfo();
 }
-
-/*
- * #### static Methods #########################################################
- */
 
 /**
 * get user keyed in username
@@ -160,11 +147,25 @@ View.prototype._setupDisplayDefaults= function() {
 
 View.prototype._setupPrompts = function() {
     var self = this;
+
+    /**
+    * set default (device dependent) max number of prompts the user can record 
+    */
+    function displayPrompts() {
+        var startPrompt = 10; // min number of prompts no matter what device
+        var incr = 5;
+        var option = ''; // clear previous use of option var    
+        for (var i=startPrompt; i <= self.max_numPrompts_selector; i = i + incr) {
+           option += '<option value="'+ i + '">' + i +  '</option>';
+        }
+        $('#max_num_prompts').append(option);
+        $('#max_num_prompts-display').show();
+    }
     
     this.maxnumpromptschanged = document.querySelector('#max_num_prompts');
 
     if (this.max_numPrompts_selector > 10) {
-        this._displayPrompts();
+        displayPrompts();
     } else {
         $('#max_num_prompts-display').hide();
     }
@@ -179,17 +180,11 @@ View.prototype._setupPrompts = function() {
 }
 
 /**
-* set default (device dependent) max number of prompts the user can record 
+* display prompt line
 */
-View.prototype._displayPrompts = function() {
-    var startPrompt = 10; // min number of prompts no matter what device
-    var incr = 5;
-    var option = ''; // clear previous use of option var    
-    for (var i=startPrompt; i <= this.max_numPrompts_selector; i = i + incr) {
-       option += '<option value="'+ i + '">' + i +  '</option>';
-    }
-    $('#max_num_prompts').append(option);
-    $('#max_num_prompts-display').show();
+View.prototype.displayPrompt = function(promptId, promptSentence) {
+    document.querySelector('.prompt_id').innerText = promptId;
+    document.querySelector('.info-display').innerText = promptSentence;
 }
 
 View.prototype._turnAllButtonsOff = function() {
@@ -263,50 +258,11 @@ View.prototype.hideProfileInfo = function() {
     document.querySelector('.prompt_id').innerText = "";
 }
 
-/**
-* set record, stop button display
-*/
-View.prototype.setRSButtonDisplay = function(record, stop) {
-    this.record.disabled = ! record;
-    this.stop.disabled = ! stop;
-}
-
-/**
-* set upload button display
-*/
-View.prototype.setUButtonDisplay = function(upload) {
-    this.upload.disabled = ! upload;
-}
-
-/**
-* set record, stop & upload button display
-*/
-View.prototype.setRSUButtonDisplay = function(record, stop, upload) {
-    this.setRSButtonDisplay(record,stop);
-    this.setUButtonDisplay(upload);
-}
-
-/**
-* hide all dynamically created delete buttons
-*/
-View.prototype.disableDeleteButtons = function() {
-    $('.delete').prop('disabled', true);
-}
-
-/**
-* show all  dynamically created delete buttons
-*/
-View.prototype.enableDeleteButtons = function() {
-    $('.delete').prop('disabled', false);
-}
-
 View.prototype.enableVoiceActivityDetection = function() {
     $('#vad_run').prop('checked', true); 
 }
    
 View.prototype.hideAudioPlayer = function() {
-    //only hides the first instance of audio_player, even though it is a class
-    //document.querySelector('.audio_player').controls = false;
     var object_arr = $('.audio_player');
     for (var i = 0; i < object_arr.length; i++) {
         object_arr[i].controls = false;
@@ -314,27 +270,10 @@ View.prototype.hideAudioPlayer = function() {
 }
 
 View.prototype.showAudioPlayer = function() {
-    //document.querySelector('.audio_player').controls = true;
     var object_arr = $('.audio_player');
     for (var i = 0; i < object_arr.length; i++) {
         object_arr[i].controls = true;
     }
-}
-
-/**
-* can't just disable the play button on the lower audio player, need to hide
-* whole thing...
-*/
-View.prototype.hidePlayButtons = function() {
-    $('.play').hide();
-}
-
-/**
-* show all  dynamically created play buttons
-* TODO disable does not seem to work with WaveSurfer
-*/
-View.prototype.showPlayButtons = function() {
-    $('.play').show();
 }
 
 /**
@@ -425,23 +364,6 @@ View.prototype._getNoiseSelectValues = function() {
 }
 
 /**
-* display prompt line
-*/
-View.prototype.displayPrompt = function(promptId, promptSentence) {
-    document.querySelector('.prompt_id').innerText = promptId;
-    document.querySelector('.info-display').innerText = promptSentence;
-}
-
-/**
-* reset DOM variables for another submission
-*/
-View.prototype.reset = function() {
-    this.audioPlayer.reset();
-    this.hideProfileInfo();
-    this.updateProgress();
-}
-
-/**
 * update number of prompts recorded and total number of prompts to record
 */
 View.prototype.updateProgress = function() {
@@ -456,3 +378,12 @@ View.prototype.display = function(obj) {
     return this.audioPlayer.display.call(this.audioPlayer, obj);
 }
 
+
+/**
+* reset DOM variables for another submission
+*/
+View.prototype.reset = function() {
+    this.audioPlayer.reset();
+    this.hideProfileInfo();
+    this.updateProgress();
+}
