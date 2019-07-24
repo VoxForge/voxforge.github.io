@@ -135,7 +135,7 @@ View.prototype.init = function() {
     var self = this;
     
     this._setupDisplayDefaults();
-    
+    this._setupPrompts();    
     this.settings.initPopup();
     this.submissionsLog.setupDisplay();    
     this._turnAllButtonsOff();
@@ -146,6 +146,50 @@ View.prototype.init = function() {
     if (this.json_object) {
         this._updateProfileView();
     }
+}
+
+View.prototype._setupDisplayDefaults= function() {
+    var displayDefaults = new View.DisplayDefaults(
+        this.localized_yes,
+        this.localized_no,
+        this.localized_other,
+        this.default_value,
+        this.please_select,);
+    displayDefaults.setup();
+}
+
+View.prototype._setupPrompts = function() {
+    var self = this;
+    
+    this.maxnumpromptschanged = document.querySelector('#max_num_prompts');
+
+    if (this.max_numPrompts_selector > 10) {
+        this._displayPrompts();
+    } else {
+        $('#max_num_prompts-display').hide();
+    }
+    /**
+    * updates the current number of prompts that the user selected from dropdown
+    */
+    //$('#max_num_prompts').click(function() { 
+    $('#max_num_prompts').change(function() { 
+        self.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
+        self.updateProgress();
+    });
+}
+
+/**
+* set default (device dependent) max number of prompts the user can record 
+*/
+View.prototype._displayPrompts = function() {
+    var startPrompt = 10; // min number of prompts no matter what device
+    var incr = 5;
+    var option = ''; // clear previous use of option var    
+    for (var i=startPrompt; i <= this.max_numPrompts_selector; i = i + incr) {
+       option += '<option value="'+ i + '">' + i +  '</option>';
+    }
+    $('#max_num_prompts').append(option);
+    $('#max_num_prompts-display').show();
 }
 
 View.prototype._turnAllButtonsOff = function() {

@@ -15,25 +15,35 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//View.DisplayDefaults = function () {}
+View.DisplayDefaults = function (
+    localized_yes,
+    localized_no,
+    localized_other,
+    default_value,
+    please_select,)
+{
+    this.localized_yes = localized_yes;
+    this.localized_no = localized_no;
+    this.localized_other = localized_other;
+    this.default_value = default_value;
+    this.please_select = please_select;
+}
 
-View.prototype._setupDisplayDefaults = function() {
+View.DisplayDefaults.prototype.setup = function() {
     this._setupUsername();
     this._setUpSpeakerCharacteristics();    
     this._setUpRecordingInformation();   
-
-    this._setupPrompts();
 }
 
 // hide username instructions if there is something in the username field
-View.prototype._setupUsername = function() {
+View.DisplayDefaults.prototype._setupUsername = function() {
     new View.DivBasedonValue(
         '#username',
         '#anonymous_instructions_display',        
         true);
 }
 
-View.prototype._setUpSpeakerCharacteristics = function() {
+View.DisplayDefaults.prototype._setUpSpeakerCharacteristics = function() {
     this._setUpNativeSpeakerDependencies();
     this._setUpNativeSpeakerDefaults();    
     
@@ -49,7 +59,7 @@ View.prototype._setUpSpeakerCharacteristics = function() {
     American dialect selected:
     showDivBasedonValue('#native_speaker', this.localized_yes, '#sub_dialect_display', false);
  */
-View.prototype._setUpNativeSpeakerDependencies = function() {
+View.DisplayDefaults.prototype._setUpNativeSpeakerDependencies = function() {
     new View.DivBasedonValue(
         '#native_speaker',
         '#first_language_display',       
@@ -60,7 +70,7 @@ View.prototype._setUpNativeSpeakerDependencies = function() {
         this.localized_yes,);
 }
 
-View.prototype._setUpNativeSpeakerDefaults = function() {
+View.DisplayDefaults.prototype._setUpNativeSpeakerDefaults = function() {
     new View.ElementDefault(
         '#native_speaker',
         '#first_language',  
@@ -75,21 +85,21 @@ View.prototype._setUpNativeSpeakerDefaults = function() {
         this.localized_no,);  
 }
 
-View.prototype._setUpFirstLanguageDependencies = function() {
+View.DisplayDefaults.prototype._setUpFirstLanguageDependencies = function() {
     new View.DivBasedonValue(
         '#first_language',
         '#first_language_other_display',       
         this.localized_other,);        
 }
 
-View.prototype._setUpDialectDependencies = function() {
+View.DisplayDefaults.prototype._setUpDialectDependencies = function() {
     new View.DivBasedonValue(
         '#dialect',
         '#dialect_other_display',       
         this.localized_other,);           
 }
 
-View.prototype._setupSubDialectDependencies = function() {
+View.DisplayDefaults.prototype._setupSubDialectDependencies = function() {
     var dependentSelect = new View.DependentSelect(
         $('#dialect'),
         $('#sub_dialect'),
@@ -101,7 +111,7 @@ View.prototype._setupSubDialectDependencies = function() {
 * fill other languages select list with stringified array the names of most 
 * ISO 639-1 language names
 */
-View.prototype._setupLanguageLookup = function() {
+View.DisplayDefaults.prototype._setupLanguageLookup = function() {
     var langscodes = languages.getAllLanguageCode(); // array of language codes
     var option = '<option value="' + this.default_value +
         '">'+ this.please_select + '</option>';
@@ -117,73 +127,39 @@ View.prototype._setupLanguageLookup = function() {
     $('#first_language').append(option);
 }
 
-View.prototype._setUpRecordingInformation = function() {
+View.DisplayDefaults.prototype._setUpRecordingInformation = function() {
     this._setupMicrophoneDependencies();
     this._setupRecordingLocationDependencies();
     this._setupBackgroundNoiseDependencies();
     this._setupNoiseTypeDependencies();
 }
 
-View.prototype._setupMicrophoneDependencies = function() {
+View.DisplayDefaults.prototype._setupMicrophoneDependencies = function() {
     new View.DivBasedonValue(
         '#microphone',
         '#microphone_other_display',       
         this.localized_other,);          
 }
 
-View.prototype._setupRecordingLocationDependencies = function() {
+View.DisplayDefaults.prototype._setupRecordingLocationDependencies = function() {
     new View.DivBasedonValue(
         '#recording_location',
         '#recording_location_other_display',       
         this.localized_other,);           
 }
 
-View.prototype._setupBackgroundNoiseDependencies = function() {
+View.DisplayDefaults.prototype._setupBackgroundNoiseDependencies = function() {
     new View.DivBasedonValue(
         '#background_noise',
         '#background_noise_display',       
         this.localized_yes,);          
 }
 
-View.prototype._setupNoiseTypeDependencies = function() {
+View.DisplayDefaults.prototype._setupNoiseTypeDependencies = function() {
     new View.DivBasedonValue(
         '#noise_type',
         '#noise_type_other_display',       
         this.localized_other,);          
-}
-
-View.prototype._setupPrompts = function() {
-    var self = this;
-    
-    this.maxnumpromptschanged = document.querySelector('#max_num_prompts');
-
-    if (this.max_numPrompts_selector > 10) {
-        this._displayPrompts();
-    } else {
-        $('#max_num_prompts-display').hide();
-    }
-    /**
-    * updates the current number of prompts that the user selected from dropdown
-    */
-    //$('#max_num_prompts').click(function() { 
-    $('#max_num_prompts').change(function() { 
-        self.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
-        self.updateProgress();
-    });
-}
-
-/**
-* set default (device dependent) max number of prompts the user can record 
-*/
-View.prototype._displayPrompts = function() {
-    var startPrompt = 10; // min number of prompts no matter what device
-    var incr = 5;
-    var option = ''; // clear previous use of option var    
-    for (var i=startPrompt; i <= this.max_numPrompts_selector; i = i + incr) {
-       option += '<option value="'+ i + '">' + i +  '</option>';
-    }
-    $('#max_num_prompts').append(option);
-    $('#max_num_prompts-display').show();
 }
 
 // #############################################################################
