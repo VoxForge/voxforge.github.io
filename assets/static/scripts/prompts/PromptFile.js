@@ -282,6 +282,7 @@ PromptFile.prototype._getDefaultFromServiceWorkerCache = function() {
 /** 
 * save the prompt file as a JSON object in user's browser's Local Storage
 */
+// TODO should this be part of a larger 'Model' class (from MVC)
 function BrowserStorage(
     plf,
     prompt_file_index,
