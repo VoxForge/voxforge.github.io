@@ -178,21 +178,22 @@ Prompts.prototype.toArray = function () {
 */
 Prompts.prototype.toJsonString = function () {
     var self = this;
+
+    function addPromptlineToObject(obj, promptLine) {
+        var prompt_id = self._extractPromptIdFromPromptLine(promptLine);
+        var prompt_sentence = self._extractPromptSentencePromptLine(promptLine);
+
+        obj[prompt_id] = prompt_sentence;
+    }
+    
     var obj = {};    
     var arr = this.prompts_recorded.sort();
 
     arr.forEach(function(promptLine) {
-        self._addPromptlineToObject(obj, promptLine);
+        addPromptlineToObject(obj, promptLine);
     });
 
     return JSON.stringify(obj,null,"  ");
-}
-
-Prompts.prototype._addPromptlineToObject = function (obj, promptLine) {
-    var prompt_id = this._extractPromptIdFromPromptLine(promptLine);
-    var prompt_sentence = this._extractPromptSentencePromptLine(promptLine);
-
-    obj[prompt_id] = prompt_sentence;
 }
 
 Prompts.prototype._extractPromptIdFromPromptLine = function (promptLine) {
@@ -216,24 +217,25 @@ Prompts.prototype.addToPromptsRecorded = function (prompt) {
 */
 Prompts.prototype.getDebugValues = function () {
     var self = this;
+    
+    function addPromptlineToDebugObject(obj, promptLine) {
+        var prompt_id = self._extractPromptIdFromPromptLine(promptLine);
+        var prompt_sentence = self._extractPromptSentencePromptLine(promptLine);
+
+        obj[prompt_id] = {
+            sentence : prompt_sentence, 
+            audio: self.audio_characteristics[prompt_id],
+        }
+    }
+    
     var obj = {};    
     var arr = this.prompts_recorded.sort();
 
     arr.forEach(function(promptLine) {
-        self._addPromptlineToDebugObject(obj, promptLine);
+        addPromptlineToDebugObject(obj, promptLine);
     });
     
     return obj;
-}
-
-Prompts.prototype._addPromptlineToDebugObject = function (obj, promptLine) {
-    var prompt_id = this._extractPromptIdFromPromptLine(promptLine);
-    var prompt_sentence = this._extractPromptSentencePromptLine(promptLine);
-
-    obj[prompt_id] = {
-        sentence : prompt_sentence, 
-        audio: this.audio_characteristics[prompt_id],
-    }
 }
 
 Prompts.prototype.setAudioCharacteristics = function (obj) {
