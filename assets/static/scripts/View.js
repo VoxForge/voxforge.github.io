@@ -16,8 +16,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 'use strict';
-
-var View = (function() { // code to keep helper classes inside View namespace //
     
 /*
  * Contructor
@@ -76,13 +74,13 @@ View.prototype._setupTranslations = function() {
 }
 
 View.prototype._instantiateObjectDependencies = function() {
-    this.settings = new Settings();
-    this.submissionsLog = new SubmissionsLog(
+    this.settings = new View.Settings();
+    this.submissionsLog = new View.SubmissionsLog(
          this.saved_submissions,
          this.uploaded_submissions,
     );
 
-    this.audioPlayer = new AudioPlayer(
+    this.audioPlayer = new View.AudioPlayer(
         this.movePrompt2Stack,
         this.pageVariables,
     );
@@ -97,7 +95,7 @@ View.getUserProfileInfo = function(
     localized_anonymous,      
     default_value,)
 {
-    var profileView = new ProfileView(
+    var profileView = new View.ProfileView(
         localized_yes,
         localized_other,
         localized_anonymous,      
@@ -108,8 +106,23 @@ View.getUserProfileInfo = function(
     return profileView.getUserProfileInfo();
 }
 
-View.getLicenseID = ProfileView.getLicenseID;
-View.getUserName = ProfileView.getUserName;
+/*
+ * #### static Methods #########################################################
+ */
+
+/**
+* get user keyed in username
+*/
+View.getUserName = function() {
+  return $('#username').val();
+}
+
+/**
+* get user selected license
+*/
+View.getLicenseID = function() {
+  return $("#license").val();
+}
 
 // ### METHODS #################################################################
 
@@ -151,7 +164,7 @@ View.prototype._runVad = function() {
 }
 
 View.prototype._updateProfileView = function() {
-    var profileView = new ProfileView(
+    var profileView = new View.ProfileView(
         this.localized_yes,
         this.localized_other,
         this.localized_anonymous,      
@@ -163,7 +176,7 @@ View.prototype._updateProfileView = function() {
 
 // hide username instructions if there is something in the username field
 View.prototype._setupUsername = function() {
-    new DivBasedonValue(
+    new View.DivBasedonValue(
         '#username',
         '#anonymous_instructions_display',        
         true);
@@ -186,47 +199,47 @@ View.prototype._setUpSpeakerCharacteristics = function() {
     showDivBasedonValue('#native_speaker', this.localized_yes, '#sub_dialect_display', false);
  */
 View.prototype._setUpNativeSpeakerDependencies = function() {
-    new DivBasedonValue(
+    new View.DivBasedonValue(
         '#native_speaker',
         '#first_language_display',       
         this.localized_no,);
-    new DivBasedonValue(
+    new View.DivBasedonValue(
         '#native_speaker',
         '#dialect_display',       
         this.localized_yes,);
 }
 
 View.prototype._setUpNativeSpeakerDefaults = function() {
-    new ElementDefault(
+    new View.ElementDefault(
         '#native_speaker',
         '#first_language',  
         this.localized_yes,);
-    new ElementDefault(
+    new View.ElementDefault(
         '#native_speaker',
         '#dialect',  
         this.localized_no,);       
-    new ElementDefault(
+    new View.ElementDefault(
         '#native_speaker',
         '#sub_dialect',  
         this.localized_no,);  
 }
 
 View.prototype._setUpFirstLanguageDependencies = function() {
-    new DivBasedonValue(
+    new View.DivBasedonValue(
         '#first_language',
         '#first_language_other_display',       
         this.localized_other,);        
 }
 
 View.prototype._setUpDialectDependencies = function() {
-    new DivBasedonValue(
+    new View.DivBasedonValue(
         '#dialect',
         '#dialect_other_display',       
         this.localized_other,);           
 }
 
 View.prototype._setupSubDialectDependencies = function() {
-    var dependentSelect = new DependentSelect(
+    var dependentSelect = new View.DependentSelect(
         $('#dialect'),
         $('#sub_dialect'),
         $("#sub_dialect_display") );
@@ -241,28 +254,28 @@ View.prototype._setUpRecordingInformation = function() {
 }
 
 View.prototype._setupMicrophoneDependencies = function() {
-    new DivBasedonValue(
+    new View.DivBasedonValue(
         '#microphone',
         '#microphone_other_display',       
         this.localized_other,);          
 }
 
 View.prototype._setupRecordingLocationDependencies = function() {
-    new DivBasedonValue(
+    new View.DivBasedonValue(
         '#recording_location',
         '#recording_location_other_display',       
         this.localized_other,);           
 }
 
 View.prototype._setupBackgroundNoiseDependencies = function() {
-    new DivBasedonValue(
+    new View.DivBasedonValue(
         '#background_noise',
         '#background_noise_display',       
         this.localized_yes,);          
 }
 
 View.prototype._setupNoiseTypeDependencies = function() {
-    new DivBasedonValue(
+    new View.DivBasedonValue(
         '#noise_type',
         '#noise_type_other_display',       
         this.localized_other,);          
@@ -591,7 +604,7 @@ View.prototype.display = function(obj) {
 // need to select second or third option, then can select first option
 // TODO if subdialect exists for dialect in on language (e.g. Canadian) and
 // then switch to another language; subdialect does not get cleared
-function DependentSelect(
+View.DependentSelect = function(
     $independent,
     $dependent,
     $dependent_display)
@@ -607,7 +620,7 @@ function DependentSelect(
 /*
  * Methods
  */
-DependentSelect.prototype.setup = function() {
+View.DependentSelect.prototype.setup = function() {
     var self = this;
         
     this.$independent.on( 'change', function() {
@@ -616,7 +629,7 @@ DependentSelect.prototype.setup = function() {
     .trigger('change');
 }
 
-DependentSelect.prototype._filterOnDialectToFindSubdialect = function(value) {
+View.DependentSelect.prototype._filterOnDialectToFindSubdialect = function(value) {
     var filter =  this.$optgroup.filter( '[name="' + value + '"]' );
 
     if ( filter.length ) {
@@ -648,7 +661,7 @@ DependentSelect.prototype._filterOnDialectToFindSubdialect = function(value) {
 *
 * see https://stackoverflow.com/questions/15566999/how-to-show-form-input-fields-based-on-select-value
 */
-function DivBasedonValue(
+View.DivBasedonValue = function(
     independent_div,
     dependent_div,
     value)
@@ -667,7 +680,7 @@ function DivBasedonValue(
 /*
  * Methods
  */
-DivBasedonValue.prototype.test = function() {
+View.DivBasedonValue.prototype.test = function() {
     if ( this._valueIsBoolean() ) {
         this._booleanTest();
     } else {
@@ -675,24 +688,24 @@ DivBasedonValue.prototype.test = function() {
     }
 }
 
-DivBasedonValue.prototype._valueIsBoolean = function() {
+View.DivBasedonValue.prototype._valueIsBoolean = function() {
     return typeof(this.value) === "boolean";
 }
 
 // show if false; hide if true
-DivBasedonValue.prototype._booleanTest = function() {
+View.DivBasedonValue.prototype._booleanTest = function() {
     if ( this.value === true ) {
         this._showBasedOnContentsOfIndependentDiv(
             ! $(this.independent_div).val() );
     }
 }
 
-DivBasedonValue.prototype._valueCompare = function() {
+View.DivBasedonValue.prototype._valueCompare = function() {
     this._showBasedOnContentsOfIndependentDiv(
         $(this.independent_div).val() === this.value );
 }
 
-DivBasedonValue.prototype._showBasedOnContentsOfIndependentDiv = function(
+View.DivBasedonValue.prototype._showBasedOnContentsOfIndependentDiv = function(
     boolean_result)
 {
     if( boolean_result ){
@@ -707,7 +720,7 @@ DivBasedonValue.prototype._showBasedOnContentsOfIndependentDiv = function(
 /*
  * Contructor
  */
-function ElementDefault(
+View.ElementDefault = function(
     independent_div,
     dependent_div,    
     value,)
@@ -726,13 +739,9 @@ function ElementDefault(
 /*
  * Methods
  */
-ElementDefault.prototype._set = function() {
+View.ElementDefault.prototype._set = function() {
     if ( $( this.independent_div).val() === this.value ) {
        $(this.dependent_div).val($("select option:first").val()).change();
     }
 }
 
-
-/// code to keep helper classes inside View namespace //////////////////////////
-return View;
-}());

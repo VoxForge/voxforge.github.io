@@ -30,7 +30,7 @@ properties showing that a certain element was selected...
 /*
  * Constructor
  */
-function ProfileView (
+View.ProfileView = function (
     localized_yes,
     localized_other,
     localized_anonymous,    
@@ -45,44 +45,26 @@ function ProfileView (
 }
 
 /*
- * #### static Methods #########################################################
- */
-
-/**
-* get user keyed in username
-*/
-ProfileView.getUserName = function() {
-  return $('#username').val();
-}
-
-/**
-* get user selected license
-*/
-ProfileView.getLicenseID = function() {
-  return $("#license").val();
-}
-
-/*
  *  * #### Methods #############################################################
  */
 
 /*
  * Update DOM with saved profile data in json_object
  */
-ProfileView.prototype.update = function()
+View.ProfileView.prototype.update = function()
 {
     this._setSpeakerCharacteristics();
     this._setRecordingInformation();
 }
 
-ProfileView.prototype._setSpeakerCharacteristics = function()
+View.ProfileView.prototype._setSpeakerCharacteristics = function()
 {
     this._setUserInfo();
     this._setLanguageCharacteristics();
     this._displaySpeakerCharacteristicsIfNotAllFilled();
 }
 
-ProfileView.prototype._setUserInfo = function() {
+View.ProfileView.prototype._setUserInfo = function() {
     $('#username').val(
         Profile.cleanUserInputRemoveSpaces(this.json_object.username) );
     if (this.json_object.username) {
@@ -94,13 +76,13 @@ ProfileView.prototype._setUserInfo = function() {
     $('#age').val( this.json_object.age );
 }
 
-ProfileView.prototype._setLanguageCharacteristics = function() {
+View.ProfileView.prototype._setLanguageCharacteristics = function() {
     this._setNativeSpeaker();
     this._setFirstLanguage();
     this._setDialect();
 }
 
-ProfileView.prototype._setNativeSpeaker = function() {
+View.ProfileView.prototype._setNativeSpeaker = function() {
     $('#native_speaker').val( this.json_object.native_speaker );
     if ( this._isNativeSpeaker() ) {
         $("#dialect_display").show();
@@ -109,17 +91,17 @@ ProfileView.prototype._setNativeSpeaker = function() {
     }
 }
 
-ProfileView.prototype._isNativeSpeaker = function() {
+View.ProfileView.prototype._isNativeSpeaker = function() {
     return (this.json_object.native_speaker === this.localized_yes);
 }
 
-ProfileView.prototype._setFirstLanguage = function() {
+View.ProfileView.prototype._setFirstLanguage = function() {
     $('#first_language').val( this.json_object.first_language );
     $('#first_language_other').val(
         Profile.cleanUserInput(this.json_object.first_language_other) );
 }
 
-ProfileView.prototype._setDialect = function() {
+View.ProfileView.prototype._setDialect = function() {
     $('#dialect').val( this.json_object.dialect );
     $('#sub_dialect').val( this.json_object.sub_dialect );
     if ( this._subdialectSelected() ) {
@@ -131,11 +113,11 @@ ProfileView.prototype._setDialect = function() {
     }
 }
 
-ProfileView.prototype._subdialectSelected = function() {
+View.ProfileView.prototype._subdialectSelected = function() {
     return ( this.json_object.sub_dialect !== this.default_value );
 }
 
-ProfileView.prototype._otherDialectSelected = function() {
+View.ProfileView.prototype._otherDialectSelected = function() {
     return ( this.json_object.dialect === this.localized_other ) ;
 }
 
@@ -145,13 +127,13 @@ ProfileView.prototype._otherDialectSelected = function() {
  * (if user has filled in relevant profile information, no need to present
  * Speaker Characteristics section to user)
  */
-ProfileView.prototype._displaySpeakerCharacteristicsIfNotAllFilled = function() {
+View.ProfileView.prototype._displaySpeakerCharacteristicsIfNotAllFilled = function() {
     if ( this._speakerCharacteristicsFilled() )  {
        $("#speaker_characteristics_display").hide();
     }
 }
 
-ProfileView.prototype._speakerCharacteristicsFilled = function() {
+View.ProfileView.prototype._speakerCharacteristicsFilled = function() {
     return ( this.json_object.gender !== this.default_value &&
              this.json_object.age  !== this.default_value &&
              this.json_object.native_speaker !== this.default_value &&
@@ -162,7 +144,7 @@ ProfileView.prototype._speakerCharacteristicsFilled = function() {
 
 // ###
 
-ProfileView.prototype._setRecordingInformation = function()
+View.ProfileView.prototype._setRecordingInformation = function()
 {
     this._setMic();
     this._setLocation();
@@ -170,7 +152,7 @@ ProfileView.prototype._setRecordingInformation = function()
     this._setLicense();    
 }
 
-ProfileView.prototype._setMic = function() {
+View.ProfileView.prototype._setMic = function() {
     $('#microphone').val( this.json_object.microphone );
     $('#microphone_other').val(
         Profile.cleanUserInput(this.json_object.microphone_other) );
@@ -179,11 +161,11 @@ ProfileView.prototype._setMic = function() {
     }
 }
 
-ProfileView.prototype._otherMicrophone = function() {
+View.ProfileView.prototype._otherMicrophone = function() {
     return ( this.json_object.microphone === this.localized_other );
 }
 
-ProfileView.prototype._setLocation = function() {
+View.ProfileView.prototype._setLocation = function() {
     $('#recording_location').val( this.json_object.recording_location );
     $('#recording_location_other').val(
         Profile.cleanUserInput( this.json_object.recording_location_other) );
@@ -192,11 +174,11 @@ ProfileView.prototype._setLocation = function() {
     }
 }
 
-ProfileView.prototype._otherRecordingLocation = function() {
+View.ProfileView.prototype._otherRecordingLocation = function() {
     return ( this.json_object.recording_location === this.localized_other );
 }
 
-ProfileView.prototype._setNoise = function() {
+View.ProfileView.prototype._setNoise = function() {
     $('#background_noise').val( this.json_object.background_noise );
     if ( this._backgroudNoise() ) {
       $("#background_noise_display").show();
@@ -210,15 +192,15 @@ ProfileView.prototype._setNoise = function() {
     }
 }
 
-ProfileView.prototype._backgroudNoise = function() {
+View.ProfileView.prototype._backgroudNoise = function() {
     return ( this.json_object.background_noise === this.localized_yes );
 }
 
-ProfileView.prototype._otherNoiseType= function() {
+View.ProfileView.prototype._otherNoiseType= function() {
     return ( this.json_object.noise_type === this.localized_other );
 }
 
-ProfileView.prototype._setLicense = function() {
+View.ProfileView.prototype._setLicense = function() {
     $('#license').val( this.json_object.license );
 }
 
@@ -228,7 +210,7 @@ ProfileView.prototype._setLicense = function() {
 /**
 * get user entered DOM data
 */
-ProfileView.prototype.getUserProfileInfo = function() {
+View.ProfileView.prototype.getUserProfileInfo = function() {
     this.profile_hash = {};
 
     this._getSpeakerCharacteristics();
@@ -237,12 +219,12 @@ ProfileView.prototype.getUserProfileInfo = function() {
     return this.profile_hash;
 }
 
-ProfileView.prototype._getSpeakerCharacteristics = function() {
+View.ProfileView.prototype._getSpeakerCharacteristics = function() {
     this._getUserInfo();   
     this._getLanguageCharacteristics();
 }
 
-ProfileView.prototype._getUserInfo = function() {
+View.ProfileView.prototype._getUserInfo = function() {
     if ( $('#username').val() ) {
         this.profile_hash["username"] =
             Profile.cleanUserInputRemoveSpaces( $("#username").val() );
@@ -254,17 +236,17 @@ ProfileView.prototype._getUserInfo = function() {
     this.profile_hash["age_old_value"] = $('#age').find(':selected').attr('old_value');
 }
 
-ProfileView.prototype._getLanguageCharacteristics = function() {
+View.ProfileView.prototype._getLanguageCharacteristics = function() {
     this._getNativeSpeaker();
     this._getFirstLanguage();
     this._getDialect();
 }
 
-ProfileView.prototype._getNativeSpeaker = function() {
+View.ProfileView.prototype._getNativeSpeaker = function() {
     this.profile_hash["native_speaker"] = $("#native_speaker").val();
 }
 
-ProfileView.prototype._getFirstLanguage = function() {
+View.ProfileView.prototype._getFirstLanguage = function() {
     this.profile_hash["first_language"] = $('#first_language').val();
     if ( this._otherFirstLanguage() ) {
         this.profile_hash["first_language_other"] =
@@ -274,11 +256,11 @@ ProfileView.prototype._getFirstLanguage = function() {
     }
 }
 
-ProfileView.prototype._otherFirstLanguage = function() {
+View.ProfileView.prototype._otherFirstLanguage = function() {
     return ( $('#first_language').val() === this.localized_other );
 }
 
-ProfileView.prototype._getDialect = function() {
+View.ProfileView.prototype._getDialect = function() {
     this.profile_hash["dialect"] = $("#dialect").val();
     if ( this._otherDialect() ) {
         this.profile_hash["dialect_other"] =
@@ -290,11 +272,11 @@ ProfileView.prototype._getDialect = function() {
     this.profile_hash["sub_dialect"] = $("#sub_dialect").val();
 }
 
-ProfileView.prototype._otherDialect = function() {
+View.ProfileView.prototype._otherDialect = function() {
     return ($('#dialect').val() === this.localized_other);
 }
 
-ProfileView.prototype._getRecordingInformation = function() {
+View.ProfileView.prototype._getRecordingInformation = function() {
     this._getMic();
     this._getLocation();
     this._getNoise();      
@@ -302,7 +284,7 @@ ProfileView.prototype._getRecordingInformation = function() {
     this._getLicense();             
 }
 
-ProfileView.prototype._getMic = function() {
+View.ProfileView.prototype._getMic = function() {
     this.profile_hash["microphone"] = $("#microphone").val() ;
     if ( this._otherMic() ) {
         this.profile_hash["microphone_other"] =
@@ -312,11 +294,11 @@ ProfileView.prototype._getMic = function() {
     }
 }
 
-ProfileView.prototype._otherMic = function() {
+View.ProfileView.prototype._otherMic = function() {
     return  ($('#microphone').val() === this.localized_other);
 }
 
-ProfileView.prototype._getLocation = function() {
+View.ProfileView.prototype._getLocation = function() {
     this.profile_hash["recording_location"] = $("#recording_location").val();
     if ( this._otherLocation() ) {
         this.profile_hash["recording_location_other"] =
@@ -326,11 +308,11 @@ ProfileView.prototype._getLocation = function() {
     }
 }
 
-ProfileView.prototype._otherLocation = function() {
+View.ProfileView.prototype._otherLocation = function() {
     return  ($('#recording_location').val() === this.localized_other);
 }
 
-ProfileView.prototype._getNoise = function() {
+View.ProfileView.prototype._getNoise = function() {
     this.profile_hash["background_noise"] = $("#background_noise").val() ;
     if ( this._hasNoise() ) {    
         this._noise();
@@ -339,11 +321,11 @@ ProfileView.prototype._getNoise = function() {
     }
 }
 
-ProfileView.prototype._hasNoise = function() {
+View.ProfileView.prototype._hasNoise = function() {
     return  ( $("#background_noise").val() === this.localized_yes ) ;
 }
 
-ProfileView.prototype._noise = function() {
+View.ProfileView.prototype._noise = function() {
     this.profile_hash["noise_volume"] = $("#noise_volume").val();
 
     this.profile_hash["noise_type"] = $("#noise_type").val();
@@ -355,11 +337,11 @@ ProfileView.prototype._noise = function() {
     }
 }
 
-ProfileView.prototype._otherNoiseType = function() {
+View.ProfileView.prototype._otherNoiseType = function() {
     return  ($('#noise_type').val() === this.localized_other);
 }
 
-ProfileView.prototype._noNoise = function() {
+View.ProfileView.prototype._noNoise = function() {
     this.profile_hash["noise_volume"] = this.default_value;
     this.profile_hash["noise_type"] = this.default_value;
     this.profile_hash["noise_type_other"] = "";
@@ -367,7 +349,7 @@ ProfileView.prototype._noNoise = function() {
 
 // see http://www.whatsmyua.info/
 // https://developers.whatismybrowser.com/useragents/parse/?analyse-my-user-agent=yes
-ProfileView.prototype._userAgentInfo = function() {
+View.ProfileView.prototype._userAgentInfo = function() {
     if ( this._includeUA() ) {
         this._getUserAgentInfo();
     } else {
@@ -375,11 +357,11 @@ ProfileView.prototype._userAgentInfo = function() {
     }
 }
 
-ProfileView.prototype._includeUA = function() {
+View.ProfileView.prototype._includeUA = function() {
     return  $('#ua_string').is(":checked");
 }
 
-ProfileView.prototype._getUserAgentInfo = function() {
+View.ProfileView.prototype._getUserAgentInfo = function() {
     this.profile_hash["user_agent_string"] = platform.ua;
     
     // attempts to parse the ua string; use empty string if cannot parse
@@ -391,7 +373,7 @@ ProfileView.prototype._getUserAgentInfo = function() {
     this.profile_hash["manufacturer"] = platform.manufacturer || '';
 }
     
-ProfileView.prototype._clearUserAgentInfo = function() {
+View.ProfileView.prototype._clearUserAgentInfo = function() {
     this.profile_hash["user_agent_string"] = '';
     this.profile_hash["os_family"] = '';
     this.profile_hash["os_version"] = '';
@@ -401,6 +383,6 @@ ProfileView.prototype._clearUserAgentInfo = function() {
     this.profile_hash["manufacturer"] = '';
 }
 
-ProfileView.prototype._getLicense = function() {
+View.ProfileView.prototype._getLicense = function() {
     this.profile_hash["license"] = $("#license").val();
 }

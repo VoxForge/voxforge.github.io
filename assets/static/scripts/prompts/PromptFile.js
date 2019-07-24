@@ -474,7 +474,7 @@ Readmd.prototype._checkForUndefinedAttributesIfNoPromptId = function (plf, i) {
 
 Readmd.prototype._logPromptFileInformation = function() {
     var m = this._addPromptIDToMessageifMissing();
-
+// TODO previousPlf_id is "not defined" - fix!
     console.log("Using cached prompt file (id =" +
         this.previousPlf_id + 
         "); next prompt file id: " +

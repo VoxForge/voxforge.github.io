@@ -16,20 +16,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 'use strict';
-
-var Settings = (function() { // code to keep helper classes inside Settings namespace //
     
 /**
 * setup app settings Popup for user to modify
 */
 // TODO need to split the display for advanced and easy modes for selecting
 // things
-function Settings () { }
+View.Settings = function() {}
 
 /*
  * Local storage only uses strings (no booleans)
  */
-Settings.convertBooleanToString = function(bool) {
+View.Settings.convertBooleanToString = function(bool) {
     var bool_string;
     
     if (bool) {
@@ -54,12 +52,12 @@ Settings.convertBooleanToString = function(bool) {
 * if adding new setting element, see settings.html for layout;
 * default.yaml for text, app.js for defaults
 */
-Settings.prototype.initPopup = function(message) {
+View.Settings.prototype.initPopup = function(message) {
     this._setRecordingInformation();
     this._setResourceIntensive();
     this._setSystemInformation();  
     
-    var recordInfo = new DependentElement (
+    var recordInfo = new View.DependentElement (
         "display_record_info",
         "recording_information_button_display",
         false,
@@ -71,12 +69,12 @@ Settings.prototype.initPopup = function(message) {
 // TODO when turn this off, recording_geolocation_reminder shows
 // message on console saying it is enabled on even though it is off?????
 // see: setProperties above
-Settings.prototype._setRecordingInformation = function() {
+View.Settings.prototype._setRecordingInformation = function() {
     this._setupCheckBox("recording_time_reminder", false);       
 }
 
-Settings.prototype._setupCheckBox = function(func_name, bool) {
-    var checkbox = new Checkbox(
+View.Settings.prototype._setupCheckBox = function(func_name, bool) {
+    var checkbox = new View.Checkbox(
         func_name,
         bool,
         function(){console.log(func_name + " enabled")},
@@ -84,15 +82,15 @@ Settings.prototype._setupCheckBox = function(func_name, bool) {
     checkbox.setup();
 }
 
-Settings.prototype._setResourceIntensive = function() {
+View.Settings.prototype._setResourceIntensive = function() {
     this._setupCheckBox("recording_geolocation_reminder", false);      
     this._setupCheckBox("vad_run", true);  
     this._audioVisualizer();
     this._setupCheckBox("waveform_display", true);      
 }
 
-Settings.prototype._audioVisualizer = function() {
-    var checkbox = new Checkbox(
+View.Settings.prototype._audioVisualizer = function() {
+    var checkbox = new View.Checkbox(
         "audio_visualizer",
         true,
         this._addVisualizer,
@@ -105,7 +103,7 @@ Settings.prototype._audioVisualizer = function() {
 *
 * user can disable on low resource devices
 */
-Settings.prototype._addVisualizer = function() {    
+View.Settings.prototype._addVisualizer = function() {    
     var vu_meter = document.querySelector('#vu-meter');
     var visualizer = document.createElement('canvas');
     visualizer.classList.add('visualizer');
@@ -117,7 +115,7 @@ Settings.prototype._addVisualizer = function() {
 /**
 * see: https://dzone.com/articles/how-you-clear-your-html5
 */
-Settings.prototype._removeVisualizer = function() {       
+View.Settings.prototype._removeVisualizer = function() {       
     var visualizer = document.querySelector('.visualizer');
     
     if ( visualizer ) {
@@ -128,12 +126,12 @@ Settings.prototype._removeVisualizer = function() {
     console.log("audio_visualizer disabled");            
 }
 
-Settings.prototype._setSystemInformation = function() {
+View.Settings.prototype._setSystemInformation = function() {
     this._setupCheckBox("ua_string", true);    
     this._setupCheckBox("debug", true);
 }
 
-Settings.prototype._setPropertiesTrue = function() {
+View.Settings.prototype._setPropertiesTrue = function() {
     this._setProperties(true);
     console.log("display_record_info enabled"); 
 }
@@ -141,7 +139,7 @@ Settings.prototype._setPropertiesTrue = function() {
 /*
 // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
 */
-Settings.prototype._setProperties = function(checked) {        
+View.Settings.prototype._setProperties = function(checked) {        
     $('#recording_time_reminder').prop( "disabled", ! checked );
     $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
     // TODO does change work with jQuery Mobile?
@@ -155,7 +153,7 @@ Settings.prototype._setProperties = function(checked) {
 /*
 * clear certain field entries when user clicks display_record_info off
 */
-Settings.prototype._clearLocationSpecificRecordingInformation = function() {    
+View.Settings.prototype._clearLocationSpecificRecordingInformation = function() {    
     $('#recording_location').val($("select option:first").val()).change();
     $('#recording_location_other').val("").change();
     $('#background_noise').val($("select option:first").val()).change();
@@ -170,7 +168,7 @@ Settings.prototype._clearLocationSpecificRecordingInformation = function() {
 
 // #############################################################################
 
-function DependentElement (
+View.DependentElement = function(
     independent_element,
     dependent_element,
     default_bool,
@@ -187,7 +185,7 @@ function DependentElement (
     this.$dependent_element = $('#' + dependent_element);
 }
 
-DependentElement.prototype.setup = function() {
+View.DependentElement.prototype.setup = function() {
     if ( this._dependentElementdoesNotExistInStorage() ) {
         this._setupLocalStorage();
     } else {    
@@ -204,20 +202,20 @@ DependentElement.prototype.setup = function() {
     });
 }
 
-DependentElement.prototype._dependentElementdoesNotExistInStorage = function() {
+View.DependentElement.prototype._dependentElementdoesNotExistInStorage = function() {
     return ! localStorage.getItem(this.dependent_element);
 }
 
-DependentElement.prototype._setupLocalStorage = function() {
+View.DependentElement.prototype._setupLocalStorage = function() {
     localStorage.setItem(
         this.dependent_element,
-        Settings.convertBooleanToString(this.default_bool) );
+        View.Settings.convertBooleanToString(this.default_bool) );
     this.$dependent_element.hide();
 
     this.$independent_element.prop('checked', this.default_bool).change();
 }
 
-DependentElement.prototype._getFromLocalStorage = function() {
+View.DependentElement.prototype._getFromLocalStorage = function() {
     if ( localStorage.getItem(this.independent_element) === 'true') {
         this.$dependent_element.show();
         this.$independent_element.prop('checked', true);
@@ -227,7 +225,7 @@ DependentElement.prototype._getFromLocalStorage = function() {
     }
 }
 
-DependentElement.prototype._independentElementChecked = function() {
+View.DependentElement.prototype._independentElementChecked = function() {
     localStorage.setItem(this.independent_element, 'true');
 
     this.$dependent_element.show();
@@ -236,7 +234,7 @@ DependentElement.prototype._independentElementChecked = function() {
     this.func_on_true();   
 }
 
-DependentElement.prototype._independentElementUnchecked = function() {
+View.DependentElement.prototype._independentElementUnchecked = function() {
     localStorage.setItem(this.independent_element, 'false');
 
     this.$dependent_element.hide();
@@ -251,7 +249,7 @@ DependentElement.prototype._independentElementUnchecked = function() {
  * Set up defaults for checkbox and generate an event so that any user changes
  * are saved to localstorage
 */
-function Checkbox (
+View.Checkbox = function(
     element,
     default_bool,
     func_if_true,
@@ -264,7 +262,7 @@ function Checkbox (
     this.func_if_false = func_if_false;
 }
 
-Checkbox.prototype.setup = function() {
+View.Checkbox.prototype.setup = function() {
     if ( this._firstTimeSetup() ) {
         this._performDefaultSetup();
     } else {    
@@ -280,7 +278,7 @@ Checkbox.prototype.setup = function() {
 // in jQuery Mobile
 // see: https://demos.jquerymobile.com/1.2.0/docs/forms/checkboxes/methods.html
 */
-Checkbox.prototype._setEventFunction = function() {
+View.Checkbox.prototype._setEventFunction = function() {
     var self = this;
         
     this.$element.change( function() {
@@ -296,11 +294,11 @@ Checkbox.prototype._setEventFunction = function() {
 /*
  * Nothing in local storage, therefore first time setup
  */
-Checkbox.prototype._firstTimeSetup = function() {
+View.Checkbox.prototype._firstTimeSetup = function() {
     return ! localStorage.getItem(this.element);
 }
 
-Checkbox.prototype._performDefaultSetup = function() {
+View.Checkbox.prototype._performDefaultSetup = function() {
     this._execElementDefaultFunction(this.default_bool);
     this._setElementValueInLocalStorage(this.default_bool); 
 
@@ -308,7 +306,7 @@ Checkbox.prototype._performDefaultSetup = function() {
     this.$element.prop( 'disabled', ! this.default_bool);
 }
 
-Checkbox.prototype._execElementDefaultFunction = function(test) {
+View.Checkbox.prototype._execElementDefaultFunction = function(test) {
     if ( ! this._functionsExist() ) {
         console.warn("missing default function(s)");
         return;
@@ -321,24 +319,24 @@ Checkbox.prototype._execElementDefaultFunction = function(test) {
     }
 }
 
-Checkbox.prototype._functionsExist = function(func) {
+View.Checkbox.prototype._functionsExist = function(func) {
     return this.func_if_true && this.func_if_false;
 }
 
-Checkbox.prototype._setElementValueInLocalStorage = function(bool) {
+View.Checkbox.prototype._setElementValueInLocalStorage = function(bool) {
     localStorage.setItem(
         this.element,
-        Settings.convertBooleanToString(bool) ); 
+       View.Settings.convertBooleanToString(bool) ); 
 }
 
-Checkbox.prototype._restoreSettingsFromLocalStorage = function() {
+View.Checkbox.prototype._restoreSettingsFromLocalStorage = function() {
     var checked = localStorage.getItem(this.element) === 'true';
     
     this._setDefaultPropertyFromLocalStorage(checked);
     this._setDefaultFunctionFromLocalStorage(checked);    
 }
 
-Checkbox.prototype._setDefaultPropertyFromLocalStorage = function(checked) {
+View.Checkbox.prototype._setDefaultPropertyFromLocalStorage = function(checked) {
     if ( checked ) {
         this.$element.prop('checked', true);
     } else {
@@ -346,7 +344,7 @@ Checkbox.prototype._setDefaultPropertyFromLocalStorage = function(checked) {
     }
 }
 
-Checkbox.prototype._setDefaultFunctionFromLocalStorage = function(checked) {
+View.Checkbox.prototype._setDefaultFunctionFromLocalStorage = function(checked) {
     if ( checked ) {
         if (this.func_if_true) { this.func_if_true() }
     } else {
@@ -354,6 +352,3 @@ Checkbox.prototype._setDefaultFunctionFromLocalStorage = function(checked) {
     }
 }
 
-/// code to keep helper classes inside Settings namespace //////////////////////////
-return Settings;
-}());

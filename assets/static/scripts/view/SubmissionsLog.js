@@ -17,12 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-var SubmissionsLog = (function() { // code to keep helper classes inside SubmissionsLog namespace //
-    
 /**
 * setup display of log of uploaded and saved submissions
 */
-function SubmissionsLog (
+View.SubmissionsLog = function(
     saved_submissions,
     uploaded_submissions,)
 {
@@ -45,7 +43,7 @@ function SubmissionsLog (
 * see: http://api.jquerymobile.com/popup/
 * (chaining of popups)
 */
-SubmissionsLog.prototype.setupDisplay = function() {
+View.SubmissionsLog.prototype.setupDisplay = function() {
     var self = this;
 
     $( document ).on( "pageinit", function() {
@@ -54,7 +52,7 @@ SubmissionsLog.prototype.setupDisplay = function() {
     });
 }
 
-SubmissionsLog.prototype._popupafterclose = function() {
+View.SubmissionsLog.prototype._popupafterclose = function() {
     var self = this;
     
     Promise.all( this._getSubmissionListPromises() )
@@ -63,7 +61,7 @@ SubmissionsLog.prototype._popupafterclose = function() {
 }
 
 // TODO need to check for empty indexedDB - error occurs
-SubmissionsLog.prototype._getSubmissionListPromises = function() {
+View.SubmissionsLog.prototype._getSubmissionListPromises = function() {
     var self = this;
     
     var promise1 =
@@ -80,7 +78,7 @@ SubmissionsLog.prototype._getSubmissionListPromises = function() {
     return [promise1, promise2];
 }
 
-SubmissionsLog.prototype._popup = function() {
+View.SubmissionsLog.prototype._popup = function() {
     var submissionList = this._submissionListToString();
 
     $('#popupSubmissionList').popup(); // initialize popup before open
@@ -93,19 +91,19 @@ SubmissionsLog.prototype._popup = function() {
     }
 }
 
-SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
+View.SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
     return this.uploadedSubmissionList || this.savedSubmissionList;
 }
 
 // TODO implement pagination of some sort...
 // display new popup for each 20 submissions,
 // with option to cancel so user can skip
-SubmissionsLog.prototype._submissionListToString = function() {
-    var savedHTML = new Html(
+View.SubmissionsLog.prototype._submissionListToString = function() {
+    var savedHTML = new View.Html(
         this.saved_submissions,    
         this.savedSubmissionList
             .slice(0, this.maxNumberOfSubmissions2display));    
-    var uploadedHTML = new Html(
+    var uploadedHTML = new View.Html(
         this.uploaded_submissions,    
         this.uploadedSubmissionList
             .slice(0, this.maxNumberOfSubmissions2display));
@@ -117,9 +115,8 @@ SubmissionsLog.prototype._submissionListToString = function() {
 
 /**
 * helper function to wrap array in html
-*
 */
-function Html(
+View.Html = function(
     heading,
     submissionList)
 {
@@ -130,7 +127,7 @@ function Html(
 /*
  * Methods
  */
-Html.prototype.make = function() {
+View.Html.prototype.make = function() {
     if (this.submissionList) {
         return this._submissionList2Html();
     } else {
@@ -138,13 +135,13 @@ Html.prototype.make = function() {
     }
 }
 
-Html.prototype._submissionList2Html = function() {
+View.Html.prototype._submissionList2Html = function() {
     return '<h3>' + this.heading + '</h3>' +
         this._arrayToHtmlList();
 }
 
 // TODO need some way of return translated "None" if no submissions
-Html.prototype._arrayToHtmlList = function() {
+View.Html.prototype._arrayToHtmlList = function() {
     var count = 1;
     
     var result = '<ul>';
@@ -158,7 +155,3 @@ Html.prototype._arrayToHtmlList = function() {
     return result;
 }
 
-
-/// code to keep helper classes inside SubmissionsLog namespace ////////////////
-return SubmissionsLog;
-}());
