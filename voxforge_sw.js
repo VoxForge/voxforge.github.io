@@ -40,11 +40,11 @@ var urlsToCache = [
   PATH + 'scripts/app.js',
 
   PATH + 'scripts/Audio.js',
-  PATH + 'scripts/audio/AudioDebug.js',  
-  PATH + 'scripts/audio/AudioWorker.js',
+  PATH + 'scripts/audio/Debug.js',  
+  PATH + 'scripts/audio/Worker.js',
   PATH + 'scripts/audio/MicVolume.js',
   PATH + 'scripts/audio/Vad.js',  
-  PATH + 'scripts/audio/wavAudioEncoder.js',  
+  PATH + 'scripts/audio/wavEncoder.js',  
 
   PATH + 'scripts/common/SavedSubmissions.js',   
   PATH + 'scripts/common/Submission.js',
