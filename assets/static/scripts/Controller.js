@@ -567,9 +567,9 @@ Controller.prototype._startRecordingPromiseChain = function () {
 
 Controller.prototype._dealWithRecordingDebugSettings = function (obj) {
     if ( this.view.debugChecked() ) {
-        this.prompts.setAudioCharacteristics(obj);
+        this.prompts.setDebugAudioCharacteristics(obj);
     } else {
-        this.prompts.clearAudioCharacteristics(obj);
+        this.prompts.clearDebugAudioCharacteristics(obj);
     }
 }
 
