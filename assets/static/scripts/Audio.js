@@ -129,7 +129,6 @@ Audio.prototype._setupGetUserMedia = function() {
             window.alert(self.alert_message.getUserMedia_error + " " + err);
             console.error(self.alert_message.getUserMedia_error + " " + err);
         });
-
 }
 
 /**
