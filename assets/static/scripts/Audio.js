@@ -40,7 +40,7 @@ function Audio (parms,
 Audio.prototype._setUpWorkers = function() {
     var self = this;
     
-    this.audioworker = new Worker('/assets/static/scripts/audio/AudioWorker.js');
+    this.audioworker = new Worker('/assets/static/scripts/audio/Worker.js');
 
     /**
     * if page reloaded kill background worker threads oldgain page reload
@@ -204,7 +204,7 @@ Audio.prototype._setProfileAudioProperties = function () {
     this._setAudioPropertiesAndContraints();
     var track = this.stream.getAudioTracks()[0];
 
-    this.debugValues = new AudioDebug(this.parms, track);
+    this.debugValues = new Audio.Debug(this.parms, track);
     this.debugValues.set();
 
     console.log('audioCtx.sampleRate: ' + this.audioCtx.sampleRate);
