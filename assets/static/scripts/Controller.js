@@ -305,7 +305,7 @@ Controller.prototype._checkForLowEndDevice = function () {
 Controller.prototype._checkForLocationChange = function () {
     var self = this;
     
-    location.getCurrentPosition() // long running function that may or may not return successfully
+    Controller.location.getCurrentPosition() // long running function that may or may not return successfully
     .then( function (coords) {
         self._processCoordinates(coords);
     })
@@ -316,7 +316,7 @@ Controller.prototype._checkForLocationChange = function () {
 }
 
 Controller.prototype._processCoordinates = function (coords) {
-    if ( location.changed(coords) ) {
+    if ( Controller.location.changed(coords) ) {
         this._locationHasChanged(coords);
     } else {
         this._checkTimeSinceLastSubmission();
@@ -328,7 +328,7 @@ Controller.prototype._locationHasChanged = function (coords) {
     this.view.profileInfo();
     this.view.recordingInformation();
     
-    location.saveToLocalStorage(coords);
+    Controller.location.saveToLocalStorage(coords);
 }
 
 Controller.prototype._checkTimeSinceLastSubmission = function () {

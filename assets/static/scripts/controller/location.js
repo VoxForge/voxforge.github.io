@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 'use strict';
+Controller.location = Controller.location || {};
 
 /** 
 * This sets up location processing so if there is a change of location
@@ -51,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     // this way, self.coords always contains most current coordinates
     //self.watchID = navigator.geolocation.watchPosition(success, error);
 */
-location.getCurrentPosition = function () {
+Controller.location.getCurrentPosition = function () {
   var self = this;
 
   return new Promise(function (resolve, reject) {
@@ -101,7 +102,7 @@ location.getCurrentPosition = function () {
 * use location change to determine if user should be
 * asked to update recording location information
 */
-location.changed = function (new_coords) {
+Controller.location.changed = function (new_coords) {
     var old = localStorage.getItem("last_submission_coords");
     if (old) {
       old = JSON.parse(old);
@@ -115,7 +116,7 @@ location.changed = function (new_coords) {
           }
       }
     } else {
-        location.saveToLocalStorage(new_coords);
+        Controller.location.saveToLocalStorage(new_coords);
         return false;
     }
 }
@@ -123,6 +124,6 @@ location.changed = function (new_coords) {
 /**
 * save geolocation to browser storage
 */
-location.saveToLocalStorage = function (coords) {
+Controller.location.saveToLocalStorage = function (coords) {
     localStorage.setItem( 'last_submission_coords', JSON.stringify(coords) );
 }
