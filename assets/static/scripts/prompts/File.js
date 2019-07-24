@@ -15,13 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var PromptFile = (function() { // code to keep helper classes inside Uploader namespace //
-
 /** 
 * get prompts file for given language from server; used cached version of 
 * prompt file if no network connection...
 */
-function PromptFile(language, prompt_list_files, appversion) {
+Prompts.File = function(language, prompt_list_files, appversion) {
     this.language = language;
     this.prompt_list_files = prompt_list_files;
     this.appversion = appversion;
@@ -32,15 +30,15 @@ function PromptFile(language, prompt_list_files, appversion) {
     this._initializeHelperClass();      
 }
 
-PromptFile.prototype._identifyPromptFileToSelect = function () {
+Prompts.File.prototype._identifyPromptFileToSelect = function () {
     this.prompt_file_index =
         Math.floor((Math.random() * this.prompt_list_files.length)); // zero indexed
     this.plf = this.prompt_list_files[this.prompt_file_index];
     this.prompt_file_name = this.plf['file_location'];
 }
 
-PromptFile.prototype._validateReadmd = function () {
-    var readmd = new Readmd(
+Prompts.File.prototype._validateReadmd = function () {
+    var readmd = new Prompts.Readmd(
         this.prompt_list_files,
         this.language,
         this.plf,
@@ -49,8 +47,8 @@ PromptFile.prototype._validateReadmd = function () {
     readmd.validate();
 }
 
-PromptFile.prototype._initializeHelperClass = function () {
-    this.browserStorage = new BrowserStorage(
+Prompts.File.prototype._initializeHelperClass = function () {
+    this.browserStorage = new Prompts.BrowserStorage(
         this.plf,
         this.prompt_file_index,
         this.language,
@@ -86,7 +84,7 @@ PromptFile.prototype._initializeHelperClass = function () {
  * use service worker cache default prompt file (id == 001)
  * 
  */
-PromptFile.prototype.get = function () {
+Prompts.File.prototype.get = function () {
     var self = this;
 
     /** 
@@ -155,7 +153,7 @@ PromptFile.prototype.get = function () {
  * if there is Internet access, then user will get updated 
  * random prompts on subsequent submission.
  */
-PromptFile.prototype._getFromBrowserStorage = function() {
+Prompts.File.prototype._getFromBrowserStorage = function() {
     var self = this;
 
     /*
@@ -201,7 +199,7 @@ PromptFile.prototype._getFromBrowserStorage = function() {
  * selected small section of the total prompt set.
  * 
  */
-PromptFile.prototype._getFromServer = function() {
+Prompts.File.prototype._getFromServer = function() {
     var self = this;
         
     return new Promise(function(resolve, reject) {
@@ -222,7 +220,7 @@ PromptFile.prototype._getFromServer = function() {
  * local_prompt_file_name - name of prompt file when stored in user's browser
  * storage
  */
-PromptFile.prototype._getLocalizedPromptFilename = function() {
+Prompts.File.prototype._getLocalizedPromptFilename = function() {
     return this.language + '_prompt_file';
 }
 
@@ -232,7 +230,7 @@ PromptFile.prototype._getLocalizedPromptFilename = function() {
  * (service worker caches the first prompt file (default prompt file) shown
  * in prompt_list_files.)
 */
-PromptFile.prototype._getDefaultFromServiceWorkerCache = function() {
+Prompts.File.prototype._getDefaultFromServiceWorkerCache = function() {
     var self = this;
     
     /*
@@ -283,7 +281,7 @@ PromptFile.prototype._getDefaultFromServiceWorkerCache = function() {
 * save the prompt file as a JSON object in user's browser's Local Storage
 */
 // TODO should this be part of a larger 'Model' class (from MVC)
-function BrowserStorage(
+Prompts.BrowserStorage = function(
     plf,
     prompt_file_index,
     language,
@@ -301,7 +299,7 @@ function BrowserStorage(
     });       
 }
 
-BrowserStorage.prototype.save = function(prompt_data) {
+Prompts.BrowserStorage.prototype.save = function(prompt_data) {
     var self = this;
 
     var promptList = this._convertToArray(prompt_data);
@@ -313,7 +311,7 @@ BrowserStorage.prototype.save = function(prompt_data) {
     return promptList; // parameter for next in chain
 }
 
-BrowserStorage.prototype.getItem = function(item) {
+Prompts.BrowserStorage.prototype.getItem = function(item) {
     return this.promptCache.getItem( item );
 }
 
@@ -322,11 +320,11 @@ BrowserStorage.prototype.getItem = function(item) {
  * tells you if prompt file was already locally cached in promptCache 
  * for that language
  */
-BrowserStorage.prototype.length = function() {
+Prompts.BrowserStorage.prototype.length = function() {
     return this.promptCache.length();
 }
 
-BrowserStorage.prototype._confirmPromptListLength = function(promptList) {
+Prompts.BrowserStorage.prototype._confirmPromptListLength = function(promptList) {
     if (this.plf.number_of_prompts !=  promptList.length) {
         console.warn(
             "number of prompts in prompt_list_files[" +
@@ -343,7 +341,7 @@ BrowserStorage.prototype._confirmPromptListLength = function(promptList) {
 *
 * see https://stackoverflow.com/questions/2998784/how-to-output-integers-with-leading-zeros-in-javascript
 */
-BrowserStorage.prototype._convertToArray = function(prompt_data) {
+Prompts.BrowserStorage.prototype._convertToArray = function(prompt_data) {
     var self = this;
     
     function removeEmptyStrings(sentence) {
@@ -377,7 +375,7 @@ BrowserStorage.prototype._convertToArray = function(prompt_data) {
 
     return list;
 }
-BrowserStorage.prototype._createJsonPromptObject = function(promptList) {
+Prompts.BrowserStorage.prototype._createJsonPromptObject = function(promptList) {
     var jsonOnject = {};
 
     jsonOnject['language'] = this.language;
@@ -392,7 +390,7 @@ BrowserStorage.prototype._createJsonPromptObject = function(promptList) {
     return jsonOnject;
 }
 
-BrowserStorage.prototype._saveObject2PromptCache = function(jsonObject) {
+Prompts.BrowserStorage.prototype._saveObject2PromptCache = function(jsonObject) {
     this.promptCache.setItem(
         this.getLocalizedPromptFilename(),
         jsonObject)
@@ -405,8 +403,8 @@ BrowserStorage.prototype._saveObject2PromptCache = function(jsonObject) {
 }
 
 // #############################################################################
- 
-function Readmd(
+
+Prompts.Readmd = function( 
     prompt_list_files,
     language,
     plf,
@@ -426,7 +424,7 @@ function Readmd(
 * verify that read.md entries contain valid prompt related data;
 * iterates through all prompt_list_files attributes defined in read.md files
 */
-Readmd.prototype.validate = function () {
+Prompts.Readmd.prototype.validate = function () {
     var self = this;
     var num_prompts_calc = 0;
 
@@ -436,7 +434,7 @@ Readmd.prototype.validate = function () {
     this._logPromptFileInformation();        
 }
 
-Readmd.prototype._checkForUndefinedAttributesInGivenPromptListEntry = 
+Prompts.Readmd.prototype._checkForUndefinedAttributesInGivenPromptListEntry = 
     function (plf, i)
 {
     this._checkForUndefinedAttributes(plf, i);
@@ -446,7 +444,7 @@ Readmd.prototype._checkForUndefinedAttributesInGivenPromptListEntry =
     }
 }
 
-Readmd.prototype._checkForUndefinedAttributes = function (plf, i) {  
+Prompts.Readmd.prototype._checkForUndefinedAttributes = function (plf, i) {  
     if (typeof plf.id === 'undefined') {
         console.warn("prompt_list_files[" + i + "].id " + this.notDefined);
     }
@@ -463,7 +461,7 @@ Readmd.prototype._checkForUndefinedAttributes = function (plf, i) {
 
 // if prompt lines already have promptid, then don't need start or prefix
 // fields in read.md front matter
-Readmd.prototype._checkForUndefinedAttributesIfNoPromptId = function (plf, i) {
+Prompts.Readmd.prototype._checkForUndefinedAttributesIfNoPromptId = function (plf, i) {
     if (typeof plf.start === 'undefined') {
         console.warn("prompt_list_files[" + i + "].start " + this.notDefined);
     }
@@ -473,7 +471,7 @@ Readmd.prototype._checkForUndefinedAttributesIfNoPromptId = function (plf, i) {
     }
 }
 
-Readmd.prototype._logPromptFileInformation = function() {
+Prompts.Readmd.prototype._logPromptFileInformation = function() {
     var m = this._addPromptIDToMessageifMissing();
 // TODO previousPlf_id is "not defined" - fix!
     console.log("Using cached prompt file (id =" +
@@ -485,7 +483,7 @@ Readmd.prototype._logPromptFileInformation = function() {
         m);
 }
 
-Readmd.prototype._addPromptIDToMessageifMissing = function() {
+Prompts.Readmd.prototype._addPromptIDToMessageifMissing = function() {
     var m = "";
     
     if ( ! this.plf.contains_promptid ) {
@@ -497,6 +495,3 @@ Readmd.prototype._addPromptIDToMessageifMissing = function() {
     return m;
 }
 
-// code to keep helper classes inside PromptFile namespace /////////////////////
-return PromptFile;
-}());

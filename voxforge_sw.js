@@ -57,7 +57,7 @@ var urlsToCache = [
   PATH + 'scripts/Profile.js',
   
   PATH + 'scripts/Prompts.js',
-  PATH + 'scripts/prompts/PromptFile.js',
+  PATH + 'scripts/prompts/File.js',
     
   PATH + 'scripts/Uploader.js',
   PATH + 'scripts/uploader/UploadMessage.js',

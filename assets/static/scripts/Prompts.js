@@ -46,7 +46,7 @@ function Prompts(parms,
 
 Prompts.prototype.init = function () {
     var self = this;      
-    var promptFile = new PromptFile(
+    var promptFile = new Prompts.File(
         this.language,
         this.prompt_list_files,
         this.appversion);
