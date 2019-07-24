@@ -25,25 +25,6 @@ View.prototype._setupDisplayDefaults = function() {
     this._setupPrompts();
 }
 
-View.prototype._turnAllButtonsOff = function() {
-    this.setRSUButtonDisplay(false, false, false); 
-}
-
-View.prototype._runVad = function() {
-    return localStorage.getItem("vad_run") === 'true';
-}
-
-View.prototype._updateProfileView = function() {
-    var profileView = new View.ProfileView(
-        this.localized_yes,
-        this.localized_other,
-        this.localized_anonymous,      
-        this.default_value,
-        this.json_object,                
-    );               
-    profileView.update();
-}
-
 // hide username instructions if there is something in the username field
 View.prototype._setupUsername = function() {
     new View.DivBasedonValue(
@@ -116,6 +97,26 @@ View.prototype._setupSubDialectDependencies = function() {
     dependentSelect.setup()        
 }
 
+/**
+* fill other languages select list with stringified array the names of most 
+* ISO 639-1 language names
+*/
+View.prototype._setupLanguageLookup = function() {
+    var langscodes = languages.getAllLanguageCode(); // array of language codes
+    var option = '<option value="' + this.default_value +
+        '">'+ this.please_select + '</option>';
+    for (var i=1;i<langscodes.length;i++){
+       option += '<option value="'+ langscodes[i] + '">' +
+       languages.getLanguageInfo(langscodes[i]).name + " (" +
+       languages.getLanguageInfo(langscodes[i]).nativeName + ")" +
+       '</option>';
+    }
+    option += '<option value="' + this.localized_other + '">' +
+        this.localized_other + '</option>';
+        
+    $('#first_language').append(option);
+}
+
 View.prototype._setUpRecordingInformation = function() {
     this._setupMicrophoneDependencies();
     this._setupRecordingLocationDependencies();
@@ -149,26 +150,6 @@ View.prototype._setupNoiseTypeDependencies = function() {
         '#noise_type',
         '#noise_type_other_display',       
         this.localized_other,);          
-}
-
-/**
-* fill other languages select list with stringified array the names of most 
-* ISO 639-1 language names
-*/
-View.prototype._setupLanguageLookup = function() {
-    var langscodes = languages.getAllLanguageCode(); // array of language codes
-    var option = '<option value="' + this.default_value +
-        '">'+ this.please_select + '</option>';
-    for (var i=1;i<langscodes.length;i++){
-       option += '<option value="'+ langscodes[i] + '">' +
-       languages.getLanguageInfo(langscodes[i]).name + " (" +
-       languages.getLanguageInfo(langscodes[i]).nativeName + ")" +
-       '</option>';
-    }
-    option += '<option value="' + this.localized_other + '">' +
-        this.localized_other + '</option>';
-        
-    $('#first_language').append(option);
 }
 
 View.prototype._setupPrompts = function() {

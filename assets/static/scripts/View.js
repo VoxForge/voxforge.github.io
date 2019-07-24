@@ -148,6 +148,25 @@ View.prototype.init = function() {
     }
 }
 
+View.prototype._turnAllButtonsOff = function() {
+    this.setRSUButtonDisplay(false, false, false); 
+}
+
+View.prototype._runVad = function() {
+    return localStorage.getItem("vad_run") === 'true';
+}
+
+View.prototype._updateProfileView = function() {
+    var profileView = new View.ProfileView(
+        this.localized_yes,
+        this.localized_other,
+        this.localized_anonymous,      
+        this.default_value,
+        this.json_object,                
+    );               
+    profileView.update();
+}
+
 /**
 * Set up toggles for profile and direction buttons
 */
