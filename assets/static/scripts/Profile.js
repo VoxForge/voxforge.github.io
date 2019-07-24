@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+var Profile = (function() { // code to keep helper classes inside Uploader namespace //
+
 function Profile (appversion, pageVariables) {
     this.appversion = appversion;
 
@@ -513,3 +515,7 @@ ProfileArray.prototype._setLicense = function () {
     this.profile_array.push('\nLicense: ' +
         this.profile_hash["license"]  + '\n');        
 }
+
+// code to keep helper classes inside PromptFile namespace /////////////////////
+return Profile;
+}());
