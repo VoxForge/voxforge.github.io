@@ -63,8 +63,7 @@ var view;  // needs to be global so can be accessible to index.html
     }
 
     // #############################################################################
-    // TODO add version number to bottom of settings page
-    const appversion = "0.3";
+    const appversion = pageVariables.appversion;
 
     var parms = new Parms();
     var debug = new Debug();
@@ -81,7 +80,7 @@ var view;  // needs to be global so can be accessible to index.html
         parms.view,
         prompts,
         profile,
-        pageVariables); 
+        pageVariables,); 
 
     var audio = new Audio(
         parms.audio,

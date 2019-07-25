@@ -24,7 +24,7 @@ function View (
     parms,
     prompts,
     profile,
-    pageVariables)
+    pageVariables,)
 {
     this.max_numPrompts_selector = parms.max_numPrompts_selector;
     this.displayWaveform = parms.displayWaveform;
@@ -33,7 +33,7 @@ function View (
     this.getProgressDescription = prompts.getProgressDescription.bind(prompts);
     this.json_object = profile.getProfileFromBrowserStorage();
     this.pageVariables = pageVariables;
-
+    
     this._initProperties();
 }
 
@@ -124,6 +124,7 @@ View.prototype.init = function() {
     this._setupDisplayDefaults();
     this._setupPrompts();    
     this.settings.initPopup();
+ 
     this.submissionsLog.setupDisplay();    
     this._turnAllButtonsOff();
     if ( this._runVad() ) {

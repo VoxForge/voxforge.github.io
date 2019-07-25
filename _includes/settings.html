@@ -21,7 +21,8 @@
        style="padding:10px 20px;">
     <fieldset data-role="controlgroup">
       <legend>{{ page.settings.title | default: default.settings.title }}</legend>
-
+      <p>ver. {{ default.appversion }}</p>
+      
       <input type="checkbox" name="display_record_info" id="display_record_info">
       <label for="display_record_info">{{ page.settings.display_record_info | default: default.settings.display_record_info }}</label>
 
