@@ -37,6 +37,9 @@ Audio.Debug.prototype._browserSupportedProperties = function () {
         (typeof c.echoCancellation == 'undefined') ? 'undefined' : c.echoCancellation;
     d.browser_supports_noiseSuppression =
         (typeof c.noiseSuppression == 'undefined') ? 'undefined' : c.noiseSuppression;
+
+// TODO: browser_supports_autoGain shows as not defined in debug.jso in
+// submission, even when autoGainControl shows true???
     d.browser_supports_autoGain =
         (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported;
 }
