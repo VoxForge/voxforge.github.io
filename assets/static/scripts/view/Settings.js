@@ -22,12 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 // TODO need to split the display for advanced and easy modes for selecting
 // things
-View.Settings = function() {}
+View.Settings = function() {
+
+}
 
 /*
  * Local storage only uses strings (no booleans)
  */
-View.Settings.convertBooleanToString = function(bool) {
+View.Settings._convertBooleanToString = function(bool) {
     var bool_string;
     
     if (bool) {
@@ -55,7 +57,7 @@ View.Settings.convertBooleanToString = function(bool) {
 View.Settings.prototype.initPopup = function(message) {
     this._setRecordingInformation();
     this._setResourceIntensive();
-    this._setSystemInformation();  
+    this._setSystemInformation();
     
     var recordInfo = new View.DependentElement (
         "display_record_info",
@@ -209,7 +211,7 @@ View.DependentElement.prototype._dependentElementdoesNotExistInStorage = functio
 View.DependentElement.prototype._setupLocalStorage = function() {
     localStorage.setItem(
         this.dependent_element,
-        View.Settings.convertBooleanToString(this.default_bool) );
+        View.Settings._convertBooleanToString(this.default_bool) );
     this.$dependent_element.hide();
 
     this.$independent_element.prop('checked', this.default_bool).change();
@@ -326,7 +328,7 @@ View.Checkbox.prototype._functionsExist = function(func) {
 View.Checkbox.prototype._setElementValueInLocalStorage = function(bool) {
     localStorage.setItem(
         this.element,
-       View.Settings.convertBooleanToString(bool) ); 
+       View.Settings._convertBooleanToString(bool) ); 
 }
 
 View.Checkbox.prototype._restoreSettingsFromLocalStorage = function() {
