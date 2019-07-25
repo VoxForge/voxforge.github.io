@@ -70,12 +70,12 @@ Prompts.File.prototype._initializeHelperClass = function () {
  * from the server.
  *
  * b. if network down
- * do not update update browser storage prompt file.
+ * do not update update browser storage prompt file from server.
  * 
  * II. no prompt file in browser storage
  *
  * a. first time setup
- * user strarting app for first time - therefore get random prompt file from
+ * user starting app for first time - therefore get random prompt file from
  * the server.
  *
  * b. if network down
