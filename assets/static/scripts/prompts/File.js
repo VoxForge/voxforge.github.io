@@ -23,7 +23,6 @@ Prompts.File = function(language, prompt_list_files, appversion) {
     this.language = language;
     this.prompt_list_files = prompt_list_files;
     this.appversion = appversion;
-    this.previousPlf_id = "not defined";
 
     this._identifyPromptFileToSelect();
     this._validateReadmd();
@@ -42,8 +41,7 @@ Prompts.File.prototype._validateReadmd = function () {
         this.prompt_list_files,
         this.language,
         this.plf,
-        this.prompt_file_index,
-        this.previousPlf_id);
+        this.prompt_file_index,);
     readmd.validate();
 }
 
@@ -168,7 +166,8 @@ Prompts.File.prototype._getFromBrowserStorage = function() {
     return new Promise(function(resolve, reject) {
         self.browserStorage.getItem(self._getLocalizedPromptFilename() )        
         .then( function(jsonObject) {
-            self.previousPlf_id = jsonObject.id;
+            console.log("Using prompt file (id =" +
+                jsonObject.id + "); cached in browser storage");
             backgroundUpdateOfPromptsFileFromServer(); // discard reply
             resolve(jsonObject.list);
         })
@@ -408,14 +407,12 @@ Prompts.Readmd = function(
     prompt_list_files,
     language,
     plf,
-    prompt_file_index,
-    previousPlf_id)
+    prompt_file_index,)
 {
     this.prompt_list_files = prompt_list_files;
     this.language = language;
     this.plf = plf;
     this.prompt_file_index = prompt_file_index;
-    this.previousPlf_id =  previousPlf_id;
     
     this.notDefined = "not defined in read.md for language: " + language;    
 }
@@ -473,10 +470,7 @@ Prompts.Readmd.prototype._checkForUndefinedAttributesIfNoPromptId = function (pl
 
 Prompts.Readmd.prototype._logPromptFileInformation = function() {
     var m = this._addPromptIDToMessageifMissing();
-// TODO previousPlf_id is "not defined" - fix!
-    console.log("Using cached prompt file (id =" +
-        this.previousPlf_id + 
-        "); next prompt file id: " +
+    console.log("Prompt file saved to browser cache; prompt file id: " +
         this.plf.id + 
         " (prompt file array index: " +
         this.prompt_file_index + ") " +
