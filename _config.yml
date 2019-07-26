@@ -38,19 +38,15 @@ index:
 baseurl: "" # the subpath of your site, e.g. /blog
 
 # redirects use this url:
-url: "https://voxforge.github.io" # the base hostname & protocol for your site
-#url: "https://jekyll_voxforge.org" # dev
+url: "https://voxforge.github.io" # prod - the base hostname & protocol for your site
+#url: "https://jekyll_voxforge.org" # dev - (need to also update voxforge_sw.js and _config.yml: permalink)
+                                   # use https://jekyll_voxforge.org/en/read/ to directly access read page
 
-# Note: In Jekyll 2, any URL constructed from the permalink: field had a 
-# trailing slash (/) added to it automatically. Jekyll 3 no longer adds a
-# trailing slash automatically to permalink: URLs
-# see: https://jekyllrb.com/docs/upgrading/2-to-3/
-
-permalink: /:lang/:ref # required for links to work properly on Github
-# add trailing slash to permalinks for debugging with Apache2 and self signed SSL certificate
-# note: messes up manifest path, expects manifest.json at https://jekyll_voxforge.org/en/read/manifest.json
-# when it should be https://jekyll_voxforge.org/en/manifest.json
-# permalink: /:lang/:ref/ # !!!!!! for debugging with jekyll locally
+# add trailing slash to permalinks:
+# (for debugging with Apache2 and self signed SSL certificate)
+# note: messes up manifest path,
+permalink: /:lang/:ref # prod - required for links to work properly on Github
+#permalink: /:lang/:ref/ # dev - (need to also update voxforge_sw.js and _config.yml: URL; and copy manifest file to en/read and restart jekyll...)
 
 
 collections:
