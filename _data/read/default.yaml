@@ -3,6 +3,7 @@
 # default language
 lang: en
 appversion: "0.3"
+appversion_text: "ver."
 
 username_label: Username
 anonymous: anonymous
