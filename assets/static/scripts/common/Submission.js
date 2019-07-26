@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #############################################################################
 /**
 * Class definition
+*
+* Individual Submission object
 */
 function Submission (
     submissionCache,
@@ -61,10 +63,6 @@ Submission.prototype.upload = function() {
 
 /**
 * upload the submission to the VoxForge server
-*
-* '.then(response=>response.text())': resolves the promise to get the response
-* data from network stream;
-* basically converts the voxforge server response stream to text...
 */
 Submission.prototype._upload = function(jsonObject) {
     var self = this;
@@ -88,6 +86,11 @@ Submission.prototype._upload = function(jsonObject) {
     });
 }
 
+/**
+* '.then(response=>response.text())': resolves the promise to get the response
+* data from network stream;
+* basically converts the voxforge server response stream to text...
+*/
 Submission.prototype._convertStreamResponseToText = function(response) {
     return response.text()
 }

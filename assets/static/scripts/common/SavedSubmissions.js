@@ -26,8 +26,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // places and have different relative paths to localforage
 // importScripts('assets/static/lib/localforage.js');
 
+// TODO is there some way to use full path?
 /**
 * Class definition
+*
+* Submissions collection
 */
 function SavedSubmissions (
     uploadURL,
