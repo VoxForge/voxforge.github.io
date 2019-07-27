@@ -3,7 +3,7 @@
 # default language
 lang: en
 appversion: "0.3"
-appversion_text: "ver."
+appversion_text: "App ver."
 
 username_label: Username
 anonymous: anonymous
@@ -360,24 +360,26 @@ alert_message:
     
 settings:
   title: Settings
-  recording_information_text: >
-    Recording Information reminders (remind you to make sure
-    Recording Information is still valid).
+  recording_information_text: Reminders
+  recording_information_text_2: >
+   (to make sure Recording Information settings are still valid).
   display_record_info: >
     Display Recording Information section.
   recording_time_reminder: >
     use the time since your last recording to determine when to remind.
   recording_geolocation_reminder: >
     use GPS to monitor for change in location to determine when to remind (resource intensive).
-  resource_intensive_text: >
-    Resource intensive functions (disable these to improve recording
-    quality on low powered devices)
+  resource_intensive_text: Resource intensive functions
+  resource_intensive_text_2: >
+    (disable these to improve recording quality on low powered devices)
   vad_run: Voice Activity Detection (VAD)
+  auto_gain: Automatic Software Volume Control
   audio_visualizer: Audio visualizer
   waveform_display: Waveform display for each recording  
   saved_submissions: Waiting to upload (in browser storage)
   uploaded_submissions: Uploaded submissions
-  system_information_text: System information included in submission
+  system_information_text: System information
+  system_information_text_2: (included in submission)
   ua_string: User Agent String
   debug_text: Browser audio settings
   other_heading: General  

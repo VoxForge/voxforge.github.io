@@ -55,46 +55,53 @@ View.Settings._convertBooleanToString = function(bool) {
 * default.yaml for text, app.js for defaults
 */
 View.Settings.prototype.initPopup = function(message) {
-    this._setRecordingInformation();
+    this._setAutoGain();
+    this._setRecordingInformation();     
     this._setResourceIntensive();
     this._setSystemInformation();
-    
-    var recordInfo = new View.DependentElement (
-        "display_record_info",
-        "recording_information_button_display",
-        false,
-        this._setPropertiesTrue.bind(this),
-        this._clearLocationSpecificRecordingInformation.bind(this),);
-    recordInfo.setup();
+    this._setRecordInfo();    
+}
+
+View.Settings.prototype._setAutoGain = function() {
+    this._setupCheckBox("auto_gain", false, false);
 }
 
 // TODO when turn this off, recording_geolocation_reminder shows
 // message on console saying it is enabled on even though it is off?????
 // see: setProperties above
 View.Settings.prototype._setRecordingInformation = function() {
-    this._setupCheckBox("recording_time_reminder", false);       
+    this._setupCheckBox("recording_time_reminder", false, true);       
 }
 
-View.Settings.prototype._setupCheckBox = function(func_name, bool) {
+View.Settings.prototype._setupCheckBox = function(
+    func_name,
+    default_checked,
+    default_disabled)
+{
     var checkbox = new View.Checkbox(
         func_name,
-        bool,
+        default_checked,
+        default_disabled,        
         function(){console.log(func_name + " enabled")},
         function(){console.log(func_name + " disabled")},);
     checkbox.setup();
 }
 
 View.Settings.prototype._setResourceIntensive = function() {
-    this._setupCheckBox("recording_geolocation_reminder", false);      
-    this._setupCheckBox("vad_run", true);  
+    this._setupCheckBox("recording_geolocation_reminder", false, true);      
+    this._setupCheckBox("vad_run", true, false);
     this._audioVisualizer();
-    this._setupCheckBox("waveform_display", true);      
+    this._setupCheckBox("waveform_display", true, false);      
 }
 
 View.Settings.prototype._audioVisualizer = function() {
+    var default_checked = true;
+    var default_disabled = false;
+    
     var checkbox = new View.Checkbox(
         "audio_visualizer",
-        true,
+        default_checked,
+        default_disabled,        
         this._addVisualizer,
         this._removeVisualizer);
     checkbox.setup();
@@ -129,8 +136,18 @@ View.Settings.prototype._removeVisualizer = function() {
 }
 
 View.Settings.prototype._setSystemInformation = function() {
-    this._setupCheckBox("ua_string", true);    
-    this._setupCheckBox("debug", true);
+    this._setupCheckBox("ua_string", true, false);    
+    this._setupCheckBox("debug", true, false);
+}
+
+View.Settings.prototype._setRecordInfo = function() {
+     var recordInfo = new View.DependentElement (
+        "display_record_info",
+        "recording_information_button_display",
+        false,
+        this._setPropertiesTrue.bind(this),
+        this._clearLocationSpecificRecordingInformation.bind(this),);
+    recordInfo.setup();   
 }
 
 View.Settings.prototype._setPropertiesTrue = function() {
@@ -253,13 +270,15 @@ View.DependentElement.prototype._independentElementUnchecked = function() {
 */
 View.Checkbox = function(
     element,
-    default_bool,
+    default_checked,
+    default_disabled,    
     func_if_true,
     func_if_false)
 {
     this.element = element;
     this.$element = $('#' + this.element);    
-    this.default_bool = default_bool;
+    this.default_checked = default_checked;
+    this.default_disabled = default_disabled;    
     this.func_if_true = func_if_true;
     this.func_if_false = func_if_false;
 }
@@ -301,11 +320,11 @@ View.Checkbox.prototype._firstTimeSetup = function() {
 }
 
 View.Checkbox.prototype._performDefaultSetup = function() {
-    this._execElementDefaultFunction(this.default_bool);
-    this._setElementValueInLocalStorage(this.default_bool); 
+    this._execElementDefaultFunction(this.default_checked);
+    this._setElementValueInLocalStorage(this.default_checked); 
 
-    this.$element.prop('checked', this.default_bool);
-    this.$element.prop( 'disabled', ! this.default_bool);
+    this.$element.prop('checked', this.default_checked);
+    this.$element.prop( 'disabled', this.default_disabled);
 }
 
 View.Checkbox.prototype._execElementDefaultFunction = function(test) {
@@ -328,7 +347,7 @@ View.Checkbox.prototype._functionsExist = function(func) {
 View.Checkbox.prototype._setElementValueInLocalStorage = function(bool) {
     localStorage.setItem(
         this.element,
-       View.Settings._convertBooleanToString(bool) ); 
+        View.Settings._convertBooleanToString(bool) ); 
 }
 
 View.Checkbox.prototype._restoreSettingsFromLocalStorage = function() {

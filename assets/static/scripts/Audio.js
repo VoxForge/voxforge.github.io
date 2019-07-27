@@ -227,7 +227,7 @@ Audio.prototype.getDebugValues = function () {
 }
 
 /**
-* tell worker to start recording audio 
+* tell worker to start recording audio
 */
 Audio.prototype.record = function (
     prompt_id,
@@ -361,21 +361,17 @@ Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
         }
       };
 
-    }); // promise
+    });
 }
 
-Audio.prototype.adjustVolumeIfNeeded = function (obj) {
-    if (this.parms.platform == 'smartphone') {
-        var audioLevels = new MicVolume(
-            this.parms,    
-            obj,
-            this.autoGainSupported,
-            this.gainNode,
-            this.audioCtx,
-            this.debugValues, );        
-        audioLevels.adjust();
-    }
-    
-    return obj;
+Audio.prototype.adjustVolume = function (obj) {
+    var audioLevels = new Audio.MicVolume(
+        this.parms,    
+        obj,
+        this.autoGainSupported,
+        this.gainNode,
+        this.audioCtx,
+        this.debugValues, );        
+    audioLevels.adjust();
 }
 

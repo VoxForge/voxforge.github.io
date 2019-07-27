@@ -20,21 +20,18 @@
        data-role="popup" 
        style="padding:10px 20px;">
     <fieldset data-role="controlgroup">
-      <legend>{{ page.settings.title | default: default.settings.title }}</legend>
-      <p>{{ page.appversion_text | default: default.appversion_text }}{{ default.appversion }}</p>
-      
-      <input type="checkbox" name="display_record_info" id="display_record_info">
-      <label for="display_record_info">{{ page.settings.display_record_info | default: default.settings.display_record_info }}</label>
+      <legend>
+        <b>{{ page.settings.title | default: default.settings.title }}</b>
+        <small>({{ page.appversion_text | default: default.appversion_text }} {{ default.appversion }})</small>
+      </legend>
 
-      <p>{{ page.settings.recording_information_text | default: default.settings.recording_information_text }}</p>
-      <input type="checkbox" name="recording_time_reminder" id="recording_time_reminder">
-      <label for="recording_time_reminder">{{ page.settings.recording_time_reminder | default: default.settings.recording_time_reminder }}</label>
+      <input type="checkbox" name="auto_gain" id="auto_gain">
+      <label for="auto_gain">{{ page.settings.auto_gain | default: default.settings.auto_gain }}</label>
 
-      <input type="checkbox" name="recording_geolocation_reminder" id="recording_geolocation_reminder">
-      <label for="recording_geolocation_reminder">{{ page.settings.recording_geolocation_reminder | default: default.settings.recording_geolocation_reminder }}</label>
+      <!-- Resource Intensive -->
+      <p><b>{{ page.settings.resource_intensive_text | default: default.settings.resource_intensive_text }}</b></p>
+      <p>{{ page.settings.resource_intensive_text_2 | default: default.settings.resource_intensive_text_2 }}</p>
 
-
-      <p>{{ page.settings.resource_intensive_text | default: default.settings.resource_intensive_text }}</p>
       <input type="checkbox" name="vad_run" id="vad_run">
       <label for="vad_run">{{ page.settings.vad_run | default: default.settings.vad_run }}</label>
 
@@ -44,16 +41,34 @@
       <input type="checkbox" name="waveform_display" id="waveform_display">
       <label for="waveform_display">{{ page.settings.waveform_display | default: default.settings.waveform_display }}</label>
 
+      <!-- System Information -->
+      <p><b>{{ page.settings.system_information_text | default: default.settings.system_information_text }}:</b></p>
+      <p><small>{{ page.settings.system_information_text_2 | default: default.settings.system_information_text_2 }}:</small></p>
 
-      <p>{{ page.settings.system_information_text | default: default.settings.system_information_text }}:</p>
       <input type="checkbox" name="ua_string" id="ua_string">
       <label for="ua_string">{{ page.settings.ua_string | default: default.settings.ua_string }}</label>
 
       <input type="checkbox" name="debug" id="debug">
       <label for="debug">{{ page.settings.debug_text | default: default.settings.debug_text }}</label>
 
+      <!-- Recording Info -->
+      <p><b>{{ page.recording_information | default: default.recording_information }}</b></p>
+      <hr>
+          <input type="checkbox" name="display_record_info" id="display_record_info">
+          <label for="display_record_info">{{ page.settings.display_record_info | default: default.settings.display_record_info }}</label>
 
-      <p>{{ page.settings.other_heading | default: default.settings.other_heading }}:</p>
+          <p><b>{{ page.settings.recording_information_text | default: default.settings.recording_information_text }}</b></p>
+          <p><small>{{ page.settings.recording_information_text_2 | default: default.settings.recording_information_text_2 }}</small></p>
+
+          <input type="checkbox" name="recording_time_reminder" id="recording_time_reminder">
+          <label for="recording_time_reminder">{{ page.settings.recording_time_reminder | default: default.settings.recording_time_reminder }}</label>
+
+          <input type="checkbox" name="recording_geolocation_reminder" id="recording_geolocation_reminder">
+          <label for="recording_geolocation_reminder">{{ page.settings.recording_geolocation_reminder | default: default.settings.recording_geolocation_reminder }}</label>
+      <hr>
+      
+      <!-- General -->
+      <p><b>{{ page.settings.other_heading | default: default.settings.other_heading }}:</b></p>
       {{ page.license.label | default: default.license.label }}
       <select type="text" id="license">
         <option selected value="{{ page.license.selection_default.value | default: default.license.selection_default.value}}">
@@ -69,8 +84,9 @@
         {% endfor %}
       </select>
 
+      <!-- Prompts -->
       <div id="max_num_prompts-display">
-          <label for="max_num_prompts">{{ page.num_prompts.label | default: default.num_prompts.label }}</label>
+          <label for="max_num_prompts"><small>{{ page.num_prompts.label | default: default.num_prompts.label }}</small></label>
           <select type="text" id="max_num_prompts">
           </select>
       </div>
