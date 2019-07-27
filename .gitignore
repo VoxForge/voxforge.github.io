@@ -9,3 +9,4 @@ rootCA.crt
 php.ini
 ssl
 *(copy).*
+.vscode
