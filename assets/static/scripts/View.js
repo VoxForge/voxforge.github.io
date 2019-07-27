@@ -132,8 +132,8 @@ View.getLicenseID = function() {
 View.prototype.init = function() {
     var self = this;
     
-    this._setupDisplayDefaults();
-    this._setupPromptSettings();    
+    this.displayDefaults.setup();
+    this.maxnumpromptschanged = this.promptSettings.setup(); 
     this.settings.initPopup();
  
     this.submissionsLog.setupDisplay();    
@@ -145,14 +145,6 @@ View.prototype.init = function() {
     if (this.json_object) {
         this._updateProfileView();
     }
-}
-
-View.prototype._setupDisplayDefaults= function() {
-    this.displayDefaults.setup();
-}
-
-View.prototype._setupPromptSettings = function() {
-    this.maxnumpromptschanged = this.promptSettings.setup();
 }
 
 /**
