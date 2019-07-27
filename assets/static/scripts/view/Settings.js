@@ -56,10 +56,11 @@ View.Settings._convertBooleanToString = function(bool) {
 */
 View.Settings.prototype.initPopup = function(message) {
     this._setAutoGain();
-    this._setRecordingInformation();     
+//    this._setNumPrompts(); 
     this._setResourceIntensive();
     this._setSystemInformation();
-    this._setRecordInfo();    
+    this._setRecordInfo();
+    this._setRecordingInformation();    
 }
 
 /*
@@ -74,6 +75,8 @@ View.Settings.prototype._setAutoGain = function() {
         $('#auto_gain_display').hide();
     }
 }
+
+
 
 // TODO when turn this off, recording_geolocation_reminder shows
 // message on console saying it is enabled on even though it is off?????
@@ -370,11 +373,7 @@ View.Checkbox.prototype._restoreSettingsFromLocalStorage = function() {
 }
 
 View.Checkbox.prototype._setDefaultPropertyFromLocalStorage = function(checked) {
-    if ( checked ) {
-        this.$element.prop('checked', true);
-    } else {
-        this.$element.prop('checked', false);
-    }
+    this.$element.prop('checked', checked);
 }
 
 View.Checkbox.prototype._setDefaultFunctionFromLocalStorage = function(checked) {
@@ -385,3 +384,71 @@ View.Checkbox.prototype._setDefaultFunctionFromLocalStorage = function(checked) 
     }
 }
 
+/*
+View.Settings.prototype._setNumPrompts = function() {
+    var element = 'max_num_prompts';
+    var $element = $('#max_num_prompts');
+     
+    if (! localStorage.getItem(this.element) ) {
+        
+    }
+    
+    $element.change( function() {
+        localStorage.setItem(
+            element,
+            this.value );
+    } );
+}
+*/
+
+View.PromptSettings = function(
+    max_numPrompts_selector,
+    prompts, )
+{
+    this.max_numPrompts_selector = max_numPrompts_selector;
+    this.userChangedMaxNum = prompts.userChangedMaxNum.bind(prompts);
+    this.getProgressDescription = prompts.getProgressDescription.bind(prompts);    
+}
+
+View.PromptSettings.prototype.setup = function() {
+    var self = this;
+
+    /**
+    * set default (device dependent) max number of prompts the user can record 
+    */
+    function displayPrompts() {
+        var startPrompt = 10; // min number of prompts no matter what device
+        var incr = 5;
+        var option = ''; // clear previous use of option var    
+        for (var i=startPrompt; i <= self.max_numPrompts_selector; i = i + incr) {
+           option += '<option value="'+ i + '">' + i +  '</option>';
+        }
+        $('#max_num_prompts').append(option);
+        $('#max_num_prompts_display').show();
+    }
+    
+    var maxnumpromptschanged = document.querySelector('#max_num_prompts');
+
+    if (this.max_numPrompts_selector > 10) {
+        displayPrompts();
+    } else {
+        $('#max_num_prompts_display').hide();
+    }
+    /**
+    * updates the current number of prompts that the user selected from dropdown
+    */
+    $('#max_num_prompts').change(function() { 
+        self.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
+        self.updateProgress();
+    });
+
+    return maxnumpromptschanged;
+}
+
+/**
+* update number of prompts recorded and total number of prompts to record
+*/
+View.PromptSettings.prototype.updateProgress = function() {
+    document.querySelector('.progress-display').innerText =
+        this.getProgressDescription();
+}

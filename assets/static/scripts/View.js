@@ -29,9 +29,8 @@ function View (
     this.max_numPrompts_selector = parms.max_numPrompts_selector;
     this.displayWaveform = parms.displayWaveform;
     this.platform = parms.platform;
+    this.prompts = prompts;    
     this.movePrompt2Stack = prompts.movePrompt2Stack.bind(prompts);
-    this.userChangedMaxNum = prompts.userChangedMaxNum.bind(prompts);
-    this.getProgressDescription = prompts.getProgressDescription.bind(prompts);
     this.json_object = profile.getProfileFromBrowserStorage();
     this.pageVariables = pageVariables;
     
@@ -76,6 +75,17 @@ View.prototype._instantiateObjectDependencies = function() {
         this.movePrompt2Stack,
         this.pageVariables,
     );
+
+    this.promptSettings = new View.PromptSettings(
+        this.max_numPrompts_selector,
+        this.prompts,);
+
+    this.displayDefaults = new View.DisplayDefaults(
+        this.localized_yes,
+        this.localized_no,
+        this.localized_other,
+        this.default_value,
+        this.please_select,);          
 }
 
 /*
@@ -123,7 +133,7 @@ View.prototype.init = function() {
     var self = this;
     
     this._setupDisplayDefaults();
-    this._setupPrompts();    
+    this._setupPromptSettings();    
     this.settings.initPopup();
  
     this.submissionsLog.setupDisplay();    
@@ -138,47 +148,11 @@ View.prototype.init = function() {
 }
 
 View.prototype._setupDisplayDefaults= function() {
-    var displayDefaults = new View.DisplayDefaults(
-        this.localized_yes,
-        this.localized_no,
-        this.localized_other,
-        this.default_value,
-        this.please_select,);
-    displayDefaults.setup();
+    this.displayDefaults.setup();
 }
 
-View.prototype._setupPrompts = function() {
-    var self = this;
-
-    /**
-    * set default (device dependent) max number of prompts the user can record 
-    */
-    function displayPrompts() {
-        var startPrompt = 10; // min number of prompts no matter what device
-        var incr = 5;
-        var option = ''; // clear previous use of option var    
-        for (var i=startPrompt; i <= self.max_numPrompts_selector; i = i + incr) {
-           option += '<option value="'+ i + '">' + i +  '</option>';
-        }
-        $('#max_num_prompts').append(option);
-        $('#max_num_prompts_display').show();
-    }
-    
-    this.maxnumpromptschanged = document.querySelector('#max_num_prompts');
-
-    if (this.max_numPrompts_selector > 10) {
-        displayPrompts();
-    } else {
-        $('#max_num_prompts_display').hide();
-    }
-    /**
-    * updates the current number of prompts that the user selected from dropdown
-    */
-    //$('#max_num_prompts').click(function() { 
-    $('#max_num_prompts').change(function() { 
-        self.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
-        self.updateProgress();
-    });
+View.prototype._setupPromptSettings = function() {
+    this.maxnumpromptschanged = this.promptSettings.setup();
 }
 
 /**
@@ -366,20 +340,15 @@ View.prototype._getNoiseSelectValues = function() {
 }
 
 /**
-* update number of prompts recorded and total number of prompts to record
-*/
-View.prototype.updateProgress = function() {
-    document.querySelector('.progress-display').innerText =
-        this.getProgressDescription();
-}
-
-/**
 * Interface to AudioPLayer - hide implementation details from Controller
 */
 View.prototype.display = function(obj) {
     return this.audioPlayer.display.call(this.audioPlayer, obj);
 }
 
+View.prototype.updateProgress = function() {
+    this.promptSettings.updateProgress();
+}
 
 /**
 * reset DOM variables for another submission
