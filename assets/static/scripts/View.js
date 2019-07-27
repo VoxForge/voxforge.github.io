@@ -28,6 +28,7 @@ function View (
 {
     this.max_numPrompts_selector = parms.max_numPrompts_selector;
     this.displayWaveform = parms.displayWaveform;
+    this.platform = parms.platform;
     this.movePrompt2Stack = prompts.movePrompt2Stack.bind(prompts);
     this.userChangedMaxNum = prompts.userChangedMaxNum.bind(prompts);
     this.getProgressDescription = prompts.getProgressDescription.bind(prompts);
@@ -65,7 +66,7 @@ View.prototype._setupTranslations = function() {
 }
 
 View.prototype._instantiateObjectDependencies = function() {
-    this.settings = new View.Settings();
+    this.settings = new View.Settings(this.platform);
     this.submissionsLog = new View.SubmissionsLog(
          this.saved_submissions,
          this.uploaded_submissions,
@@ -160,7 +161,7 @@ View.prototype._setupPrompts = function() {
            option += '<option value="'+ i + '">' + i +  '</option>';
         }
         $('#max_num_prompts').append(option);
-        $('#max_num_prompts-display').show();
+        $('#max_num_prompts_display').show();
     }
     
     this.maxnumpromptschanged = document.querySelector('#max_num_prompts');
@@ -168,7 +169,7 @@ View.prototype._setupPrompts = function() {
     if (this.max_numPrompts_selector > 10) {
         displayPrompts();
     } else {
-        $('#max_num_prompts-display').hide();
+        $('#max_num_prompts_display').hide();
     }
     /**
     * updates the current number of prompts that the user selected from dropdown

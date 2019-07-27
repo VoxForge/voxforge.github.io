@@ -566,7 +566,7 @@ Controller.prototype._startRecordingPromiseChain = function () {
 }
 
 Controller.prototype._adjustVolumeIfNeeded = function (obj) {
-    if( this.audio.parms.platform == 'smartphone' &&
+    if( this.parms.platform == 'smartphone' &&
         localStorage.getItem("auto_gain") === 'true' )
     {
          this.audio.adjustVolume.call(this.audio, obj);

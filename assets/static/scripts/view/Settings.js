@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 // TODO need to split the display for advanced and easy modes for selecting
 // things
-View.Settings = function() {
-
+View.Settings = function(platform) {
+    this.platform = platform;
 }
 
 /*
@@ -62,8 +62,17 @@ View.Settings.prototype.initPopup = function(message) {
     this._setRecordInfo();    
 }
 
+/*
+ * only show autogain checkbox (for auto adjust volume) for smartphones
+ */
 View.Settings.prototype._setAutoGain = function() {
-    this._setupCheckBox("auto_gain", false, false);
+    this._setupCheckBox("auto_gain", false, false); // to get localstorage defaults set up
+    
+    if ( this.platform == 'smartphone' ) {
+        $('#auto_gain_display').show();        
+    } else {
+        $('#auto_gain_display').hide();
+    }
 }
 
 // TODO when turn this off, recording_geolocation_reminder shows
@@ -276,7 +285,8 @@ View.Checkbox = function(
     func_if_false)
 {
     this.element = element;
-    this.$element = $('#' + this.element);    
+    this.$element = $('#' + this.element);
+     
     this.default_checked = default_checked;
     this.default_disabled = default_disabled;    
     this.func_if_true = func_if_true;
@@ -294,25 +304,6 @@ View.Checkbox.prototype.setup = function() {
 }
 
 /*
-// if checkbox is being set based on contents of another checkbox, then
-// need to use checkboxradio('refresh') so that it will display correctly
-// in jQuery Mobile
-// see: https://demos.jquerymobile.com/1.2.0/docs/forms/checkboxes/methods.html
-*/
-View.Checkbox.prototype._setEventFunction = function() {
-    var self = this;
-        
-    this.$element.change( function() {
-        self.$element.checkboxradio('refresh');
-
-        // using 'this.checked' - it is in local context to this change 
-        // function representing whether element has been checked or not
-        self._execElementDefaultFunction.call(self, this.checked);           
-        self._setElementValueInLocalStorage.call(self, this.checked);
-    } );
-}
-
-/*
  * Nothing in local storage, therefore first time setup
  */
 View.Checkbox.prototype._firstTimeSetup = function() {
@@ -325,6 +316,27 @@ View.Checkbox.prototype._performDefaultSetup = function() {
 
     this.$element.prop('checked', this.default_checked);
     this.$element.prop( 'disabled', this.default_disabled);
+}
+
+/*
+ * if checkbox is being set based on contents of another checkbox, then
+ * need to use checkboxradio('refresh') so that it will display correctly
+ * in jQuery Mobile
+ * see: https://demos.jquerymobile.com/1.2.0/docs/forms/checkboxes/methods.html
+ *
+ * Note: using 'this.checked' inside $element.change function - it is in local
+ * context to this change function representing whether element has been
+ * checked or not
+ */
+View.Checkbox.prototype._setEventFunction = function() {
+    var self = this;
+        
+    this.$element.change( function() {
+        self.$element.checkboxradio('refresh');
+
+        self._execElementDefaultFunction.call(self, this.checked);           
+        self._setElementValueInLocalStorage.call(self, this.checked);
+    } );
 }
 
 View.Checkbox.prototype._execElementDefaultFunction = function(test) {

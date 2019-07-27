@@ -37,9 +37,6 @@ function Parms() {
       },
 
       blockDisplayOfRecordButton: false, // on slower devices, allowing user to record while display is still working can cause dropout/scratches
-      //platform: 'desktop', // only needed for smartphones where you cannot adjust recording volume; desktops allow you to adjust recording volume
-      platform: 'smartphone', // !!!!!! debug
-
       gain: {
         maxValue: 2.5,       
         increment_factor: 1.2, // speech detected, but volume too low, use this factor to increase volume
@@ -79,19 +76,20 @@ function Parms() {
     } 
 
     // ### ANDROID #############################################################
-
     if ( platform.os.family.includes("Android") ) {
         this.audio.vad.maxsilence = 650; // detect longer silence period on Android
         this.audio.vad.minvoice = 75; // use shorter min voice threshold period on Android
         this.audio.blockDisplayOfRecordButton = true;
         //this.audio.canAdjustRecordingVolume = false; // Android does not allow you to manually adjust the recording volume on your phone;
-        this.platform = 'smartphone';   
+
+        this.controller.platform = 'smartphone';
+        this.view.platform = 'smartphone';           
         this.controller.recording_stop_delay = 750;
 
         if (platform.os.version) {
           if (parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
-            // the more prompts to display the more it cpu is uses on mobile 
-            // devices causing problems with drop outs crackles in recorded audio
+            // the more prompts to display, the more it cpu is uses on mobile 
+            // devices causing problems with drop outs/crackles in recorded audio
             this.view.max_numPrompts_selector = 10;
           } else { // Android 5 and above
             this.view.max_numPrompts_selector = 20;
