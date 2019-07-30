@@ -381,7 +381,7 @@ Prompts.BrowserStorage.prototype._createJsonPromptObject = function(promptList) 
     jsonOnject['id'] = this.plf.id;
     jsonOnject['list'] = promptList;
     
-    jsonOnject['speechSubmissionAppVersion'] = this.appversion;
+    jsonOnject['appversion'] = this.appversion;
     var date = new Date();  
     jsonOnject['timestamp'] = date.getTime(); // UTC timestamp in milliseconds;
     jsonOnject['timezoneOffset'] = date.getTimezoneOffset();

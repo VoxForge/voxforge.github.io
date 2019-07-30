@@ -139,6 +139,9 @@
         this.saved_submissions = "{{ page.settings.saved_submissions | default: default.settings.saved_submissions }}";
         this.uploaded_submissions = "{{ page.settings.uploaded_submissions | default: default.settings.uploaded_submissions }}";
 
+        /* work around so that it will only pickup default */
+        this.appversion = "{{ page.xxxxxxxxxx |default: default.appversion }}";
+
         /**
         * confirm that all default properties exist in page property, and if not
         * add default property to page property

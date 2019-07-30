@@ -147,7 +147,7 @@ Uploader.prototype.upload = function(
     prompts,
     profile,
     debug,
-    speechSubmissionAppVersion,
+    appversion,
     allClips,
     language,
     debugChecked )
@@ -157,7 +157,7 @@ Uploader.prototype.upload = function(
     this.prompts = prompts;
     this.profile = profile;    
     this.debug = debug;
-    this.speechSubmissionAppVersion = speechSubmissionAppVersion;      
+    this.appversion = appversion;      
     this.allClips = allClips;
     this.language = language;
     this.debugChecked = debugChecked;
@@ -248,7 +248,7 @@ Uploader.prototype._tellWorkerToZipFile = function() {
 
 Uploader.prototype._zipworkerProperties = function() {
     return {
-        speechSubmissionAppVersion: this.speechSubmissionAppVersion,
+        appversion: this.appversion,
         temp_submission_name: this.profile.getTempSubmissionName(),
         short_submission_name: this.profile.getShortSubmissionName(),
         username: this.profile.getUserName(),
