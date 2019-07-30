@@ -348,7 +348,7 @@ Controller.prototype._midpromptsrecorded = function () {
 
     if (this.audio.parms.blockDisplayOfRecordButton) {
         this._blockDisplayOfRecordButtonUntilRecDone();
-    } else { // allows recording even though waveform display not completed
+    } else { // allows recording even though waveform display not completed; usually on desktop computer
         this._displayOfRecordButtonWhileRecording();
     }
 }
@@ -389,7 +389,7 @@ Controller.prototype._maxpromptsrecorded = function () {
 Controller.prototype._recordingfirst = function () {
     this.view.setRSButtonDisplay(false, true);
     
-    promise_list = []; // !!!!!!
+    promise_list = []; 
     
     this._recordAudio();
 }
@@ -497,7 +497,7 @@ Controller.prototype._uploadPromiseChain = function () {
 }
 
 Controller.prototype._setMaxPromptsEvenTrigger = function () {
-    this.view.maxnumpromptschanged.onChange = function() {
+    this.view.$numPromptsToRead.onChange = function() {
         this._dealWithChangeInMaxNumPrompts();
     }
 }

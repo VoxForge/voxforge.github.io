@@ -26,7 +26,7 @@ function View (
     profile,
     pageVariables,)
 {
-    this.max_numPrompts_selector = parms.max_numPrompts_selector;
+    this.parms = parms;
     this.displayWaveform = parms.displayWaveform;
     this.platform = parms.platform;
     this.prompts = prompts;    
@@ -49,7 +49,7 @@ View.prototype._initProperties = function() {
     this.delete_clicked = document.querySelector('#delete_clicked'); // only picks up first instance of in=delete in DOM
 
     this._setupTranslations();
-    this._instantiateObjectDependencies();
+    this._instantiateObjects();
 }
 
 View.prototype._setupTranslations = function() {
@@ -64,8 +64,9 @@ View.prototype._setupTranslations = function() {
     this.uploaded_submissions = this.pageVariables.uploaded_submissions;    
 }
 
-View.prototype._instantiateObjectDependencies = function() {
+View.prototype._instantiateObjects = function() {
     this.settings = new View.Settings(this.platform);
+    
     this.submissionsLog = new View.SubmissionsLog(
          this.saved_submissions,
          this.uploaded_submissions,
@@ -77,7 +78,7 @@ View.prototype._instantiateObjectDependencies = function() {
     );
 
     this.promptSettings = new View.PromptSettings(
-        this.max_numPrompts_selector,
+        this.parms,
         this.prompts,);
 
     this.displayDefaults = new View.DisplayDefaults(
@@ -131,11 +132,11 @@ View.getLicenseID = function() {
 */
 View.prototype.init = function() {
     var self = this;
-    
+
     this.displayDefaults.setup();
-    this.maxnumpromptschanged = this.promptSettings.setup(); 
+    this.$numPromptsToRead = this.promptSettings.setup(); 
     this.settings.initPopup();
- 
+
     this.submissionsLog.setupDisplay();    
     this._turnAllButtonsOff();
     if ( this._runVad() ) {
@@ -153,10 +154,6 @@ View.prototype.init = function() {
 View.prototype.displayPrompt = function(promptId, promptSentence) {
     document.querySelector('.prompt_id').innerText = promptId;
     document.querySelector('.info-display').innerText = promptSentence;
-}
-
-View.prototype._turnAllButtonsOff = function() {
-    this.setRSUButtonDisplay(false, false, false); 
 }
 
 View.prototype._runVad = function() {

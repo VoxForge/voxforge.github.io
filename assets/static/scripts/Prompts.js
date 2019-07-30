@@ -24,20 +24,35 @@ function Prompts(parms,
                  pageVariables,
                  appversion)
 {
-    this.max_num_prompts = parms.num_prompts_to_trigger_upload;
+    this.parms = parms;
     this.prompt_list = []; // list of prompts to be recorded by user
-    this.previous_max_num_prompts = 0; // to decide what to do when use changes max number of prompts
     this.index = 0; // pointer to position in prompt list array
     this.prompt_count = 0; // number of prompts user read
     this.prompts_recorded = []; // list of prompts that have been recorded
-    this.audio_characteristics = {}; // hash of audio characteritics of recorded audio; indexed by promptID
     this.prompt_stack = []; // stack; makes it easier to add deleted elements for re-record
     this.current_promptLine = null; // need to keep track of current prompt since no longer tracking index
 
+    this.previous_numPromptsToRead = 0; // to decide what to do when use changes max number of prompts
+    this.numPromptsToRead = this._getNumPromptsToRead();
+
     this.language = pageVariables.language;
     this.prompt_list_files = pageVariables.prompt_list_files;
-
+    this.audio_characteristics = {}; // hash of audio characteritics of recorded audio; indexed by promptID
     this.appversion = appversion;
+}
+
+Prompts.prototype._getNumPromptsToRead = function () {
+    var element = "numPromptsToRead";
+       
+    var numPromptsToRead = localStorage.getItem(element);
+    if ( ! numPromptsToRead ) {
+        numPromptsToRead = this.parms.numPromptsToRead.numPrompts;   
+        localStorage.setItem(
+            element,
+            numPromptsToRead );
+    }
+
+    return numPromptsToRead;
 }
 
 /**
@@ -84,7 +99,7 @@ Prompts.prototype._initPromptStack = function() {
         self.prompt_stack.unshift(nextPrompt());
     }
 
-    var n = this.max_num_prompts;
+    var n = this.numPromptsToRead;
     while (n--) addPromptToFrontOfStack();
 }
 
@@ -178,7 +193,7 @@ Prompts.prototype.addToPromptsRecorded = function (prompt) {
 * true when max number of prompts user wants to record is reached
 */
 Prompts.prototype.lastone = function () {
-    return this.prompt_count >= this.max_num_prompts;
+    return this.prompt_count >= this.numPromptsToRead;
 }
 
 Prompts.prototype.oneleft = function () {
@@ -186,18 +201,18 @@ Prompts.prototype.oneleft = function () {
 }
 
 Prompts.prototype.maxnumpromptsincreased = function () {
-    return this.max_num_prompts >= this.previous_max_num_prompts;
+    return this.numPromptsToRead >= this.previous_numPromptsToRead;
 }
 
 /**
 * e.g. user set max prompt to 30, records 25, then changes max prompts to 20
 */
 Prompts.prototype.recordedmorethancurrentmaxprompts = function () {
-    return this.prompt_count >= this.max_num_prompts;
+    return this.prompt_count >= this.numPromptsToRead;
 }
 
 Prompts.prototype.atmid = function () {
-    return (this.prompt_count > 0 && this.prompt_count < this.max_num_prompts);
+    return (this.prompt_count > 0 && this.prompt_count < this.numPromptsToRead);
 }
 
 /**
@@ -205,7 +220,7 @@ Prompts.prototype.atmid = function () {
 * number of prompts.
 */
 Prompts.prototype.getProgressDescription = function () {
-    return this.prompt_count + "/" + this.max_num_prompts;
+    return this.prompt_count + "/" + this.numPromptsToRead;
 }
 
 /**
@@ -215,15 +230,20 @@ Prompts.prototype.getProgressDescription = function () {
 * will causes the promptIDs to be in non-consecutive order, 
 * and may result in user reading exactly same prompts again...
 */
-Prompts.prototype.userChangedMaxNum = function (new_max_prompts) {
-    this.previous_max_num_prompts = this.max_num_prompts;
-    this.max_num_prompts = new_max_prompts;
+
+// TODO when user changes numPromptsToRead should do this (instead of
+// re-initializing the prompt stack):
+//   if increase, then push more prompts to stack
+//   if decrease, just pop unneeded prompts from stack
+Prompts.prototype.userChangedNumPromptsToRead = function (new_max_prompts) {
+    this.previous_numPromptsToRead = this.numPromptsToRead;
+    this.numPromptsToRead = new_max_prompts;
 
     // promptId start point will be randomized and not be consecutive
     // to previous prompt IDs.
     this._initPromptStack();
 
-    console.log('max_num_prompts:' + new_max_prompts);
+    console.log('numPromptsToRead:' + new_max_prompts);
 }
 
 Prompts.prototype.getPromptCount = function () {

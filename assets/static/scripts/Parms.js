@@ -18,11 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 function Parms() {
-    this.prompts = {
-        // user can upload anytime after recording 10 prompts
-        num_prompts_to_trigger_upload: 10, 
-    }
-
     this.audio = {
       // this was used before we just set audioNodebufferSize to largest size 
       // possible, since latency is not a issue for this app...
@@ -45,13 +40,65 @@ function Parms() {
       }
     }
 
+    /*
+     * android442 = Android 4.4.2 and below
+     * the more prompts to display, the more it cpu is uses on mobile 
+     * devices causing problems with drop outs/crackles in recorded audio
+     * 
+     * android5 = Android 5 and above
+     */
+    function getNumPromptsRange() {
+        var desktop = {
+            min: 10,
+            max: 50,
+            numPrompts: 10}; // number of prompts to put in stack; once all recorded it triggers display of upload button
+        var android442 = {
+            min: 10,
+            max: 10,
+            numPrompts: 10};          
+        var android5 = {
+            min: 10,
+            max: 20,
+            numPrompts: 10};
+            
+        if ( platform.os.family.includes("Android") ) {
+            if (platform.os.version) {
+              if (parseFloat(platform.os.version) < 5) { 
+                return android442;
+              } else { 
+                return android5;
+              }
+            } else { // can't parse user agent... assume older version of Android/browser
+                return android442;
+            }
+        } else {
+            return desktop;
+        }
+    }
+    
     this.view = {
         displayWaveform: true,
         // corresponds to the maximum number of prompts that a user can select from the 
         // drop-down menu selector;  This value changes based on type of device being used.
-        max_numPrompts_selector: 50,      
+        increment: 5,
+        numPromptsToRead: getNumPromptsRange(),
     }
-
+    
+    // TODO for debugging
+    if ( ! (window.location.origin === 'https://voxforge.github.io') ) {
+        this.view.increment = 3;              
+        this.view.numPromptsToRead = {
+            min: 3,
+            max: 12,
+            numPrompts: 3};
+        //this.controller.numPrompt2SubmittForRecordInfo = 1;
+        //this.uploader.maxMinutesSinceLastSubmission = 1; // only relevant if recording information is included with submission
+    }
+     
+    this.prompts = {
+        numPromptsToRead: this.view.numPromptsToRead,
+    }
+    
     this.uploader = {
       maxMinutesSinceLastSubmission: 120,
     }
@@ -68,12 +115,7 @@ function Parms() {
       this.audio.bitDepth = 16;
     } 
 
-    // TODO for debugging
-    if ( ! (window.location.origin === 'https://voxforge.github.io') ) { 
-        this.prompts.num_prompts_to_trigger_upload = 3;
-        //this.controller.numPrompt2SubmittForRecordInfo = 1;
-        //this.uploader.maxMinutesSinceLastSubmission = 1; // only relevant if recording information is included with submission
-    } 
+
 
     // ### ANDROID #############################################################
     if ( platform.os.family.includes("Android") ) {
@@ -85,18 +127,6 @@ function Parms() {
         this.controller.platform = 'smartphone';
         this.view.platform = 'smartphone';           
         this.controller.recording_stop_delay = 750;
-
-        if (platform.os.version) {
-          if (parseFloat(platform.os.version) < 5) { // Android 4.4.2 and below
-            // the more prompts to display, the more it cpu is uses on mobile 
-            // devices causing problems with drop outs/crackles in recorded audio
-            this.view.max_numPrompts_selector = 10;
-          } else { // Android 5 and above
-            this.view.max_numPrompts_selector = 20;
-          }
-        } else { // can't parse user agent... assume older version of Android/browser
-            this.view.max_numPrompts_selector = 10;
-        }
     }
 }
 

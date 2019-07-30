@@ -384,65 +384,60 @@ View.Checkbox.prototype._setDefaultFunctionFromLocalStorage = function(checked) 
     }
 }
 
-/*
-View.Settings.prototype._setNumPrompts = function() {
-    var element = 'max_num_prompts';
-    var $element = $('#max_num_prompts');
-     
-    if (! localStorage.getItem(this.element) ) {
-        
-    }
-    
-    $element.change( function() {
-        localStorage.setItem(
-            element,
-            this.value );
-    } );
-}
-*/
-
 View.PromptSettings = function(
-    max_numPrompts_selector,
+    parms,
     prompts, )
 {
-    this.max_numPrompts_selector = max_numPrompts_selector;
-    this.userChangedMaxNum = prompts.userChangedMaxNum.bind(prompts);
-    this.getProgressDescription = prompts.getProgressDescription.bind(prompts);    
+    this.parms = parms;
+    this.prompts = prompts;
+
+    this.element = "numPromptsToRead";
+    this.$element = $('#' + this.element);
+    this.$element_display = $('#' + this.element + '_display');
 }
 
 View.PromptSettings.prototype.setup = function() {
-    var self = this;
+    this._displayPrompts();
+    this._setupChangeFunctions();
 
-    /**
-    * set default (device dependent) max number of prompts the user can record 
-    */
-    function displayPrompts() {
-        var startPrompt = 10; // min number of prompts no matter what device
-        var incr = 5;
-        var option = ''; // clear previous use of option var    
-        for (var i=startPrompt; i <= self.max_numPrompts_selector; i = i + incr) {
-           option += '<option value="'+ i + '">' + i +  '</option>';
-        }
-        $('#max_num_prompts').append(option);
-        $('#max_num_prompts_display').show();
+    return this.$element;
+}
+
+/**
+* updates the current number of prompts that the user selected from dropdown
+*/
+View.PromptSettings.prototype._setupChangeFunctions = function() {
+    var self = this;
+        
+    this.$element.change(function() {
+        var new_numPromptsToRead = this.value.replace(/[^0-9\.]/g,'');
+        self.prompts.userChangedNumPromptsToRead.call(
+            self.prompts, new_numPromptsToRead );
+        self.updateProgress();
+
+        localStorage.setItem(
+            self.element,
+            new_numPromptsToRead );
+    });
+}
+
+/**
+* set default (device dependent) max number of prompts the user can record
+*
+* startPrompt = // min number of prompts no matter what device
+*/
+View.PromptSettings.prototype._displayPrompts = function() {
+    var min = this.parms.numPromptsToRead.min;
+    var max = this.parms.numPromptsToRead.max;    
+    var incr = this.parms.increment;
+    
+    var option = ''; // clear previous use of option var // TODO why is this required??? should go out of scope after method is called???   
+    for (var i=min; i <= max; i = i + incr) {
+       option += '<option value="'+ i + '">' + i +  '</option>';
     }
     
-    var maxnumpromptschanged = document.querySelector('#max_num_prompts');
-
-    if (this.max_numPrompts_selector > 10) {
-        displayPrompts();
-    } else {
-        $('#max_num_prompts_display').hide();
-    }
-    /**
-    * updates the current number of prompts that the user selected from dropdown
-    */
-    $('#max_num_prompts').change(function() { 
-        self.userChangedMaxNum( this.value.replace(/[^0-9\.]/g,'') );
-        self.updateProgress();
-    });
-
-    return maxnumpromptschanged;
+    this.$element.append(option);
+    this.$element_display.show();
 }
 
 /**
@@ -450,5 +445,5 @@ View.PromptSettings.prototype.setup = function() {
 */
 View.PromptSettings.prototype.updateProgress = function() {
     document.querySelector('.progress-display').innerText =
-        this.getProgressDescription();
+        this.prompts.getProgressDescription.call(this.prompts);
 }

@@ -61,7 +61,6 @@ View.prototype.enableDeleteButtons = function() {
     $('.delete').prop('disabled', false);
 }
 
-
 /**
 * can't just disable the play button on the lower audio player, need to hide
 * whole thing...
@@ -76,4 +75,8 @@ View.prototype.hidePlayButtons = function() {
 */
 View.prototype.showPlayButtons = function() {
     $('.play').show();
+}
+
+View.prototype._turnAllButtonsOff = function() {
+    this.setRSUButtonDisplay(false, false, false); 
 }
