@@ -97,7 +97,7 @@ function _saveSubmissionLocally(data, zip_file_in_memory) {
   jsonOnject['username'] = data.username;
   jsonOnject['language'] = data.language;
   jsonOnject['suffix'] = data.suffix;
-  jsonOnject['speechSubmissionAppVersion'] = data.speechSubmissionAppVersion;
+  jsonOnject['appversion'] = data.appversion;
 
   var date = new Date();  
   jsonOnject['timestamp'] = date.getTime(); // UTC timestamp in milliseconds;

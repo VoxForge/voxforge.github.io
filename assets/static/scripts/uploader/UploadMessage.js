@@ -114,8 +114,8 @@ Uploader.UploadMessage.prototype._saveSubmissionNameToList = function(submission
     var date = new Date();  
     jsonOnject['timestamp'] = date.getTime(); // UTC timestamp in milliseconds;
     jsonOnject['timezoneOffset'] = date.getTimezoneOffset();
-    jsonOnject['speechSubmissionAppVersion'] = this.appversion;
-              
+    jsonOnject['appversion'] = this.appversion;
+           
     this.uploadedSubmissions.setItem(submissionName, jsonOnject)
     .catch(function(err) {
         console.error('save of uploaded submission name to localforage browser storage failed!', err);
