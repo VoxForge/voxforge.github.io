@@ -41,7 +41,7 @@ Audio.Debug.prototype._browserSupportedProperties = function () {
 // TODO: browser_supports_autoGain shows as not defined in debug.jso in
 // submission, even when autoGainControl shows true???
     d.browser_supports_autoGain =
-        (typeof c.autoGainSupported == 'undefined') ? 'undefined' : c.autoGainSupported;
+        (typeof c.autoGainControl == 'undefined') ? 'undefined' : c.autoGainControl;
 }
 
 Audio.Debug.prototype._propertiesActuallyTurnedOn = function () {
