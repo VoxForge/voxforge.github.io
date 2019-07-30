@@ -40,7 +40,7 @@ function Audio (parms,
 Audio.prototype._setUpWorkers = function() {
     var self = this;
     
-    this.audioworker = new Worker('/assets/static/scripts/audio/Worker.js');
+    this.audioworker = new Worker('/assets/static/scripts/audio/AudioWorker.js');
 
     /**
     * if page reloaded kill background worker threads oldgain page reload
