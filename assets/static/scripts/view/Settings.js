@@ -61,8 +61,6 @@ View.Settings.prototype.initPopup = function(message) {
     this._setRecordingInformation();    
 }
 
-*/
-
 // TODO when turn this off, recording_geolocation_reminder shows
 // message on console saying it is enabled on even though it is off?????
 // see: setProperties above
