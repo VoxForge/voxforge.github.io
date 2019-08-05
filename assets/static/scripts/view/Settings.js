@@ -55,8 +55,7 @@ View.Settings._convertBooleanToString = function(bool) {
 * default.yaml for text, app.js for defaults
 */
 View.Settings.prototype.initPopup = function(message) {
-    this._setAutoGain();
-//    this._setNumPrompts(); 
+//    this._setAutoGain();
     this._setResourceIntensive();
     this._setSystemInformation();
     this._setRecordInfo();
@@ -66,6 +65,7 @@ View.Settings.prototype.initPopup = function(message) {
 /*
  * only show autogain checkbox (for auto adjust volume) for smartphones
  */
+ /*
 View.Settings.prototype._setAutoGain = function() {
     this._setupCheckBox("auto_gain", false, false); // to get localstorage defaults set up
     
@@ -76,7 +76,7 @@ View.Settings.prototype._setAutoGain = function() {
     }
 }
 
-
+*/
 
 // TODO when turn this off, recording_geolocation_reminder shows
 // message on console saying it is enabled on even though it is off?????

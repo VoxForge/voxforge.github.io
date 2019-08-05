@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
+
+// TODO approach to getting parms for each class has too much duplication... fix
 function Parms() {
     this.audio = {
       // this was used before we just set audioNodebufferSize to largest size 
@@ -84,17 +86,6 @@ function Parms() {
         numPromptsToRead: getNumPromptsRange(),
     }
     
-    // TODO for debugging
-    if ( ! (window.location.origin === 'https://voxforge.github.io') ) {
-        this.view.increment = 3;              
-        this.view.numPromptsToRead = {
-            min: 3,
-            max: 12,
-            numPrompts: 3};
-        //this.controller.numPrompt2SubmittForRecordInfo = 1;
-        //this.uploader.maxMinutesSinceLastSubmission = 1; // only relevant if recording information is included with submission
-    }
-     
     this.prompts = {
         numPromptsToRead: this.view.numPromptsToRead,
     }
@@ -128,5 +119,20 @@ function Parms() {
         this.view.platform = 'smartphone';           
         this.controller.recording_stop_delay = 750;
     }
+
+
+    // TODO for debugging
+    if ( ! (window.location.origin === 'https://voxforge.github.io') ) {
+        this.view.increment = 3;              
+        this.view.numPromptsToRead = {
+            min: 3,
+            max: 12,
+            numPrompts: 3};
+        this.prompts.numPromptsToRead = this.view.numPromptsToRead;
+        this.controller.platform = 'smartphone';
+        this.view.platform = 'smartphone';       
+        //this.controller.numPrompt2SubmittForRecordInfo = 1;
+        //this.uploader.maxMinutesSinceLastSubmission = 1; // only relevant if recording information is included with submission
+    }    
 }
 

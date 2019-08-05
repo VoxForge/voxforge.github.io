@@ -364,6 +364,7 @@ Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
     });
 }
 
+/*
 Audio.prototype.adjustVolume = function (obj) {
     var audioLevels = new Audio.MicVolume(
         this.parms,    
@@ -374,4 +375,4 @@ Audio.prototype.adjustVolume = function (obj) {
         this.debugValues, );        
     audioLevels.adjust();
 }
-
+*/

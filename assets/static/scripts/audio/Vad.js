@@ -43,6 +43,8 @@ var process_data;
 /**
 * Constructor
 */
+
+// TODO Vad needs to be in Audio namespace, even though it is only in webworker
 function Vad(sampleRate, parms) {
     this.sampleRate = sampleRate;
     this.maxsilence = parms.maxsilence;

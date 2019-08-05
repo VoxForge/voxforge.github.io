@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * see: https://github.com/mattdiamond/Recorderjs/blob/master/src/recorder.js
  * they use min/max
  */
+
+// TODO these functions should be in Audio namespace, even though it is only in webworker
 function float2int16(buffer) {
     var len = buffer.length;
 
