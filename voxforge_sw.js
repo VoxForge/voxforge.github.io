@@ -75,6 +75,7 @@ var urlsToCache = [
   PATH + 'styles/app.css',
   PATH + 'styles/jquery.mobile-1.4.5.css',
 
+  '/favicon.ico',
   '/voxforge_sw.js',
   '/en/manifest.json',
   '/fr/manifest.json',
