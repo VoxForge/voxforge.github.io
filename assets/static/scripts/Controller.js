@@ -221,12 +221,12 @@ Controller.prototype._endRecording = function () {
 Controller.prototype._nopromptsrecorded = function () {
     this.view.setRSUButtonDisplay(true, false, false);
 
-    if (! this.view.displayRecordingInfoChecked()  && 
-        this._maxNumSubmissionsReached() &&
-        localStorage.getItem("recording_info_asked_user") !== 'true' )
-    {
-        this._askUserAboutRecordingInformation();
-    }
+//    if (! this.view.displayRecordingInfoChecked()  && 
+//        this._maxNumSubmissionsReached() &&
+//        localStorage.getItem("recording_info_asked_user") !== 'true' )
+//   {
+//        this._askUserAboutRecordingInformation();
+//    }
 }
 
 /*
@@ -234,7 +234,7 @@ only ask the user once if they want to activate the Recording
 Information section
 TODO when this gets sent, Recording information section should
 display to user rather than being buried under Profile Info
-* */
+*
 Controller.prototype._askUserAboutRecordingInformation = function () {
     localStorage.setItem("recording_info_asked_user", true); 
     this.view.recordingInformationButtonDisplay();
@@ -245,7 +245,8 @@ Controller.prototype._maxNumSubmissionsReached = function () {
     return  (this.uploader.getNumberOfSubmissions() >
             this.parms.numPrompt2SubmittForRecordInfo);
 }
-
+ */
+ 
 /*
 if location changed, notify user
 if no change in location, check time since last submission,

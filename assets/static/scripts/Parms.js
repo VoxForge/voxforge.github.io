@@ -106,7 +106,7 @@ function Parms() {
     this.controller = {
       recording_timeout: 20000, // 20 seconds - silence detection should remove leading and trailing silence
       recording_stop_delay: 500, // 0.5 seconds between when stop button is clicked and app actually stops recording
-      numPrompt2SubmittForRecordInfo: 10,
+      // numPrompt2SubmittForRecordInfo: 10, // no longer being used
     }
 
     // FireFox on (all platforms) can record 32-bit float, but cannot play back 32-bit 
