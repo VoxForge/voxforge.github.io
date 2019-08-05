@@ -558,25 +558,12 @@ Controller.prototype._startRecordingPromiseChain = function () {
             self.prompts.getPromptId(),
             vad_run,
             self.view.audioVisualizerChecked() )
-//        .then( self._adjustVolumeIfNeeded.bind(self) )                
         .then( self.view.display.bind(self.view) )  // TODO not waiting for AudioPlayer.display to finish on long, then short/upload submissions...   
         .then( self._dealWithRecordingDebugSettings.bind(self) )
         .catch(function (err) {
             console.log(err)
         });
 }
-
-/*
-Controller.prototype._adjustVolumeIfNeeded = function (obj) {
-    if( this.parms.platform == 'smartphone' &&
-        localStorage.getItem("auto_gain") === 'true' ) // set by: View.Settings.prototype._setAutoGain
-    {
-         this.audio.adjustVolume.call(this.audio, obj);
-    }
-
-    return obj;
-}
-*/
 
 Controller.prototype._dealWithRecordingDebugSettings = function (obj) {
     if ( this.view.debugChecked() ) {

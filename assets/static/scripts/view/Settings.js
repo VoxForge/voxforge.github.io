@@ -55,25 +55,10 @@ View.Settings._convertBooleanToString = function(bool) {
 * default.yaml for text, app.js for defaults
 */
 View.Settings.prototype.initPopup = function(message) {
-//    this._setAutoGain();
     this._setResourceIntensive();
     this._setSystemInformation();
     this._setRecordInfo();
     this._setRecordingInformation();    
-}
-
-/*
- * only show autogain checkbox (for auto adjust volume) for smartphones
- */
- /*
-View.Settings.prototype._setAutoGain = function() {
-    this._setupCheckBox("auto_gain", false, false); // to get localstorage defaults set up
-    
-    if ( this.platform == 'smartphone' ) {
-        $('#auto_gain_display').show();        
-    } else {
-        $('#auto_gain_display').hide();
-    }
 }
 
 */
