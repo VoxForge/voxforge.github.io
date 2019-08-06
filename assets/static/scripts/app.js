@@ -66,7 +66,7 @@ var view;  // needs to be global so can be accessible to index.html
     const appversion = pageVariables.appversion;
 
     var parms = new Parms();
-    var debug = new Debug();
+    var debug = new Debug(appversion,);
     var prompts = new Prompts(
         parms.prompts,
         pageVariables,

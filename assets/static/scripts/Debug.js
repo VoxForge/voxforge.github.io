@@ -20,10 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Class definition
 */
-function Debug (parms) 
+function Debug (appversion) 
 {
     this.audio = {};
     this.prompts = {};
+    this.appversion = appversion;
   
     this.appType = this._getAppType();
 }
@@ -89,6 +90,7 @@ Debug.prototype.toHash = function () {
     debug_hash["audio"] = this.audio.debugValues;
     debug_hash["prompts"] = this.prompts;
     debug_hash["appType"] = this.appType;
+    debug_hash.appversion = this.appversion;
     
     var date = new Date();
     debug_hash.timestamp = date.getTime(); // UTC timestamp in milliseconds;
