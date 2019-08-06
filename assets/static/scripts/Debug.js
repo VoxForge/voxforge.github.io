@@ -87,9 +87,9 @@ Debug.prototype.clearValues = function (attribute) {
 Debug.prototype.toHash = function () {
     var debug_hash = {};
 
-    debug_hash["audio"] = this.audio.debugValues;
-    debug_hash["prompts"] = this.prompts;
-    debug_hash["appType"] = this.appType;
+    debug_hash.audio = this.audio.debugValues;
+    debug_hash.prompts = this.prompts;
+    debug_hash.appType = this.appType;
     debug_hash.appversion = this.appversion;
     
     var date = new Date();
