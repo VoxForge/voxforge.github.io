@@ -45,14 +45,14 @@ View.Settings._convertBooleanToString = function(bool) {
 * settings pop up
 * Note: localstorage only stores strings
 *
-* see app.js, line 68, for setting of default values
+* see main.js, line 68, for setting of default values
 *
 * see: http://jq4you.blogspot.com/2013/04/jquery-attr-vs-prop-difference.html
 * Notes: an element’s property can be changed, because it is in the DOM and dynamic.
 * But element’s attribute is in HTML text and can not be changed! comes in name=”value” pairs
 *
 * if adding new setting element, see settings.html for layout;
-* default.yaml for text, app.js for defaults
+* default.yaml for text, main.js for defaults
 */
 View.Settings.prototype.initPopup = function(message) {
     this._setResourceIntensive();
@@ -61,9 +61,6 @@ View.Settings.prototype.initPopup = function(message) {
     this._setRecordingInformation();    
 }
 
-// TODO when turn this off, recording_geolocation_reminder shows
-// message on console saying it is enabled on even though it is off?????
-// see: setProperties above
 View.Settings.prototype._setRecordingInformation = function() {
     this._setupCheckBox("recording_time_reminder", false, true);       
 }

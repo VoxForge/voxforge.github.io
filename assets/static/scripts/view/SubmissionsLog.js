@@ -129,10 +129,19 @@ View.Html = function(
  */
 View.Html.prototype.make = function() {
     if (this.submissionList) {
-        return this._submissionList2Html();
+        if ( this.submissionList == 0 ) {
+            return this._emptySubmissionList2Html();
+        } else {
+            return this._submissionList2Html();
+        }
     } else {
        return "";
     }
+}
+
+View.Html.prototype._emptySubmissionList2Html = function() {
+    return '<h3>' + this.heading + '</h3>' +
+        '<ul>' + '<li>' + "none" + '</li>' + '<ul>';
 }
 
 View.Html.prototype._submissionList2Html = function() {
@@ -146,9 +155,9 @@ View.Html.prototype._arrayToHtmlList = function() {
     
     var result = '<ul>';
     result += jQuery.map(this.submissionList,
-           function(element) {
-              return( '<li>' + count++ + '. ' + element + '</li>' );
-           })
+        function(element, index) {
+            return( '<li>' + count++ + '. ' + element + '</li>' );
+        })
         .join(''); // returns as a string
     result += '<ul>';
     
