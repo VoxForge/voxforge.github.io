@@ -37,7 +37,7 @@ var urlsToCache = [
   PATH + 'lib/wavesurfer.js',
   PATH + 'lib/webrtc_vad.js',
 
-  PATH + 'scripts/app.js',
+  PATH + 'scripts/main.js',
 
   PATH + 'scripts/Audio.js',
   PATH + 'scripts/audio/Debug.js',  
