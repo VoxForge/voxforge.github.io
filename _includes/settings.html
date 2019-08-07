@@ -24,12 +24,6 @@
         <b>{{ page.settings.title | default: default.settings.title }}</b>
         <small>({{ page.appversion_text | default: default.appversion_text }} {{ default.appversion }})</small>
       </legend>
-     
-      <!-- Volume -->
-      <div id="auto_gain_display">
-          <input type="checkbox" name="auto_gain" id="auto_gain">
-          <label for="auto_gain">{{ page.settings.auto_gain | default: default.settings.auto_gain }}</label>
-      </div>
       
       <!-- Prompts -->
       <div id="numPromptsToRead_display">
