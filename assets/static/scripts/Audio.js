@@ -364,15 +364,3 @@ Audio.prototype._processResultsFromAudioWorkerWhenAvailable = function () {
     });
 }
 
-/*
-Audio.prototype.adjustVolume = function (obj) {
-    var audioLevels = new Audio.MicVolume(
-        this.parms,    
-        obj,
-        this.autoGainSupported,
-        this.gainNode,
-        this.audioCtx,
-        this.debugValues, );        
-    audioLevels.adjust();
-}
-*/
