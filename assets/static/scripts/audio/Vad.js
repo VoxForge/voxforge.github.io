@@ -19,25 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 importScripts('../../lib/webrtc_vad.js'); 
 
-// arbitrary trial and error values to determine when audio sample is too
-// loud or soft...
-// TODO convert to DB?
-var MAX_ENERGY_THRESHOLD = 0.50;
-var MIN_ENERGY_THRESHOLD = 0.02;
-
-// These values are a function of event buffer size... the larger the buffer
-// the smaller these values can be; and vice versa..
-var LEADING_SILENCE_SEC = 0.2; // secs
-var TRAILING_SILENCE_SEC = 0.2; // little less because of lag in VAD detecting end of speech
-
-// since chrome/FF default sample rate on Linux is 44100, but VAD does 
-// not support 44100... hardcode 48000 - works OK
-var VAD_SAMPLE_RATE = 48000;
-
 // emscripten required variables
 var Module = {};
 Module.noInitialRun = true;
-
 var process_data;
 
 /**
@@ -73,14 +57,15 @@ Audio.Vad = function(sampleRate, parms) {
     this.speechstart_index = 0;
     this.speechend_index = 0;
 
-    this.leading_silence_buffer = 0;
-    this.trailing_silence_buffer = 0;
-
-    this.max_energy = 0;
-    this.min_energy = 1.0;
-
+    this._setEnergyProperties
+    this._setSilenceProperties
+    
     this.vadbuffer_start = 0;
     this.vadbuffer_end = 0;
+
+    // since chrome/FF default sample rate on Linux is 44100, but VAD does 
+    // not support 44100... hardcode 48000 - works OK
+    this.VAD_SAMPLE_RATE = 48000;
 
     // setup webrtc VAD
     var main = cwrap('main');
@@ -95,6 +80,27 @@ Audio.Vad = function(sampleRate, parms) {
     var mode = 3;
     var result = setmode(mode);
 //    console.log('WebRTC VAD setmode(' + mode + ')=' + result);
+}
+
+Audio.Vad.prototype._setSilenceProperties = function() {
+    // These values are a function of event buffer size... the larger the buffer
+    // the smaller these values can be; and vice versa..
+    this.LEADING_SILENCE_SEC = 0.2; // secs
+    this.TRAILING_SILENCE_SEC = 0.2; // little less because of lag in VAD detecting end of speech
+
+    this.leading_silence_buffer = 0;
+    this.trailing_silence_buffer = 0;
+}
+
+Audio.Vad.prototype._setEnergyProperties = function() {
+    this.max_energy = 0;
+    this.min_energy = 1.0;
+
+    // arbitrary trial and error values to determine when audio sample is too
+    // loud or soft...
+    // TODO convert to DB?
+    this.MAX_ENERGY_THRESHOLD = 0.50;
+    this.MIN_ENERGY_THRESHOLD = 0.02;
 }
 
 /**
@@ -121,10 +127,12 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
     function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
       var buffers_per_sec = samples_per_sec / num_samples_in_buffer; 
 
-      self.leading_silence_buffer = Math.round(LEADING_SILENCE_SEC * buffers_per_sec);
-      self.trailing_silence_buffer = Math.floor(TRAILING_SILENCE_SEC * buffers_per_sec);
+      self.leading_silence_buffer = Math.round(self.LEADING_SILENCE_SEC * buffers_per_sec);
+      self.trailing_silence_buffer = Math.floor(self.TRAILING_SILENCE_SEC * buffers_per_sec);
 
-      console.log('leading_silence_buffer= ' + self.leading_silence_buffer + '; trailing_silence_buffer= ' + self.trailing_silence_buffer);
+      console.log(
+        'leading_silence_buffer= ' + self.leading_silence_buffer +
+        '; trailing_silence_buffer= ' + self.trailing_silence_buffer);
     }
 
     /**
@@ -138,10 +146,11 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
       self.voice_stopped = false;
       if ( self.first_speak ) {
         // really only recognizing non-silence (i.e. any sound that is not silence")
-        console.log("webrtc: voice_started=" + buffers_index + 
-                    " vadbuffer_start: " + start + 
-                    " vadbuffer_end: " + end + 
-                    " chunk_index: " + chunk_index);
+        console.log(
+            "webrtc: voice_started=" + buffers_index + 
+            " vadbuffer_start: " + start + 
+            " vadbuffer_end: " + end + 
+            " chunk_index: " + chunk_index);
         self.speechstart_index = buffers_index;
         self.first_speak = false;
       }
@@ -156,10 +165,11 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
 
       // only want first stop after speech ends
       if ( ! self.voice_stopped ) {
-        console.log("webrtc: voice_stopped=" + buffers_index + 
-                    " vadbuffer_start: " + start + 
-                     " vadbuffer_end: " + end + 
-                    " chunk_index: " + chunk_index);
+        console.log(
+            "webrtc: voice_stopped=" + buffers_index + 
+            " vadbuffer_start: " + start + 
+            " vadbuffer_end: " + end + 
+            " chunk_index: " + chunk_index);
         self.speechend_index = buffers_index;
       }
       self.voice_stopped = true;
@@ -187,8 +197,13 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
           let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
           dataHeap.set(new Uint8Array(buffer_pcm.buffer));
 
-          //         int process_data( int16_t  data[],      int n_samples,  int samplerate,      int val0,      int val100, int val2000){
-          let result = process_data(dataHeap.byteOffset, buffer_pcm.length, VAD_SAMPLE_RATE, buffer_pcm[0], buffer_pcm[100], buffer_pcm[2000]);
+          let result = process_data(
+            dataHeap.byteOffset, // int16_t  data[],
+            buffer_pcm.length, // int n_samples
+            self.VAD_SAMPLE_RATE, // int samplerate,
+            buffer_pcm[0], //  int val0
+            buffer_pcm[100], // int val100
+            buffer_pcm[2000]); // int val2000
 
           // Free memory
           _free(dataHeap.byteOffset);
@@ -282,11 +297,11 @@ Audio.Vad.prototype.getSpeech = function(buffers) {
       var too_soft = false;
 
       function checkEnergy() {
-          if (self.max_energy > MAX_ENERGY_THRESHOLD) {
+          if (self.max_energy > self.MAX_ENERGY_THRESHOLD) {
             clipping = true;
             console.warn( 'audio clipping');
           } else {
-            if (self.max_energy < MIN_ENERGY_THRESHOLD) {
+            if (self.max_energy < self.MIN_ENERGY_THRESHOLD) {
               too_soft = true;
               console.warn( 'audio volume too too low');
             }
@@ -307,7 +322,9 @@ Audio.Vad.prototype.getSpeech = function(buffers) {
           checkEnergy(); // even though user may have hit stop too early, still need to check energy levels
         }
       }
-      console.log( 'max_energy=' + self.max_energy.toFixed(2) + ' MIN_ENERGY_THRESHOLD=' + MIN_ENERGY_THRESHOLD + ', MAX_ENERGY_THRESHOLD=' + MAX_ENERGY_THRESHOLD);
+      console.log( 'max_energy=' + self.max_energy.toFixed(2) +
+        ' MIN_ENERGY_THRESHOLD=' + self.MIN_ENERGY_THRESHOLD +
+        ', MAX_ENERGY_THRESHOLD=' + self.MAX_ENERGY_THRESHOLD);
 
       if (self.speechend_index == 0) { // should never occur
         self.speechend_index = buffers.length;
