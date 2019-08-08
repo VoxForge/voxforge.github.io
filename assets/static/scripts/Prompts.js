@@ -25,7 +25,8 @@ function Prompts(
     pageVariables,
     appversion)
 {
-    this.parms = parms.prompts;
+    this.parms_numPrompts = parms.view.numPromptsToRead.numPrompts;
+    
     this.prompt_list = []; // list of prompts to be recorded by user
     this.index = 0; // pointer to position in prompt list array
     this.prompt_count = 0; // number of prompts user read
@@ -47,7 +48,7 @@ Prompts.prototype._getNumPromptsToRead = function () {
        
     var numPromptsToRead = localStorage.getItem(element);
     if ( ! numPromptsToRead ) {
-        numPromptsToRead = this.parms.numPromptsToRead.numPrompts;   
+        numPromptsToRead = this.parms_numPrompts;   
         localStorage.setItem(
             element,
             numPromptsToRead );

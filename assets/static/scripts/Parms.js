@@ -86,10 +86,6 @@ function Parms() {
         numPromptsToRead: getNumPromptsRange(),
     }
     
-    this.prompts = {
-        numPromptsToRead: this.view.numPromptsToRead,
-    }
-    
     this.uploader = {
       maxMinutesSinceLastSubmission: 120,
     }
@@ -105,8 +101,6 @@ function Parms() {
       this.audio.bitDepth = 16;
     } 
 
-
-
     // ### ANDROID #############################################################
     if ( platform.os.family.includes("Android") ) {
         this.audio.vad.maxsilence = 650; // detect longer silence period on Android
@@ -120,14 +114,13 @@ function Parms() {
     }
 
 
-    // TODO for debugging
+    // ### DEBUGGING #############################################################
     if ( ! (window.location.origin === 'https://voxforge.github.io') ) {
         this.view.increment = 3;              
         this.view.numPromptsToRead = {
             min: 3,
             max: 12,
             numPrompts: 3};
-        this.prompts.numPromptsToRead = this.view.numPromptsToRead;
         this.controller.platform = 'smartphone';
         this.view.platform = 'smartphone';       
         //this.controller.numPrompt2SubmittForRecordInfo = 1;
