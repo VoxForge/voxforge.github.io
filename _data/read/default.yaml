@@ -360,6 +360,7 @@ alert_message:
     
 settings:
   title: Settings
+  none: none
   recording_information_text: Reminders
   recording_information_text_2: >
    (to remind you to make sure that your Recording Information settings are still 

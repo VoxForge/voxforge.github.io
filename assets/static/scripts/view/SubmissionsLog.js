@@ -21,9 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * setup display of log of uploaded and saved submissions
 */
 View.SubmissionsLog = function(
+    pageVariables,
     saved_submissions,
     uploaded_submissions,)
 {
+    this.none = pageVariables.none;
     this.saved_submissions = saved_submissions;
     this.uploaded_submissions = uploaded_submissions;
     
@@ -100,10 +102,12 @@ View.SubmissionsLog.prototype._uploadedOrSaved = function(submissions) {
 // with option to cancel so user can skip
 View.SubmissionsLog.prototype._submissionListToString = function() {
     var savedHTML = new View.Html(
+        this.none,
         this.saved_submissions,    
         this.savedSubmissionList
             .slice(0, this.maxNumberOfSubmissions2display));    
     var uploadedHTML = new View.Html(
+        this.none,
         this.uploaded_submissions,    
         this.uploadedSubmissionList
             .slice(0, this.maxNumberOfSubmissions2display));
@@ -117,9 +121,11 @@ View.SubmissionsLog.prototype._submissionListToString = function() {
 * helper function to wrap array in html
 */
 View.Html = function(
+    none,
     heading,
     submissionList)
 {
+    this.none = none;
     this.heading = heading;
     this.submissionList = submissionList;
 }
@@ -141,7 +147,7 @@ View.Html.prototype.make = function() {
 
 View.Html.prototype._emptySubmissionList2Html = function() {
     return '<h3>' + this.heading + '</h3>' +
-        '<ul>' + '<li>' + "none" + '</li>' + '<ul>';
+        '<ul>' + '<li>' + this.none + '</li>' + '<ul>';
 }
 
 View.Html.prototype._submissionList2Html = function() {
@@ -149,7 +155,6 @@ View.Html.prototype._submissionList2Html = function() {
         this._arrayToHtmlList();
 }
 
-// TODO need some way of return translated "None" if no submissions
 View.Html.prototype._arrayToHtmlList = function() {
     var count = 1;
     

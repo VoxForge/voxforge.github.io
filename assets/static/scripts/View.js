@@ -68,8 +68,9 @@ View.prototype._instantiateObjects = function() {
     this.settings = new View.Settings(this.platform);
     
     this.submissionsLog = new View.SubmissionsLog(
-         this.saved_submissions,
-         this.uploaded_submissions,
+        this.pageVariables,
+        this.saved_submissions,
+        this.uploaded_submissions,
     );
 
     this.audioPlayer = new View.AudioPlayer(
