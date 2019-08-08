@@ -262,9 +262,6 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer_pcm,
     }
 }
 
-/**
-*
-*/
 Vad.prototype.getSpeech = function(buffers) {
     // save context for inner functions
     var self = this;

@@ -27,7 +27,7 @@ self.onmessage = function(event) {
   switch (data.command) {
     case 'start':
         if (data.vad_run) {
-            audioWorker = new Audio.Vad(data);            
+            audioWorker = new Audio.VadWorker(data);            
         } else {
             audioWorker = new Audio.Worker(data);
         }
@@ -114,7 +114,7 @@ Audio.Worker.prototype._addWavHeaderToDataView = function () {
 // https://eli.thegreenplace.net/2013/10/22/classical-inheritance-in-javascript-es5
 // #############################################################################
 // subclass
-Audio.Vad = function (data) {
+Audio.VadWorker = function (data) {
     // Call constructor of superclass to initialize superclass-derived members.
     Audio.Worker.call(this, data);
     
@@ -123,9 +123,9 @@ Audio.Vad = function (data) {
         this.vad_parms);    
 }
 
-// Audio.Vad derives from Audio.Worker
-Audio.Vad.prototype = Object.create(Audio.Worker.prototype);
-Audio.Vad.prototype.constructor = Audio.Worker;
+// Audio.VadWorker derives from Audio.Worker
+Audio.VadWorker.prototype = Object.create(Audio.Worker.prototype);
+Audio.VadWorker.prototype.constructor = Audio.Worker;
 
 /*
 // TODO VAD currently only works with 16-bit audio.
@@ -136,7 +136,7 @@ Audio.Vad.prototype.constructor = Audio.Worker;
  * we are fudging a bit so can process 44.1kHz...
  * so split buffer up into smaller chunks that VAD can digest
  */ 
-Audio.Vad.prototype.record = function (data) {
+Audio.VadWorker.prototype.record = function (data) {
     this.buffers.push(data.event_buffer); // array of buffer arrays
     this.numSamples += data.event_buffer.length;
 
@@ -148,7 +148,7 @@ Audio.Vad.prototype.record = function (data) {
     }
 }
 
-Audio.Vad.prototype._performVadOnChunk = function(
+Audio.VadWorker.prototype._performVadOnChunk = function(
     data,
     i,
     cutoff,
@@ -168,7 +168,7 @@ Audio.Vad.prototype._performVadOnChunk = function(
         chunk_index);
 }
 
-Audio.Vad.prototype.finish = function () {
+Audio.VadWorker.prototype.finish = function () {
     var speech_array, no_speech, no_trailing_silence, clipping, too_soft;
     
     [speech_array,
