@@ -57,8 +57,8 @@ Audio.Vad = function(sampleRate, parms) {
     this.speechstart_index = 0;
     this.speechend_index = 0;
 
-    this._setEnergyProperties
-    this._setSilenceProperties
+    this._setEnergyProperties();
+    this._setSilenceProperties();
     
     this.vadbuffer_start = 0;
     this.vadbuffer_end = 0;
