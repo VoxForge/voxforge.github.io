@@ -23,7 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 // TODO these functions should be in Audio namespace, even though it is only in webworker
-function float2int16(buffer) {
+// function Audio.float2int16(buffer) {
+var Audio = Audio || {};
+
+Audio.float2int16 = function (buffer) {    
     var len = buffer.length;
 
     // array of twos-complement 16-bit signed integers in the platform byte order.
@@ -45,33 +48,35 @@ function float2int16(buffer) {
 }
 
 // TODO use the output from WAVAudioEncoder
-function floatTo16BitPCM(buffer) {
-  var buffer_pcm = new Int16Array(buffer.length);
-  var sum = 0;
+// function floatTo16BitPCM(buffer) {
+Audio.floatTo16BitPCM = function (buffer) {       
+    var buffer_pcm = new Int16Array(buffer.length);
+    var sum = 0;
 
-  for (let i = 0; i < buffer.length; i++) {
-    var sample = buffer[i];
-    //sum += Math.abs( sample );
-    sum += sample * sample;
+    for (let i = 0; i < buffer.length; i++) {
+        var sample = buffer[i];
+        //sum += Math.abs( sample );
+        sum += sample * sample;
 
-    // original Mozilla 32-bit float to 16bit PCM encoder
-    //let s = Math.max(-1, Math.min(1, sample));
-    //buffer_pcm[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
+        // original Mozilla 32-bit float to 16bit PCM encoder
+        //let s = Math.max(-1, Math.min(1, sample));
+        //buffer_pcm[i] =  s < 0 ? s * 0x8000 : s * 0x7FFF;
 
-    var x = buffer[i] * 0x7fff; // 0x7fff = 32767
-    buffer_pcm[i] =  x < 0 ? Math.max(x, -0x8000) : Math.min(x, 0x7fff);
-  }
-  //var energy = sum / buffer.length;
-  var energy = Math.sqrt( sum / buffer.length ); // rms
+        var x = buffer[i] * 0x7fff; // 0x7fff = 32767
+        buffer_pcm[i] =  x < 0 ? Math.max(x, -0x8000) : Math.min(x, 0x7fff);
+    }
+    //var energy = sum / buffer.length;
+    var energy = Math.sqrt( sum / buffer.length ); // rms
 
-  return [buffer_pcm, energy];
+    return [buffer_pcm, energy];
 }
 
 /*
  * assumes one channel (mono)
  * see: https://github.com/mattdiamond/Recorderjs/blob/master/src/recorder.js
  */
-function createWavHeader(numSamples, bitDepth, sampleRate) {
+//function createWavHeader(numSamples, bitDepth, sampleRate) {
+Audio.createWavHeader = function(numSamples, bitDepth, sampleRate) {
 
     var writeString = function(view, offset, string) {
         for (var i = 0; i < string.length; ++i) {

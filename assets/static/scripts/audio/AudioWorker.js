@@ -97,13 +97,13 @@ Audio.Worker.prototype._convertBufferToWavDataViewFormat = function (bufferArray
 
 Audio.Worker.prototype._convertAudioBuffersTo16bitDataView = function (bufferArray) {
     while (bufferArray.length > 0) {
-        var view = float2int16(bufferArray.shift());
+        var view = Audio.float2int16(bufferArray.shift());
         this.dataViews.push(view);
     }
 }
 
 Audio.Worker.prototype._addWavHeaderToDataView = function () {
-    var header = createWavHeader(
+    var header = Audio.createWavHeader(
         this.numSamples,
         this.bitDepth,
         this.sampleRate);
@@ -159,7 +159,7 @@ Audio.Vad.prototype._performVadOnChunk = function(
     let end = (i * cutoff) + cutoff;
     // slice extracts up to but not including end.
     let chunk = data.event_buffer.slice(start, end);
-    var [buffer_chunk_int, chunk_energy] = floatTo16BitPCM(chunk);
+    var [buffer_chunk_int, chunk_energy] = Audio.floatTo16BitPCM(chunk);
 
     this.vad.calculateSilenceBoundaries(
         buffer_chunk_int,

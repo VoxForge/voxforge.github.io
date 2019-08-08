@@ -251,8 +251,6 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer_pcm,
       this.first_buffer = false;
     }
 
-    //var [buffer_pcm, energy] = floatTo16BitPCM(buffer);
-
     callWebrtcVad(buffer_pcm);
 
     if (energy > this.max_energy) {
