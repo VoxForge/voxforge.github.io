@@ -44,8 +44,10 @@ var process_data;
 * Constructor
 */
 
-// TODO Vad needs to be in Audio namespace, even though it is only in webworker
-function Vad(sampleRate, parms) {
+var Audio = Audio || {};
+
+//function Vad(sampleRate, parms) {
+Audio.Vad = function(sampleRate, parms) {
     this.sampleRate = sampleRate;
     this.maxsilence = parms.maxsilence;
     this.minvoice = parms.minvoice;
@@ -98,12 +100,12 @@ function Vad(sampleRate, parms) {
 /**
 * buffer_pcm must be 16-bit
 */
-//Vad.prototype.calculateSilenceBoundaries = function(buffer, buffers_index, chunk_index) {
-Vad.prototype.calculateSilenceBoundaries = function(buffer_pcm,
-                                                    energy,
-                                                    buffers_index,
-                                                    chunk_index) {
-  
+Audio.Vad.prototype.calculateSilenceBoundaries = function(
+    buffer_pcm,
+    energy,
+    buffers_index,
+    chunk_index)
+{
     // save reference to current context for use in inner functions
     var self = this;
 
@@ -262,7 +264,7 @@ Vad.prototype.calculateSilenceBoundaries = function(buffer_pcm,
     }
 }
 
-Vad.prototype.getSpeech = function(buffers) {
+Audio.Vad.prototype.getSpeech = function(buffers) {
     // save context for inner functions
     var self = this;
 

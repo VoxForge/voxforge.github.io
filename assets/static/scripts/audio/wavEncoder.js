@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 // TODO these functions should be in Audio namespace, even though it is only in webworker
-// function Audio.float2int16(buffer) {
 var Audio = Audio || {};
 
 Audio.float2int16 = function (buffer) {    
@@ -48,7 +47,6 @@ Audio.float2int16 = function (buffer) {
 }
 
 // TODO use the output from WAVAudioEncoder
-// function floatTo16BitPCM(buffer) {
 Audio.floatTo16BitPCM = function (buffer) {       
     var buffer_pcm = new Int16Array(buffer.length);
     var sum = 0;
@@ -75,7 +73,6 @@ Audio.floatTo16BitPCM = function (buffer) {
  * assumes one channel (mono)
  * see: https://github.com/mattdiamond/Recorderjs/blob/master/src/recorder.js
  */
-//function createWavHeader(numSamples, bitDepth, sampleRate) {
 Audio.createWavHeader = function(numSamples, bitDepth, sampleRate) {
 
     var writeString = function(view, offset, string) {

@@ -118,7 +118,7 @@ Audio.VadWorker = function (data) {
     // Call constructor of superclass to initialize superclass-derived members.
     Audio.Worker.call(this, data);
     
-    this.vad = new Vad(
+    this.vad = new Audio.Vad(
         this.sampleRate,
         this.vad_parms);    
 }
