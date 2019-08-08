@@ -26,7 +26,7 @@ function View (
     profile,
     pageVariables,)
 {
-    this.parms = parms;
+    this.parms = parms.view;
     this.displayWaveform = parms.displayWaveform;
     this.platform = parms.platform;
     this.prompts = prompts;    

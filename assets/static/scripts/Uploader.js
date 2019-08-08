@@ -21,8 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * ### Contructor ##############################################
 */
 
-function Uploader(parms, alert_message, appversion,) {
-    this.maxMinutesSinceLastSubmission = parms.maxMinutesSinceLastSubmission;
+function Uploader(
+    parms,
+    alert_message,
+    appversion,)
+{
+    this.maxMinutesSinceLastSubmission = parms.uploader.maxMinutesSinceLastSubmission;
     this.alert_message = alert_message;
     this.appversion = appversion;
     

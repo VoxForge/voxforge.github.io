@@ -27,10 +27,11 @@ var wavesurfer = [];
 /**
 * Class definition
 */
-function Audio (parms,
-                pageVariables) 
+function Audio (
+    parms,
+    pageVariables) 
 {
-    this.parms = parms;
+    this.parms = parms.audio;
     this.alert_message = pageVariables.alert_message;
 
     this._setUpWorkers();    

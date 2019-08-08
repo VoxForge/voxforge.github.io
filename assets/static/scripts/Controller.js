@@ -40,7 +40,7 @@ function Controller(
     this.audio = audio; 
     this.uploader = uploader;
     this.debug = debug;
-    this.parms = parms; 
+    this.parms = parms.controller; 
     this.appversion = appversion; 
     this.language = language;
     this.alert_message = alert_message;

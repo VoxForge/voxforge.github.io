@@ -20,11 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * ### Contructor ##############################################
 */
-function Prompts(parms,
-                 pageVariables,
-                 appversion)
+function Prompts(
+    parms,
+    pageVariables,
+    appversion)
 {
-    this.parms = parms;
+    this.parms = parms.prompts;
     this.prompt_list = []; // list of prompts to be recorded by user
     this.index = 0; // pointer to position in prompt list array
     this.prompt_count = 0; // number of prompts user read
