@@ -30,7 +30,6 @@ var process_data;
 
 var Audio = Audio || {};
 
-//function Vad(sampleRate, parms) {
 Audio.Vad = function(sampleRate, parms) {
     this.sampleRate = sampleRate;
     this.maxsilence = parms.maxsilence;
