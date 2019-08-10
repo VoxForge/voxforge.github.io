@@ -306,36 +306,28 @@ alert_message:
   workernotfound: worker type not found
   submission_singular: submission
   submission_plural: submissions
+  audio_too_loud_short: Audio too loud!  
   audio_too_loud: >
     Your recording is too loud!<br>
     Please reduce your microphone volume,<br>
     then delete this recording and re-record the prompt.
+  audio_too_soft_short: Audio not loud enough!   
   audio_too_soft: >
     Your recording levels are too low!<br>
     Please increase your microphone volume,<br>
     then delete this prompt recording and re-record it.
+  no_trailing_silence_short: No trailing silence detected.
   no_trailing_silence: >
     You may have not left enough trailing silence (i.e. clicked
     'stop' too early) <br>
     Please review and make sure there is some silence (at least
     1/4 of a second) at end of this recording. <br>
     If not, delete and re-record the prompt.
+  no_speech_short: No speech detected.    
   no_speech: >
     No Speech (or microphone volume too low).<br>
     Please increase microphone volume,<br>
     then delete and re-record this prompt.
-  audio_too_loud_autogain: >
-    Your recording is too loud!<br>
-    Automatically decreasing volume.<br>
-    Please delete this recording and re-record the prompt.
-  audio_too_soft_autogain: >
-    Your recording levels are too low!<br>
-    Automatically increasing volume.<br>
-    Please delete this recording and re-record the prompt.
-  no_speech_autogain: >
-    No Speech or recording volume too low.<br>
-    Please delete this recording and re-record the prompt.<br>    
-    Microphone volume automatically increased for next recording.<br>
 
   getUserMedia_error: >
     Could not get audio input... make sure your microphone is connected to your 
