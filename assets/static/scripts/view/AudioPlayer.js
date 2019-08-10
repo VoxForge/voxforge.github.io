@@ -124,11 +124,14 @@ View.AudioPlayer.prototype._deleteButtonFunc = function(e) {
 }
 
 // TODO create subclass of AudioPlayer which allows display of waveform
+// why? because to many embedded if to create waveformdisplay
 View.AudioPlayer.prototype._displayAudioBasedOnUserSelection = function(clipContainer) {
     if ( this.waveformDisplayChecked() ) {        
-      clipContainer.appendChild( this._createWaveformElement() );
+        clipContainer.appendChild( this._createWaveformElement() );
     } else {
-      clipContainer.appendChild( this._createAudioPlayer() );
+        var waveformElement = this._createWaveformElement();
+        waveformElement.appendChild( this._createAudioPlayer() );
+        clipContainer.appendChild( waveformElement );
     }
 }
 
@@ -142,13 +145,17 @@ View.AudioPlayer.prototype._createWaveformElement = function() {
     
     this._setHeader(waveformElement);
     this._setSpeechCharacteristics(waveformElement);
-    this._createWaveSurferPlayButton(waveformElement)    
-    
+    if ( this.waveformDisplayChecked() ) {       
+        this._createWaveSurferPlayButton(waveformElement)    
+    }
     console.log("clip_id: " + this.clip_id);
 
     return waveformElement;
 }
 
+/**
+ * display browser based audio player only; not visualizer
+ */
 View.AudioPlayer.prototype._createAudioPlayer = function() {
     // TODO this should use obj.promptId
     var prompt_id = document.querySelector('.prompt_id').innerText;
