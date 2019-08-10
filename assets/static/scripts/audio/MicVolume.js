@@ -1,3 +1,8 @@
+// !!!!!! removed because software autogain was causing more problems
+// than it was solving
+
+
+
 /*
 Copyright 2019 VoxForge
 
