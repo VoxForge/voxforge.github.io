@@ -38,12 +38,9 @@ View.AudioPlayer = function (
 
 View.AudioPlayer.prototype._setAlertMessages = function(alert) {
     this.no_speech = alert.no_speech;  
-    this.no_speech_autogain = alert.no_speech_autogain;
     this.no_trailing_silence = alert.no_trailing_silence;
     this.audio_too_soft = alert.audio_too_soft;
-    this.audio_too_soft_autogain = alert.audio_too_soft_autogain;
     this.audio_too_loud = alert.audio_too_loud;
-    this.audio_too_loud_autogain = alert.audio_too_loud_autogain;
 }
 
 /**
@@ -244,10 +241,7 @@ View.AudioPlayer.prototype._setSpeechCharacteristics = function(waveformElement)
 
 View.AudioPlayer.prototype._noSpeech = function(waveformElement) {
     waveformElement.setAttribute("style", "background: #ff4500");
-    var no_speech_message = (this.obj.platform == 'smartphone') ?
-        this.no_speech_autogain :
-        this.no_speech;
-    waveformElement.innerHTML = "<h4>" + no_speech_message + "</h4>";
+    waveformElement.innerHTML = "<h4>" + this.no_speech + "</h4>";
 }
 
 View.AudioPlayer.prototype._noTrailingSilence = function(waveformElement) {
@@ -259,20 +253,13 @@ View.AudioPlayer.prototype._noTrailingSilence = function(waveformElement) {
 // TODO should not be able to upload if too loud
 View.AudioPlayer.prototype._clipping = function(waveformElement) {
     waveformElement.setAttribute("style", "background: #ff4500");
-    //var audio_too_loud_message = this.obj.platformHasAutoGain ?    
-    var audio_too_loud_message = (this.obj.platform == 'smartphone') ?
-        this.audio_too_loud_autogain :
-        this.audio_too_loud;
-    waveformElement.innerHTML = "<h4>" + audio_too_loud_message + "</h4>";
+    waveformElement.innerHTML = "<h4>" + this.audio_too_loud + "</h4>";
 }
 
 //TODO need confidence level for soft speaker
 View.AudioPlayer.prototype._tooSoft = function(waveformElement) {
     waveformElement.setAttribute("style", "background: #ff4500");
-    var audio_too_soft_message = (this.obj.platform == 'smartphone') ?
-        this.audio_too_soft_autogain :
-        this.audio_too_soft;
-    waveformElement.innerHTML = "<h4>" + audio_too_soft_message + "</h4>";
+    waveformElement.innerHTML = "<h4>" + this.audio_too_soft + "</h4>";
 }
 
 View.AudioPlayer.prototype._createWaveSurferPlayButton = function(waveformElement) {
