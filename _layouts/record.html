@@ -175,13 +175,19 @@
         } else {
           this.license = {{ default.license | jsonify}};
         }
+        
+        this.speechCharacteristics = {{ page.speechCharacteristics | jsonify}};
+        if ( this.speechCharacteristics ) {
+          addAnyMissingPropertyDefaults({{ default.speechCharacteristics | jsonify}}, this.speechCharacteristics);
+        } else {
+          this.speechCharacteristics = {{ default.speechCharacteristics | jsonify}};
+        }        
     }
     </script>
     <script src="/assets/static/scripts/Debug.js"></script>
     <script src="/assets/static/scripts/Parms.js"></script>
     <script src="/assets/static/scripts/Audio.js"></script>
     <script src="/assets/static/scripts/audio/Debug.js"></script>
-<!--    <script src="/assets/static/scripts/audio/MicVolume.js"></script>   -->     
     <script src="/assets/static/scripts/Profile.js"></script>
     <script src="/assets/static/scripts/Prompts.js"></script>
     <script src="/assets/static/scripts/prompts/File.js"></script>

@@ -25,7 +25,7 @@ View.AudioPlayer = function (
     pageVariables,)
 {
     this.movePrompt2Stack = movePrompt2Stack;
-    this._setAlertMessages(pageVariables.alert_message);
+    this._setspeechCharacteristicsMessages(pageVariables.speechCharacteristics);
 
     this.playbuttontext = pageVariables.playbuttontext;
     this.stopbuttontext = pageVariables.stopbuttontext;
@@ -36,11 +36,20 @@ View.AudioPlayer = function (
     this.clip_id = 0;    
 }
 
-View.AudioPlayer.prototype._setAlertMessages = function(alert) {
-    this.no_speech = alert.no_speech;  
-    this.no_trailing_silence = alert.no_trailing_silence;
-    this.audio_too_soft = alert.audio_too_soft;
-    this.audio_too_loud = alert.audio_too_loud;
+View.AudioPlayer.prototype._setspeechCharacteristicsMessages = function(
+    speechCharacteristics)
+{
+    this.no_speech_short = speechCharacteristics.no_speech_short;    
+    this.no_speech_text = speechCharacteristics.no_speech_text;
+
+    this.no_trailing_silence_short = speechCharacteristics.no_trailing_silence_short;           
+    this.no_trailing_silence_text = speechCharacteristics.no_trailing_silence_text;
+
+    this.audio_too_soft_short = speechCharacteristics.audio_too_soft_short;    
+    this.audio_too_soft_text = speechCharacteristics.audio_too_soft_text;
+
+    this.audio_too_loud_short = speechCharacteristics.audio_too_loud_short;    
+    this.audio_too_loud_text = speechCharacteristics.audio_too_loud_text;
 }
 
 /**
@@ -137,13 +146,14 @@ View.AudioPlayer.prototype._displayAudioBasedOnUserSelection = function(clipCont
 * by WaveSurfer to display the audio waveform; Wavesurfer needs the container 
 * to exist before being called, so this creates it...
 */
+// TODO this should be a class, passing waveformElement to too many functions
 View.AudioPlayer.prototype._createWaveformElement = function() {    
     var waveformElement = document.createElement('div');
     
     this._setHeader(waveformElement);
     this._setSpeechCharacteristics(waveformElement);
     if ( this.waveformDisplayChecked() ) {       
-        this._createWaveSurferPlayButton(waveformElement)    
+        this._createWaveSurferPlayButton(waveformElement);   
     }
     console.log("clip_id: " + this.clip_id);
 
@@ -227,6 +237,7 @@ View.AudioPlayer.prototype._setHeader = function(waveformElement) {
     return waveformElement;
 }
 
+// TODO confirm order of speech characteristic
 View.AudioPlayer.prototype._setSpeechCharacteristics = function(waveformElement) {
     if (this.obj.no_speech) {
         this._noSpeech(waveformElement);
@@ -239,27 +250,68 @@ View.AudioPlayer.prototype._setSpeechCharacteristics = function(waveformElement)
     }
 }
 
-View.AudioPlayer.prototype._noSpeech = function(waveformElement) {
-    waveformElement.setAttribute("style", "background: #ff4500");
-    waveformElement.innerHTML = "<h4>" + this.no_speech + "</h4>";
-}
-
-View.AudioPlayer.prototype._noTrailingSilence = function(waveformElement) {
-    waveformElement.setAttribute("style", "background: #ffA500");
-    waveformElement.innerHTML = "<h4>" + this.no_trailing_silence + "</h4>";
-}
-
 //TODO need confidence level for clipping
 // TODO should not be able to upload if too loud
 View.AudioPlayer.prototype._clipping = function(waveformElement) {
     waveformElement.setAttribute("style", "background: #ff4500");
-    waveformElement.innerHTML = "<h4>" + this.audio_too_loud + "</h4>";
+    waveformElement.innerHTML = 
+        this._speechCharacteristic2Html(
+            "audio_too_loud",
+            this.audio_too_loud_short,
+            this.audio_too_loud_text, );    
 }
 
 //TODO need confidence level for soft speaker
 View.AudioPlayer.prototype._tooSoft = function(waveformElement) {
     waveformElement.setAttribute("style", "background: #ff4500");
-    waveformElement.innerHTML = "<h4>" + this.audio_too_soft + "</h4>";
+    waveformElement.innerHTML = 
+        this._speechCharacteristic2Html(
+            "audio_too_soft",
+            this.audio_too_soft_short,
+            this.audio_too_soft_text, );    
+}
+
+// TODO how to deal with leading silence?
+// should be OK since user cannot start reading until after the record button
+// has been pressed
+View.AudioPlayer.prototype._noTrailingSilence = function(waveformElement) {
+    waveformElement.setAttribute("style", "background: #ffA500");
+    waveformElement.innerHTML = 
+        this._speechCharacteristic2Html(
+            "no_trailing_silence",
+            this.no_trailing_silence_short,
+            this.no_trailing_silence_text, );
+}
+
+View.AudioPlayer.prototype._noSpeech = function(waveformElement) {
+    waveformElement.setAttribute("style", "background: #ff4500");
+    waveformElement.innerHTML =
+        this._speechCharacteristic2Html(
+            "no_speech",
+            this.no_speech_short,
+            this.no_speech_text, );
+}
+
+/*
+ * See settings.html for clickable popup text
+ */
+View.AudioPlayer.prototype._speechCharacteristic2Html = function(
+    speechCharacteristicLabel,
+    short_text,
+    long_text,)
+{
+    var div_id = '#' + speechCharacteristicLabel + '_popupInfo';
+    
+    return '<label style="display: inline;" ' +
+            'for="' + speechCharacteristicLabel + '">' +
+            short_text +
+        '</label>' +
+        '<a href="' + div_id + '" data-rel="popup" ' +
+            'data-transition="pop" ' +
+            'class="my-tooltip-btn ui-btn ui-alt-icon ui-nodisc-icon ' +
+                'ui-btn-inline ui-icon-info ui-btn-icon-notext" ' +
+            'title="'  + long_text + '">' +
+        '</a>';
 }
 
 View.AudioPlayer.prototype._createWaveSurferPlayButton = function(waveformElement) {
@@ -287,7 +339,7 @@ View.AudioPlayer.prototype.reset = function() {
 }
 
 View.AudioPlayer.prototype.clearSoundClips = function() {
-    $( '.sound-clips' ).empty();
+    $('.sound-clips').empty();
 }
 
 View.AudioPlayer.prototype.waveformDisplayChecked = function() {

@@ -225,31 +225,7 @@ alert_message:
   webworker: webworker
   submission_singular: soumission
   submission_plural: soumissions
-  audio_too_loud: >
-    Volume est trop fort.<br>
-    Veuillez réduire votre volume et réenregistrer.
-  audio_too_soft: >
-    Volume est trop doux.<br>
-    le system a augmente le volume automatiquement<br>
-    Veuillez réenregistrer.
-  no_trailing_silence: >
-    Le systeme pense que avez couper votre enregistrement (vous avez cliqué
-    trop tôt)<br>
-    Veuillez examiner cet enregistrement, et supprimer et réenregistrer si nécessaire.
-  no_speech: >
-    Pas d'audio vocal enregistré! <br> Veuillez supprimer et réenregistrer.
-  audio_too_loud_autogain: >
-    Volume est trop fort.<br>
-    le system a reduit le volume automatiquement<br>
-    Veuillez effacer et ré-enregistrer.
-  audio_too_soft_autogain: >
-    Volume est trop doux.<br>
-    le system a augmente le volume automatiquement<br>
-    Veuillez effacer et ré-enregistrer.
-  no_speech_autogain: >
-    Volume est trop doux.<br>
-    le system a augmente le volume automatiquement<br>
-    Veuillez effacer et ré-enregistrer.
+
   getUserMedia_error: >
     Impossible d'obtenir une entrée audio... assurez-vous que votre microphone 
     est connecté à votre ordinateur.  <br> Votre navigateur donne ce message d'erreur:
@@ -268,7 +244,26 @@ alert_message:
   location_change: >
     Changement de lieu: S'il vous plaît examiner vos paramètres d'enregistrement
     et Si nécessaire, mettez à jour votre localisation et le niveau de bruit.
-          
+
+speechCharacteristics:
+  audio_too_loud_short: Volume trop fort.
+  audio_too_loud_text: >
+    Volume est trop fort.
+    Veuillez réduire votre volume et réenregistrer.
+  audio_too_soft_short: Volume trop doux.
+  audio_too_soft_text: >  
+    Volume est trop doux.
+    le system a augmente le volume automatiquement
+    Veuillez réenregistrer.
+  no_trailing_silence_short: Enregistrement coupé
+  no_trailing_silence_text: >  
+    Le systeme pense que avez couper votre enregistrement (vous avez cliqué
+    trop tôt)
+    Veuillez examiner cet enregistrement, et supprimer et réenregistrer si nécessaire.
+  no_speech_short: Pas d'audio enregistré!
+  no_speech_text: >  
+    Pas d'audio vocal enregistré! Veuillez supprimer et réenregistrer.
+              
 settings:
   title: Paramètres
   display_record_info: >

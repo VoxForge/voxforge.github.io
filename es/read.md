@@ -215,34 +215,7 @@ alert_message:
   webworker: webworker
   submission_singular: sumisión
   submission_plural: sumisiones
-  audio_too_loud: >
-    ¡Tu grabación es demasiado fuerte! <br>
-    Por favor reduzca el volumen de su micrófono, <br>
-    luego borre esta grabación y vuelva a grabarla.
-  audio_too_soft: >
-    ¡Tus niveles de grabación son demasiado bajos! <br>
-    Por favor, aumente el volumen de su micrófono, <br>
-    luego borre esta grabación y vuelva a grabarla.
-  no_trailing_silence: >
-    La aplicación cree que no has dejado suficiente silencio. Es posible que hayas hecho clic
-    'para' demasiado temprano! <br>
-    Revise esta grabación rápida y elimine y vuelva a grabar si es necesario.
-  no_speech: >
-    No hay volumen de voz o grabación demasiado bajo <br>
-    Por favor, aumente el volumen de su micrófono,<br>
-    luego borre y vuelva a grabar este mensaje.
-  audio_too_loud_autogain: >
-    ¡Tu grabación es demasiado fuerte! <br>
-    Disminución automática del volumen. <br>
-    Borre esta grabación y vuelva a grabarla.
-  audio_too_soft_autogain: >
-    ¡Tus niveles de grabación son demasiado bajos! <br>
-    Aumento automático del volumen. <br>
-    Borre esta grabación y vuelva a grabarla.
-  no_speech_autogain: >
-    No hay volumen de voz o grabación demasiado bajo. <br>
-    Aumento automático del volumen. <br>
-    Borre esta grabación y vuelva a grabarla.
+
   getUserMedia_error: >
     No se pudo obtener la entrada de audio ... asegúrese de que su micrófono esté conectado a su
     computadora. Su navegador está dando este mensaje de error:
@@ -260,6 +233,28 @@ alert_message:
   location_change: >
     Cambio de ubicación: Por favor revise la configuración de Información
     de grabación y, si es necesario, actualice su Ubicación y Niveles de ruido.
+
+speechCharacteristics:
+  audio_too_loud_short: ¡Tu grabación es demasiado fuerte!
+  audio_too_loud_text: >
+    ¡Tu grabación es demasiado fuerte!
+    Por favor reduzca el volumen de su micrófono,
+    luego borre esta grabación y vuelva a grabarla.
+  audio_too_soft_short:  ¡Tus niveles de grabación son demasiado bajos!
+  audio_too_soft_text: >  
+    ¡Tus niveles de grabación son demasiado bajos!
+    Por favor, aumente el volumen de su micrófono,
+    luego borre esta grabación y vuelva a grabarla.
+  no_trailing_silence_short: La aplicación cree que no has dejado suficiente silencio.    
+  no_trailing_silence_text: >
+    La aplicación cree que no has dejado suficiente silencio. Es posible que hayas hecho clic
+    'para' demasiado temprano!
+    Revise esta grabación rápida y elimine y vuelva a grabar si es necesario.
+  no_speech_short: No hay volumen de voz o grabación demasiado bajo .
+  no_speech_text: >  
+    No hay volumen de voz o grabación demasiado bajo
+    Por favor, aumente el volumen de su micrófono,
+    luego borre y vuelva a grabar este mensaje.
 
 settings:
   title: Configuración (haga clic en el cuadro para habilitar)
