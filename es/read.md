@@ -234,23 +234,24 @@ alert_message:
     Cambio de ubicación: Por favor revise la configuración de Información
     de grabación y, si es necesario, actualice su Ubicación y Niveles de ruido.
 
+# TODO: fix draft translations below
 speechCharacteristics:
-  audio_too_loud_short: ¡Tu grabación es demasiado fuerte!
+  audio_too_loud_short: 'error: ¡Tu grabación es demasiado fuerte!'
   audio_too_loud_text: >
     ¡Tu grabación es demasiado fuerte!
     Por favor reduzca el volumen de su micrófono,
     luego borre esta grabación y vuelva a grabarla.
-  audio_too_soft_short:  ¡Tus niveles de grabación son demasiado bajos!
+  audio_too_soft_short:  'attencion: ¡Tus niveles de grabación son demasiado bajos!'
   audio_too_soft_text: >  
     ¡Tus niveles de grabación son demasiado bajos!
     Por favor, aumente el volumen de su micrófono,
     luego borre esta grabación y vuelva a grabarla.
-  no_trailing_silence_short: La aplicación cree que no has dejado suficiente silencio.    
+  no_trailing_silence_short: 'attencion: La aplicación cree que no has dejado suficiente silencio.'
   no_trailing_silence_text: >
     La aplicación cree que no has dejado suficiente silencio. Es posible que hayas hecho clic
     'para' demasiado temprano!
     Revise esta grabación rápida y elimine y vuelva a grabar si es necesario.
-  no_speech_short: No hay volumen de voz o grabación demasiado bajo .
+  no_speech_short:  'error: No hay volumen de voz o grabación demasiado bajo.'
   no_speech_text: >  
     No hay volumen de voz o grabación demasiado bajo
     Por favor, aumente el volumen de su micrófono,

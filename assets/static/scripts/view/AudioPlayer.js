@@ -28,6 +28,7 @@ View.AudioPlayer = function (
     this.speechCharacteristics = pageVariables.speechCharacteristics;
 
     this.playbuttontext = pageVariables.playbuttontext;
+    // TODO not being used!
     this.stopbuttontext = pageVariables.stopbuttontext;
 
     // where audio files will be displayed in HTML
@@ -232,12 +233,16 @@ View.WaveformElement = function(
     this.obj = obj;
     this.waveformdisplay_id = waveformdisplay_id;
     this.clip_id = clip_id;
-    this.playbuttontext = playbuttontext;    
+
+    // TODO stopbutton text not being used
+    this.playbuttontext = playbuttontext;
+       
     this.speechCharacteristics = speechCharacteristics;
     this._setspeechCharacteristicsMessages();
 
     this.errorColor = "#ff7500";
-    this.warningColor = "#ffdd00";    
+    this.warningColor = "#ffdd00";
+    
     this.waveformElement = document.createElement('div');    
 }
 

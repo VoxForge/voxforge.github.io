@@ -246,21 +246,21 @@ alert_message:
     et Si nécessaire, mettez à jour votre localisation et le niveau de bruit.
 
 speechCharacteristics:
-  audio_too_loud_short: Volume trop fort.
+  audio_too_loud_short: 'Erreur: Volume trop fort.'
   audio_too_loud_text: >
     Volume est trop fort.
     Veuillez réduire votre volume et réenregistrer.
-  audio_too_soft_short: Volume trop doux.
+  audio_too_soft_short: 'Avertissement: Volume trop doux.'
   audio_too_soft_text: >  
     Volume est trop doux.
     le system a augmente le volume automatiquement
     Veuillez réenregistrer.
-  no_trailing_silence_short: Enregistrement coupé
+  no_trailing_silence_short: 'Avertissement: Enregistrement coupé'
   no_trailing_silence_text: >  
     Le systeme pense que avez couper votre enregistrement (vous avez cliqué
     trop tôt)
     Veuillez examiner cet enregistrement, et supprimer et réenregistrer si nécessaire.
-  no_speech_short: Pas d'audio enregistré!
+  no_speech_short: "Erreur: Pas d'audio enregistré!"
   no_speech_text: >  
     Pas d'audio vocal enregistré! Veuillez supprimer et réenregistrer.
               

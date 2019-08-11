@@ -329,24 +329,24 @@ alert_message:
     Detection) in Settings, then delete and re-record your last prompt.
 
 speechCharacteristics:
-  audio_too_loud_short: too loud!  
+  audio_too_loud_short: 'Error: too loud!'  
   audio_too_loud_text: >
     Your recording is too loud!
     Please reduce your microphone volume,
     then delete this recording and re-record the prompt.
-  audio_too_soft_short: not loud enough!   
+  audio_too_soft_short: 'Warning: not loud enough!'   
   audio_too_soft_text: >
     Your recording levels are too low!
     Please increase your microphone volume,
     then delete this prompt recording and re-record it.
-  no_trailing_silence_short: no trailing silence.
+  no_trailing_silence_short: 'Warning: no trailing silence.'
   no_trailing_silence_text: >
     You may have not left enough trailing silence (i.e. clicked
     'stop' too early)
     Please review and make sure there is some silence (at least
     1/4 of a second) at end of this recording.
     If not, delete and re-record the prompt.
-  no_speech_short: no speech.    
+  no_speech_short: 'Error : no speech.'
   no_speech_text: >
     No Speech (or microphone volume too low).
     Please increase microphone volume,
