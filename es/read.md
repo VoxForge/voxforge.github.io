@@ -258,6 +258,7 @@ speechCharacteristics:
 
 settings:
   title: Configuración (haga clic en el cuadro para habilitar)
+  none: ??none??  
   display_record_info: >
     Información de grabación (necesita actualizarse cada vez
     que cambia la ubicación o las características del ruido)
@@ -279,27 +280,6 @@ settings:
   debug_text: Configuración de audio del navegador  
   recording_information_text: Información de grabación - ajustes
   other_heading: General
-
-#TODO no longer used
-ua_string:
-  label: Agente de usuario Cadena
-  popup:
-    title: Recopilar información de cadena de agente de usuario
-    link: http://www.useragentstring.com
-    hover_text: >
-      Incluir cadena de agente de usuario con grabación
-    text:  > 
-      Cuando su navegador web realiza una solicitud a un sitio web, también envía un usuario
-      Cadena del agente Esta cadena contiene información sobre el nombre de su navegador,
-      sistema operativo, tipo de dispositivo, etc. <br>
-      La aplicación VoxForge recopila esta información para ayudar a solucionar problemas y
-      determinar qué dispositivos funcionan mejor con esta aplicación. <br>
-  selection_default: { value: 'Sí',  item: 'Sí' }
-  selection:
-    - { value: 'No',  option: 'No' }
-
-
-
 
 ---
 

@@ -266,6 +266,7 @@ speechCharacteristics:
               
 settings:
   title: Paramètres
+  none: null  
   display_record_info: >
     Enregistrement d'informations (doit être mis à jour chaque fois
     que votre location ou les caractéristiques de bruit changent)  
@@ -286,24 +287,6 @@ settings:
   debug_text: Paramètres audio du navigateur  
   recording_information_text: Informations d'enregistrement - paramètres
   other_heading: Général
-
-#TODO no longer used
-ua_string:
-  label: inclure l'agent d'utilisateur
-  popup:
-    title: Collecter les informations de l'agent utilisateur
-    link: https://www.whatismybrowser.com/detect/what-is-my-user-agent
-    hover_text: >
-      Inclure l'agent utilisateur avec votre soumission
-    text:  > 
-      L'agent d'utilisateur de votre navigateur indique quelque chose de 
-      particulier a propos de votre système. <br>
-      VoxForge peut collecter la chaîne de l'agent utilisateur de votre navigateur
-      pour dépanner et aider à déterminer quels appareils fonctionnent le mieux avec
-      Application d'enregistrement VoxForge
-  selection_default: { value: 'Oui',  item: 'Oui' }
-  selection:
-    - { value: 'Non',  option: 'Non' }
 
 ---
 

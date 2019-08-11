@@ -38,15 +38,15 @@ index:
 baseurl: "" # the subpath of your site, e.g. /blog
 
 # redirects use this url:
-url: "https://voxforge.github.io" # prod - the base hostname & protocol for your site
-#url: "https://jekyll_voxforge.org" # dev - (need to also update voxforge_sw.js and _config.yml: permalink)
+#url: "https://voxforge.github.io" # prod - the base hostname & protocol for your site
+url: "https://jekyll_voxforge.org" # dev - (need to also update voxforge_sw.js and _config.yml: permalink)
                                    # use https://jekyll_voxforge.org/en/read/ to directly access read page
 
 # add trailing slash to permalinks:
 # (for debugging with Apache2 and self signed SSL certificate)
 # note: messes up manifest path,
-permalink: /:lang/:ref # prod - required for links to work properly on Github
-#permalink: /:lang/:ref/ # dev - (need to also update voxforge_sw.js and _config.yml: URL; and copy manifest file to en/read and restart jekyll...)
+#permalink: /:lang/:ref # prod - required for links to work properly on Github
+permalink: /:lang/:ref/ # dev - (need to also update voxforge_sw.js and _config.yml: URL; and copy manifest file to en/read and restart jekyll...)
 
 
 collections:
