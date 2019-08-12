@@ -107,7 +107,7 @@ Audio.Worker.prototype._addWavHeaderToDataView = function () {
         this.numSamples,
         this.bitDepth,
         this.sampleRate);
-        
+
     this.dataViews.unshift(header);
 }
 
@@ -135,7 +135,9 @@ Audio.VadWorker.prototype.constructor = Audio.Worker;
  * VAD can only process 16-bit audio, with sampling rates of 8/16/32/48kHz;
  * we are fudging a bit so can process 44.1kHz...
  * so split buffer up into smaller chunks that VAD can digest
- */ 
+ */
+// TODO why 4 chumks? seems o work OK without chunking on laptop
+// is this for low powered smartphones? 
 Audio.VadWorker.prototype.record = function (data) {
     this.buffers.push(data.event_buffer); // array of buffer arrays
     this.numSamples += data.event_buffer.length;

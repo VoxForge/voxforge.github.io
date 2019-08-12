@@ -32,8 +32,6 @@ var Audio = Audio || {};
 
 Audio.Vad = function(sampleRate, parms) {
     this.sampleRate = sampleRate;
-    //const maxsilence = 1500; //  original
-    //this.minvoice = 250;//  original    
     this.maxsilence = parms.maxsilence;
     this.minvoice = parms.minvoice;
     this.sizeBufferVad = parms.buffersize;
@@ -61,6 +59,7 @@ Audio.Vad = function(sampleRate, parms) {
     this.vadbuffer_start = 0;
     this.vadbuffer_end = 0;
 
+    // VAD can only process sampling rates of 8/16/32/48kHz;
     // since chrome/FF default sample rate on Linux is 44100, but VAD does 
     // not support 44100... hardcode 48000 - works OK
     this.VAD_SAMPLE_RATE = 48000;
@@ -93,8 +92,8 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
     chunk_index)
 {
     if (this.first_buffer) {
-      this._calculateSilencePadding(buffer_pcm.length, this.sampleRate);
-      this.first_buffer = false;
+        this._calculateSilencePadding(buffer_pcm.length, this.sampleRate);
+        this.first_buffer = false;
     }
 
     this._callWebrtcVad(buffer_pcm, buffers_index, chunk_index);
