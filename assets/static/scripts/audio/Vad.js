@@ -279,7 +279,54 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
 }
 
 Audio.Vad.prototype.getSpeech = function(buffers) {
-    // save context for inner functions
+    var vadSpeech = new Audio.Vad.Speech(
+        buffers,
+        this.speechstart_index,
+        this.speechend_index,
+        this.leading_silence_buffer,
+        this.trailing_silence_buffer,
+        this.max_energy,
+        this.voice_started,
+        this.voice_stopped,);
+
+    return vadSpeech.get();
+}
+
+// #############################################################################
+
+Audio.Vad.Speech = function(
+    buffers,
+    speechstart_index,
+    speechend_index,
+    leading_silence_buffer,
+    trailing_silence_buffer,
+    max_energy,
+    voice_started,
+    voice_stopped, )
+{
+    this.buffers = buffers;
+    this.speechstart_index = speechstart_index;
+    this.speechend_index = speechend_index;          
+    this.leading_silence_buffer = leading_silence_buffer;
+    this.trailing_silence_buffer = trailing_silence_buffer;
+    this.max_energy = max_energy;
+    this.voice_started = voice_started;
+    this.voice_stopped = voice_stopped;
+    
+    this.no_speech = false;
+    this.no_trailing_silence = false;
+    this.clipping = false;
+    this.too_soft = false;    
+
+    // arbitrary trial and error values to determine when audio sample is too
+    // loud or soft...
+    // TODO convert to DB?
+    //this.MAX_ENERGY_THRESHOLD = 0.50;
+    this.MAX_ENERGY_THRESHOLD = 0.45;    
+    this.MIN_ENERGY_THRESHOLD = 0.02;
+}
+
+Audio.Vad.Speech.prototype.get = function() {
     var self = this;
 
     /**
@@ -290,18 +337,14 @@ Audio.Vad.prototype.getSpeech = function(buffers) {
       // user was still speaking when they clicked stop
     */
     function validateSpeech() {
-      var no_speech = false;
-      var no_trailing_silence = false;
-      var clipping = false;
-      var too_soft = false;
 
       function checkEnergy() {
           if (self.max_energy > self.MAX_ENERGY_THRESHOLD) {
-            clipping = true;
+            self.clipping = true;
             console.warn( 'audio clipping');
           } else {
             if (self.max_energy < self.MIN_ENERGY_THRESHOLD) {
-              too_soft = true;
+              self.too_soft = true;
               console.warn( 'audio volume too too low');
             }
           } 
@@ -311,12 +354,12 @@ Audio.Vad.prototype.getSpeech = function(buffers) {
         checkEnergy();
       } else { 
         if ( ! self.voice_started  ) { // VAD never started
-          self.speechend_index = buffers.length;
-          no_speech = true;
+          self.speechend_index = self.buffers.length;
+          self.no_speech = true;
           console.warn( 'no speech recorded');
         } else { // user cut end of recording off too early
-          self.speechend_index = buffers.length;
-          no_trailing_silence = true;
+          self.speechend_index = self.buffers.length;
+          self.no_trailing_silence = true;
           console.warn( 'no trailing silence');
           checkEnergy(); // even though user may have hit stop too early, still need to check energy levels
         }
@@ -326,16 +369,15 @@ Audio.Vad.prototype.getSpeech = function(buffers) {
         ', MAX_ENERGY_THRESHOLD=' + self.MAX_ENERGY_THRESHOLD);
 
       if (self.speechend_index == 0) { // should never occur
-        self.speechend_index = buffers.length;
+        self.speechend_index = self.buffers.length;
         console.warn( 'speechend_index never set, setting to end of recording');
       }
       if (self.speechend_index < self.speechstart_index) {// should never occur
         self.speechend_index =0;
-        self.speechend_index = buffers.length;
+        self.speechend_index = self.buffers.length;
         console.warn( 'speechend_index bigger than speechstart_index');
       }
 
-      return [no_speech, no_trailing_silence, clipping, too_soft];
     }
 
     /**
@@ -345,12 +387,12 @@ Audio.Vad.prototype.getSpeech = function(buffers) {
     */
     function extractSpeechFromRecording() {
       var start_index = Math.max(self.speechstart_index - self.leading_silence_buffer, 0);
-      var end_index = Math.min(self.speechend_index + self.trailing_silence_buffer, buffers.length);
+      var end_index = Math.min(self.speechend_index + self.trailing_silence_buffer, self.buffers.length);
       console.log("start_index=" + start_index + 
                   "; end_index=" + end_index +
-                  "; buffer length=" + buffers.length);
+                  "; buffer length=" + self.buffers.length);
 
-      var speech_array =  buffers.slice(start_index, end_index);
+      var speech_array = self.buffers.slice(start_index, end_index);
 
       console.log("speech_array length=" + speech_array.length);
 
@@ -359,11 +401,11 @@ Audio.Vad.prototype.getSpeech = function(buffers) {
 
     // ### main ##################################################################
 
-    var [no_speech, no_trailing_silence, clipping, too_soft] = 
-        validateSpeech();
+    validateSpeech();
 
     var speech_array = extractSpeechFromRecording();
 
-    return [speech_array, no_speech, no_trailing_silence, clipping, too_soft];
+    return [speech_array, this.no_speech, this.no_trailing_silence,
+        this.clipping, this.too_soft];
 }
 
