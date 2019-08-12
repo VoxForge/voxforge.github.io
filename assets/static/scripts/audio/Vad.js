@@ -380,32 +380,33 @@ Audio.Vad.Speech.prototype.get = function() {
 
     }
 
-    /**
-    * using calculated speechstart and speechstop indexes, extract audio segment
-    * that includes speech (i.e. remove leading and trailing silence from 
-    * recording)
-    */
-    function extractSpeechFromRecording() {
-      var start_index = Math.max(self.speechstart_index - self.leading_silence_buffer, 0);
-      var end_index = Math.min(self.speechend_index + self.trailing_silence_buffer, self.buffers.length);
-      console.log("start_index=" + start_index + 
-                  "; end_index=" + end_index +
-                  "; buffer length=" + self.buffers.length);
 
-      var speech_array = self.buffers.slice(start_index, end_index);
-
-      console.log("speech_array length=" + speech_array.length);
-
-      return speech_array;
-    }
 
     // ### main ##################################################################
 
     validateSpeech();
 
-    var speech_array = extractSpeechFromRecording();
+    var speech_array = this._extractSpeechFromBuffers();
 
     return [speech_array, this.no_speech, this.no_trailing_silence,
         this.clipping, this.too_soft];
 }
 
+/**
+* using calculated speechstart and speechstop indexes, extract audio segment
+* that includes speech (i.e. remove leading and trailing silence from 
+* recording)
+*/
+Audio.Vad.Speech.prototype._extractSpeechFromBuffers = function() {
+  var start_index = Math.max(this.speechstart_index - this.leading_silence_buffer, 0);
+  var end_index = Math.min(this.speechend_index + this.trailing_silence_buffer, this.buffers.length);
+  console.log("start_index=" + start_index + 
+              "; end_index=" + end_index +
+              "; buffer length=" + this.buffers.length);
+
+  var speech_array = this.buffers.slice(start_index, end_index);
+
+  console.log("speech_array length=" + speech_array.length);
+
+  return speech_array;
+}
