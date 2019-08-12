@@ -307,8 +307,10 @@ Audio.Vad.Speech = function(
     this.buffers = buffers;
     this.speechstart_index = speechstart_index;
     this.speechend_index = speechend_index;          
-    this.leading_silence_buffer = leading_silence_buffer;
-    this.trailing_silence_buffer = trailing_silence_buffer;
+    //this.leading_silence_buffer = leading_silence_buffer;
+    //this.trailing_silence_buffer = trailing_silence_buffer;
+    this.start_index = Math.max(speechstart_index - leading_silence_buffer, 0);
+    this.end_index = Math.min(speechend_index + trailing_silence_buffer, buffers.length);    
     this.max_energy = max_energy;
     this.voice_started = voice_started;
     this.voice_stopped = voice_stopped;
@@ -327,11 +329,10 @@ Audio.Vad.Speech = function(
 }
 
 Audio.Vad.Speech.prototype.get = function() {
-    this._validateSpeech();
+    this._checkForProblemsWithSpeech();
+    this._extractSpeechFromBuffers();
 
-    var speech_array = this._extractSpeechFromBuffers();
-
-    return [speech_array, this.no_speech, this.no_trailing_silence,
+    return [this.speech_array, this.no_speech, this.no_trailing_silence,
         this.clipping, this.too_soft];
 }
 
@@ -342,9 +343,7 @@ Audio.Vad.Speech.prototype.get = function() {
   // goes true (and voice_started never goes false)
   // user was still speaking when they clicked stop
 */
-Audio.Vad.Speech.prototype._validateSpeech = function() {
-    var self = this;
-
+Audio.Vad.Speech.prototype._checkForProblemsWithSpeech = function() {
     if ( this.voice_stopped ) { // user stopped talking then clicked stop button.
         this._checkAudioVolume();
     } else { 
@@ -404,15 +403,12 @@ Audio.Vad.Speech.prototype._checkForErrors = function() {
 * recording)
 */
 Audio.Vad.Speech.prototype._extractSpeechFromBuffers = function() {
-  var start_index = Math.max(this.speechstart_index - this.leading_silence_buffer, 0);
-  var end_index = Math.min(this.speechend_index + this.trailing_silence_buffer, this.buffers.length);
-  console.log("start_index=" + start_index + 
-              "; end_index=" + end_index +
+
+    console.log("start_index=" + this.start_index + 
+              "; end_index=" + this.end_index +
               "; buffer length=" + this.buffers.length);
 
-  var speech_array = this.buffers.slice(start_index, end_index);
+    this.speech_array = this.buffers.slice(this.start_index, this.end_index);
 
-  console.log("speech_array length=" + speech_array.length);
-
-  return speech_array;
+    console.log("speech_array length=" + this.speech_array.length);
 }
