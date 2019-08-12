@@ -346,34 +346,38 @@ Audio.Vad.Speech.prototype._validateSpeech = function() {
     var self = this;
 
     if ( this.voice_stopped ) { // user stopped talking then clicked stop button.
-        this._checkEnergy();
+        this._checkAudioVolume();
     } else { 
-        if ( ! this.voice_started  ) { // VAD never started
-            this.speechend_index = this.buffers.length;
-            this.no_speech = true;
-            console.warn( 'no speech recorded');
-        } else { // user cut end of recording off too early
-            this.speechend_index = this.buffers.length;
-            this.no_trailing_silence = true;
-            console.warn( 'no trailing silence');
-            this._checkEnergy(); // even though user may have hit stop too early, still need to check energy levels
-        }
+        this._problemsWithSpeech();
     }
 
     this._logValidateSpeech();
     this._checkForErrors();
 }
 
-Audio.Vad.Speech.prototype._checkEnergy = function() {
-  if (this.max_energy > this.MAX_ENERGY_THRESHOLD) {
-    this.clipping = true;
-    console.warn( 'audio clipping');
-  } else {
-    if (this.max_energy < this.MIN_ENERGY_THRESHOLD) {
-      this.too_soft = true;
-      console.warn( 'audio volume too too low');
+Audio.Vad.Speech.prototype._checkAudioVolume = function() {
+    if (this.max_energy > this.MAX_ENERGY_THRESHOLD) {
+        this.clipping = true;
+        console.warn( 'audio clipping');
+    } else {
+        if (this.max_energy < this.MIN_ENERGY_THRESHOLD) {
+            this.too_soft = true;
+            console.warn( 'audio volume too too low');
+        }
+    } 
+}
+
+Audio.Vad.Speech.prototype._problemsWithSpeech = function() {
+    if ( ! this.voice_started  ) { // VAD never started
+        this.speechend_index = this.buffers.length;
+        this.no_speech = true;
+        console.warn( 'no speech recorded');
+    } else { // user cut end of recording off too early
+        this.speechend_index = this.buffers.length;
+        this.no_trailing_silence = true;
+        console.warn( 'no trailing silence');
+        this._checkAudioVolume(); // even though user may have hit stop too early, still need to check energy levels
     }
-  } 
 }
 
 Audio.Vad.Speech.prototype._logValidateSpeech = function() {
