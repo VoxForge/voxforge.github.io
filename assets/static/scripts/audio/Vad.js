@@ -114,36 +114,17 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
     // save reference to current context for use in inner functions
     var self = this;
 
-    /**
-    * Must be calculated from event buffer because there is no other way
-    * to get buffer size... and buffer sizes differ markedly 
-    * depending on device (e.g. Linux 2048 samples per event buffer; Android 16384 
-    * samples)
-    */
-    // TODO what if very short recording??? less than buffer length
-    // TODO what if talking when press stop so that end_voice is after length of array
-    // TODO what if sound from start to end of recording when user clicks stop
-    function calculateSilencePadding(num_samples_in_buffer, samples_per_sec) {
-      var buffers_per_sec = samples_per_sec / num_samples_in_buffer; 
-
-      self.leading_silence_buffer = Math.round(self.LEADING_SILENCE_SEC * buffers_per_sec);
-      self.trailing_silence_buffer = Math.floor(self.TRAILING_SILENCE_SEC * buffers_per_sec);
-
-      console.log(
-        'leading_silence_buffer= ' + self.leading_silence_buffer +
-        '; trailing_silence_buffer= ' + self.trailing_silence_buffer);
-    }
 
     /**
     * called when non-silence detected (any sound, not just speech)
     */
     function speaking(start, end) {
-      self.speaking_vadbuffer_start = start;
-      self.speaking_vadbuffer_end = end;
+        self.speaking_vadbuffer_start = start;
+        self.speaking_vadbuffer_end = end;
 
-      self.voice_started = true;
-      self.voice_stopped = false;
-      if ( self.first_speak ) {
+        self.voice_started = true;
+        self.voice_stopped = false;
+        if ( self.first_speak ) {
         // really only recognizing non-silence (i.e. any sound that is not silence")
         console.log(
             "webrtc: voice_started=" + buffers_index + 
@@ -152,26 +133,26 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
             " chunk_index: " + chunk_index);
         self.speechstart_index = buffers_index;
         self.first_speak = false;
-      }
+        }
     }
 
     /**
     * called when silence detected
     */
     function nospeech(start, end) {
-      self.nospeech_vadbuffer_start = start;
-      self.nospeech_vadbuffer_end = end;
+        self.nospeech_vadbuffer_start = start;
+        self.nospeech_vadbuffer_end = end;
 
-      // only want first stop after speech ends
-      if ( ! self.voice_stopped ) {
+        // only want first stop after speech ends
+        if ( ! self.voice_stopped ) {
         console.log(
             "webrtc: voice_stopped=" + buffers_index + 
             " vadbuffer_start: " + start + 
             " vadbuffer_end: " + end + 
             " chunk_index: " + chunk_index);
         self.speechend_index = buffers_index;
-      }
-      self.voice_stopped = true;
+        }
+        self.voice_stopped = true;
     }
 
     /**
@@ -263,7 +244,7 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
     // ### main ################################################################
 
     if (this.first_buffer) {
-      calculateSilencePadding(buffer_pcm.length, this.sampleRate);
+      this._calculateSilencePadding(buffer_pcm.length, this.sampleRate);
       this.first_buffer = false;
     }
 
@@ -277,6 +258,30 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
       this.min_energy = energy;
     }
 }
+
+/**
+* Must be calculated from event buffer because there is no other way
+* to get buffer size... and buffer sizes differ markedly 
+* depending on device (e.g. Linux 2048 samples per event buffer; Android 16384 
+* samples)
+*/
+// TODO what if very short recording??? less than buffer length
+// TODO what if talking when press stop so that end_voice is after length of array
+// TODO what if sound from start to end of recording when user clicks stop
+Audio.Vad.prototype._calculateSilencePadding = function(
+    num_samples_in_buffer,
+    samples_per_sec)
+{
+    var buffers_per_sec = samples_per_sec / num_samples_in_buffer; 
+
+    this.leading_silence_buffer = Math.round(this.LEADING_SILENCE_SEC * buffers_per_sec);
+    this.trailing_silence_buffer = Math.floor(this.TRAILING_SILENCE_SEC * buffers_per_sec);
+
+    console.log(
+        'leading_silence_buffer= ' + this.leading_silence_buffer +
+        '; trailing_silence_buffer= ' + this.trailing_silence_buffer);
+}
+
 
 Audio.Vad.prototype.getSpeech = function(buffers) {
     var vadSpeech = new Audio.Vad.Speech(
@@ -307,10 +312,10 @@ Audio.Vad.Speech = function(
     this.buffers = buffers;
     this.speechstart_index = speechstart_index;
     this.speechend_index = speechend_index;          
-    //this.leading_silence_buffer = leading_silence_buffer;
-    //this.trailing_silence_buffer = trailing_silence_buffer;
+
     this.start_index = Math.max(speechstart_index - leading_silence_buffer, 0);
     this.end_index = Math.min(speechend_index + trailing_silence_buffer, buffers.length);    
+
     this.max_energy = max_energy;
     this.voice_started = voice_started;
     this.voice_stopped = voice_stopped;
@@ -329,7 +334,7 @@ Audio.Vad.Speech = function(
 }
 
 Audio.Vad.Speech.prototype.get = function() {
-    this._checkForProblemsWithSpeech();
+    this._checkForProblemsWithRecording();
     this._extractSpeechFromBuffers();
 
     return [this.speech_array, this.no_speech, this.no_trailing_silence,
@@ -343,7 +348,7 @@ Audio.Vad.Speech.prototype.get = function() {
   // goes true (and voice_started never goes false)
   // user was still speaking when they clicked stop
 */
-Audio.Vad.Speech.prototype._checkForProblemsWithSpeech = function() {
+Audio.Vad.Speech.prototype._checkForProblemsWithRecording = function() {
     if ( this.voice_stopped ) { // user stopped talking then clicked stop button.
         this._checkAudioVolume();
     } else { 
@@ -403,7 +408,6 @@ Audio.Vad.Speech.prototype._checkForErrors = function() {
 * recording)
 */
 Audio.Vad.Speech.prototype._extractSpeechFromBuffers = function() {
-
     console.log("start_index=" + this.start_index + 
               "; end_index=" + this.end_index +
               "; buffer length=" + this.buffers.length);
