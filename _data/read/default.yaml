@@ -267,6 +267,7 @@ instructions:
 #        2. Choose your preferred setting for Let apps use my microphone.<br>
 #        3. Under Choose apps that can use your microphone, turn on the individual setting for the Edge browser.<br>
 
+# TODO convert to icons so that no need to translate
 controls:
   record: Record
   stop: Stop
