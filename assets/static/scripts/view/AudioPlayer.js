@@ -28,7 +28,6 @@ View.AudioPlayer = function (
     this.speechCharacteristics = pageVariables.speechCharacteristics;
 
     this.playbuttontext = pageVariables.playbuttontext;
-    // TODO not being used!
     this.stopbuttontext = pageVariables.stopbuttontext;
 
     // where audio files will be displayed in HTML
@@ -141,6 +140,7 @@ View.AudioPlayer.prototype._displayAudioBasedOnUserSelection = function(clipCont
         this.waveformdisplay_id,
         this.clip_id,
         this.playbuttontext,
+        this.stopbuttontext,        
         this.speechCharacteristics);
 
     if ( this.waveformDisplayChecked() ) { 
@@ -227,6 +227,7 @@ View.WaveformElement = function(
     waveformdisplay_id,
     clip_id,
     playbuttontext,
+    stopbuttontext,
     speechCharacteristics)
 {
     this.waveformDisplayChecked = waveformDisplayChecked;
@@ -234,9 +235,9 @@ View.WaveformElement = function(
     this.waveformdisplay_id = waveformdisplay_id;
     this.clip_id = clip_id;
 
-    // TODO stopbutton text not being used
     this.playbuttontext = playbuttontext;
-       
+    this.stopbuttontext = stopbuttontext;
+           
     this.speechCharacteristics = speechCharacteristics;
     this._setspeechCharacteristicsMessages();
 
@@ -367,12 +368,30 @@ View.WaveformElement.prototype._createWaveSurferPlayButton = function() {
 }
 
 View.WaveformElement.prototype._createButton = function() {
+    var self = this;
+
     var display_id = "button_" + this.obj.prompt_id;
     var button = document.createElement(display_id);
     button.className = "play btn btn-primary";
     // TODO not sure how to toggle Play/Pause text
     button.textContent = this.playbuttontext; 
-    button.setAttribute("onclick", "wavesurfer[" + this.clip_id + "].playPause()");
+    //button.setAttribute("onclick", "wavesurfer[" + this.clip_id + "].playPause()");
 
+    //$(display_id + ".play").click(function() {
+ 
+    button.onclick = function() {
+        var buttonContext = this;
+        
+        if (this.textContent == self.playbuttontext) {
+            this.textContent = self.stopbuttontext;
+        } else {
+            this.textContent = self.playbuttontext;
+        };
+        wavesurfer[self.clip_id].playPause();
+        wavesurfer[self.clip_id].on('finish', function() {
+            buttonContext.textContent = self.playbuttontext;
+        } );
+    };
+    
     return button;
 }
