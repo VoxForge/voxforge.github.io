@@ -359,19 +359,9 @@ Audio.Vad.Speech.prototype._validateSpeech = function() {
             this._checkEnergy(); // even though user may have hit stop too early, still need to check energy levels
         }
     }
-    console.log( 'max_energy=' + this.max_energy.toFixed(2) +
-    ' MIN_ENERGY_THRESHOLD=' + this.MIN_ENERGY_THRESHOLD +
-    ', MAX_ENERGY_THRESHOLD=' + this.MAX_ENERGY_THRESHOLD);
 
-    if (this.speechend_index == 0) { // should never occur
-        this.speechend_index = this.buffers.length;
-        console.warn( 'speechend_index never set, setting to end of recording');
-    }
-    if (this.speechend_index < this.speechstart_index) {// should never occur
-        this.speechend_index =0;
-        this.speechend_index = this.buffers.length;
-        console.warn( 'speechend_index bigger than speechstart_index');
-    }
+    this._logValidateSpeech();
+    this._checkForErrors();
 }
 
 Audio.Vad.Speech.prototype._checkEnergy = function() {
@@ -384,6 +374,24 @@ Audio.Vad.Speech.prototype._checkEnergy = function() {
       console.warn( 'audio volume too too low');
     }
   } 
+}
+
+Audio.Vad.Speech.prototype._logValidateSpeech = function() {
+    console.log( 'max_energy=' + this.max_energy.toFixed(2) +
+    ' MIN_ENERGY_THRESHOLD=' + this.MIN_ENERGY_THRESHOLD +
+    ', MAX_ENERGY_THRESHOLD=' + this.MAX_ENERGY_THRESHOLD);
+}
+
+Audio.Vad.Speech.prototype._checkForErrors = function() {
+    if (this.speechend_index == 0) { // should never occur
+        this.speechend_index = this.buffers.length;
+        console.warn( 'speechend_index never set, setting to end of recording');
+    }
+    if (this.speechend_index < this.speechstart_index) {// should never occur
+        this.speechend_index =0;
+        this.speechend_index = this.buffers.length;
+        console.warn( 'speechend_index bigger than speechstart_index');
+    }
 }
 
 /**
