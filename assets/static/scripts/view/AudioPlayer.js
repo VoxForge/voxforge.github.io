@@ -367,17 +367,17 @@ View.WaveformElement.prototype._createWaveSurferPlayButton = function() {
     this.waveformElement.appendChild(buttonDiv);
 }
 
+/*
+ * wavesurfer is a global array containing wavesurfer audio waveform display
+ * objects
+ */
 View.WaveformElement.prototype._createButton = function() {
     var self = this;
 
     var display_id = "button_" + this.obj.prompt_id;
     var button = document.createElement(display_id);
     button.className = "play btn btn-primary";
-    // TODO not sure how to toggle Play/Pause text
     button.textContent = this.playbuttontext; 
-    //button.setAttribute("onclick", "wavesurfer[" + this.clip_id + "].playPause()");
-
-    //$(display_id + ".play").click(function() {
  
     button.onclick = function() {
         var buttonContext = this;
