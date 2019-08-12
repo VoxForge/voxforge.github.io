@@ -345,20 +345,8 @@ Audio.Vad.Speech.prototype.get = function() {
 Audio.Vad.Speech.prototype._validateSpeech = function() {
     var self = this;
 
-    function checkEnergy() {
-      if (self.max_energy > self.MAX_ENERGY_THRESHOLD) {
-        self.clipping = true;
-        console.warn( 'audio clipping');
-      } else {
-        if (self.max_energy < self.MIN_ENERGY_THRESHOLD) {
-          self.too_soft = true;
-          console.warn( 'audio volume too too low');
-        }
-      } 
-    }
-
     if ( this.voice_stopped ) { // user stopped talking then clicked stop button.
-        checkEnergy();
+        this._checkEnergy();
     } else { 
         if ( ! this.voice_started  ) { // VAD never started
             this.speechend_index = this.buffers.length;
@@ -368,7 +356,7 @@ Audio.Vad.Speech.prototype._validateSpeech = function() {
             this.speechend_index = this.buffers.length;
             this.no_trailing_silence = true;
             console.warn( 'no trailing silence');
-            checkEnergy(); // even though user may have hit stop too early, still need to check energy levels
+            this._checkEnergy(); // even though user may have hit stop too early, still need to check energy levels
         }
     }
     console.log( 'max_energy=' + this.max_energy.toFixed(2) +
@@ -384,7 +372,18 @@ Audio.Vad.Speech.prototype._validateSpeech = function() {
         this.speechend_index = this.buffers.length;
         console.warn( 'speechend_index bigger than speechstart_index');
     }
+}
 
+Audio.Vad.Speech.prototype._checkEnergy = function() {
+  if (this.max_energy > this.MAX_ENERGY_THRESHOLD) {
+    this.clipping = true;
+    console.warn( 'audio clipping');
+  } else {
+    if (this.max_energy < this.MIN_ENERGY_THRESHOLD) {
+      this.too_soft = true;
+      console.warn( 'audio volume too too low');
+    }
+  } 
 }
 
 /**
