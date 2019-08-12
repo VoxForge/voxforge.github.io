@@ -115,45 +115,8 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
     var self = this;
 
 
-    /**
-    * called when non-silence detected (any sound, not just speech)
-    */
-    function speaking(start, end) {
-        self.speaking_vadbuffer_start = start;
-        self.speaking_vadbuffer_end = end;
 
-        self.voice_started = true;
-        self.voice_stopped = false;
-        if ( self.first_speak ) {
-        // really only recognizing non-silence (i.e. any sound that is not silence")
-        console.log(
-            "webrtc: voice_started=" + buffers_index + 
-            " vadbuffer_start: " + start + 
-            " vadbuffer_end: " + end + 
-            " chunk_index: " + chunk_index);
-        self.speechstart_index = buffers_index;
-        self.first_speak = false;
-        }
-    }
 
-    /**
-    * called when silence detected
-    */
-    function nospeech(start, end) {
-        self.nospeech_vadbuffer_start = start;
-        self.nospeech_vadbuffer_end = end;
-
-        // only want first stop after speech ends
-        if ( ! self.voice_stopped ) {
-        console.log(
-            "webrtc: voice_stopped=" + buffers_index + 
-            " vadbuffer_start: " + start + 
-            " vadbuffer_end: " + end + 
-            " chunk_index: " + chunk_index);
-        self.speechend_index = buffers_index;
-        }
-        self.voice_stopped = true;
-    }
 
     /**
     * original Mozilla code segment to call webrtc_vad,
@@ -222,7 +185,7 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
                 self.samplessilence += dtdepois - self.dtantesmili;
                 if (self.samplessilence >  self.maxsilence) {
                   self.touchedsilence = true;
-                  nospeech(start, end);
+                  self._nospeech(start, end, buffers_index, chunk_index);
                 }
               }
             }
@@ -230,7 +193,7 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
               self.samplesvoice  += dtdepois - self.dtantesmili;
               if (self.samplesvoice >  self.minvoice) {
                 self.touchedvoice = true;
-                speaking(start, end);
+                self._speaking(start, end, buffers_index, chunk_index);
               }
             }
             self.dtantesmili = dtdepois;
@@ -260,14 +223,55 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
 }
 
 /**
+* called when non-silence detected (any sound, not just speech)
+*/
+Audio.Vad.prototype._speaking = function(start, end, buffers_index, chunk_index) {
+    this.speaking_vadbuffer_start = start;
+    this.speaking_vadbuffer_end = end;
+
+    this.voice_started = true;
+    this.voice_stopped = false;
+    if ( this.first_speak ) {
+        // really only recognizing non-silence (i.e. any sound that is not silence")
+        console.log(
+            "webrtc: voice_started=" + buffers_index + 
+            " vadbuffer_start: " + start + 
+            " vadbuffer_end: " + end + 
+            " chunk_index: " + chunk_index);
+        this.speechstart_index = buffers_index;
+        this.first_speak = false;
+    }
+}
+
+/**
+* called when silence detected
+*/
+Audio.Vad.prototype._nospeech = function(start, end, buffers_index, chunk_index) {
+    this.nospeech_vadbuffer_start = start;
+    this.nospeech_vadbuffer_end = end;
+
+    // only want first stop after speech ends
+    if ( ! this.voice_stopped ) {
+        console.log(
+            "webrtc: voice_stopped=" + buffers_index + 
+            " vadbuffer_start: " + start + 
+            " vadbuffer_end: " + end + 
+            " chunk_index: " + chunk_index);
+        this.speechend_index = buffers_index;
+    }
+    this.voice_stopped = true;
+}
+
+/**
 * Must be calculated from event buffer because there is no other way
 * to get buffer size... and buffer sizes differ markedly 
 * depending on device (e.g. Linux 2048 samples per event buffer; Android 16384 
 * samples)
-*/
+
 // TODO what if very short recording??? less than buffer length
 // TODO what if talking when press stop so that end_voice is after length of array
 // TODO what if sound from start to end of recording when user clicks stop
+*/ 
 Audio.Vad.prototype._calculateSilencePadding = function(
     num_samples_in_buffer,
     samples_per_sec)
