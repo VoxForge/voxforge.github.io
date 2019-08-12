@@ -68,23 +68,9 @@ Audio.Vad = function(sampleRate, parms) {
     this._setupWebrtcVad();
 }
 
-/*
- *  VAD configs:
- *      - mode      : Aggressiveness degree
- *                    0 (High quality) - 3 (Highly aggressive)
- */
-Audio.Vad.prototype._setupWebrtcVad = function() {
-    // setup webrtc VAD
-    var main = cwrap('main');
-    var setmode = cwrap('setmode', 'number', ['number']);
-    process_data = cwrap('process_data', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
-
-    main();
-
-    var mode = 3;
-    var result = setmode(mode);
-    
-//    console.log('WebRTC VAD setmode(' + mode + ')=' + result);
+Audio.Vad.prototype._setEnergyProperties = function() {
+    this.max_energy = 0;
+    this.min_energy = 1.0;
 }
 
 Audio.Vad.prototype._setSilenceProperties = function() {
@@ -95,11 +81,6 @@ Audio.Vad.prototype._setSilenceProperties = function() {
 
     this.leading_silence_buffer = 0;
     this.trailing_silence_buffer = 0;
-}
-
-Audio.Vad.prototype._setEnergyProperties = function() {
-    this.max_energy = 0;
-    this.min_energy = 1.0;
 }
 
 /**
@@ -121,6 +102,24 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
     this._trackHighLowEnergyLevels(energy);
 }
 
+/*
+ *  VAD configs:
+ *      - mode      : Aggressiveness degree
+ *                    0 (High quality) - 3 (Highly aggressive)
+ */
+Audio.Vad.prototype._setupWebrtcVad = function() {
+    // setup webrtc VAD
+    var main = cwrap('main');
+    var setmode = cwrap('setmode', 'number', ['number']);
+    process_data = cwrap('process_data', 'number', ['number', 'number', 'number', 'number', 'number', 'number']);
+
+    main();
+
+    var mode = 3;
+    var result = setmode(mode);
+    
+//    console.log('WebRTC VAD setmode(' + mode + ')=' + result);
+}
 
 /**
 * original Mozilla code segment to call webrtc_vad,

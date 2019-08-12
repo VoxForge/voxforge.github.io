@@ -17,8 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict';
 
-
-// TODO approach to getting parms for each class has too much duplication... fix
 function Parms() {
     this.audio = {
       // this was used before we just set audioNodebufferSize to largest size 
@@ -28,9 +26,10 @@ function Parms() {
       bitDepth:  '32bit-float', // 16 or 32bit-float
       vad: { // Voice Activity Detection parameters
         // maxsilence: 1500, minvoice: 250, buffersize: 480,//  original values
+        // TODO should vad values be user selectable?
         maxsilence: 350, 
         minvoice: 250, 
-        buffersize: 480, // don't change; current 'chunking' of of sending audio to VAD assumes this buffeersize
+        buffersize: 480, // don't change; current 'chunking' of sending audio to VAD assumes this buffeersize
       },
 
       blockDisplayOfRecordButton: false, // on slower devices, allowing user to record while display is still working can cause dropout/scratches
@@ -48,12 +47,14 @@ function Parms() {
      * devices causing problems with drop outs/crackles in recorded audio
      * 
      * android5 = Android 5 and above
+     * numPrompts = number of prompts to put in stack; once all recorded it
+     * triggers display of upload button
      */
     function getNumPromptsRange() {
         var desktop = {
             min: 10,
             max: 50,
-            numPrompts: 10}; // number of prompts to put in stack; once all recorded it triggers display of upload button
+            numPrompts: 10}; // 
         var android442 = {
             min: 10,
             max: 10,
@@ -77,7 +78,7 @@ function Parms() {
             return desktop;
         }
     }
-    
+
     this.view = {
         displayWaveform: true,
         // corresponds to the maximum number of prompts that a user can select from the 
@@ -85,7 +86,7 @@ function Parms() {
         increment: 5,
         numPromptsToRead: getNumPromptsRange(),
     }
-    
+
     this.uploader = {
       maxMinutesSinceLastSubmission: 120,
     }
@@ -113,7 +114,6 @@ function Parms() {
         this.controller.recording_stop_delay = 750;
     }
 
-
     // ### DEBUGGING #############################################################
     if ( ! (window.location.origin === 'https://voxforge.github.io') ) {
         this.view.increment = 3;              
@@ -127,4 +127,3 @@ function Parms() {
         //this.uploader.maxMinutesSinceLastSubmission = 1; // only relevant if recording information is included with submission
     }    
 }
-
