@@ -326,6 +326,8 @@ Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
         command: 'finish',
     });
 
+    // TODO this seems to create a bunch of zombie nodes that just sit in memory 
+    // until garbage collected... there should be a better way
     this.processor.onaudioprocess = null;
 
     if (audio_visualizer_checked) {
