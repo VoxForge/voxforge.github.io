@@ -136,7 +136,7 @@ Audio.VadWorker.prototype.constructor = Audio.Worker;
  * we are fudging a bit so can process 44.1kHz...
  * so split buffer up into smaller chunks that VAD can digest
  */
-// TODO why 4 chunks? seems o work OK without chunking on laptop
+// TODO why 4 chunks? seems to work OK without chunking on laptop
 // is this for low powered smartphones? 
 Audio.VadWorker.prototype.record = function (data) {
     this.buffers.push(data.event_buffer); // array of buffer arrays
