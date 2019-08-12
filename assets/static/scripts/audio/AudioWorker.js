@@ -169,25 +169,23 @@ Audio.VadWorker.prototype._performVadOnChunk = function(
 }
 
 Audio.VadWorker.prototype.finish = function () {
-    var speech_array, no_speech, no_trailing_silence, clipping, too_soft;
-    
-    [speech_array,
-    no_speech,
-    no_trailing_silence,
-    clipping,
-    too_soft] = this.vad.getSpeech(this.buffers);
+    var [speech_array,
+        no_speech,
+        no_trailing_silence,
+        clipping,
+        too_soft] = this.vad.getSpeech(this.buffers);
         
     self.postMessage({
-      status: 'finished',
-      obj : { 
-        prompt_id: this.prompt_id,
-        blob: this._convertBufferToAudioBlob(speech_array),
-        no_trailing_silence: no_trailing_silence,
-        no_speech: no_speech,
-        clipping: clipping,
-        too_soft: too_soft,
-        vad_run: true,
-      }
+        status: 'finished',
+        obj : { 
+            prompt_id: this.prompt_id,
+            blob: this._convertBufferToAudioBlob(speech_array),
+            no_trailing_silence: no_trailing_silence,
+            no_speech: no_speech,
+            clipping: clipping,
+            too_soft: too_soft,
+            vad_run: true,
+        }
     });
 
     this.buffers = [];
