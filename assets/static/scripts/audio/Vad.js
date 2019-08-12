@@ -32,14 +32,13 @@ var Audio = Audio || {};
 
 Audio.Vad = function(sampleRate, parms) {
     this.sampleRate = sampleRate;
+    //const maxsilence = 1500; //  original
+    //this.minvoice = 250;//  original    
     this.maxsilence = parms.maxsilence;
     this.minvoice = parms.minvoice;
     this.sizeBufferVad = parms.buffersize;
 
     this.leftovers = 0;
-
-    //const maxsilence = 1500; //  original
-    //this.minvoice = 250;//  original
 
     this.finishedvoice = false;
     this.samplesvoice = 0 ;
@@ -94,12 +93,6 @@ Audio.Vad.prototype._setSilenceProperties = function() {
 Audio.Vad.prototype._setEnergyProperties = function() {
     this.max_energy = 0;
     this.min_energy = 1.0;
-
-    // arbitrary trial and error values to determine when audio sample is too
-    // loud or soft...
-    // TODO convert to DB?
-    this.MAX_ENERGY_THRESHOLD = 0.50;
-    this.MIN_ENERGY_THRESHOLD = 0.02;
 }
 
 /**
@@ -111,36 +104,52 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
     buffers_index,
     chunk_index)
 {
+    if (this.first_buffer) {
+      this._calculateSilencePadding(buffer_pcm.length, this.sampleRate);
+      this.first_buffer = false;
+    }
+
+    this._callWebrtcVad(buffer_pcm, buffers_index, chunk_index);
+
+    if (energy > this.max_energy) {
+        this.max_energy = energy;
+    } else if (energy < this.min_energy) {
+        // TODO need to ignore silence selections, therefore do this after 
+        // speech has been extracted...
+        this.min_energy = energy;
+    }
+}
+
+/**
+* original Mozilla code segment to call webrtc_vad,
+* some variable names changed
+*/
+Audio.Vad.prototype._callWebrtcVad = function(
+    buffer_pcm,
+    buffers_index,
+    chunk_index)
+{
     // save reference to current context for use in inner functions
     var self = this;
-
-
-
-
-
+        
     /**
-    * original Mozilla code segment to call webrtc_vad,
-    * some variable names changed
+    * calls webrtc VAD code
+    *
+    * converts buffer_pcm 16-bit to 8 bit unsigned integer array
+    * (using javascript buffer array property) for use by Webrtc VAD
+    *
+    * see HEAPF32 function in webrtc_vad
     */
-    function callWebrtcVad(buffer_pcm) {
-        /**
-        * calls webrtc VAD code
-        *
-        * converts buffer_pcm 16-bit to 8 bit unsigned integer array
-        * (using javascript buffer array property) for use by Webrtc VAD
-        *
-        * see HEAPF32 function in webrtc_vad
-        */
-        function isSilence(buffer_pcm){
-          // Get data byte size, allocate memory on Emscripten heap, and get pointer
-          let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
-          let dataPtr = _malloc(nDataBytes);
+    function isSilence(buffer_pcm){
+        // Get data byte size, allocate memory on Emscripten heap, and get pointer
+        let nDataBytes = buffer_pcm.length * buffer_pcm.BYTES_PER_ELEMENT;
+        let dataPtr = _malloc(nDataBytes);
 
-          // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
-          let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
-          dataHeap.set(new Uint8Array(buffer_pcm.buffer));
+        // Copy data to Emscripten heap (directly accessed from Module.HEAPU8)
+        let dataHeap = new Uint8Array(HEAPU8.buffer, dataPtr, nDataBytes);
+        dataHeap.set(new Uint8Array(buffer_pcm.buffer));
 
-          let result = process_data(
+        let result = process_data(
             dataHeap.byteOffset, // int16_t  data[],
             buffer_pcm.length, // int n_samples
             self.VAD_SAMPLE_RATE, // int samplerate,
@@ -148,77 +157,59 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
             buffer_pcm[100], // int val100
             buffer_pcm[2000]); // int val2000
 
-          // Free memory
-          _free(dataHeap.byteOffset);
-          return result;
+        // Free memory
+        _free(dataHeap.byteOffset);
+        return result;
+    }
+
+    // ###
+    // vad buffer is only size of even buffer
+    let buffer_vad = new Int16Array(this.sizeBufferVad);
+    //let buffer_vad = new Int8Array(this.sizeBufferVad); not working
+
+    for (let i = 0; i < Math.ceil(buffer_pcm.length/this.sizeBufferVad); i++) {
+      let start = i * this.sizeBufferVad;
+      let end = start + this.sizeBufferVad;
+      if ((start + this.sizeBufferVad) > buffer_pcm.length) {
+        // store to the next
+        buffer_vad.set(buffer_pcm.slice(start));
+        this.leftovers =  buffer_pcm.length - start;
+      } else {
+        if (this.leftovers > 0) {
+          // we have leftovers from previous array
+          end = end - this.leftovers;
+          buffer_vad.set((buffer_pcm.slice(start, end)), this.leftovers);
+          this.leftovers =  0;
+        } else {
+          // send for vad
+          buffer_vad.set(buffer_pcm.slice(start, end));
         }
 
-        // ###
-        // vad buffer is only size of even buffer
-        let buffer_vad = new Int16Array(self.sizeBufferVad);
-        //let buffer_vad = new Int8Array(self.sizeBufferVad); not working
-
-        for (let i = 0; i < Math.ceil(buffer_pcm.length/self.sizeBufferVad); i++) {
-          let start = i * self.sizeBufferVad;
-          let end = start+self.sizeBufferVad;
-          if ((start + self.sizeBufferVad) > buffer_pcm.length) {
-            // store to the next
-            buffer_vad.set(buffer_pcm.slice(start));
-            self.leftovers =  buffer_pcm.length - start;
-          } else {
-            if (self.leftovers > 0) {
-              // we have leftovers from previous array
-              end = end - self.leftovers;
-              buffer_vad.set((buffer_pcm.slice(start, end)), self.leftovers);
-              self.leftovers =  0;
-            } else {
-              // send for vad
-              buffer_vad.set(buffer_pcm.slice(start, end));
+        // whole vad algorithm comes here
+        let vad = isSilence(buffer_vad);
+        //this.buffer_vad = new Int16Array(this.sizeBufferVad);
+        let dtdepois = Date.now();
+        if (vad == 0) {
+          if (this.touchedvoice) {
+            this.samplessilence += dtdepois - this.dtantesmili;
+            if (this.samplessilence >  this.maxsilence) {
+              this.touchedsilence = true;
+              this._nospeech(start, end, buffers_index, chunk_index);
             }
-
-            // whole vad algorithm comes here
-            let vad = isSilence(buffer_vad);
-            //self.buffer_vad = new Int16Array(self.sizeBufferVad);
-            let dtdepois = Date.now();
-            if (vad == 0) {
-              if (self.touchedvoice) {
-                self.samplessilence += dtdepois - self.dtantesmili;
-                if (self.samplessilence >  self.maxsilence) {
-                  self.touchedsilence = true;
-                  self._nospeech(start, end, buffers_index, chunk_index);
-                }
-              }
-            }
-            else {
-              self.samplesvoice  += dtdepois - self.dtantesmili;
-              if (self.samplesvoice >  self.minvoice) {
-                self.touchedvoice = true;
-                self._speaking(start, end, buffers_index, chunk_index);
-              }
-            }
-            self.dtantesmili = dtdepois;
-
-            if (self.touchedvoice && self.touchedsilence)
-              self.finishedvoice = true;
           }
         }
-    }
+        else {
+          this.samplesvoice  += dtdepois - this.dtantesmili;
+          if (this.samplesvoice >  this.minvoice) {
+            this.touchedvoice = true;
+            this._speaking(start, end, buffers_index, chunk_index);
+          }
+        }
+        this.dtantesmili = dtdepois;
 
-    // ### main ################################################################
-
-    if (this.first_buffer) {
-      this._calculateSilencePadding(buffer_pcm.length, this.sampleRate);
-      this.first_buffer = false;
-    }
-
-    callWebrtcVad(buffer_pcm);
-
-    if (energy > this.max_energy) {
-      this.max_energy = energy;
-    } else if (energy < this.min_energy) {
-      // TODO need to ignore silence selections, therefore do this after 
-      // speech has been extracted...
-      this.min_energy = energy;
+        if (this.touchedvoice && this.touchedsilence, chunk_index)
+          this.finishedvoice = true;
+      }
     }
 }
 
@@ -234,10 +225,10 @@ Audio.Vad.prototype._speaking = function(start, end, buffers_index, chunk_index)
     if ( this.first_speak ) {
         // really only recognizing non-silence (i.e. any sound that is not silence")
         console.log(
-            "webrtc: voice_started=" + buffers_index + 
-            " vadbuffer_start: " + start + 
-            " vadbuffer_end: " + end + 
-            " chunk_index: " + chunk_index);
+            "webrtc: voice_started " + buffers_index + " " +
+            "vadbuffer_start: " + start + " " +
+            "vadbuffer_end: " + end + " " +
+            "chunk_index: " + chunk_index);
         this.speechstart_index = buffers_index;
         this.first_speak = false;
     }
@@ -253,10 +244,10 @@ Audio.Vad.prototype._nospeech = function(start, end, buffers_index, chunk_index)
     // only want first stop after speech ends
     if ( ! this.voice_stopped ) {
         console.log(
-            "webrtc: voice_stopped=" + buffers_index + 
-            " vadbuffer_start: " + start + 
-            " vadbuffer_end: " + end + 
-            " chunk_index: " + chunk_index);
+            "webrtc: voice_stopped=" + buffers_index + " " +
+            "vadbuffer_start: " + start + " " +
+            "vadbuffer_end: " + end + " " +
+            "chunk_index: " + chunk_index);
         this.speechend_index = buffers_index;
     }
     this.voice_stopped = true;
