@@ -304,6 +304,7 @@ Audio.Vad.prototype.getSpeech = function(buffers) {
 
 // #############################################################################
 
+// TODO this class structure is still not quite right...
 Audio.Vad.Speech = function(
     buffers,
     speechstart_index,
@@ -315,11 +316,18 @@ Audio.Vad.Speech = function(
     voice_stopped, )
 {
     this.buffers = buffers;
+    
+    // VAD determined speech start and speech end
     this.speechstart_index = speechstart_index;
-    this.speechend_index = speechend_index;          
+    this.speechend_index = speechend_index;
 
-    this.start_index = Math.max(speechstart_index - leading_silence_buffer, 0);
-    this.end_index = Math.min(speechend_index + trailing_silence_buffer, buffers.length);    
+    this.leading_silence_buffer = leading_silence_buffer;
+    this.trailing_silence_buffer = trailing_silence_buffer;
+    
+    // actual indices used for slicing buffer; taking into consideration
+    // leading and trailing silence buffers
+    this.start_index = Math.max(this.speechstart_index - this.leading_silence_buffer, 0);
+    this.end_index = Math.min(this.speechend_index + this.trailing_silence_buffer, this.buffers.length); 
 
     this.max_energy = max_energy;
     this.voice_started = voice_started;
@@ -346,9 +354,7 @@ Audio.Vad.Speech.prototype.get = function() {
         this.clipping, this.too_soft];
 }
 
-/**
-* determine if energy level threshholds have been passed
-
+/*
   // 1. user clicks stop before they finish speaking; voice_stopped never 
   // goes true (and voice_started never goes false)
   // user was still speaking when they clicked stop
@@ -364,6 +370,9 @@ Audio.Vad.Speech.prototype._checkForProblemsWithRecording = function() {
     this._checkForErrors();
 }
 
+/**
+* determine if energy level threshholds have been passed
+*/
 Audio.Vad.Speech.prototype._checkAudioVolume = function() {
     if (this.max_energy > this.MAX_ENERGY_THRESHOLD) {
         this.clipping = true;
@@ -378,11 +387,11 @@ Audio.Vad.Speech.prototype._checkAudioVolume = function() {
 
 Audio.Vad.Speech.prototype._problemsWithSpeech = function() {
     if ( ! this.voice_started  ) { // VAD never started
-        this.speechend_index = this.buffers.length;
+        this.end_index = this.buffers.length; // no trimming of audio recording
         this.no_speech = true;
         console.warn( 'no speech recorded');
     } else { // user cut end of recording off too early
-        this.speechend_index = this.buffers.length;
+        this.end_index = this.buffers.length; // no trimming of audio recording
         this.no_trailing_silence = true;
         console.warn( 'no trailing silence');
         this._checkAudioVolume(); // even though user may have hit stop too early, still need to check energy levels

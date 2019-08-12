@@ -286,10 +286,10 @@ View.WaveformElement.prototype._setHeader = function() {
 View.WaveformElement.prototype._setSpeechCharacteristics = function() {
     if (this.obj.no_speech) {
         this._noSpeech();
+    } else if (this.obj.clipping) {
+        this._clipping();        
     } else if (this.obj.no_trailing_silence) {
         this._noTrailingSilence();
-    } else if (this.obj.clipping) {
-        this._clipping();
     } else if (this.obj.too_soft) {
         this._tooSoft();
     }
