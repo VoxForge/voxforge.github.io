@@ -327,69 +327,64 @@ Audio.Vad.Speech = function(
 }
 
 Audio.Vad.Speech.prototype.get = function() {
-    var self = this;
-
-    /**
-    * determine if energy level threshholds have been passed
-
-      // 1. user clicks stop before they finish speaking; voice_stopped never 
-      // goes true (and voice_started never goes false)
-      // user was still speaking when they clicked stop
-    */
-    function validateSpeech() {
-
-      function checkEnergy() {
-          if (self.max_energy > self.MAX_ENERGY_THRESHOLD) {
-            self.clipping = true;
-            console.warn( 'audio clipping');
-          } else {
-            if (self.max_energy < self.MIN_ENERGY_THRESHOLD) {
-              self.too_soft = true;
-              console.warn( 'audio volume too too low');
-            }
-          } 
-      }
-
-      if ( self.voice_stopped ) { // user stopped talking then clicked stop button.
-        checkEnergy();
-      } else { 
-        if ( ! self.voice_started  ) { // VAD never started
-          self.speechend_index = self.buffers.length;
-          self.no_speech = true;
-          console.warn( 'no speech recorded');
-        } else { // user cut end of recording off too early
-          self.speechend_index = self.buffers.length;
-          self.no_trailing_silence = true;
-          console.warn( 'no trailing silence');
-          checkEnergy(); // even though user may have hit stop too early, still need to check energy levels
-        }
-      }
-      console.log( 'max_energy=' + self.max_energy.toFixed(2) +
-        ' MIN_ENERGY_THRESHOLD=' + self.MIN_ENERGY_THRESHOLD +
-        ', MAX_ENERGY_THRESHOLD=' + self.MAX_ENERGY_THRESHOLD);
-
-      if (self.speechend_index == 0) { // should never occur
-        self.speechend_index = self.buffers.length;
-        console.warn( 'speechend_index never set, setting to end of recording');
-      }
-      if (self.speechend_index < self.speechstart_index) {// should never occur
-        self.speechend_index =0;
-        self.speechend_index = self.buffers.length;
-        console.warn( 'speechend_index bigger than speechstart_index');
-      }
-
-    }
-
-
-
-    // ### main ##################################################################
-
-    validateSpeech();
+    this._validateSpeech();
 
     var speech_array = this._extractSpeechFromBuffers();
 
     return [speech_array, this.no_speech, this.no_trailing_silence,
         this.clipping, this.too_soft];
+}
+
+/**
+* determine if energy level threshholds have been passed
+
+  // 1. user clicks stop before they finish speaking; voice_stopped never 
+  // goes true (and voice_started never goes false)
+  // user was still speaking when they clicked stop
+*/
+Audio.Vad.Speech.prototype._validateSpeech = function() {
+    var self = this;
+
+    function checkEnergy() {
+      if (self.max_energy > self.MAX_ENERGY_THRESHOLD) {
+        self.clipping = true;
+        console.warn( 'audio clipping');
+      } else {
+        if (self.max_energy < self.MIN_ENERGY_THRESHOLD) {
+          self.too_soft = true;
+          console.warn( 'audio volume too too low');
+        }
+      } 
+    }
+
+    if ( this.voice_stopped ) { // user stopped talking then clicked stop button.
+        checkEnergy();
+    } else { 
+        if ( ! this.voice_started  ) { // VAD never started
+            this.speechend_index = this.buffers.length;
+            this.no_speech = true;
+            console.warn( 'no speech recorded');
+        } else { // user cut end of recording off too early
+            this.speechend_index = this.buffers.length;
+            this.no_trailing_silence = true;
+            console.warn( 'no trailing silence');
+            checkEnergy(); // even though user may have hit stop too early, still need to check energy levels
+        }
+    }
+    console.log( 'max_energy=' + this.max_energy.toFixed(2) +
+    ' MIN_ENERGY_THRESHOLD=' + this.MIN_ENERGY_THRESHOLD +
+    ', MAX_ENERGY_THRESHOLD=' + this.MAX_ENERGY_THRESHOLD);
+
+    if (this.speechend_index == 0) { // should never occur
+        this.speechend_index = this.buffers.length;
+        console.warn( 'speechend_index never set, setting to end of recording');
+    }
+    if (this.speechend_index < this.speechstart_index) {// should never occur
+        this.speechend_index =0;
+        this.speechend_index = this.buffers.length;
+        console.warn( 'speechend_index bigger than speechstart_index');
+    }
+
 }
 
 /**
