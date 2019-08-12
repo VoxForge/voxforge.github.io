@@ -64,7 +64,16 @@ Audio.Vad = function(sampleRate, parms) {
     // since chrome/FF default sample rate on Linux is 44100, but VAD does 
     // not support 44100... hardcode 48000 - works OK
     this.VAD_SAMPLE_RATE = 48000;
+    
+    this._setupWebrtcVad();
+}
 
+/*
+ *  VAD configs:
+ *      - mode      : Aggressiveness degree
+ *                    0 (High quality) - 3 (Highly aggressive)
+ */
+Audio.Vad.prototype._setupWebrtcVad = function() {
     // setup webrtc VAD
     var main = cwrap('main');
     var setmode = cwrap('setmode', 'number', ['number']);
@@ -72,11 +81,9 @@ Audio.Vad = function(sampleRate, parms) {
 
     main();
 
-// * VAD configs:
-// *      - mode      : Aggressiveness degree
-// *                    0 (High quality) - 3 (Highly aggressive)
     var mode = 3;
     var result = setmode(mode);
+    
 //    console.log('WebRTC VAD setmode(' + mode + ')=' + result);
 }
 
@@ -110,15 +117,10 @@ Audio.Vad.prototype.calculateSilenceBoundaries = function(
     }
 
     this._callWebrtcVad(buffer_pcm, buffers_index, chunk_index);
-
-    if (energy > this.max_energy) {
-        this.max_energy = energy;
-    } else if (energy < this.min_energy) {
-        // TODO need to ignore silence selections, therefore do this after 
-        // speech has been extracted...
-        this.min_energy = energy;
-    }
+    
+    this._trackHighLowEnergyLevels(energy);
 }
+
 
 /**
 * original Mozilla code segment to call webrtc_vad,
@@ -210,6 +212,16 @@ Audio.Vad.prototype._callWebrtcVad = function(
         if (this.touchedvoice && this.touchedsilence, chunk_index)
           this.finishedvoice = true;
       }
+    }
+}
+
+Audio.Vad.prototype._trackHighLowEnergyLevels = function(energy) {
+    if (energy > this.max_energy) {
+        this.max_energy = energy;
+    } else if (energy < this.min_energy) {
+        // TODO need to ignore silence selections, therefore do this after 
+        // speech has been extracted...
+        this.min_energy = energy;
     }
 }
 
