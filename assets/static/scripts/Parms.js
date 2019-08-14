@@ -107,10 +107,9 @@ function Parms() {
         this.audio.vad.maxsilence = 650; // detect longer silence period on Android
         this.audio.vad.minvoice = 75; // use shorter min voice threshold period on Android
         this.audio.blockDisplayOfRecordButton = true;
-        //this.audio.canAdjustRecordingVolume = false; // Android does not allow you to manually adjust the recording volume on your phone;
 
-        this.controller.platform = 'smartphone';
-        this.view.platform = 'smartphone';           
+        //this.controller.platform = 'smartphone';
+        //this.view.platform = 'smartphone';           
         this.controller.recording_stop_delay = 750;
     }
 
