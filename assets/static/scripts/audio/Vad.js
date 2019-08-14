@@ -227,9 +227,6 @@ Audio.Vad.prototype._trackHighLowEnergyLevels = function(energy) {
 * called when non-silence detected (any sound, not just speech)
 */
 Audio.Vad.prototype._speaking = function(start, end, buffers_index, chunk_index) {
-    this.speaking_vadbuffer_start = start;
-    this.speaking_vadbuffer_end = end;
-
     this.voice_started = true;
     this.voice_stopped = false;
     if ( this.first_speak ) {
@@ -248,9 +245,6 @@ Audio.Vad.prototype._speaking = function(start, end, buffers_index, chunk_index)
 * called when silence detected
 */
 Audio.Vad.prototype._nospeech = function(start, end, buffers_index, chunk_index) {
-    this.nospeech_vadbuffer_start = start;
-    this.nospeech_vadbuffer_end = end;
-
     // only want first stop after speech ends
     if ( ! this.voice_stopped ) {
         console.log(
@@ -362,7 +356,7 @@ Audio.Vad.Speech.prototype.get = function() {
 Audio.Vad.Speech.prototype._checkForProblemsWithRecording = function() {
     if ( this.voice_stopped ) { // user stopped talking then clicked stop button.
         this._checkAudioVolume();
-    } else { 
+    } else { // no speech or user hit stop too early
         this._problemsWithSpeech();
     }
 
@@ -385,6 +379,9 @@ Audio.Vad.Speech.prototype._checkAudioVolume = function() {
     } 
 }
 
+/**
+* no speech or user hit stop too early
+*/
 Audio.Vad.Speech.prototype._problemsWithSpeech = function() {
     if ( ! this.voice_started  ) { // VAD never started
         this.end_index = this.buffers.length; // no trimming of audio recording
@@ -405,14 +402,16 @@ Audio.Vad.Speech.prototype._logValidateSpeech = function() {
 }
 
 Audio.Vad.Speech.prototype._checkForErrors = function() {
-    if (this.speechend_index == 0) { // should never occur
-        this.speechend_index = this.buffers.length;
-        console.warn( 'speechend_index never set, setting to end of recording');
+    if (this.end_index == 0) { // should never occur
+        this.start_index = 0;        
+        this.end_index = this.buffers.length;
+        console.warn( 'end_index never set, setting to end of recording');
     }
-    if (this.speechend_index < this.speechstart_index) {// should never occur
-        this.speechend_index =0;
-        this.speechend_index = this.buffers.length;
-        console.warn( 'speechend_index bigger than speechstart_index');
+    if (this.end_index < this.start_index) {// should never occur
+        this.start_index = 0;
+        this.end_index = this.buffers.length;
+        console.warn( 'end_index bigger than start_index; setting from ' +
+            'beginning of recording to end');
     }
 }
 
