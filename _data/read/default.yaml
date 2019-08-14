@@ -342,12 +342,11 @@ speechCharacteristics:
     then delete this prompt recording and re-record it.
   no_trailing_silence_short: 'Warning: no trailing silence.'
   no_trailing_silence_text: >
-    You may have not left enough trailing silence (i.e. clicked
-    'stop' too early)
+    Not enough silence at end of recording (i.e. you clicked 'stop' too early).  
     Please review and make sure there is some silence (at least
     1/4 of a second) at end of this recording.
     If not, delete and re-record the prompt.
-  no_speech_short: 'Error : no speech.'
+  no_speech_short: 'Error: no speech.'
   no_speech_text: >
     No Speech (or microphone volume too low).
     Please increase microphone volume,
