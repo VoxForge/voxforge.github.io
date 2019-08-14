@@ -269,7 +269,15 @@ View.ProfileView.prototype._getDialect = function() {
         this.profile_hash["dialect_other"] = "";
     }
 
-    this.profile_hash["sub_dialect"] = $("#sub_dialect").val();
+    // TODO problem with way sub_dialect dropdown works in
+    // speaker_characteristics.html results in a value of
+    // 'null' being given in sub_dialect value; fix that and no longer need to
+    // check for null here
+    if ($("#sub_dialect").val() != null) {
+        this.profile_hash["sub_dialect"] = $("#sub_dialect").val();
+    } else {
+        this.profile_hash["sub_dialect"] = this.default_value;
+    }
 }
 
 View.ProfileView.prototype._otherDialect = function() {
