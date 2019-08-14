@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 // TODO need to split the display for advanced and easy modes for selecting
 // things
-View.Settings = function(platform) {
-    this.platform = platform;
+View.Settings = function() {
+
 }
 
 /*

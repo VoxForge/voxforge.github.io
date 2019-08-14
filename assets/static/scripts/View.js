@@ -28,7 +28,6 @@ function View (
 {
     this.parms = parms.view;
     this.displayWaveform = parms.displayWaveform;
-    this.platform = parms.platform;
     this.prompts = prompts;    
     this.movePrompt2Stack = prompts.movePrompt2Stack.bind(prompts);
     this.json_object = profile.getProfileFromBrowserStorage();
@@ -65,7 +64,7 @@ View.prototype._setupTranslations = function() {
 }
 
 View.prototype._instantiateObjects = function() {
-    this.settings = new View.Settings(this.platform);
+    this.settings = new View.Settings();
     
     this.submissionsLog = new View.SubmissionsLog(
         this.pageVariables,
