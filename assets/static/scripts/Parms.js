@@ -104,13 +104,18 @@ function Parms() {
 
     // ### ANDROID #############################################################
     if ( platform.os.family.includes("Android") ) {
-        this.audio.vad.maxsilence = 650; // detect longer silence period on Android
-        this.audio.vad.minvoice = 75; // use shorter min voice threshold period on Android
-        this.audio.blockDisplayOfRecordButton = true;
+        if (platform.os.version) {
+            if (parseFloat(platform.os.version) < 5) {
+                // TODO might need to make this user adjustable if have powerful, but older smartphone
+                this.audio.vad.maxsilence = 650; // detect longer silence period on older Android devices
+                this.audio.vad.minvoice = 75; // use shorter min voice threshold period on older Android devices
+                this.audio.blockDisplayOfRecordButton = true;
 
-        //this.controller.platform = 'smartphone';
-        //this.view.platform = 'smartphone';           
-        this.controller.recording_stop_delay = 750;
+                //this.controller.platform = 'smartphone';
+                //this.view.platform = 'smartphone';           
+                this.controller.recording_stop_delay = 750;
+            }
+        }
     }
 
     // ### DEBUGGING #############################################################
