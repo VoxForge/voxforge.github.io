@@ -59,7 +59,7 @@ View.Settings.prototype.initPopup = function(message) {
 
 View.Settings.prototype._setRecordingInformation = function() {
     this._setupCheckBox("recording_time_reminder", false, true);
-    this._setupCheckBox("recording_geolocation_reminder", false, true);             
+    this._setupCheckBox("recording_geolocation_reminder", false, true);
 }
 
 View.Settings.prototype._setupCheckBox = function(
@@ -70,9 +70,7 @@ View.Settings.prototype._setupCheckBox = function(
     var checkbox = new View.Checkbox(
         func_name,
         default_checked,
-        default_disabled,        
-        function(){console.log(func_name + " enabled")},
-        function(){console.log(func_name + " disabled")},);
+        default_disabled,);
     checkbox.setup();
 }
 
@@ -131,38 +129,104 @@ View.Settings.prototype._setSystemInformation = function() {
 View.Settings.prototype._setRecordInfoDependencies = function() {
      var recordInfo = new View.DependentElement(
         "display_record_info",
-        "recording_information_button_display",
-        false,
-        this._enableRecordInfoProperties.bind(this),
-        this._disableRecordInfoProperties.bind(this),);
+        "recording_information_button_display",);
     recordInfo.setup();
+}
+
+// #############################################################################
+
+View.DependentElement = function(
+    setting_checkbox, // independent element
+    button, ) // dependent element
+{
+    this.setting_checkbox = setting_checkbox;
+    this.button = button; // button to display recording information
+
+    this.$setting_checkbox = $('#' + setting_checkbox);
+    this.$button = $('#' + button);
+}
+
+View.DependentElement.prototype.setup = function() {
+    if ( this._dependentElementdoesNotExistInStorage() ) {
+        this._setupLocalStorage();
+    } else { 
+        this._getFromLocalStorage();
+    }
+
+    var self = this;
+    this.$setting_checkbox.change(function() { // not executed until user actually makes change to checkbox
+        if (this.checked) {
+            self._independentElementChecked.call(self);
+        } else {
+            self._independentElementUnchecked.call(self);          
+        }
+    });    
+}
+
+View.DependentElement.prototype._dependentElementdoesNotExistInStorage = function() {
+    return ! localStorage.getItem(this.button);
+}
+
+View.DependentElement.prototype._setupLocalStorage = function() {
+    localStorage.setItem(
+        this.button,
+        View.Settings._convertBooleanToString(false) );
+    this.$button.hide();
+
+    this.$setting_checkbox.prop('checked', false).change();
+}
+
+View.DependentElement.prototype._getFromLocalStorage = function() {
+    if ( localStorage.getItem(this.setting_checkbox) === 'true') {
+        this.$button.show();
+        this.$setting_checkbox.prop('checked', true);
+    } else {
+        this.$button.hide();            
+        this.$setting_checkbox.prop('checked', false);
+
+        //this._disableRecordInfoProperties(); // why is this not working???
+        this._updateCheckbox('#recording_time_reminder', true, false, false);
+        this._updateCheckbox('#recording_geolocation_reminder', true, false, false);     
+    }
+}
+
+View.DependentElement.prototype._independentElementChecked = function() {
+    localStorage.setItem(this.setting_checkbox, 'true');
+
+    this.$button.show();
+    localStorage.setItem(this.button, 'true');
+    
+    this._enableRecordInfoProperties();   
+}
+
+View.DependentElement.prototype._independentElementUnchecked = function() {
+    localStorage.setItem(this.setting_checkbox, 'false');
+
+    this.$button.hide();
+    localStorage.setItem(this.button, 'false');
+
+    this._disableRecordInfoProperties();      
 }
 
 /*
 // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
 */ 
-View.Settings.prototype._enableRecordInfoProperties = function() {
-    this._updateCheckbox('#recording_time_reminder', false, true);
-    this._updateCheckbox('#recording_geolocation_reminder', false, false);    
-}
-
-View.Settings.prototype._updateCheckbox = function(element, disabled, checked) {
-    $(element).prop('disabled', disabled );
-    $(element).prop('checked', checked).checkboxradio("refresh");
-    $(element).change(); // updates value in localstorage (triggers Checkbox change function to execute localstorage update)
+View.DependentElement.prototype._enableRecordInfoProperties = function() {
+    this._updateCheckbox('#recording_time_reminder', false, true, true);
+    this._updateCheckbox('#recording_geolocation_reminder', false, false, true);
 }
 
 /*
 * clear certain field entries when user clicks display_record_info off
 */
-View.Settings.prototype._disableRecordInfoProperties = function() {    
+View.DependentElement.prototype._disableRecordInfoProperties = function() {    
     this._clearLocationSpecificRecordingInformation();
     
-    this._updateCheckbox('#recording_time_reminder', true, false);
-    this._updateCheckbox('#recording_geolocation_reminder', true, false);    
+    this._updateCheckbox('#recording_time_reminder', true, false, true);
+    this._updateCheckbox('#recording_geolocation_reminder', true, false, true);
 }
 
-View.Settings.prototype._clearLocationSpecificRecordingInformation = function() {    
+View.DependentElement.prototype._clearLocationSpecificRecordingInformation = function() {    
     $('#recording_location').val($("select option:first").val()).change();
     $('#recording_location_other').val("").change();
     $('#background_noise').val($("select option:first").val()).change();
@@ -171,81 +235,14 @@ View.Settings.prototype._clearLocationSpecificRecordingInformation = function() 
     $('#noise_type_other').val("").change();
 }
 
-// #############################################################################
-
-View.DependentElement = function(
-    independent_element,
-    dependent_element,
-    default_bool,
-    func_on_true,
-    func_on_false,)
-{
-    this.independent_element = independent_element;
-    this.dependent_element = dependent_element;
-    this.default_bool = default_bool;
-    this.func_on_true = func_on_true;
-    this.func_on_false = func_on_false;
-
-    this.$independent_element = $('#' + independent_element);
-    this.$dependent_element = $('#' + dependent_element);
-}
-
-View.DependentElement.prototype.setup = function() {
-    if ( this._dependentElementdoesNotExistInStorage() ) {
-        this._setupLocalStorage();
-    } else {    
-        this._getFromLocalStorage();
-    }
-
-    var self = this;
-    this.$independent_element.change(function() {
-        if (this.checked) {
-            self._independentElementChecked.call(self);
-        } else {
-            self._independentElementUnchecked.call(self);          
-        }
-    });
-}
-
-View.DependentElement.prototype._dependentElementdoesNotExistInStorage = function() {
-    return ! localStorage.getItem(this.dependent_element);
-}
-
-View.DependentElement.prototype._setupLocalStorage = function() {
-    localStorage.setItem(
-        this.dependent_element,
-        View.Settings._convertBooleanToString(this.default_bool) );
-    this.$dependent_element.hide();
-
-    this.$independent_element.prop('checked', this.default_bool).change();
-}
-
-View.DependentElement.prototype._getFromLocalStorage = function() {
-    if ( localStorage.getItem(this.independent_element) === 'true') {
-        this.$dependent_element.show();
-        this.$independent_element.prop('checked', true);
+View.DependentElement.prototype._updateCheckbox = function(element, disabled, checked, refresh) {
+    $(element).prop('disabled', disabled );
+    if (refresh) {
+        $(element).prop('checked', checked).checkboxradio("refresh"); // this looks like its already being done within checkbox!!
     } else {
-        this.$dependent_element.hide();            
-        this.$independent_element.prop('checked', false);
+        $(element).prop('checked', checked);
     }
-}
-
-View.DependentElement.prototype._independentElementChecked = function() {
-    localStorage.setItem(this.independent_element, 'true');
-
-    this.$dependent_element.show();
-    localStorage.setItem(this.dependent_element, 'true');
-    
-    this.func_on_true();   
-}
-
-View.DependentElement.prototype._independentElementUnchecked = function() {
-    localStorage.setItem(this.independent_element, 'false');
-
-    this.$dependent_element.hide();
-    localStorage.setItem(this.dependent_element, 'false');
-    
-    this.func_on_false();   
+    $(element).change(); // updates value in localstorage (triggers Checkbox change function to execute localstorage update)
 }
 
 // #############################################################################
@@ -257,17 +254,13 @@ View.DependentElement.prototype._independentElementUnchecked = function() {
 View.Checkbox = function(
     element,
     default_checked,
-    default_disabled,    
-    func_if_true,
-    func_if_false)
+    default_disabled)
 {
     this.element = element;
     this.$element = $('#' + this.element);
      
     this.default_checked = default_checked; // element selected
     this.default_disabled = default_disabled;  // element display disabled  
-    this.func_if_true = func_if_true;
-    this.func_if_false = func_if_false;
 }
 
 View.Checkbox.prototype.setup = function() {
@@ -288,7 +281,7 @@ View.Checkbox.prototype._firstTimeSetup = function() {
 }
 
 View.Checkbox.prototype._performDefaultSetup = function() {
-    this._execElementDefaultFunction(this.default_checked);
+    this._logCheckboxChange(this.default_checked);
     this._setElementValueInLocalStorage(this.default_checked); 
 
     this.$element.prop('checked', this.default_checked);
@@ -307,53 +300,36 @@ View.Checkbox.prototype._performDefaultSetup = function() {
  */
 View.Checkbox.prototype._setEventFunction = function() {
     var self = this;
-        
+
     this.$element.change( function() {
         self.$element.checkboxradio('refresh');
 
-        self._execElementDefaultFunction.call(self, this.checked);           
+        self._logCheckboxChange.call(self, this.checked);           
         self._setElementValueInLocalStorage.call(self, this.checked);
     } );
 }
 
-View.Checkbox.prototype._execElementDefaultFunction = function(test) {
-    if ( ! this._functionsExist() ) {
-        console.warn("missing default function(s)");
-        return;
-    }
-    
-    if (test) {
-        this.func_if_true();
+View.Checkbox.prototype._logCheckboxChange = function(checked) {
+    if (checked) {
+        console.log(this.element + " enabled");
     } else {
-        this.func_if_false();
+        console.log(this.element + " disabled");
     }
-}
-
-View.Checkbox.prototype._functionsExist = function(func) {
-    return this.func_if_true && this.func_if_false;
 }
 
 View.Checkbox.prototype._setElementValueInLocalStorage = function(bool) {
     localStorage.setItem(
         this.element,
-        View.Settings._convertBooleanToString(bool) ); 
+        View.Settings._convertBooleanToString(bool) );
 }
 
 View.Checkbox.prototype._restoreSettingsFromLocalStorage = function() {
     var checked = localStorage.getItem(this.element) === 'true';
-    
+
     this._setDefaultPropertyFromLocalStorage(checked);
-    this._setDefaultFunctionFromLocalStorage(checked);    
+    this._logCheckboxChange(checked);
 }
 
 View.Checkbox.prototype._setDefaultPropertyFromLocalStorage = function(checked) {
     this.$element.prop('checked', checked);
-}
-
-View.Checkbox.prototype._setDefaultFunctionFromLocalStorage = function(checked) {
-    if ( checked ) {
-        if (this.func_if_true) { this.func_if_true() }
-    } else {
-        if (this.func_if_false) { this.func_if_false() }             
-    }
 }
