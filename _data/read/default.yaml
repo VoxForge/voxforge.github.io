@@ -334,7 +334,7 @@ speechCharacteristics:
   audio_too_loud_text: >
     Your recording is too loud!
     Please reduce your microphone volume,
-    then delete this recording and re-record the prompt.
+    then delete this recording and re-record it.
   audio_too_soft_short: 'Warning: not loud enough!'   
   audio_too_soft_text: >
     Your recording levels are too low!
@@ -342,15 +342,16 @@ speechCharacteristics:
     then delete this prompt recording and re-record it.
   no_trailing_silence_short: 'Warning: no trailing silence.'
   no_trailing_silence_text: >
-    Not enough silence at end of recording (i.e. you clicked 'stop' too early).  
+    There might not be enough silence at end of your recording (i.e. you
+    clicked 'stop' too early).  
     Please review and make sure there is some silence (at least
     1/4 of a second) at end of this recording.
-    If not, delete and re-record the prompt.
+    If not, delete and re-record it.
   no_speech_short: 'Error: no speech.'
   no_speech_text: >
-    No Speech (or microphone volume too low).
+    No Speech (or microphone volume too low) in recording.
     Please increase microphone volume,
-    then delete and re-record this prompt.
+    then delete and re-record its.
     
 settings:
   title: Settings
