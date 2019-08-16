@@ -84,7 +84,7 @@ View.Settings.prototype._audioVisualizer = function() {
     var default_checked = true;
     var default_disabled = false;
     
-    var checkbox = new View.Checkbox(
+    var checkbox = new View.CheckboxWithFunction(
         "audio_visualizer",
         default_checked,
         default_disabled,        
@@ -198,9 +198,8 @@ View.DependentElement.prototype._independentElementChecked = function() {
 
 View.DependentElement.prototype._independentElementUnchecked = function() {
     localStorage.setItem(this.setting_checkbox, 'false');
-
-    this.$button.hide();
     localStorage.setItem(this.button, 'false');
+    this.$button.hide();
 
     this._disableRecordInfoProperties();      
 }
@@ -282,7 +281,7 @@ View.Checkbox.prototype._firstTimeSetup = function() {
 }
 
 View.Checkbox.prototype._performDefaultSetup = function() {
-    this._logCheckboxChange(this.default_checked);
+    this._runFunction(this.default_checked);
     this._setElementValueInLocalStorage(this.default_checked); 
 
     this.$element.prop('checked', this.default_checked);
@@ -305,12 +304,12 @@ View.Checkbox.prototype._setEventFunction = function() {
     this.$element.change( function() {
         self.$element.checkboxradio('refresh');
 
-        self._logCheckboxChange.call(self, this.checked);           
+        self._runFunction.call(self, this.checked);           
         self._setElementValueInLocalStorage.call(self, this.checked);
     } );
 }
 
-View.Checkbox.prototype._logCheckboxChange = function(checked) {
+View.Checkbox.prototype._runFunction = function(checked) {
     if (checked) {
         console.log(this.element + " enabled");
     } else {
@@ -333,4 +332,33 @@ View.Checkbox.prototype._restoreSettingsFromLocalStorage = function() {
 
 View.Checkbox.prototype._setDefaultPropertyFromLocalStorage = function(checked) {
     this.$element.prop('checked', checked);
+}
+
+// https://eli.thegreenplace.net/2013/10/22/classical-inheritance-in-javascript-es5
+// #############################################################################
+// subclass
+View.CheckboxWithFunction = function(
+    element,
+    default_checked,
+    default_disabled,
+    func_if_true,
+    func_if_false,)
+{
+    // Call constructor of superclass to initialize superclass-derived members.
+    View.Checkbox.call(this, element, default_checked, default_disabled);
+
+    this.func_if_true = func_if_true;
+    this.func_if_false = func_if_false;
+}
+
+// Audio.VadWorker derives from Audio.Worker
+View.CheckboxWithFunction.prototype = Object.create(View.Checkbox.prototype);
+View.CheckboxWithFunction.prototype.constructor = View.Checkbox;
+
+View.CheckboxWithFunction.prototype._runFunction = function(test) {
+    if (test) {
+        this.func_if_true();
+    } else {
+        this.func_if_false();
+    }
 }
