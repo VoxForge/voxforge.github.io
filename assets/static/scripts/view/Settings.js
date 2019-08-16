@@ -233,13 +233,17 @@ View.DependentElement.prototype._clearLocationSpecificRecordingInformation = fun
 }
 
 /*
- *  // $(element).prop('checked', checked).checkboxradio("refresh"); // refresh already being done within checkbox event function
- *  $(element).change(); // updates value in localstorage (triggers Checkbox change function to execute localstorage update)
+ *  //$(element).prop('checked', checked).checkboxradio("refresh"); // refresh
+ *    already being done within checkbox event function
+
+ *  $(element).change(); // updates value in localstorage (triggers Checkbox
+ *    change function to execute localstorage update)
+ *    see: View.Checkbox.prototype._setEventFunction
  */
 View.DependentElement.prototype._updateCheckbox = function(element, disabled, checked) {
     $(element).prop('disabled', disabled );
     $(element).prop('checked', checked);
-    $(element).change();
+    $(element).change(); // updates value in localstorage
 }
 
 // #############################################################################
