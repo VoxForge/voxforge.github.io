@@ -358,6 +358,8 @@ View.Checkbox.prototype._setDefaultFunctionFromLocalStorage = function(checked) 
     }
 }
 
+// TODO this should be in its own file, because it is called directly by View
+// and is not call by Settings 
 View.PromptSettings = function(
     parms,
     prompts, )
@@ -389,6 +391,7 @@ View.PromptSettings.prototype._setupChangeFunctions = function() {
             self.prompts, new_numPromptsToRead );
         self.updateProgress();
 
+        // TODO should be in Prompts class
         localStorage.setItem(
             self.element,
             new_numPromptsToRead );
@@ -402,16 +405,28 @@ View.PromptSettings.prototype._setupChangeFunctions = function() {
 */
 View.PromptSettings.prototype._displayPrompts = function() {
     var min = this.parms.numPromptsToRead.min;
-    var max = this.parms.numPromptsToRead.max;    
+    var max = this.parms.numPromptsToRead.max;
     var incr = this.parms.increment;
+
+    // TODO how to set default based on what is stored in localstorage
+    var option = '';
     
-    var option = ''; // clear previous use of option var // TODO why is this required??? should go out of scope after method is called???   
     for (var i=min; i <= max; i = i + incr) {
        option += '<option value="'+ i + '">' + i +  '</option>';
     }
-    
     this.$element.append(option);
+    this._setDefaultNumberOfPrompts();
     this.$element_display.show();
+}
+
+/*
+ * set default number of prompts in prompts selector
+ */
+View.PromptSettings.prototype._setDefaultNumberOfPrompts = function() {
+    var numPromptsToRead = localStorage.getItem(this.element);
+    if ( numPromptsToRead ) {
+        this.$element.val( numPromptsToRead );
+    }
 }
 
 /**
