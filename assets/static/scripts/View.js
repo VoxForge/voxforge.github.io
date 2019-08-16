@@ -134,10 +134,10 @@ View.prototype.init = function() {
     var self = this;
 
     this.displayDefaults.setup();
-    this.$numPromptsToRead = this.promptSettings.setup(); 
+    this.$numPromptsToRead = this.promptSettings.setup();
     this.settings.initPopup();
 
-    this.submissionsLog.setupDisplay();    
+    this.submissionsLog.setupDisplay();
     this._turnAllButtonsOff();
     if ( this._runVad() ) {
         this.enableVoiceActivityDetection();

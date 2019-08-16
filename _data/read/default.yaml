@@ -2,7 +2,7 @@
 
 # default language
 lang: en
-appversion: "0.3.3"
+appversion: "0.3.4"
 appversion_text: "App ver."
 
 username_label: Username

@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 'use strict';
-    
+
 /**
 * setup app settings Popup for user to modify
 */
@@ -30,15 +30,11 @@ View.Settings = function() {
  * Local storage only uses strings (no booleans)
  */
 View.Settings._convertBooleanToString = function(bool) {
-    var bool_string;
-    
     if (bool) {
-        bool_string = 'true';
+        return 'true';
     } else {
-        bool_string = 'false';
+        return 'false';
     }
-
-    return bool_string;
 }
 
 /**
@@ -57,12 +53,13 @@ View.Settings._convertBooleanToString = function(bool) {
 View.Settings.prototype.initPopup = function(message) {
     this._setResourceIntensive();
     this._setSystemInformation();
-    this._setRecordInfo();
-    this._setRecordingInformation();    
+    this._setRecordInfoDependencies();
+    this._setRecordingInformation();
 }
 
 View.Settings.prototype._setRecordingInformation = function() {
-    this._setupCheckBox("recording_time_reminder", false, true);       
+    this._setupCheckBox("recording_time_reminder", false, true);
+    this._setupCheckBox("recording_geolocation_reminder", false, true);             
 }
 
 View.Settings.prototype._setupCheckBox = function(
@@ -80,7 +77,6 @@ View.Settings.prototype._setupCheckBox = function(
 }
 
 View.Settings.prototype._setResourceIntensive = function() {
-    this._setupCheckBox("recording_geolocation_reminder", false, true);      
     this._setupCheckBox("vad_run", true, false);
     this._audioVisualizer();
     this._setupCheckBox("waveform_display", true, false);      
@@ -124,46 +120,48 @@ View.Settings.prototype._removeVisualizer = function() {
         visualizer.parentNode.removeChild(visualizer); // remove from DOM
     }
 
-    console.log("audio_visualizer disabled");            
+    console.log("audio_visualizer disabled");
 }
 
 View.Settings.prototype._setSystemInformation = function() {
-    this._setupCheckBox("ua_string", true, false);    
+    this._setupCheckBox("ua_string", true, false);
     this._setupCheckBox("debug", true, false);
 }
 
-View.Settings.prototype._setRecordInfo = function() {
-     var recordInfo = new View.DependentElement (
+View.Settings.prototype._setRecordInfoDependencies = function() {
+     var recordInfo = new View.DependentElement(
         "display_record_info",
         "recording_information_button_display",
         false,
-        this._setPropertiesTrue.bind(this),
-        this._clearLocationSpecificRecordingInformation.bind(this),);
-    recordInfo.setup();   
-}
-
-View.Settings.prototype._setPropertiesTrue = function() {
-    this._setProperties(true);
-    console.log("display_record_info enabled"); 
+        this._enableRecordInfoProperties.bind(this),
+        this._disableRecordInfoProperties.bind(this),);
+    recordInfo.setup();
 }
 
 /*
 // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
-*/
-View.Settings.prototype._setProperties = function(checked) {        
-    $('#recording_time_reminder').prop( "disabled", ! checked );
-    $('#recording_time_reminder').prop('checked', checked).checkboxradio("refresh");
-    // TODO does change work with jQuery Mobile?
-    $('#recording_time_reminder').change(); // triggers change function
+*/ 
+View.Settings.prototype._enableRecordInfoProperties = function() {
+    this._updateCheckbox('#recording_time_reminder', false, true);
+    this._updateCheckbox('#recording_geolocation_reminder', false, false);    
+}
 
-    // only enable geolocation selection when Record Info available
-    $('#recording_geolocation_reminder').prop( "disabled", ! checked );
-    $('#recording_geolocation_reminder').change(); // triggers change function       
+View.Settings.prototype._updateCheckbox = function(element, disabled, checked) {
+    $(element).prop('disabled', disabled );
+    $(element).prop('checked', checked).checkboxradio("refresh");
+    $(element).change(); // updates value in localstorage (triggers Checkbox change function to execute localstorage update)
 }
 
 /*
 * clear certain field entries when user clicks display_record_info off
 */
+View.Settings.prototype._disableRecordInfoProperties = function() {    
+    this._clearLocationSpecificRecordingInformation();
+    
+    this._updateCheckbox('#recording_time_reminder', true, false);
+    this._updateCheckbox('#recording_geolocation_reminder', true, false);    
+}
+
 View.Settings.prototype._clearLocationSpecificRecordingInformation = function() {    
     $('#recording_location').val($("select option:first").val()).change();
     $('#recording_location_other').val("").change();
@@ -171,10 +169,6 @@ View.Settings.prototype._clearLocationSpecificRecordingInformation = function() 
     $('#noise_volume').val($("select option:first").val()).change();
     $('#noise_type').val($("select option:first").val()).change();
     $('#noise_type_other').val("").change();
-    
-    this._setProperties(false);
-    $('#recording_geolocation_reminder').prop('checked', false).checkboxradio("refresh");        
-    console.log("display_record_info disabled");           
 }
 
 // #############################################################################
@@ -270,8 +264,8 @@ View.Checkbox = function(
     this.element = element;
     this.$element = $('#' + this.element);
      
-    this.default_checked = default_checked;
-    this.default_disabled = default_disabled;    
+    this.default_checked = default_checked; // element selected
+    this.default_disabled = default_disabled;  // element display disabled  
     this.func_if_true = func_if_true;
     this.func_if_false = func_if_false;
 }
@@ -373,7 +367,7 @@ View.PromptSettings = function(
 
     this.element = "numPromptsToRead";
     this.$element = $('#' + this.element);
-    this.$element_display = $('#' + this.element + '_display');
+    this.$element_display = $('#' + this.element + '_display'); // numPromptsToRead_display
 }
 
 View.PromptSettings.prototype.setup = function() {
