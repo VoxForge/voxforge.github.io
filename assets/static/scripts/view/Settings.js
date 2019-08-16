@@ -84,41 +84,11 @@ View.Settings.prototype._audioVisualizer = function() {
     var default_checked = true;
     var default_disabled = false;
     
-    var checkbox = new View.CheckboxWithFunction(
+    var checkbox = new View.VisualizerCheckbox(
         "audio_visualizer",
         default_checked,
-        default_disabled,        
-        this._addVisualizer,
-        this._removeVisualizer);
+        default_disabled,);
     checkbox.setup();
-}
-
-/**
-* enable use of canvas visualizer
-*
-* user can disable on low resource devices
-*/
-View.Settings.prototype._addVisualizer = function() {    
-    var vu_meter = document.querySelector('#vu-meter');
-    var visualizer = document.createElement('canvas');
-    visualizer.classList.add('visualizer');
-    vu_meter.appendChild(visualizer);
-
-    console.log("audio_visualizer enabled");         
-}
-
-/**
-* see: https://dzone.com/articles/how-you-clear-your-html5
-*/
-View.Settings.prototype._removeVisualizer = function() {       
-    var visualizer = document.querySelector('.visualizer');
-    
-    if ( visualizer ) {
-        visualizer.width = visualizer.width; // clear canvas
-        visualizer.parentNode.removeChild(visualizer); // remove from DOM
-    }
-
-    console.log("audio_visualizer disabled");
 }
 
 View.Settings.prototype._setSystemInformation = function() {
@@ -337,28 +307,51 @@ View.Checkbox.prototype._setDefaultPropertyFromLocalStorage = function(checked) 
 // https://eli.thegreenplace.net/2013/10/22/classical-inheritance-in-javascript-es5
 // #############################################################################
 // subclass
-View.CheckboxWithFunction = function(
+View.VisualizerCheckbox = function(
     element,
     default_checked,
-    default_disabled,
-    func_if_true,
-    func_if_false,)
+    default_disabled,)
 {
     // Call constructor of superclass to initialize superclass-derived members.
     View.Checkbox.call(this, element, default_checked, default_disabled);
-
-    this.func_if_true = func_if_true;
-    this.func_if_false = func_if_false;
 }
 
 // Audio.VadWorker derives from Audio.Worker
-View.CheckboxWithFunction.prototype = Object.create(View.Checkbox.prototype);
-View.CheckboxWithFunction.prototype.constructor = View.Checkbox;
+View.VisualizerCheckbox.prototype = Object.create(View.Checkbox.prototype);
+View.VisualizerCheckbox.prototype.constructor = View.Checkbox;
 
-View.CheckboxWithFunction.prototype._runFunction = function(test) {
+View.VisualizerCheckbox.prototype._runFunction = function(test) {
     if (test) {
-        this.func_if_true();
+        this._addVisualizer();
     } else {
-        this.func_if_false();
+        this._removeVisualizer();
     }
+}
+
+/**
+* enable use of canvas visualizer
+*
+* user can disable on low resource devices
+*/
+View.VisualizerCheckbox.prototype._addVisualizer = function() {    
+    var vu_meter = document.querySelector('#vu-meter');
+    var visualizer = document.createElement('canvas');
+    visualizer.classList.add('visualizer');
+    vu_meter.appendChild(visualizer);
+
+    console.log("audio_visualizer enabled");         
+}
+
+/**
+* see: https://dzone.com/articles/how-you-clear-your-html5
+*/
+View.VisualizerCheckbox.prototype._removeVisualizer = function() {       
+    var visualizer = document.querySelector('.visualizer');
+    
+    if ( visualizer ) {
+        visualizer.width = visualizer.width; // clear canvas
+        visualizer.parentNode.removeChild(visualizer); // remove from DOM
+    }
+
+    console.log("audio_visualizer disabled");
 }
