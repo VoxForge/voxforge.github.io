@@ -297,7 +297,7 @@ View.Checkbox.prototype._restoreSettingsFromLocalStorage = function() {
     var checked = localStorage.getItem(this.element) === 'true';
 
     this._setDefaultPropertyFromLocalStorage(checked);
-    this._logCheckboxChange(checked);
+    this._runFunction(checked);
 }
 
 View.Checkbox.prototype._setDefaultPropertyFromLocalStorage = function(checked) {
