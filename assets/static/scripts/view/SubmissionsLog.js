@@ -63,6 +63,8 @@ View.SubmissionsLog.prototype._popupafterclose = function() {
 }
 
 // TODO need to check for empty indexedDB - error occurs
+// TODO .keys generate an array that seems to be in hash order.  Not sure how to
+// in submission date/time order
 View.SubmissionsLog.prototype._getSubmissionListPromises = function() {
     var self = this;
     
