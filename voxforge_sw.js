@@ -66,8 +66,9 @@ var urlsToCache = [
   PATH + 'scripts/View.js',
   PATH + 'scripts/view/AudioPlayer.js',
   PATH + 'scripts/view/buttons.js',  
-  PATH + 'scripts/view/DisplayDefaults.js',  
-  PATH + 'scripts/view/ProfileView.js',
+  PATH + 'scripts/view/DisplayDefaults.js',
+  PATH + 'scripts/view/ProfileView.js',  
+  PATH + 'scripts/view/PromptSettings.js',
   PATH + 'scripts/view/Settings.js',
   PATH + 'scripts/view/SubmissionsLog.js',        
 
