@@ -184,17 +184,14 @@ View.DependentElement.prototype._getFromLocalStorage = function() {
         this.$button.hide();            
         this.$setting_checkbox.prop('checked', false);
 
-        //this._disableRecordInfoProperties(); // why is this not working???
-        this._updateCheckbox('#recording_time_reminder', true, false, false);
-        this._updateCheckbox('#recording_geolocation_reminder', true, false, false);     
+        this._disableRecordInfoProperties();
     }
 }
 
 View.DependentElement.prototype._independentElementChecked = function() {
     localStorage.setItem(this.setting_checkbox, 'true');
-
-    this.$button.show();
     localStorage.setItem(this.button, 'true');
+    this.$button.show();
     
     this._enableRecordInfoProperties();   
 }
@@ -212,8 +209,8 @@ View.DependentElement.prototype._independentElementUnchecked = function() {
 // https://stackoverflow.com/questions/13675364/checking-unchecking-checkboxes-inside-a-jquery-mobile-dialog
 */ 
 View.DependentElement.prototype._enableRecordInfoProperties = function() {
-    this._updateCheckbox('#recording_time_reminder', false, true, true);
-    this._updateCheckbox('#recording_geolocation_reminder', false, false, true);
+    this._updateCheckbox('#recording_time_reminder', false, true);
+    this._updateCheckbox('#recording_geolocation_reminder', false, false);
 }
 
 /*
@@ -222,8 +219,8 @@ View.DependentElement.prototype._enableRecordInfoProperties = function() {
 View.DependentElement.prototype._disableRecordInfoProperties = function() {    
     this._clearLocationSpecificRecordingInformation();
     
-    this._updateCheckbox('#recording_time_reminder', true, false, true);
-    this._updateCheckbox('#recording_geolocation_reminder', true, false, true);
+    this._updateCheckbox('#recording_time_reminder', true, false);
+    this._updateCheckbox('#recording_geolocation_reminder', true, false);
 }
 
 View.DependentElement.prototype._clearLocationSpecificRecordingInformation = function() {    
@@ -235,14 +232,14 @@ View.DependentElement.prototype._clearLocationSpecificRecordingInformation = fun
     $('#noise_type_other').val("").change();
 }
 
-View.DependentElement.prototype._updateCheckbox = function(element, disabled, checked, refresh) {
+/*
+ *  // $(element).prop('checked', checked).checkboxradio("refresh"); // refresh already being done within checkbox event function
+ *  $(element).change(); // updates value in localstorage (triggers Checkbox change function to execute localstorage update)
+ */
+View.DependentElement.prototype._updateCheckbox = function(element, disabled, checked) {
     $(element).prop('disabled', disabled );
-    if (refresh) {
-        $(element).prop('checked', checked).checkboxradio("refresh"); // this looks like its already being done within checkbox!!
-    } else {
-        $(element).prop('checked', checked);
-    }
-    $(element).change(); // updates value in localstorage (triggers Checkbox change function to execute localstorage update)
+    $(element).prop('checked', checked);
+    $(element).change();
 }
 
 // #############################################################################
