@@ -149,10 +149,10 @@ license:
     title: Creative Commons Licences
     link: https://creativecommons.org/licenses/?lang=fr
     hover_text: >
-      CC0 - Public Domain Dedication
-      CC BY - Attribution
-      CC BY-SA - Attribution-ShareAlike
-      GPLv3 - GNU General Public License
+      CC0 1.0 - Creative Commons Public Domain Dedication;
+      CC BY 4.0 - Creative Commons Attribution;
+      CC BY-SA 4.0 - Creative Commons Attribution-ShareAlike;
+      GPLv3 - GNU General Public License.
     text:  > 
       <b>CC0 - Creative Commons - Pas de droit d’auteur</b> permet aux titulaires de droits de 
       renoncer à tous leurs droits et de placer une œuvre dans le domaine 
@@ -223,6 +223,7 @@ alert_message:
     téléchargé sur serveur Web VoxForge
   serviceworker: serviceworker
   webworker: webworker
+  workernotfound: worker type not found  
   submission_singular: soumission
   submission_plural: soumissions
 
@@ -244,6 +245,9 @@ alert_message:
   location_change: >
     Changement de lieu: S'il vous plaît examiner vos paramètres d'enregistrement
     et Si nécessaire, mettez à jour votre localisation et le niveau de bruit.
+  noise_Turn_Off_Vad: >
+    Bruit de fond présent. Vous devrez peut-être désactiver le DAV (Détection
+    d'activité vocale) dans Paramètres, puis supprimer et réenregistrer.
 
 speechCharacteristics:
   audio_too_loud_short: 'Erreur: Volume trop fort.'
@@ -257,36 +261,48 @@ speechCharacteristics:
     Veuillez réenregistrer.
   no_trailing_silence_short: 'Avertissement: Enregistrement coupé'
   no_trailing_silence_text: >  
-    Le systeme pense que avez couper votre enregistrement (vous avez cliqué
-    trop tôt)
-    Veuillez examiner cet enregistrement, et supprimer et réenregistrer si nécessaire.
+    Il se peut qu’il n’y ait pas assez de silence à la fin de votre
+    enregistrement (c’est-à-dire que cliqué sur 'arrêter' trop tôt).
+    Veuillez vous assurer qu'il y a un peu de silence (au moins
+    1/4 de seconde) à la fin de cet enregistrement.
+    Sinon, supprimez-le et enregistrez-le à nouveau.
   no_speech_short: "Erreur: Pas d'audio enregistré!"
   no_speech_text: >  
     Pas d'audio vocal enregistré! Veuillez supprimer et réenregistrer.
-              
+    Pas de parole (ou votre volume de microphone est trop faible) en enregistrement.
+    S'il vous plaît augmenter le volume du microphone et veuillez supprimer
+    et réenregistrer.
+
 settings:
   title: Paramètres
-  none: null  
+  none: null
+  recording_information_text: Rappels
+  recording_information_text_2: >
+      (pour vous rappeler de vous assurer que vos paramètres d'informations
+      d'enregistrement sont toujours valide si vous avez changé d’emplacement
+      depuis votre dernier enregistrement).
   display_record_info: >
-    Enregistrement d'informations (doit être mis à jour chaque fois
-    que votre location ou les caractéristiques de bruit changent)  
-  resource_intensive_text: >
-    Fonctions gourmandes en ressources (désactivez-les pour améliorer
-    la qualité d'enregistrement sur les appareils à faible consommation)
-  vad_run: Détection d'activité vocale (VAD)
-  recording_geolocation_reminder: Rappel de changement de lieu d'enregistrement utilizant géolocalisation
+    Afficher la section "Informations d'enregistrement"
   recording_time_reminder: >
-    rappel pour "Vérifier les informations d'enregistrement", utilisant temps
-    écoulé depuis la dernière soumission.
+    utilisez le temps écoulé depuis votre dernier enregistrement pour déterminer
+    quand rappeler.
+  recording_geolocation_reminder: >
+    Rappel de changement de lieu d'enregistrement utilizant géolocalisation
+    
+  resource_intensive_text: Fonctions gourmandes en ressources
+  resource_intensive_text_2: >  
+     (désactivez-les pour améliorer la qualité d'enregistrement sur les
+     appareils à faible consommation)
+  vad_run: Détection d'activité vocale (DAV)
+
   audio_visualizer: Visualiseur Audio
   waveform_display: Affichage de forme d'onde pour chaque enregistrement
   saved_submissions: En attente de téléchargement (enregistré dans la mémoire du navigateur)
   uploaded_submissions: Soumissions téléchargées
-  system_information_text: Informations système incluses dans la soumission
+  system_information_text: Informations système
+  system_information_text_2: (incluses dans la soumission)  
   ua_string: Agent d'utilisateur
   debug_text: Paramètres audio du navigateur  
-  recording_information_text: Informations d'enregistrement - paramètres
-  other_heading: Général
 
 ---
 

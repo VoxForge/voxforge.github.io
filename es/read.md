@@ -77,13 +77,17 @@ native_speaker:
 first_language:
   label: Primer idioma
   popup_link: https://en.wikipedia.org/wiki/First_language
-  popup_text: lenguaje al que una persona ha estado expuesta desde el nacimiento o dentro del período crítico.
+  popup_text: >
+    lenguaje al que una persona ha estado expuesta desde el nacimiento o
+    dentro del período crítico.
   other_label: Otro primer idioma
 
 dialect:
   label: Dialecto de la pronunciación
   popup_link: https://es.wikipedia.org/wiki/Dialecto_(programación)
-  popup_text: variedad de un idioma que es una característica de un grupo particular de hablantes del idioma.
+  popup_text: >
+    variedad de un idioma que es una característica de un grupo particular de
+    hablantes del idioma.
   selection:
   - [España, [Español España]]
   - [America latina, [Español Mexicano, Español Argentina, Español Chile, Español Latinoamerica]]
@@ -174,8 +178,10 @@ instructions:
   lines:
     - 1. Haga clic en <b>Grabar</b> para comenzar y solo diga las palabras que aparecen en el cuadro siguiente.
     - 2. Haga clic en <b>Detener</b> cuando se haya completado.
+    - 3. <b> Revise </b> cualquier grabación con advertencias.        
   lastline: >
-    3. Cuando termine, haga clic en <b> Subir </b> para enviar sus grabaciones al servidor de VoxForge.
+    4. Cuando termine, haga clic en <b> Subir </b> para enviar sus grabaciones
+    al servidor de VoxForge.
 
 controls:
   record: Grabar
@@ -204,15 +210,16 @@ browser_support:
 # localstorage_message - <br> or \n line breaks don't work...
 alert_message:
   localstorage_message: >
-    No se puede conectar al servidor.
+    No es posible conectar con el servidor.
     Envío guardado en el almacenamiento del navegador.
     Se cargará con la siguiente presentación realizada con conexión al servidor.
   browsercontains_message: >
     El almacenamiento de su navegador contiene
   uploaded_message: >
     cargado en el servidor VoxForge
-  serviceworker: serviceworker
-  webworker: webworker
+  serviceworker: trabajador del servicio
+  webworker: trabajador web
+  workernotfound: tipo de trabajador no encontrado 
   submission_singular: sumisión
   submission_plural: sumisiones
 
@@ -233,54 +240,65 @@ alert_message:
   location_change: >
     Cambio de ubicación: Por favor revise la configuración de Información
     de grabación y, si es necesario, actualice su Ubicación y Niveles de ruido.
+  noise_Turn_Off_Vad: >
+    Ruido de fondo presente. Es posible que deba deshabilitar DAV (Detección
+    de actividad de voz) en Configuración, luego elimine y vuelva a grabar
+    su último mensaje.
 
 # TODO: fix draft translations below
 speechCharacteristics:
-  audio_too_loud_short: 'error: ¡Tu grabación es demasiado fuerte!'
+  audio_too_loud_short: 'Error: ¡Tu grabación es demasiado fuerte!'
   audio_too_loud_text: >
     ¡Tu grabación es demasiado fuerte!
     Por favor reduzca el volumen de su micrófono,
     luego borre esta grabación y vuelva a grabarla.
-  audio_too_soft_short:  'attencion: ¡Tus niveles de grabación son demasiado bajos!'
+  audio_too_soft_short:  'Attencion: ¡Tus niveles de grabación son demasiado bajos!'
   audio_too_soft_text: >  
     ¡Tus niveles de grabación son demasiado bajos!
     Por favor, aumente el volumen de su micrófono,
     luego borre esta grabación y vuelva a grabarla.
-  no_trailing_silence_short: 'attencion: La aplicación cree que no has dejado suficiente silencio.'
+  no_trailing_silence_short: 'Attencion: La aplicación cree que no has dejado suficiente silencio.'
   no_trailing_silence_text: >
     La aplicación cree que no has dejado suficiente silencio. Es posible que hayas hecho clic
     'para' demasiado temprano!
     Revise esta grabación rápida y elimine y vuelva a grabar si es necesario.
-  no_speech_short:  'error: No hay volumen de voz o grabación demasiado bajo.'
+  no_speech_short:  'Error: No hay volumen de voz o grabación demasiado bajo.'
   no_speech_text: >  
-    No hay volumen de voz o grabación demasiado bajo
-    Por favor, aumente el volumen de su micrófono,
-    luego borre y vuelva a grabar este mensaje.
+    Sin voz (o volumen de micrófono demasiado bajo) en la grabación.
+    Aumente el volumen del micrófono,
+    luego borre y vuelva a grabar su.
 
 settings:
   title: Configuración (haga clic en el cuadro para habilitar)
-  none: ??none??  
+  none: ninguna
+  recording_information_text: Recordatorios
+  recording_information_text_2: >
+    (para recordarle que se asegure de que la configuración de la información
+    de grabación aún esté válido, si cambió de ubicación desde su última
+    grabación).
   display_record_info: >
     Información de grabación (necesita actualizarse cada vez
     que cambia la ubicación o las características del ruido)
-  resource_intensive_text: >
-    Funciones intensivas de recursos (desactívelas para mejorar la grabación
-    calidad en dispositivos de baja potencia)
-  vad_run: Detección de actividad de voz (VAD)
-  recording_geolocation_reminder: >
-    Geolocalización recordatorio "Verificar información de grabación".
   recording_time_reminder: >
-    Tiempo transcurrido desde el último envío "Verificación de información de
-    grabación" recordatorio.
+    use el tiempo transcurrido desde su última grabación para determinar cuándo
+    recordar.
+  recording_geolocation_reminder: >
+    use el GPS para monitorear el cambio de ubicación para determinar cuándo
+    recordar (uso intensivo de recursos).
+  resource_intensive_text: Funciones intensivas en recursos
+  resource_intensive_text_2: >  
+    (desactívelas para mejorar la calidad de grabación en dispositivos de baja
+    potencia)
+    
+  vad_run: Detección de actividad de voz (DAV)
   audio_visualizer: Visualizador de audio
   waveform_display: Pantalla de forma de onda para cada grabación 
   saved_submissions: En espera de subir (guardado en el almacenamiento del navegador)
   uploaded_submissions: Sumisiones cargados
-  system_information_text: Información del sistema incluida en la sumisione
+  system_information_text: Información del sistema
+  system_information_text_2: (incluida en la sumisione)
   ua_string: Cadena de agente de usuario
   debug_text: Configuración de audio del navegador  
-  recording_information_text: Información de grabación - ajustes
-  other_heading: General
 
 ---
 

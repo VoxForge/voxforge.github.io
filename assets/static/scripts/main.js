@@ -55,6 +55,8 @@ var view;  // needs to be global so can be accessible to index.html
       window.alert( pageVariables.browser_support.no_indexedDB_message );          
     }
 
+    // TODO newer versions of Edge use same javascript engine as Chrome, so
+    // need to check version of edge
     // Edge webworkers do not support FormData, and their web worker debugging is not there yet...
     if (platform.os.family === "Windows" &&
        (platform.name === "Microsoft Edge" || platform.name === "IE" ) )
