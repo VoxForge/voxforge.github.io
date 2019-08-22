@@ -170,8 +170,9 @@ Audio.prototype._setupAudioNodes = function(stream) {
  */
 Audio.prototype._createAudioNodes = function() {
     this.microphone = this.audioCtx.createMediaStreamSource(this.stream);
+    // TODO gainNode no longer being used
     this.gainNode = this.audioCtx.createGain();
-    
+
     var numInputChannels = 1;
     var numOutputChannels = 1;    
     this.processor = this.audioCtx.createScriptProcessor(
@@ -185,6 +186,7 @@ Audio.prototype._createAudioNodes = function() {
 
 Audio.prototype._setAllAudioNodesToMono = function() {
     this.microphone.channelCount = 1;
+    // TODO gainNode no longer being used
     this.gainNode.channelCount = 1;
     this.processor.channelCount = 1;
     this.analyser.channelCount = 1;
@@ -192,6 +194,7 @@ Audio.prototype._setAllAudioNodesToMono = function() {
 }
 
 Audio.prototype._connectAudioNodes = function() {
+    // TODO gainNode no longer being used    
     this.microphone.connect(this.gainNode);    
     this.gainNode.connect(this.processor);
     this.processor.connect(this.audioCtx.destination);
@@ -274,6 +277,7 @@ Audio.prototype._getBitDepth = function () {
 }
 
 Audio.prototype._enableVisualizer = function () {
+    // TODO gainNode no longer being used
     this.gainNode.connect(this.analyser);
 }
 
@@ -331,6 +335,7 @@ Audio.prototype.endRecording = function (audio_visualizer_checked, vad_run) {
     this.processor.onaudioprocess = null;
 
     if (audio_visualizer_checked) {
+        // TODO gainNode no longer being used
         self.gainNode.disconnect(self.analyser);
     }
 }
