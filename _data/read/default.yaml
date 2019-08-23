@@ -13,6 +13,8 @@ default_value: not selected
 
 # Yes and No must be in quotes, otherwise evaluates to true/false
 # can't use 'yes' or 'no' as variable names in YAML
+# localized_variable.other is used in code to compare whether 'Other' has
+# been selected by user, so make sure they match in selection sections
 localized_variable:
   lv_yes: "Yes"
   lv_no: "No"
