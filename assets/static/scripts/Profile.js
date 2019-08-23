@@ -130,7 +130,8 @@ Profile.prototype._getParsedLocalStorageObject = function () {
 
 // TODO gets called twice to get same info
 // everytime a user uploads...
-// TODO need english translations of fields
+// TODO need english translations of fields and include in Profile.json file
+// in submission
 // TODO first language should be blank is user in native speaker
 Profile.prototype.toHash = function () {
     var profile_hash = this._getProfileAttributesFromViewClass();
