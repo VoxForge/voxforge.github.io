@@ -82,6 +82,8 @@ View.ProfileView.prototype._setLanguageCharacteristics = function() {
     this._setDialect();
 }
 
+// TODO first language should be blank (rather than 'not selected') if
+// user is a native speaker
 View.ProfileView.prototype._setNativeSpeaker = function() {
     $('#native_speaker').val( this.json_object.native_speaker );
     if ( this._isNativeSpeaker() ) {
@@ -391,6 +393,7 @@ View.ProfileView.prototype._clearUserAgentInfo = function() {
     this.profile_hash["manufacturer"] = '';
 }
 
+// TODO license hover not working
 View.ProfileView.prototype._getLicense = function() {
     this.profile_hash["license"] = $("#license").val();
 }

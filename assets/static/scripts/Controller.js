@@ -274,6 +274,8 @@ Controller.prototype._displayRecordingInfoChecked = function () {
     }
 }
 
+// TODO this should only appear once in a recording session, not for every
+// recording
 Controller.prototype._IfTooMuchBackgroundnoiseTurnOffVad = function () {
     if ( this.view.userSaysTooMuchBackgroundNoise() &&
         localStorage.getItem("vad_run") === 'true')
