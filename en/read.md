@@ -41,7 +41,9 @@ prompt_list_files:
 
 # see https://en.wikipedia.org/wiki/Regional_accents_of_English
 # ( https://en.wikipedia.org/wiki/List_of_dialects_of_the_English_language
-# https://en.wikipedia.org/wiki/Non-native_pronunciations_of_English 
+# https://en.wikipedia.org/wiki/Non-native_pronunciations_of_English
+# last selection must be sames as localized_variable.other so that script
+# will create text entry box for user to enter another dialect
 dialect:
   selection:
   - [British Isles, [British English, Scottish English, Welsh English, Irish English]]
