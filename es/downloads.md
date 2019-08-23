@@ -29,6 +29,6 @@ Por favor [contribuye con tu voz].
 [contribuye con tu voz]: /es/read
 [Speech Corpus]: https://repository.voxforge1.org/downloads/es/Trunk/Audio/
 [Nassos Katsamanis]: https://github.com/nassosoassos/spanish_voxforge_htk_asr
-[Ubanov]: https://dev.voxforge.org/projects/es/browser/Trunk/Ubanov
+[Ubanov]: http://dev.voxforge.org/projects/es/browser/Trunk/Ubanov
 [Listen]: http://localhost:4000/es/listen
 

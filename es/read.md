@@ -269,7 +269,7 @@ speechCharacteristics:
     luego borre y vuelva a grabar su.
 
 settings:
-  title: Configuración (haga clic en el cuadro para habilitar)
+  title: Configuración
   none: ninguna
   recording_information_text: Recordatorios
   recording_information_text_2: >
