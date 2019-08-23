@@ -1,0 +1,24 @@
+{
+  "short_name": "VoxForge",
+  "name": "Aplicación de grabación de voz en español de Voxforge",
+  "description": "Aplicación en español para grabar y cargar voz a VoxForge.org",
+  "dir": "rtl",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/voxforge-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/voxforge-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/es/read",
+  "background_color" : "#3367D6",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#3367D6"
+}

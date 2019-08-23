@@ -1,0 +1,1211 @@
+de2-01 Man versucht, durch Geheimhaltung Sicherheit zu erzeugen.
+de2-02 Diese Sicherheitslücken sind bisher unbekannt.
+de2-03 Das hat zur Folge, dass Angreifer sie nicht finden können.
+de2-04 Zu diesem Thema gibt es viele Bücher.
+de2-05 Die Konstruktion des Systems könnte den Angreifern bekannt sein.
+de2-06 Neben der Haustür steht ein Blumentopf.
+de2-07 Wer das Versteck kennt, kann die Haustür problemlos öffnen.
+de2-08 Das System wurde durch gefälschte Antworten beeinträchtigt.
+de2-09 Jedoch geht der Hauseigentümer davon aus,
+de2-10 dass den Schlüssel niemand finden kann.
+de2-11 Hierdurch wird das Sicherheitssystem unsicherer.
+de2-12 Ein Einbrecher würde sehr viel Zeit verlieren.
+de2-13 Es würde ihn von vornherein abschrecken.
+de2-14 AES gilt als ein sehr starker Algorithmus,
+de2-15 der nicht geheim gehalten werden muss.
+de2-16 Der Angreifer kann die Daten später entschlüsseln.
+de2-17 Diese Software darf verwendet, kopiert, verändert und vertrieben werden.
+de2-18 Die Software wurde unter einer freien Softwarelizenz veröffentlicht.
+de2-19 Es kommt auf die Freiheit an und nicht auf den Preis.
+de2-20 Man versteht hierunter die freie Rede und nicht lediglich Freibier.
+de2-21 Der Quellcode kann veröffentlicht sein, muss es aber nicht.
+de2-22 Das ist ein wichtiger, internationaler Fortschritt.
+de2-23 Die wirtschaftlichen Vorteile sind unübersehbar.
+de2-24 Holz ist die Substanz des Stammes, der Äste und Zweige.
+de2-25 Bei Holz handelt es sich um einen vielseitigen, nachwachsenden Rohstoff.
+de2-26 Entwicklungsgeschichtlich gesehen sind Nadelhölzer älter als Laubhölzer.
+de2-27 Nadelhölzer haben den einfacheren Zellaufbau.
+de2-28 Man unterscheidet Festigungsgewebe und Speichergewebe.
+de2-29 Ein unpräziser Begriff ist Tropenholz.
+de2-30 Tropenholz hat sehr viele positive Eigenschaften.
+de2-31 Es ist sehr beständig gegen Witterungseinflüsse und Insektenbefall.
+de2-32 Durch den Raubbau kann der Bestand der Regenwälder gefährdet sein.
+de2-33 Hierdurch werden die Ressourcen eines Computers stark belastet.
+de2-34 Der Computer wird in seiner Arbeitsfähigkeit eingeschränkt.
+de2-35 Zahlreiche Anfragen werden gestellt,
+de2-36 so dass nicht innerhalb von vernünftiger Zeit geantwortet werden kann.
+de2-37 Der Programmfehler ist dadurch ausgenutzt worden.
+de2-38 Der Angreifer sendet seine Datenpakete nicht unmittelbar an das Opfer.
+de2-39 Er trägt als Absenderadresse die Adresse des Opfers ein.
+de2-40 Der Ursprung des Angriffs lässt sich jedoch nicht mehr ermitteln.
+de3-01 In Frankreich wurde der Mindestlohn kürzlich erhöht.
+de3-02 Die Wehrpflicht soll in Deutschland leider noch nicht abgeschafft werden.
+de3-03 Wenn du etwas nicht willst, dann hat das keine Konsequenzen.
+de3-04 Er hat einen indirekten Wettbewerbsvorteil erlangt
+de3-05 gegenüber seinen Mitbewerbern, die benachteiligt sind.
+de3-06 Es geht nicht darum, in den Computer einzudringen.
+de3-07 Der Angreifer setzt dabei häufig einen Wurm ein,
+de3-08 der sich auf dem fremden System ausbreiten soll.
+de3-09 Welchen Geltungsbereich hat das deutsche Strafrecht?
+de3-10 Geregelt sind diejenigen Fälle, die einen Bezug zum Ausland haben.
+de3-11 Der Täter befindet sich im Ausland, oder der Täter ist ein Ausländer.
+de3-12 Der Erfolgsort und der Tatort fallen im Ausland zusammen,
+de3-13 die Tat soll aber im Inland verfolgt werden.
+de3-14 Das internationale Strafrecht ist nationales Strafanwendungsrecht.
+de3-15 Deutsche Strafrichter entscheiden nach deutschem Strafrecht.
+de3-16 Beim internationalen Privatrecht kann nach ausländischem Recht
+de3-17 gemäß Kollisionsrecht entschieden werden.
+de3-18 Ein Prozesshindernis liegt vor, wenn das deutsche Strafrecht nicht anwendbar ist.
+de3-19 Die Auslegung der deutschen Strafbestimmung ergibt,
+de3-20 dass der Schutzzweck der Norm sich auf inländische Rechtsgüter bezieht.
+de3-21 Im konkreten Fall hat der Täter ein ausländisches Rechtsgut verletzt.
+de3-22 Die Einzelheiten spielen jedoch in der heutigen Zeit vermutlich keine Rolle mehr.
+de3-23 Die Bundesrepublik Deutschland übte auf dem Gebiet der DDR keine Staatsgewalt aus.
+de3-24 Das Signal wird durch Frequenzanalyse in seine Bestandteile zerlegt.
+de3-25 Die Häufigkeit von Buchstaben eines Geheimtexts soll analysiert werden.
+de3-26 Somit können klassische Geheimtexte lesbar gemacht werden.
+de3-27 Bestimmte Buchstaben und Kombinationen erscheinen relativ häufig.
+de3-28 Innerhalb einer Sprache gibt es eine charakteristische Verteilung der Buchstaben.
+de3-29 Andere Kombinationen sind hingegen äußerst selten anzutreffen.
+de3-30 Wurde die Häufigkeit der Buchstaben unterdrückt?
+de3-31 Der Geheimtext kann durch recht einfache Methoden gehackt werden.
+de3-32 Jeder Buchstabe wurde durch den gleichen Buchstaben des Geheimtexts ausgetauscht.
+de3-33 Durch Kryptoanalyse kann der wahre Buchstabe herausgefunden werden.
+de3-34 Bei der Frequenzanalyse wird die Häufigkeit von Buchstaben gezählt.
+de3-35 Je länger die geheime Nachricht ist, desto größer ist die Genauigkeit.
+de3-36 Lange Nachrichten sind erheblich einfacher zu entschlüsseln als kurze Nachrichten.
+de3-37 Die Datenübertragungsrate wird in Bits pro Sekunde angegeben.
+de3-38 Es handelt sich nicht um die Entfernung pro Zeiteinheit,
+de3-39 sondern um die Datenmenge.
+de3-40 Häufig werden auch andere Abkürzungen verwendet.
+de3-41 Hierbei besteht eine einfache Verwechslungsgefahr.
+de3-42 In Abkürzungen wird daher häufig diese Angabe unterschlagen.
+de3-43 Darunter können sich viele Teilnehmer etwas vorstellen.
+de3-44 Auf diese Weise gewinnt man zwei ganz brauchbare Vergleichswerte.
+de3-45 Der technische Fortschritt ermöglicht immer höhere Bitraten.
+de3-46 Im Mainboard ist eine entsprechende Netzwerkkarte eingebaut.
+de3-47 Das Netzwerkkabel weist die notwendige Qualität auf für schnelle Datenübertragung.
+de3-48 Das Endgerät weist ebenfalls die entsprechende Kapazität auf.
+de3-49 Wer genügend Geld hat, sollte in diese Technik investieren.
+de3-50 Der Preisabstand dürfte beim Neuerwerb der Geräte ziemlich gering sein.
+de3-51 Die schnellere Technik ist verfügbar - eine Investition ist lohnenswert.
+de3-52 Mit dem Ausdruck DSL bezeichnet man verschiedene Techniken.
+de3-53 Über mindestens zwei Kupferadern werden Daten gesendet und empfangen.
+de3-54 Als Daten kommen insbesondere Text, Sprache, Musik und Fernsehen infrage.
+de3-55 Es geht um die Aufrechterhaltung alter Monopole.
+de3-56 Diese Technik wird überwiegend von Geschäftskunden verwendet.
+de3-57 Die moderne Technik ist noch nicht
+de3-58 an allen Standorten in Deutschland verfügbar.
+de3-59 Ein Telefonanschluss wurde in der früheren Zeit
+de3-60 häufig als unverzichtbar angesehen.
+de3-61 Die Reichweite hängt von unterschiedlichen Faktoren ab.
+de3-62 Der Durchmesser der Kupferleitung ist ausschlaggebend.
+de3-63 Dickere Kupferadern gewährleisten eine höhere Reichweite.
+de3-64 Die höchste erzielbare Datenübertragungsrate liegt niedriger,
+de3-65 je größer die Entfernung des Teilnehmers von der Vermittlungsstelle ist.
+de3-66 Es handelt sich hierbei um eine neuentwickelte Form von DSL,
+de3-67 die die Datenübertragung spürbar und deutlich beschleunigt.
+de3-68 Die Datenmenge, die gesendet wird, ist erheblich geringer
+de3-69 als diejenige Datenmenge, die empfangen wird.
+de3-70 Der Endbenutzer hat eine höhere Geschwindigkeit für den Download zur Verfügung.
+de3-71 Der durchschnittliche Internetnutzer benötigt
+de3-72 eine größere Datenübertragungsrate in Empfangsrichtung.
+de4-01 Stromverschlüsselung ist eine symmetrische Verschlüsselung.
+de4-02 Der unverschlüsselte Text wird Bit für Bit nacheinander verschlüsselt.
+de4-03 Größere Blöcke von Bits werden bei der Blockverschlüsselung verschlüsselt.
+de4-04 Zunächst müssen genügend Daten gesammelt werden,
+de4-05 die danach verschlüsselt werden.
+de4-06 Jede Datei kann über das ungesicherte Internet an den Empfänger gesendet werden.
+de4-07 Bei einem symmetrischen Kryptosystem wird anders vorgegangen.
+de4-08 Die Stromverschlüsselung wird üblicherweise mit einer höheren Geschwindigkeit durchgeführt.
+de4-09 Erhebliche Sicherheitsmängel sind möglich, wenn die Software nicht korrekt eingesetzt wird.
+de4-10 Auch theoretisch kann diese Art von Verschlüsselung nicht geknackt werden,
+de4-11 das wurde im Jahr 1949 bewiesen.
+de4-12 Es handelt sich um eine vollständig zufällige Abfolge von Zeichen.
+de4-13 Der Schlüsselstrom wird mit dem Klartext kombiniert.
+de4-14 Lediglich einige sehr kritische Anwendungen verwenden dieses Verfahren.
+de4-15 Hierbei werden sukzessive Elemente für die Verschlüsselung generiert.
+de4-16 Man nennt das synchrone Stromverschlüsselung.
+de4-17 Beim Organstreit streiten oberste Verfassungsorgane
+de4-18 über den Umfang der Rechte und Pflichten.
+de4-19 Hierbei wird die Rechtmäßigkeit von Maßnahmen überprüft,
+de4-20 die Mitglieder der obersten Verfassungsorgane betreffen können.
+de4-21 Dem Organstreit entspricht auf der kommunalen Ebene der Kommunalverfassungsstreit.
+de4-22 Der Organstreit ist im Bundesverfassungsgerichtsgesetz geregelt.
+de4-23 Organstreitverfahren können auch ausschließlich auf der Landesebene stattfinden.
+de4-24 Die Zuständigkeit liegt dann beim jeweiligen Landesverfassungsgericht.
+de4-25 Parteifähig ist, wer antragsberechtigt ist.
+de4-26 Die obersten Bundesorgane sind antragsberechtigt.
+de4-27 Welche obersten Bundesorgane gibt es?
+de4-28 Bundesorgane sind der Bundespäsident, der Bundestag, der Bundesrat, die Bundesregierung.
+de4-29 Auch Teile der genannten Organe sind antragsberechtigt,
+de4-30 beispielsweise der Bundestagspräsident oder ein Bundesminister oder eine Fraktion.
+de4-31 Streitgegenstand können nur Rechte und Pflichten sein,
+de4-32 die im Grundgesetz verankert sind.
+de4-33 Der Antragsteller muss die Verletzung eigener Rechte hinreichend geltendmachen.
+de4-34 Ob die behauptete Rechtsverletzung auch tatsächlich vorliegt,
+de4-35 ist in der Begründetheit zu behandeln.
+de4-36 Der Antrag ist schriftlich zu stellen.
+de4-37 Er ist zu begründen, wobei eine Frist von sechs Monaten gilt.
+de4-38 Das Bundesverfassungsgericht stellt fest,
+de4-39 ob die behauptete Rechtsverletzung auch tatsächlich vorliegt.
+de4-40 Eine Goldklausel ist eine Wertsicherungsklausel,
+de4-41 die sich nach dem Wert einer bestimmten Menge Gold richten kann.
+de4-42 Seit 1949 sind Goldklauseln in der BRD grundsätzlich verboten.
+de4-43 Der rheinische Kapitalismus war ein erfolgreiches Wirtschaftsmodell in Deutschland.
+de4-44 Beim rheinischen Kapitalismus handelt es sich um eine gemäßigte Form des Kapitalismus.
+de4-45 Sie ist auch unter der Bezeichnung soziale Marktwirtschaft bekannt.
+de4-46 Was waren die wesentlichen Kennzeichen des rheinischen Kapitalismus?
+de4-47 Die Vermögensverteilung war einigermaßen ausgeglichen.
+de4-48 Im Gegensatz zur heutigen Zeit gab es keine Superreichen.
+de4-49 Jeder Bürger konnte angemessenen Wohlstand erarbeiten.
+de4-50 Weil jeder die Früchte der eigenen Arbeit genießen konnte, gab es Wohlstand für alle.
+de4-51 Die Sozialbindung des Eigentums verhinderte die schrankenlose Anhäufung von Eigentum.
+de4-52 Im Laufe der Jahrzehnte wurden extreme Vermögen angehäuft, der moderne Feudalismus entstand.
+de4-53 Es ist ein ganz hervorragendes kostenloses Programm,
+de4-54 das unter einer freien Lizenz veröffentlicht wurde.
+de4-55 Diese Software unterstützt verschiedene Protokolle.
+de4-56 Die Daten der Verbindung und das Protokoll sind einsehbar.
+de4-57 Benutzername und optional das Passwort können gespeichert werden.
+de4-58 Im Fenster wird angezeigt, welche Befehle von FileZilla gesendet wurden.
+de4-59 Die Verzeichnisse und die einzelnen Dateien werden von der Schnittstelle angezeigt.
+de4-60 In der Warteschleife wird der gegenwärtige Status mitgeteilt.
+de4-61 Beide Projekte stehen nicht im Zusammenhang miteinander.
+de4-62 Der Quelltext kann jederzeit frei eingesehen werden.
+de4-63 Die Mathematik ist diejenige Wissenschaft, die das Rechnen mit Zahlen zum Gegenstand hat.
+de4-64 Eine allgemein anerkannte Definition der Mathematik gibt es nicht.
+de4-65 Die Mathematik gilt als eine der ältesten Wissenschaften.
+de4-66 In der ersten Hälfte des 20. Jahrhunderts wurde sie deutlich beeinflusst.
+de4-67 Man versuchte, die Mathematik vollständig in Axiome zu zerlegen
+de4-68 und die mathematischen Objekte auf die wesentlichen Eigenschaften zu reduzieren.
+de4-69 Wie kann die Teilbarkeit von ganzen Zahlen untersucht werden?
+de4-70 Wie können räumliche Beziehungen optimal rechnerisch erfasst werden?
+de4-71 Wie bestimmt man die Flächeninhalte unter den Kurven?
+de4-72 Er wollte Funktionen untersuchen und gekrümmte Flächen vermessen.
+de4-73 Mathematische Fragestellungen resultieren aus der Physik und der Ingenieurwissenschaft.
+de4-74 Mathematik wird von vielen Naturwissenschaftlern als Hilfswissenschaft verwendet.
+de4-75 Mathematik ist keine Naturwissenschaft im eigentlichen Sinn,
+de4-76 denn die Aussagen der Mathematik hängen nicht von Experimenten ab.
+de4-77 Die Mathematik hat zahlreiche Gemeinsamkeiten mit der Philosophie.
+de4-78 Im Bereich der Logik gibt es einen Überschneidungsbereich.
+de4-79 Die Mathematik kann man den Geisteswissenschaften im weiteren Sinne zuordnen.
+de4-80 Naturwissenschaftliche Erkenntnisse können durch neue Experimente widerlegt werden.
+de4-81 Mathematische Erkenntnisse werden nicht durch Experimente hervorgebracht,
+de4-82 sondern durch angestrengtes Nachdenken.
+de4-83 Ein streng logischer Beweis muss herausgefunden werden,
+de4-84 bevor die jeweilige mathematische Erkenntnis
+de4-85 als mathematischer Satz anerkannt werden kann.
+de4-86 Diese Funktechnik wird auf kurzen Strecken angewendet.
+de4-87 Kurze Kabelverbindungen sollen vermieden werden.
+de4-88 Nur das unmittelbare Umfeld des jeweiligen Senders wird abgedeckt.
+de4-89 Dieser Standard wurde am 14. Juni 2002 veröffentlicht.
+de4-90 Ziele sind das Erreichen höherer Übertragungsraten und ein geringerer Energieverbrauch.
+de4-91 Störungen durch Dritte sind relativ unwahrscheinlich,
+de4-92 weil man sich auf einen kleinen Raum beschränkt.
+de4-93 Ferner benötigt man nur eine geringe Sendeleistung,
+de4-94 die bei Notebooks zu einer Energieersparnis
+de4-95 und einer verlängerten Lebensdauer des Akkus führen kann.
+de4-96 Diese Telefonsoftware ist möglicherweise kostenlos erhältlich.
+de4-97 Man kann kostenfrei im Internet Telefongespräche führen.
+de4-98 Diese Software verwendet möglicherweise offene Standards.
+de4-99 Durch die Kombination kann das Gespräch abhörsicher geführt werden.
+de5-001 Hierbei kommen auch proprietäre Protokolle zur Anwendung.
+de5-002 Diese Einnahmen stammen aus krimineller Tätigkeit,
+de5-003 die durch Geldwäsche so verschleiert werden sollen,
+de5-004 dass beim durchschnittlichen Beobachter der Anschein erweckt wird,
+de5-005 das Geld würde aus rechtmäßigen Geschäften stammen.
+de5-006 Das Geld kann aus dem Drogenhandel stammen.
+de5-007 In den legalen Finanzkreislauf gelangt es durch Geldwäsche.
+de5-008 Nicht jedes Delikt ist geeignet, den Straftatbestand der Geldwäsche zu erfüllen.
+de5-009 Nur bestimmte Straftaten kommen in Betracht.
+de5-010 Hierzu gehören Verbrechen und bestimmte Vergehen,
+de5-011 die auch bandenmäßig begangen werden können.
+de5-012 Durch die Verschleierung soll erreicht werden,
+de5-013 dass Strafverfolgungsbehörden keinen Zugriff auf das Geld haben.
+de5-014 Ferner soll das Finanzamt keine Kenntnis vom Geld erhalten.
+de5-015 Der Schaden liegt nicht nur in der Straftat an sich,
+de5-016 sondern auch in der Steuerhinterziehung.
+de5-017 Ferner werden Konkurrenten benachteiligt.
+de5-018 Das Kreditinstitut hätte Verdachtsanzeige erstatten müssen.
+de5-019 Unter welchen Voraussetzungen müssen Rechtsanwälte Verdachtsanzeige erstatten?
+de5-020 Das Computernetzwerk besteht nicht nur ausschließlich aus kabellosen Elementen.
+de5-021 Der Datenaustausch findet zwischen den Notebooks statt.
+de5-022 Ein relativ schmales Frequenzband kommt zum Einsatz.
+de5-023 Dieses Frequenzband wird in mehrere sehr schmale Frequenzbänder unterteilt.
+de5-024 Grundrechtsverwirkung ist die Verwirkung von Bürgerrechten.
+de5-025 Artikel 18 definiert diejenige Grenze,
+de5-026 innerhalb derer politische Toleranz stattfindet.
+de5-027 Dadurch wird die streitbare Demokratie gestärkt.
+de5-028 Eine kämpferische und aggressive Haltung gegen die freiheitliche Grundordnung
+de5-029 kann zur Verwirkung der Grundrechte führen.
+de5-030 Das Bundesverfassungsgericht stellt die Verwirkung fest.
+de5-031 Bisher sind lediglich zwei oder vier Verwirkungsverfahren bekannt.
+de5-032 Die Verwirkung muss nicht unbedingt unbefristet ausgesprochen werden.
+de5-033 Sie kann zeitlich beschränkt oder wieder zurückgenommen werden.
+de5-034 Hierzu bedarf es einer Zukunftsprognose.
+de5-035 Die Vertragsfreiheit ist Ausfluss der allgemeinen Handlungsfreiheit.
+de5-036 Es ist jedermann erlaubt, Verträge frei abzuschließen.
+de5-037 Vertragspartner und Vertragsgegenstand können frei bestimmt werden,
+de5-038 sofern nicht gegen höherrangiges Recht verstoßen wird.
+de5-039 § 253 StGB schützt auch die freie Willensbildung.
+de5-040 Man unterscheidet Abschlussfreiheit,
+de5-041 Inhaltsfreiheit, Formfreiheit und Aufhebungsfreiheit.
+de5-042 Die Abschlussfreiheit bezeichnet das Recht, sich frei entscheiden zu können,
+de5-043 ob man mit jemandem einen Vertrag abschließen möchte oder nicht.
+de5-044 Diese Freiheit ist durch Gesetz beschränkbar.
+de5-045 Man spricht in diesem Fall von Kontrahierungszwang.
+de5-046 Inhaltsfreiheit bedeutet, dass der Inhalt der vertraglichen Vereinbarungen
+de5-047 von den Vertragsparteien frei bestimmt werden kann.
+de5-048 Vom Gesetz bisher nicht vorgesehene neue Vertragstypen können geschaffen werden.
+de5-049 Die Inhaltsfreiheit wird durch den Typenzwang beschränkt.
+de5-050 Der Typenzwang gilt im deutschen Sachenrecht.
+de5-051 Grundsätzlich können Verträge ohne Einhaltung
+de5-052 einer bestimmten Form abgeschlossen werden.
+de5-053 Es kann auch eine Form gewählt werden, die im Gesetz nicht vorgesehen ist.
+de5-054 Ausnahmsweise kann eine bestimmte Form durch das Gesetz vorgeschrieben sein.
+de5-055 Gesetzliche Formvorschriften dienen dem Schutz
+de5-056 eines oder beider Vertragschließenden.
+de5-057 Aufhebungsfreiheit bedeutet, dass ein einmal
+de5-058 geschlossener Vertrag auch wieder aufgelöst werden kann.
+de5-059 Die persönliche Entscheidungsfreiheit wird
+de5-060 noch verfassungskonform berücksichtigt.
+de5-061 Es handelt sich um eine freie Software
+de5-062 für die Verschlüsselung mit einem öffentlichen Schlüssel.
+de5-063 Die Entschlüsselung erfolgt mit einem privaten Schlüssel.
+de5-064 Sie ist Bestandteil der grafischen Oberfläche.
+de5-065 Die kryptografische Funktionalität wird von einer anderen Anwendung übernommen.
+de5-066 Das Signieren und Verifizieren muss ebenfalls durchgeführt werden.
+de5-067 Wie lautet die aktuelle Versionsnummer?
+de5-068 Gibt es zu diesem Programm eine illustrierte Anleitung?
+de5-069 Was unterscheidet eine verschuldensfähige
+de5-070 von einer beschränkt verschuldensfähigen Person?
+de5-071 Eine verschuldensunfähige Person wurde angeklagt.
+de5-072 Welche Personen gelten als verschuldensfähig?
+de5-073 Schuldunfähig ist, wer das siebte Lebensjahr noch nicht vollendet hat.
+de5-074 Im Zustand der Bewusstlosigkeit hat jemand einer anderen Person Schaden zugefügt.
+de5-075 Die Verantwortlichkeit liegt nicht vor, wenn man
+de5-076 ohne Verschulden alkoholisiert worden ist.
+de5-077 Es handelt sich um eine Hochebene in Bonn.
+de5-078 Im Zweiten Weltkrieg befanden sich in Deutschland viele Kasernen.
+de5-079 Im angrenzenden Kottenforst gab es Munitionslager.
+de5-080 In der Nachkriegszeit wurden die Kasernen umgebaut.
+de5-081 Der Stadtteil am Rande der Stadt wuchs sehr schnell.
+de5-082 Dort lebten unter anderem Willy Brandt, Ludwig Erhard und Heinrich Lübke.
+de5-083 Dort befindet sich ebenfalls ein mehr als 80 Meter hoher Sendemast.
+de5-084 Dort werden zahlreiche Rundfunkprogramme ausgestrahlt.
+de5-085 Im Jahr 1998 lebten dort 2000 Bürger.
+de5-086 Norwegen grenzt an Schweden, Finnland und Russland.
+de5-087 Norwegen ist eine parlamentarische Monarchie.
+de5-088 Es gibt zahlreiche Buchten an der etwa 20.000 km langen Atlantikküste.
+de5-089 Zahlreiche Wasserfälle gibt es im Landesinnern.
+de5-090 Die Zahl der Norweger steigt kontinuierlich an.
+de5-091 Dieses Land ist für Einwanderer sehr attraktiv.
+de5-092 Eine ehrenrührige Tatsache wurde gegenüber einer dritten Person mitgeteilt,
+de5-093 nicht jedoch gegenüber dem Tatopfer.
+de5-094 Der Täter geht von der Wahrheit der verbreiteten Tatsache aus.
+de5-095 Er wird dennoch bestraft, es sei denn
+de5-096 der Nachweis der ehrenrührigen Tatsache kann erbracht werden.
+de5-097 Die üble Nachrede nach § 186 ist zu bejahen.
+de5-098 Der Gläubiger hat das Recht, vom Schuldner eine Leistung verlangen zu dürfen.
+de5-099 Es gibt rechtsgeschäftliche und rechtsgeschäftsähnliche Schuldverhältnisse.
+de5-100 Daneben gibt es gesetzliche Schuldverhältnisse.
+de5-101 Was versteht man unter einem Schuldverhältnis im weiteren Sinn?
+de5-102 Der Gläubiger machte einen bestimmten Anspruch gegen den Schuldner geltend.
+de5-103 Der Schuldner ist davon überzeugt, zur Leistung verpflichtet zu sein.
+de5-104 Der Käufer verlangt vom Verkäufer die Herausgabe der gekauften Sache.
+de5-105 Der Verkäufer möchte dem Käufer die Sache geben.
+de5-106 Wann erlischt das Schuldverhältnis im engeren Sinne?
+de5-107 Die Sache ist vor Übergabe an den Käufer kaputtgegangen.
+de5-108 Das Schuldverhältnis ist wegen Unmöglichkeit erloschen.
+de5-109 Aus dem Schuldverhältnis im weiteren Sinne
+de5-110 können auch Kündigungsrechte abgeleitet werden.
+de5-111 Der Kaufvertrag ist ein Schuldverhältnis im weiteren Sinne.
+de5-112 Ein Schuldverhältnis entsteht regelmäßig durch Vertrag.
+de5-113 Ferner kann es durch die Aufnahme von Vertragsverhandlungen entstehen.
+de5-114 Beim Schuldverhältnis findet eine Beziehung
+de5-115 grundsätzlich nur zwischen Gläubiger und Schuldner statt.
+de5-116 Dritte können aus einem Schuldverhältnis nicht mit Ansprüchen belastet werden.
+de5-117 Dritte haben aus einem Schuldverhältnis grundsätzlich kein Forderungsrecht.
+de5-118 Sachenrechte wirken absolut, das heißt gegen jedermann.
+de5-119 Beim Forderungsrecht wird lediglich
+de5-120 der Vertragspartner des Schuldverhältnisses gebunden.
+de5-121 Bei einem dinglichen Recht wird jedermann gebunden.
+de5-122 Ein dingliches Recht wirkt gegen alle.
+de5-123 Jedermann muss das dingliche Recht respektieren.
+de5-124 Lehre von der absoluten Forderungszuständigkeit des Gläubigers
+de5-125 Forderungsrechte werden dem Gläubiger ausschließlich zugeordnet.
+de5-126 Die Forderung gehört ausschließlich dem Gläubiger.
+de5-127 Hat der Käufer gegenüber dem Verkäufer bereits
+de5-128 durch den Vertrag Eigentum an der Sache erworben?
+de5-129 Welche Ausnahmen vom Relativitätsgrundsatz gibt es?
+de5-130 Der Erwerber der Mietwohnung tritt in die Position des Vermieters ein.
+de5-131 Die Erwerberin hat Rechte und Pflichten aus dem Mietvertrag.
+de5-132 Der Mietvertrag hat dingliche Wirkung gegenüber dem Erwerber.
+de5-133 Der Erwerber des Betriebs tritt in die Pflichten des Arbeitsverhältnisses ein.
+de5-134 Der Mieter hat die Sache dem Dritten überlassen.
+de5-135 Die Mieterin verlangt die Sache vom Dritten zurück.
+de5-136 Wann ist das Mietverhältnis beendet worden?
+de6-01 Ein Dritter kann in den Schutzbereich des Vertrages einbezogen werden.
+de6-02 Der Dritte hat keinen Anspruch auf die Hauptleistung.
+de6-03 Der Schuldner verletzte seine Sorgfaltspflichten schuldhaft.
+de6-04 Wann hat der Dritte einen vertraglichen Schadensersatzanspruch?
+de6-05 Die Einbeziehung in den Schutzbereich wurde vereinbart.
+de6-06 Der Vertrag mit Schutzwirkung zu Gunsten Dritter ist
+de6-07 vom echten Vertrag zu Gunsten Dritter abzugrenzen,
+de6-08 wo der Dritte einen eigenen Anspruch hat.
+de6-09 Sorgfaltspflichten und Schutzpflichten sind
+de6-10 gegenüber dem Gläubiger zu beachten.
+de6-11 Über die Rechtsgrundlage besteht keine vollkommene Einigkeit.
+de6-12 Früher wurde § 328 BGB analog herangezogen.
+de6-13 Später wurde das als eigenständiges Rechtsinstitut betrachtet.
+de6-14 Von der Einbeziehung des Dritten in den Schutzbereich ist
+de6-15 durch ergänzende Vertragsauslegung auszugehen.
+de6-16 Nach der Gegenmeinung handelt es sich um eine Ausprägung nach § 242.
+de6-17 Der Vater geht mit seinem Sohn zum billigen Jakob.
+de6-18 Es ist streng genommen noch kein vorvertragliches Schuldverhältnis
+de6-19 zwischen Vater und Supermarkt zustandegekommen.
+de6-20 Der Vertrag kann streng genommen keine Lücke enthalten.
+de6-21 Im BGB gilt der Grundsatz, dass die vertragliche und
+de6-22 die deliktische Haftung unterschiedlich ausgestaltet sind.
+de6-23 Dieser Grundsatz soll nicht aufgegeben werden.
+de6-24 Es muss festgelegt werden, wer als Dritter geschützt werden soll.
+de6-25 Hierbei gelten folgende Tatbestandsmerkmale.
+de6-26 Der Dritte muss gemäß dem Vertrag mit der Hauptleistung des Schuldners
+de6-27 genauso in Berührung kommen wie der Gläubiger.
+de6-28 Er muss ebenfalls durch Schlechtleistung gefährdet sein.
+de6-29 Wenn dem Gläubiger das Wohl des Dritten anvertraut ist,
+de6-30 dann ist von einer Einbeziehung auszugehen.
+de6-31 Liegt ein Verhältnis mit personenrechtlichem Einschlag vor?
+de6-32 Dies gilt insbesondere im Mietrecht, Arbeitsrecht und Familienrecht.
+de6-33 Der Lieferant lieferte dem Vater eine mangelhafte Mikrowelle.
+de6-34 Die Familienmitglieder sind in den Schutzbereich einbezogen worden.
+de6-35 Sind auch die Besucher der Familie einbezogen?
+de6-36 Ist der Käufer, an den der Gegenstand weiterveräußert wird, ebenfalls einbezogen?
+de6-37 Haben die Parteien den dritten ausdrücklich oder stillschweigend
+de6-38 in den Schutzbereich des Vertrages einbeziehen wollen?
+de6-39 Die Leistungsnähe musste bei der Anbahnung des Vertragsschlusses erkennbar sein.
+de6-40 Die Schutzbedürftigkeit des Dritten ist Voraussetzung für seine Einbeziehung.
+de6-41 Dieses Kriterium ist aus der Drittschadensliquidation entlehnt.
+de6-42 Eine Einbeziehung ist dann zu verneinen, wenn er
+de6-43 einen eigenen vertraglichen Anspruch mit gleichwertigem Inhalt hat.
+de6-44 Bezüglich der Beweislast und der Haftung für Hilfspersonen
+de6-45 wird der Dritte besser gestellt.
+de6-46 Welche Haftungsbeschränkungen gibt es zwischen Vertragsgläubiger und Schuldner?
+de6-47 Die Haftungsbeschränkungen können den Dritten begünstigen.
+de6-48 Der Dritte ist schadensersatzpflichtig geworden.
+de6-49 In welcher Höhe muss der Schädiger Schadensersatz bezahlen?
+de6-50 Der Dritte berief sich auf eine vertragliche Verkürzung der Verjährung.
+de6-51 Es ist zu gesetzlichen Haftungsbeschränkungen gekommen.
+de6-52 Die Rechte werden aus dem Vertragsverhältnis
+de6-53 zwischen Gläubiger und Schuldner hergeleitet.
+de6-54 Seine Rechte können nicht weiter gehen als die Rechte des Gläubigers.
+de6-55 Die Grenze nach Treu und Glauben darf nicht überschritten werden.
+de6-56 Die Vertragsparteien wollten deliktische Ansprüche einschränken.
+de6-57 Eine solche Vorgehensweise wäre ein unzulässiger Vertrag zulasten Dritter.
+de6-58 Nach § 254 muss das Mitverschulden berücksichtigt werden.
+de6-59 Musste dem Dritten ein Mitverschulden
+de6-60 des Vertragsgläubigers zugerechnet werden?
+de6-61 Der Gläubiger war Erfüllungsgehilfe des Dritten.
+de6-62 Wer ist der gesetzliche Vertreter des Kindes?
+de6-63 Von der stillschweigenden Abbedingung der Norm kann ausgegangen werden.
+de6-64 Es gab mehr als 25 Millionen Downloads innerhalb von 99 Tagen.
+de6-65 Mit Erweiterungen können Funktionen hinzugefügt werden.
+de6-66 Der Firefox wird als Alternative zum Internet Explorer angesehen.
+de6-67 Die höchste Verbreitung hat er in Finnland mit etwa 40%.
+de6-68 Die Entwicklung der aktuellen Version ist mittlerweile abgeschlossen.
+de6-69 Es handelt sich um eine spezielle Anwendung, die sehr beliebt sein soll.
+de6-70 Ein Zurückbehaltungsrecht besteht, wenn der Gläubiger
+de6-71 seine Leistung noch nicht erbracht hat.
+de6-72 Der Eigentümer hat der Besitzerin die Verwendungen noch nicht ersetzt.
+de6-73 Peremptorische Einrede bedeutet, dass die Einrede dauerhaft besteht.
+de6-74 Die Leistung kann wegen Unzumutbarkeit verweigert werden.
+de6-75 Bereicherungseinrede oder Arglisteinrede sind zu erheben.
+de6-76 Der Anspruch ist durch Erbfall oder Zession übergegangen.
+de6-77 Wann wird die auflösende Bedingung eintreten?
+de6-78 Unter welcher Bedingung wird der Anspruch erlöschen?
+de6-79 Nennen Sie Beispiele für den abgeleiteten Erwerb!
+de6-80 Ein absolutes Recht wurde rechtswidrig verletzt.
+de6-81 Der Dieb hat den Gegenstand rechtsgrundlos erlangt.
+de6-82 Stehen dem Anspruch rechtshindernde Einwendungen entgegen?
+de6-83 Beim Vertrag ist die Einigung zwischen den Parteien notwendig.
+de6-84 Der Anspruch ist von der Frau auf den Mann übergegangen.
+de6-85 Wodurch kann ein Anspruch begründet werden?
+de6-86 Regelmäßig unterliegen die Ansprüche der Verjährung.
+de6-87 Diese Technik ermöglicht eine höhere Geschwindigkeit
+de6-88 als traditionelle analoge Systeme.
+de6-89 Gleichzeitig konnten Sprache, Video und Text dank ISDN übertragen werden.
+de7-001 Mit der Verfassungsbeschwerde kann die Bürgerin geltend machen,
+de7-002 durch einen hoheitlichen Akt in ihren Grundrechten beziehungsweise
+de7-003 in einem grundrechtsgleichen Recht verletzt worden zu sein.
+de7-004 Die Verfassungsbeschwerde ist auf Grundrechte beschränkt.
+de7-005 Der Rechtsweg muss erschöpft sein.
+de7-006 Bei einfachen subjektiven Rechten kommt die Verfassungsbeschwerde nicht in Betracht.
+de7-007 Für die Verfassungsbeschwerde ist das Bundesverfassungsgericht zuständig.
+de7-008 Etwa 2% der Verfassungsbeschwerden wird stattgegeben.
+de7-009 Der belastende Verwaltungsakt kann durch Widerspruch angegriffen werden.
+de7-010 Das Gericht soll die Ermächtigungsgrundlage überprüfen.
+de7-011 Die Rechtsanwältin möchte Verpflichtungsklage auf Vornahme des Verwaltungsaktes einlegen.
+de7-012 Die konkrete Normenkontrolle ist eine weitere Alternative.
+de7-013 Ein ordnungsgemäßer Antrag wurde beim Bundesverfassungsgericht eingelegt.
+de7-014 Wurde der Antrag schriftlich oder mündlich eingereicht?
+de7-015 Der Antrag wurde per Telefax eingereicht.
+de7-016 Der Antrag wurde schriftlich begründet.
+de7-017 Das angeblich verletzte Grundrecht muss nicht unbedingt ausdrücklich bezeichnet werden.
+de7-018 Der hoheitliche Akt, durch den die Grundrechtsverletzung verursacht worden sein soll,
+de7-019 ist nicht hinreichend genau durch die Beschwerdeführerin angegeben worden.
+de7-020 Aus der Beschwerdeschrift ergibt sich hinreichend deutlich,
+de7-021 welches Grundrecht verletzt worden sein soll.
+de7-022 Es wurde lediglich eine allgemeine Rüge erhoben.
+de7-023 Der Grundrechtsinhalt wurde mit Worten umschrieben.
+de7-024 Jedermann kann Verfassungsbeschwerde erheben.
+de7-025 Die Beteiligtenfähigkeit ist dann zu bejahen,
+de7-026 wenn die Person Träger von Grundrechten sein kann.
+de7-027 Auch juristische Personen kommen als Träger von Grundrechten in Betracht.
+de7-028 Lediglich die Verletzung eines Grundrechts kann mit der Verfassungsbeschwerde gerügt werden.
+de7-029 Die Prozessfähigkeit ist im Bundesverfassungsgerichtsgesetz nicht exakt geregelt.
+de7-030 In Analogie zum übrigen Verfahrensrecht wird die Prozessfähigkeit herausgefunden.
+de7-031 Wer grundrechtsfähig oder grundrechtsmündig ist, ist auch prozessfähig.
+de7-032 Ein fremdes Recht soll geltendgemacht werden.
+de7-033 Popularklagen dürfen nicht eingelegt werden.
+de7-034 Aus dem Vortrag des Beschwerdeführers muss sich ergeben,
+de7-035 dass eine Grundrechtsverletzung möglich ist, die durch den
+de7-036 Akt der öffentlichen Gewalt verursacht worden ist.
+de7-037 Eine Grundrechtsverletzung ist offensichtlich ausgeschlossen.
+de7-038 Es wurde rechtswidrig in den Schutzbereich des Grundrechts eingegriffen.
+de7-039 Der Schutzbereich eines Grundrechts kann gar nicht betroffen sein,
+de7-040 eine Grundrechtsverletzung ist nicht möglich,
+de7-041 der Eingriff ist ganz offensichtlich rechtmäßig erfolgt.
+de7-042 Der Verletzte hat die Verfassungsbeschwerde selbst eingelegt.
+de7-043 Ist eine Prozessstandschaft möglich?
+de7-044 Der Hoheitsakt hat den Beschwerdeführer als Adressaten.
+de7-045 Das ist unproblematisch beim verurteilten Straftäter gegeben.
+de7-046 Der Beschwerdeführer ist nicht Adressat, sondern ein Dritter.
+de7-047 Das Ladenschlussgesetz hat als Normadressat den Ladeneigentümer.
+de7-048 Die Kunden des Geschäfts sind selbst betroffen.
+de7-049 Die Beeinträchtigung des Grundrechts ist bereits seit längerer Zeit erledigt.
+de7-050 Es gibt ein allgemeines Rechtsschutzbedürfnis.
+de7-051 Die Rechtsnorm wurde im Gesetzblatt verkündet.
+de7-052 Das Gesetz ist zwar unwirksam, löst aber für den Beschwerdeführer
+de7-053 gegenwärtig noch keine rechtlichen Folgen aus.
+de7-054 Der Normadressat wird zum gegenwärtigen Zeitpunkt
+de7-055 zu einer Entscheidung gezwungen,
+de7-056 die er später nicht mehr korrigieren kann.
+de7-057 Der Normadressat wird bereits jetzt zu einer Disposition veranlasst,
+de7-058 die nicht mehr nachgeholt werden kann,
+de7-059 wenn das Gesetz zu einem späteren Zeitpunkt bereits vollzogen wird.
+de7-060 Die Beschwerdeführerin ist unmittelbar
+de7-061 in ihren grundrechtsgleichen Rechten betroffen.
+de7-062 Erst durch einen zusätzlichen Vollzugsakt wurde
+de7-063 in die Grundrechte des Antragstellers eingegriffen.
+de7-064 Die Behörde stützt den Verwaltungsakt auf diese Norm.
+de7-065 Das Gesetz beinhaltet ein Verbot,
+de7-066 welches der Beschwerdeführer unmittelbar befolgen muss.
+de7-067 Durch den Bebauungsplan wird die Eigenschaft des Grundstücks als Bauland verändert.
+de7-068 Der Normadressat bekommt die Rechtsfolge zu spüren.
+de7-069 Wurde der Rechtsweg ausgeschöpft?
+de7-070 Es ist dem Bürger nicht zuzumuten, den Rechtsweg auszuschöpfen.
+de7-071 Es liegt lediglich ein einfacher Nachteil vor.
+de7-072 Innerhalb eines Monats muss die Verfassungsbeschwerde geltend gemacht werden.
+de7-073 Die Verfassungsbeschwerde richtete sich gegen einen Rechtssatz.
+de7-074 Das Rechtsmittel wurde innerhalb eines Jahres geltend gemacht.
+de7-075 Nicht nur diejenigen Grundrechte werden überprüft,
+de7-076 die der Beschwerdeführer in seinem Antrag angegeben hat.
+de7-077 Es ist ein Telekommunikationsstandard der dritten Generation.
+de7-078 Er wird verwendet, um Sprache, Daten und so weiter zu übertragen.
+de7-079 Die digitale Mobilfunkübertragung ist eine moderne Technologie.
+de7-080 Mehrere Sender können den gleichen Frequenzkanal verwenden.
+de7-081 Alle Sender können zur gleichen Zeit aktiv sein.
+de7-082 Es gibt kein direktes Limit für die Zahl der aktiven Sender.
+de7-083 Diese Standards haben erhebliche ökonomische Vorteile.
+de7-084 Er hat eine ziemlich lange technische Geschichte.
+de7-085 Die Kompatibilität mit älteren Standards ist gewährleistet.
+de7-086 Alle Produkte wurden für diesen Standard zertifiziert.
+de7-087 WLAN findet immer häufiger in Eigenheimen und auf Flughäfen Anwendung.
+de7-088 Unterschiedliche Sicherheitsanforderungen sind zu berücksichtigen.
+de7-089 Wenn ein Betriebsgeheimnis über das Internet versendet werden soll,
+de7-090 darf es unbeteiligten auf gar keinen Fall in die Hände gelangen.
+de7-091 Informationen über den Gesundheitszustand des Patienten sollen übertragen werden.
+de7-092 Bei den drahtlosen Netzwerken gibt es traditionell einen Mangel an Sicherheit.
+de7-093 Mit diesen Sicherheitsmängeln soll Schluss gemacht werden.
+de7-094 Man muss sich die Geschichte der Sicherheit von Wireless LAN vergegenwärtigen.
+de7-095 Sicherheitsstandards sind in die Wireless LAN Infrastruktur zu implementieren.
+de7-096 Diese Geschichte kann im Internet nachgelesen werden.
+de7-097 Die Ratifikation war am 24. Juni 2004.
+de7-098 Die Authentifizierung kann auf komplexe Art und Weise vorgenommen werden.
+de7-099 Der Wireless Access Point muss sich bei seinem Client authentifzieren.
+de7-100 Der Access Point muss dem Client einen Schlüssel überlassen.
+de8-001 Die Angaben werden durch einen kryptografischen Hash verändert.
+de8-002 Es handelt sich bei älteren Installationen um die bevorzugte Alternative.
+de8-003 Nur autorisierte Benutzer können auf das Netzwerk zugreifen.
+de8-004 Das Bundesverfassungsgericht ist Hüter der deutschen Verfassung.
+de8-005 Es ist Teil der Rechtsprechung und unabhängiges Verfassungsorgan.
+de8-006 Es ist nicht Teil des Instanzenzuges und überprüft Entscheidungen anderer Gerichte.
+de8-007 Der Sitz befindet sich in Karlsruhe innerhalb eines befriedeten Bezirks.
+de8-008 Die Bundespolizei schützt das Gericht.
+de8-009 Bestimmte Entscheidungen haben Gesetzeskraft.
+de8-010 Ein Gesetz soll für verfassungswidrig erklärt werden.
+de8-011 Es bestehen Zweifel an der Verfassungsmäßigkeit eines Gesetzes.
+de8-012 Durch eine Parabolantenne werden Signale vom Satellit empfangen.
+de8-013 Signale sollen an den Satellit gesendet werden.
+de8-014 Parabolantennen können unterschiedliche Größen und Designs haben.
+de8-015 Häufig werden damit Fernsehprogramme empfangen,
+de8-016 die über Satellit ausgestrahlt werden.
+de8-017 Moderne Parabolantennen haben einen Durchmesser von mindestens 43 cm.
+de8-018 Die Größe des zu wählenden Durchmessers ist von verschiedenen Faktoren abhängig.
+de8-019 In welchem Breitengrad befindet sich die Parabolantenne?
+de8-020 Je größer die Fläche, je größer der Durchmesser,
+de8-021 desto besser ist die Empfangsqualität im Einfamilienhaus.
+de8-022 Wenn das Wetter schlecht ist, wenn es regnet oder schneit,
+de8-023 dann gewährleistet ein größerer Durchmesser die bessere Empfangsqualität.
+de8-024 Die Parabolantenne wird grundsätzlich auf eine ganz bestimmte Position fixiert.
+de8-025 Die Signale werden durch ein spezielles Gerät verstärkt.
+de8-026 Hierbei können verschiedene Dienste über Wireless LAN realisiert werden.
+de8-027 Für den Betrieb müssen keine Lizenzgebühren gezahlt werden.
+de8-028 Wenn ein WLAN Netz verfügbar ist, bucht sich das Gerät aus dem anderen Netz aus.
+de8-029 Ein schneller Internetzugang ist notwendig.
+de8-030 Das laufende Gespräch wird einfach vom neuen Netz übernommen.
+de8-031 Die Telefonnummer kann weiterhin verwendet werden.
+de8-032 Das Mobiltelefon muss die jeweiligen Frequenzen beherrschen.
+de8-033 Die Vorteile sind ganz klar erkennbar.
+de8-034 Die Betriebskosten werden gesenkt,
+de8-035 wenn diese revolutionäre Technologie eingesetzt wird.
+de8-036 Man kann mit dem Handy vollkommen umsonst telefonieren.
+de8-037 Die optimale Erreichbarkeit ist immer gegeben.
+de8-038 Jedoch kann die Batterielebensdauer verkürzt sein,
+de8-039 wenn das Gerät sehr stark beansprucht wird.
+de8-040 Es ist eine Software für die WLAN Geräte einiger Hersteller.
+de8-041 Eine populäre Schnittstelle kommt zum Einsatz.
+de8-042 Technische Unterstützung wird durch Internetforen gewährleistet.
+de8-043 Ein Hersteller wurde gezwungen, den Quellcode der Software
+de8-044 von seinem Router zu veröffentlichen,
+de8-045 die unter einer freien Lizenz veröffentlicht worden war.
+de8-046 Dadurch konnten Programmierer die Software weiterentwickeln.
+de8-047 Die Installation gliedert sich in zwei Teile.
+de8-048 Hierbei handelt es sich um Programme für die Netzwerkkonfiguration.
+de8-049 Die Software lässt sich erweitern und einfach handhaben.
+de8-050 Mit dem Router können Funktionen genutzt werden, die der Hersteller nicht vorgesehen hat.
+de8-051 Zusätzliche Software kann einfach installiert werden.
+de8-052 Hierbei findet eine spezifische Architektur Anwendung.
+de8-053 Der Computer kann sich mit einem Server verbinden,
+de8-054 der sich möglicherweise hinter einem Router befindet.
+de8-055 Es ist nicht ganz einfach, dieses Konzept zu verstehen.
+de8-056 Aus diesem Grund einige grundlegende Anmerkungen,
+de8-057 die man einmal nachvollzogen haben sollte.
+de8-058 Jeder Computer im Internet hat mindestens eine IP Adresse.
+de8-059 Diese IP Adresse besteht aus einer Nummer,
+de8-060 so dass der jeweilige Computer identifiziert werden kann.
+de8-061 Jede IP Adresse wird in viele Ports unterteilt.
+de8-062 Der Computer sendete die Daten von einem Port an seiner IP Adresse
+de8-063 zu einem anderen Port an einer fremden IP Adresse.
+de8-064 Ein Port kann immer nur von einem Programm
+de8-065 zu einem bestimmten Zeitpunkt verwendet werden.
+de8-066 Der Router wartet auf Datenpakete aus dem Internet.
+de8-067 Das Datenpaket ist an einem bestimmten Port angekommen.
+de8-068 Das Datenpaket wurde an den Computer im Netzwerk weitergeleitet.
+de8-069 Die Weiterleitung kann auch auf einen anderen Port im LAN erfolgen.
+de8-070 Es entsteht nach außen hin der Eindruck,
+de8-071 als ob der Router die Datenpakete senden würde.
+de8-072 Hierbei wird der Router sozusagen als Server eingesetzt.
+de8-073 Die Computer können sich auch innerhalb des LANs als Server betätigen.
+de8-074 Eine IP Adresse wurde in zwei IP Adressen aufgeteilt.
+de8-075 Die erste interne IP Adresse befindet sich am Router.
+de8-076 Die zweite interne IP Adresse wird an einen Computer im LAN vergeben.
+de8-077 Man muss einfach verschiedene Standpunkte einnehmen,
+de8-078 um das ganze Szenario nachvollziehen zu können.
+de8-079 Der Computer im internen Netzwerk kann keine Daten direkt
+de8-080 zu einem Computer außerhalb des Netzwerks senden.
+de8-081 Die Daten müssen durch den Router hindurch gesendet werden.
+de8-082 Wie aber verhält es sich mit einem Computer, der sich im Internet befindet?
+de8-083 Der Computer kann lediglich die externe IP Adresse des Routers sehen.
+de8-084 Der Router muss entscheiden, wie er mit den Daten verfahren möchte.
+de8-085 In diesem Fall muss Port Forwarding zum Einsatz kommen.
+de8-086 Bestimmte Regeln können hierfür festgelegt werden.
+de8-087 Diese kanadische Provinz liegt im Osten von Kanada.
+de8-088 Die Wirtschaft ist mit Frankreich und den USA eng verbunden.
+de8-089 Die Provinz hat 7,5 Millionen Einwohner.
+de8-090 Im nördlichen Bereich ist die Provinz kaum besiedelt.
+de8-091 Sie ist fast dreimal so groß wie Frankreich.
+de8-092 Die zweitgrößte Stadt hat etwa 500.000 Einwohner.
+de8-093 Die offizielle Sprache der Provinz ist französisch.
+de8-094 Die Bevölkerung besteht hauptsächlich aus französischen Kanadiern.
+de8-095 Englisch ist hier keine offizielle Sprache.
+de8-096 Rund 80% sprechen Französisch, lediglich etwa 10% sprechen Englisch.
+de8-097 Treten sie während des Schaltens ohne Kraft weiter.
+de8-098 Die Bewegung kurz unterbrechen, wenn der gewünschte Gang nicht sofort greift.
+de8-099 Schalten Sie vor Steigungen rechtzeitig zurück.
+de8-100 Die volle Bremsleistung wird nach einer kurzen Einfahrtzeit ermöglicht.
+de8-101 Die Bremse zur Eingewöhnung vorsichtig betätigen.
+de8-102 Wenn Öl auf die Bremsbeläge gelangen sollte,
+de8-103 dann muss der Bremsträger ausgetauscht werden.
+de8-104 Die Wirkung der Bremse wird durch verölte Bremsbeläge reduziert.
+de8-105 Der Totalausfall der Bremse oder Stürze könnten die Folge sein.
+de8-106 Durch Flugrost kann eine erhöhte Bremswirkung eintreten.
+de8-107 Der Flugrost kann bei Fahrtantritt
+de8-108 durch leichtes Bremsen abgeschliffen werden.
+de8-109 Vermeiden Sie ein plötzliches blockieren der Bremse.
+de8-110 Es besteht Verbrennungsgefahr bei einer Berührung.
+de8-111 Eine sehr starke Erhitzung kann zu einem Verlust von Schmiermittel führen.
+de8-112 Besuchen Sie in diesem Fall eine Werkstatt.
+de8-113 Schalten Sie den Griff in den zweiten Gang.
+de8-114 Nehmen Sie das Schaltrohr aus der Bohrung heraus.
+de8-115 Stecken Sie den Schutzbügel auf der Zahnkranzseite auf.
+de8-116 In das Schaltrohr den Schaltstift einsetzen.
+de8-117 Den Stift in die Achsbohrung einschieben, bis zum Anschlag.
+de8-118 Mit dem Führungssteg die Fixierbuchse auf die Nabenachse schieben.
+de8-119 Den Schalter in den dritten Gang stellen.
+de8-120 Den Bremshebel zwischen den beiden Laschen montieren.
+de8-121 Was ist eine selbstsichernde Mutter?
+de8-122 Die Stellschraube sehr weit herausdrehen.
+de8-123 Bitte wenden Sie sich an Ihren Fachhändler.
+de8-124 Wenn die Bremswirkung nach längerem Gebrauch nachlässt,
+de8-125 die Einstellung bitte wiederholen.
+de8-126 Betätigen Sie den Handbremshebel mehrmals kräftig.
+de8-127 Die Getriebenabe kann für Transporträder nicht verwendet werden.
+de8-128 Eine zusätzliche externe Bremse ist am Hinterrad anzubringen.
+de8-129 Schieben Sie den Schalter auf den Lenker.
+de8-130 Montieren Sie die Griffe nicht mit fettenden Lösungen.
+de8-131 Der Bremshebel darf in seiner Funktion nicht behindert sein.
+de8-132 Kleine Radien sind beim Schaltzug zu vermeiden.
+de8-133 An mehreren Stellen des Unterrohrs den Schaltzug befestigen.
+de8-134 Unmittelbar hinter dem Kettenblatt an der Hinterradgabel den Gegenstand befestigen.
+de8-135 In den Befestigungspunkten muss die Seilhülle verschoben werden können.
+de8-136 Schalten Sie den Drehgriff in den siebten Gang.
+de8-137 Ziehen Sie die Rändelschraube von Hand fest.
+de8-138 Keine scharfen Reinigungsmittel benutzen.
+de8-139 Streusalz kann im Winter Schäden verursachen.
+de8-140 Vor dem Ölen die verschmutzte Kette bitte reinigen.
+de8-141 Lassen Sie den Reiniger einige Minuten einwirken.
+de8-142 Die Kette nur im vollkommen trockenen Zustand ölen.
+de8-143 Den Bremsmantel mit Spezialfett durch geschultes Fachpersonal nachschmieren. 
+de9-001 Ein freies Funknetz soll von zahlreichen Privatpersonen aufgebaut werden.
+de9-002 Die Geräte sind mittlerweile sehr preiswert.
+de9-003 Einige WLAN Access Points müssen an das Internet angebunden werden.
+de9-004 Glücklicherweise haben einzelne Teilnehmer einen privaten DSL Anschluss.
+de9-005 Die ersten Projekte starteten 1998, mit einem älteren Standard.
+de9-006 Im Jahr 2002 waren die meisten Netze in einem sehr frühen Entwicklungsstadium.
+de9-007 Eine kleine Gruppe von Leuten führte Experimente durch.
+de9-008 Ab 2005 wurden drahtlose Gemeinschaften zunehmend beliebter.
+de9-009 Außerdem sollen soziale Strukturen gefördert werden.
+de9-010 Der digitalen Spaltung kann entgegengewirkt werden.
+de9-011 Der Austausch dient nicht kommerziellen Interessen.
+de9-012 Ein kostenloser oder äußerst günstiger Zugang zum Internet ist möglich.
+de9-013 Das ist das Hauptziel von vielen Aktivisten.
+de9-014 Es ist gewissermaßen ein moderner Freiheitskampf.
+de9-015 Als Beispiele sind Berlin, Weimar, Dresden, Bern, Leipzig und Wien zu nennen.
+de9-016 Zahlreiche freiwillige arbeiten mit, um eigene Netzwerke aufzubauen.
+de9-017 So entstehen Alternativen zu den kommerziellen Anbietern.
+de9-018 Eine Vernetzung ist auch ohne eigenen Internetzugang möglich.
+de9-019 In Berlin sind viele Stadtteile technologisch vollkommen rückständig.
+de9-020 Um dieses Protokoll einsetzen zu können,
+de9-021 muss eine zusätzliche Software auf den Router aufgespielt werden.
+de9-022 Handelt es sich um preiswerte Geräte?
+de9-023 Durch die IP Adresse können Geräte im IP Netzwerk identifiziert werden.
+de9-024 Hierbei kommt ein Internetprotokoll zur Anwendung.
+de9-025 Jeder Computer, Router, Server hat seine eigene Adresse.
+de9-026 Man kann die IP Adresse mit der Postadresse auf einem Briefumschlag vergleichen.
+de9-027 Jede Telefonnummer gibt es nur ein einziges Mal.
+de9-028 Mehrere Clients können sich eine IP Adresse teilen.
+de9-029 Die ursprüngliche IP Adresse wird dem Server gegenüber verschleiert.
+de9-030 Menschen können sich an Namen besser erinnern als an Zahlen.
+de9-031 IP Adressen können entweder permanent
+de9-032 oder nur zeitweise zugewiesen werden.
+de9-033 Der Webserver kann immer unter der gleichen Adresse gefunden werden.
+de9-034 Typischerweise werden statische IP Adressen von Servern eingesetzt.
+de9-035 Server sind grundsätzlich immer verfügbar
+de9-036 und haben regelmäßig die gleiche IP Adresse.
+de9-037 Durch dynamische IP Adressen können Geräte identifiziert werden.
+de9-038 Die dynamische Adresszuweisung ist bei den Internetanbietern beliebt.
+de9-039 Der Webserver wartet auf eine Anfrage und weist daraufhin eine Adresse zu.
+de9-040 Die Zuweisung kann zufälligerweise erfolgen
+de9-041 oder nach einer festen Vereinbarung.
+de9-042 Der Zeitraum für die Verwendung der IP Adresse wurde festgelegt.
+de9-043 In privaten Netzwerken werden Adressen dynamisch zugewiesen.
+de9-044 Dadurch werden statische IP Adressen simuliert.
+de9-045 Die Adresse hat eine Länge von 24 Bit oder 4 Byte.
+de9-046 Der freie Adressraum ist relativ stark eingeschränkt.
+de9-047 Etwa 18 Millionen Adressen stehen den privaten Netzwerken zur Verfügung.
+de9-048 Hierdurch wird die Zahl der verfügbaren Adressen erheblich reduziert.
+de9-049 Dieses Protokoll wird noch nicht sehr häufig eingesetzt.
+de9-050 Die Adressen haben eine Länge von 128 Bits.
+de9-051 In Zukunft wird es ausreichend Adressen geben.
+de9-052 Das RSA Kryptosystem ist ein asymmetrisches Kryptosystem.
+de9-053 Für die Signierung von Nachrichten und die Verschlüsselung ist es sehr geeignet.
+de9-054 RSA ist in Protokollen noch immer sehr weit verbreitet.
+de9-055 RSA gilt als sicher, wenn die Schlüssellänge ausreichend lang ist.
+de9-056 Im Jahr 1977 wurde der Algorithmus beschrieben.
+de9-057 Damals waren preiswerte und schnelle Computer noch nicht verfügbar.
+de9-058 1983 wurde der Algorithmus in den USA patentiert.
+de9-059 Am 21. September 2000 ist das Patent abgelaufen.
+de9-060 Wenn die Beschreibung vorher bekannt gemacht worden wäre,
+de9-061 dann wäre eine Patentierung in den USA nicht möglich gewesen.
+de9-062 RSA verwendet zwei Schlüssel, und zwar einen privaten
+de9-063 und einen öffentlichen Schlüssel.
+de9-064 Der öffentliche Schlüssel kann jedermann bekannt sein.
+de9-065 Er wird verwendet, um die Mitteilungen zu verschlüsseln.
+de9-066 Mit dem privaten Schlüssel können die Mitteilungen entschlüsselt werden.
+de9-067 Jedermann kann eine Mitteilung verschlüsseln.
+de9-068 Nur der Eigentümer des Schlüssels
+de9-069 kann die Mitteilung entschlüsseln und lesen.
+de9-070 Die beiden sind über eine unsichere Verbindung miteinander in Kontakt.
+de9-071 Beim Gebrauch von RSA sind mehrere Schritte durchzuführen.
+de9-072 Die eine Partei wählt zwei Primzahlen aus.
+de9-073 Die beiden Primzahlen müssen einen unterschiedlichen Wert haben und
+de9-074 unabhängig voneinander gewählt worden sein.
+de9-075 Das Produkt der beiden Primzahlen wird berechnet.
+de9-076 Weitere mathematische Operationen werden durchgeführt.
+de9-077 Mit diesem Protokoll kann der Schlüssel
+de9-078 für ein anderes Protokoll ausgehandelt werden.
+de9-079 Die Übertragung des Schlüssels kann durch TLS sichergestellt werden.
+de9-080 Das Telefon sendete einen Anruf zum Proxy.
+de9-081 Mehrere Hersteller verwenden diese Methode zum Schlüsselaustausch.
+de9-082 Welcher Sicherheitsmechanismus wird beim Schlüsseltransport eingesetzt?
+de9-083 Das erste Datenpaket ist eingetroffen.
+de9-084 Mehrere Datenpakete mussten fallen gelassen werden.
+de9-085 Es ist umstritten, ob das wirklich erforderlich war.
+de9-086 Auch die Geheimdienste haben ein großes Interesse daran.
+de9-087 Beim Schaden handelt es sich um einen unfreiwilligen Nachteil,
+de9-088 den die Person an ihrem Vermögen erlitten hat.
+de9-089 Der Schaden wurde nach der Differenzhypothese berechnet.
+de9-090 Welche Güter sind rechtlich geschützt?
+de9-091 Die tatsächliche Lage wird mit der hypothetischen Lage verglichen.
+de9-092 Durch das schädigende Ereignis ist eine bestimmte Situation eingetreten.
+de9-093 Diejenige Situation, die ohne das schädigende Ereignis
+de9-094 bestehen würde, wurde festgestellt.
+de9-095 Durch die Differenzmethode wird der natürliche Schaden bestimmt.
+de9-096 Der normative Schadensbegriff ergänzt und korrigiert das Ergebnis.
+de9-097 Ein Schaden kann auch dann anzunehmen sein,
+de9-098 wenn ein Schaden nach der Differenzmethode nicht feststellbar war.
+de9-099 Die Schadensersatzpflicht ist bei immateriellen Schäden eingeschränkt.
+de9-100 Die Abgrenzung zwischen Vermögensschaden und Nichtvermögensschaden ist sehr wichtig.
+de9-101 Der Verletzte kann lediglich Naturalrestitution verlangen, nicht jedoch Geldersatz.
+de9-102 Bei der Körperverletzung ist Schadensersatz zu leisten.
+de9-103 Der benachteiligte Bewerber kann eine angemessene Geldentschädigung verlangen.
+de9-104 Die Reise ist vereitelt worden.
+de9-105 Wegen nutzlos aufgewendeter Urlaubszeit kann
+de9-106 der Reisende eine Geldentschädigung verlangen.
+de9-107 Ein materielles Interesse ist beeinträchtigt worden.
+de9-108 Die Einbuße ist auch in Geld messbar.
+de9-109 Ein immaterielles Interesse ist beeinträchtigt worden.
+de9-110 Die Körperverletzung kann als Beispiel genannt werden.
+de9-111 Unmittelbare und mittelbare Schäden sind voneinander zu unterscheiden.
+de9-112 Insbesondere bei der hypothetischen Kausalität ist das wichtig.
+de9-113 Die nachteilhafte Veränderung ist am Rechtsgut selbst unmittelbar eingetreten.
+de9-114 Die Kosten für die Heilbehandlung sind unmittelbare Schäden.
+de9-115 Mittelbare Schäden sind der entgangene Gewinn,
+de9-116 der Nutzungsausfall und der Erwerbsausfall.
+de9-117 Bei Rechtsgeschäften unterscheidet man zwischen
+de9-118 Nichterfüllungsschaden und Vertrauensschaden.
+de9-119 Durch die Nichteinhaltung der Leistungspflicht
+de9-120 hat die Vertragspartnerin einen Schaden erlitten.
+de9-121 Der Verletzte muss so gestellt werden,
+de9-122 wie er bei ordnungsgemäßer Erfüllung gestanden hätte.
+de9-123 Das positive Interesse ist zu ersetzen.
+de9-124 Der Verletzte hatte auf die Gültigkeit des Rechtsgeschäfts vertraut.
+de9-125 Die Willenserklärung ist nichtig oder wurde wegen Irrtums angefochten.
+de9-126 Der erklärende muss dem Erklärungsempfänger den Schaden ersetzen.
+de9-127 Die Vertreterin kannte den Mangel der Vertretungsmacht nicht.
+de9-128 Sie muss lediglich denjenigen Schaden ersetzen,
+de9-129 den die andere Partei dadurch erlitten hatte,
+de9-130 dass sie auf die Vertretungsmacht vertraut hat.
+de9-131 Grundsätzlich darf das negative Interesse das positive Interesse nicht überschreiten.
+de9-132 Durch das Erfüllungsinteresse wird der Vertrauensschaden begrenzt.
+de9-133 Sie hatte aufgrund der unrichtigen Auskunft einen Schaden erlitten.
+de9-134 Auch die Folgekosten und die Vorsorgekosten müssen ersetzt werden.
+de9-135 Aufgrund der haftungsbegründenden Handlung waren Aufwendungen notwendig.
+de9-136 Der Verletzte muss den Schaden abwehren, beseitigen oder mindern.
+de9-137 Die Personalkosten für den erhöhten Personalaufwand sind zu ersetzen.
+de9-138 Der Ladendieb hat die Fangprämie zu ersetzen,
+de9-139 wenn sie in einem angemessenen Verhältnis
+de9-140 zum Wert des gestohlenen Gegenstands steht.
+de9-141 Als Obergrenze wird der Wert der gestohlenen Sache angesehen.
+de9-142 Bei besonders wertvollen Sachen ist die Grenze niedriger als der Warenwert.
+de9-143 Das dient nicht dem Ausgleich im konkreten Fall, sondern der Abschreckung.
+de9-144 Die Kosten hatten einen Bezug zur konkreten Rechtsverletzung.
+de9-145 Der Kostenanteil kann nicht ermittelt werden.
+de9-146 Die Kosten für Überwachungskameras und Spiegel können nicht ersetzt werden.
+de9-147 Wählen Sie bitte die Telefonnummer 204 132
+de9-148 oder die Nummer 852 418.
+de9-149 Bitte rufen Sie unter 137 226 an.
+de9-150 Über dieses Thema wurde im Internet schon sehr viel geschrieben.
+de9-151 Solche Vorfälle sind nicht zu billigen.
+de9-152 Kürzlich gab es bei einer Wohnungskontrolle Ärger.
+de9-153 Es gibt fallweise Reaktionsmöglichkeiten.
+de9-154 Eine Stellungnahme gegen Rundfunkgebühren wurde abgegeben.
+de9-155 Immer weniger Bürger sind damit einverstanden,
+de9-156 sich auch in Zukunft abzocken zu lassen.
+de9-157 Vielen ist die Zwangsgebühr ein Dorn im Auge.
+de9-158 Per Zwangsgebühr wird der öffentliche Rundfunk finanziert,
+de9-159 der möglicherweise seinem Bildungsauftrag immer seltener nachkommt.
+de9-160 Kürzlich bin ich auf die Initiative eines Kollegen aufmerksam gemacht worden.
+de9-161 Es handelt sich um einen sehr schönen Aufruf.
+de9-162 Insgesamt 23 Personen aus verschiedenen Parlamenten nehmen teil.
+de9-163 Die politische Kaste erlaubt den Internetzugang nur mit Reisepass.
+de9-164 Kriminelle Politiker werden nur sehr selten angeklagt.
+de9-165 Die Justiz ist möglicherweise ein Anhängsel der Politik.
+de9-166 In Italien ist die Situation ganz anders.
+de9-167 Italienische Staatsanwälte und Richter greifen auch mal richtig durch.
+de9-168 Eine entsprechende Aktion kommt für Deutschland nicht in Betracht.
+de9-169 Man muss sich vor dem Schnüffelstaat präventiv schützen.
+de9-170 Im Aktenordner befanden sich wichtige Dokumente.
+de9-171 Diese Dokumente habe ich mit einer Digitalkamera fotografiert.
+de9-172 Die Dokumente im Aktenordner sind schon lange im Altpapier gelandet.
+de9-173 Eine Versendung an investigative Journalisten ist problemlos möglich.
+de9-174 Das Passwort kann telefonisch durchgegeben werden.
+de9-175 Mit Bargeld kann man sämtliche Schulden tilgen.
+de9-176 Theoretisch muss das Bargeld den Weg zu den Schuldnern finden.
+de9-177 Buchgeld verschwindet bei der Tilgung der Darlehensschuld.
+de9-178 Der Ausdruck politische Kaste ist recht allgemein gehalten.
+de9-179 Die Formulierungen haben einen unterschiedlichen Bedeutungsinhalt.
+de9-180 Du hast einige Fundstellen kommentiert.
+de10-001 Sie verwenden eine ähnliche Terminologie.
+de10-002 Den Beitrag mit Bildern ausdrucken.
+de10-003 Die Darstellung von Bildern mit begleitendem Text ist tadellos.
+de10-004 Der Text befindet sich nicht nur über und unter dem Bild,
+de10-005 sondern auch rechts neben dem Bild.
+de10-006 Kürzlich bin ich auf folgendes Problem hingewiesen worden.
+de10-007 Wenn man einen Artikel ausdrucken will,
+de10-008 dann wird der Text nicht rechts vom Bild dargestellt, sondern unterhalb vom Bild.
+de10-009 Woran liegt das? Der Quellcode, die immer verwendet wird,
+de10-010 ist auf dem Bildschirmfoto zu sehen.
+de10-011 Wer hat eine Idee, wie man das Problem lösen kann?
+de10-012 Die Bildunterschrift befindet sich immer unter dem Bild.
+de10-013 Das vorliegende Problem kann ganz einfach nachvollzogen werden,
+de10-014 wenn man auf Druckvorschau klickt.
+de10-015 Wie kann man das eigene Weblog bekannter machen?
+de10-016 Fügen Sie hierzu einfach in einem fremden Weblog einen Hyperlink ein.
+de10-017 Der Kommentartext ist bereits im Formular eingetragen,
+de10-018 aber noch nicht veröffentlicht worden.
+de10-019 Der Kommentartext ist nun veröffentlicht worden.
+de10-020 Er kann von jedermann weltweit gelesen werden.
+de10-021 Der Kommentartext ist in blauer Farbe hervorgehoben.
+de10-022 Wenn man nichts zu sagen hat, dann sollte man die Klappe halten.
+de10-023 In diesem Fall fand ich den Kommentar ganz passend.
+de10-024 Durch den Hyperlink konnte ich diese Aussage verstärken.
+de10-025 Es können unterschiedliche Ergebnisse erzielt werden.
+de10-026 Das fremde Weblog sieht noch belebter aus.
+de10-027 Das eigene Weblog erhält potentiell mehr Leser.
+de10-028 Die Leistungen der Zeitschrift werden angemessen gewürdigt.
+de10-029 Der Download von Open Office wurde innerhalb von kurzer Zeit durchgeführt.
+de10-030 Eine angemessene Bandbreite steht zur Verfügung.
+de10-031 Es handelt sich um einen rechnerischen Maximalwert,
+de10-032 der in der Praxis nur selten erreicht wird.
+de10-033 Im abgebildeten Beispiel ist etwa die Hälfte heruntergeladen worden.
+de10-034 Es verbleiben lediglich noch 57 Sekunden Zeit.
+de10-035 So kann wirklich schnell und produktiv gearbeitet werden.
+de10-036 Es gibt immer noch Regionen in Deutschland,
+de10-037 die technologisch nicht auf der Höhe der Zeit sind.
+de10-038 Welche Dienstleistungsunternehmen wollen sich dort ansiedeln?
+de10-039 Produktives arbeiten ist ohne Internetzugang kaum noch vorstellbar.
+de10-040 Es werden lediglich etwa 2 Minuten Zeit benötigt,
+de10-041 um den Download der anerkannten wertvollen Software abzuschließen.
+de10-042 Aber das ist den Diktatoren ganz egal.
+de10-043 Es handelt sich um eine Adresse, die eine eindeutige Identifikation ermöglicht.
+de10-044 Beide Geräte untersuchen die Datenpakete,
+de10-045 um eventuell auftretende Fehler korrigieren zu können,
+de10-046 wobei die Datenpakete stets neu angefordert werden.
+de10-047 Obwohl physikalische Adressen eigentlich permanent sind,
+de10-048 gibt es bestimmte Mechanismen, die das ermöglichen.
+de10-049 Das kann nützlich sein, um die Privatsphäre zu schützen.
+de10-050 Die Verwendung eines anderen Routers kann dazu führen,
+de10-051 dass das Angebot nicht mehr funktioniert.
+de10-052 Ähnliches gilt für Softwarelizenzen,
+de10-053 die an eine bestimmte Adresse gebunden sind.
+de10-054 Bei der Strafanzeige wird ein Lebenssachverhalt gemeldet,
+de10-055 der nach der Meinung des meldenden eine Straftat darstellen könnte.
+de10-056 Die Meldung erfolgt schriftlich oder mündlich
+de10-057 gegenüber der Strafverfolgungsbehörde.
+de10-058 Der Strafantrag ist von der Strafanzeige zu unterscheiden.
+de10-059 Bei einem Anfangsverdacht muss die Strafverfolgungsbehörde aufklären.
+de10-060 Die Ermittlungen wurden erfolgreich abgeschlossen.
+de10-061 Die Polizei wird von der Politik nur unzureichend ausgestattet.
+de10-062 Die Staatsanwaltschaft entscheidet,
+de10-063 ob gegen den Beschuldigten Anklage erhoben wird.
+de10-064 Die Strafanzeige kann von jedermann mitgeteilt werden.
+de10-065 Nicht nur der geschädigte ist berechtigt,
+de10-066 die Strafanzeige der Polizei mitzuteilen.
+de10-067 Die Strafanzeige kann auch gegen unbekannt eingelegt werden.
+de10-068 Für bestimmte geplante Straftaten besteht eine Anzeigepflicht.
+de10-069 Für bereits begangene Straftaten gibt es keine Anzeigepflicht.
+de10-070 Immer wieder werden Politiker angezeigt.
+de10-071 Es ist eine preiswerte Software,
+de10-072 die eine wichtige Alternative darstellt.
+de10-073 Mit dieser Software kannst du Nachrichten verschlüsseln
+de10-074 und mit einer digitalen Unterschrift versehen.
+de10-075 Die erste Version ist im September 1990 erschienen.
+de10-076 Früher wurde die Entwicklung durch ein Bundesministerium unterstützt.
+de10-077 Diese Unterstützung ist mittlerweile nicht mehr vorhanden.
+de10-078 Es gibt einige ältere Versionen, die leider nicht kompatibel sind.
+de10-079 Patentierte Software kommt nicht zum Einsatz.
+de10-080 Die Software funktioniert stabil und mit zahlreichen Betriebssystemen.
+de10-081 Die gegenwärtigen Versionen sind glücklicherweise kompatibel.
+de10-082 Die Installation ist ganz einfach.
+de10-083 Es handelt sich hierbei eigentlich
+de10-084 um eine Kommandozeilenschnittstelle.
+de10-085 Zahlreiche grafische Schnittstellen sind entwickelt worden.
+de10-086 Aufgrund von Plugins können Sicherheitslücken auftreten,
+de10-087 auf die die Entwickler keinen Einfluss haben können.
+de10-088 Die Installation in einem verschlüsselten Laufwerk ist möglich.
+de10-089 Du kannst unter verschieden starken Schlüsseln auswählen.
+de10-090 Zur Zeit sind bis zu 4096 Bit starke Schlüssel üblich.
+de10-091 Die hybride Verschlüsselungssoftware funktioniert zuverlässig.
+de10-092 Es gibt zwei Methoden der Verschlüsselung.
+de10-093 Mit dem geheimen Schlüssel werden die Daten verschlüsselt.
+de10-094 Der Empfänger kann durch die Überprüfung des Wertes feststellen,
+de10-095 ob das Datum auf dem Weg zu ihm verändert wurde.
+de10-096 Die digitale Signatur wurde mit dem öffentlichen Schlüssel überprüft.
+de10-097 Die Mitteilung wurde mit dem eigenen privaten Schlüssel signiert
+de10-098 und mit dem öffentlichen Schlüssel des Empfängers verschlüsselt.
+de10-099 Dieser Schlüssel wird lediglich ein einziges Mal verwendet.
+de10-100 Der Empfänger nimmt den öffentlichen Schlüssel des Absenders.
+de10-101 Wenn die beiden Werte gleich sind,
+de10-102 dann wurde der Klartext nicht verändert.
+de10-103 Das ist eine drahtlose Verbindung
+de10-104 von mehreren Wireless Access Points untereinander.
+de10-105 Die Verkabelung zu weiteren Geräten ist überflüssig.
+de10-106 Lediglich eine Stromversorgung
+de10-107 für jeden einzelnen Access Point muss vorhanden sein.
+de10-108 Jeder zusätzliche Zugang halbiert die Bandbreite,
+de10-109 denn die Pakete müssen doppelt übertragen werden.
+de10-110 Aus diesem Grund kann es sich lohnen,
+de10-111 mit Access Points zu arbeiten,
+de10-112 die nicht nur im 2,4 GHz Bereich arbeiten,
+de10-113 sondern auch im 5 GHz Bereich.
+de10-114 Die Verbindung zu den Clients erfolgt
+de10-115 nach einem bestimmten Standard.
+de10-116 Alle Access Points verwenden denselben Kanal und denselben Schlüssel.
+de10-117 Durch eine geeignete Firmware eines Drittanbieters
+de10-118 werden die Funktionen erweitert.
+de10-119 Die Eigenschaften waren nicht mehr teuer,
+de10-120 so dass auch Privatanwender diese Technik benutzen können.
+de10-121 Eine drahtlose Verbindung kann auf zwei Arten zustandekommen.
+de10-122 Notebooks dürfen nicht auf die Access Points zugreifen.
+de10-123 Die Access Points kommunizieren untereinander mit den Notebooks.
+de10-124 Die Datenübertragungsrate halbiert sich
+de10-125 mit jedem zusätzlichen Gerät.
+de10-126 Der Access Point leitet die Daten weiter,
+de10-127 bevor sie in das kabelgebundene Netzwerk eingespeist werden.
+de10-128 Das liegt daran, dass der gleiche Kanal verwendet wird.
+de10-129 Schlüssel können nicht dynamisch zugewiesen werden.
+de10-130 Eine detaillierte Spezifikation gibt es bisher nicht.
+de10-131 Die Produkte der Hersteller
+de10-132 sind untereinander teilweise nicht kompatibel.
+de10-133 An Zusammenarbeit besteht häufig kein Interesse.
+de10-134 Teilweise funktionieren die Produkte eines Herstellers nicht untereinander.
+de10-135 Man sollte Produkte vom gleichen Hersteller verwenden.
+de10-136 So minimiert man das Risiko. Es gibt mehrere Schritte,
+de10-137 die vorgenommen werden müssen,
+de10-138 um diese Technik erfolgreich einzusetzen. Man muss überprüfen,
+de10-139 ob man die Daten ohne Fehler und ohne Verzögerung senden kann.
+de10-140 Ansonsten könnte es zu einer Verdoppelung der IP Adressen kommen.
+de10-141 Die Kanäle sollen im benachbarten Netzwerk nicht eingesetzt werden.
+de10-142 Ein besserer Access Point in der Nähe wäre verfügbar.
+de10-143 Eine statische IP Adresse kann optional
+de10-144 dem Wireless Client zugewiesen werden.
+de10-145 Es kann eine Weile dauern,
+de10-146 bis die Zuweisung einer IP Adresse durchgeführt worden ist.
+de10-147 So kannst du vielleicht etwas Zeit sparen.
+de10-148 Einige Experimente sind notwendig,
+de10-149 um ein vertretbares Ergebnis zu erhalten.
+de10-150 Die Adressen musst du in das jeweilige Feld eingeben.
+de10-151 Anonyme Access Points können sich nicht mit der Brücke verbinden.
+de10-152 Jede dieser Adressen ist unterschiedlich.
+de10-153 Die Geschwindigkeit der Übertragung hängt von der Signalstärke ab.
+de10-154 Durch eine geringe Signalstärke sind weitere Einbußen hinzunehmen.
+de10-155 Diese Zahl bezeichnet die größtmögliche Anzahl von Daten,
+de10-156 die ein Netzwerkgerät auf einmal verarbeiten kann.
+de10-157 Es ist eine sehr wichtige Übereinkunft bei Internetverbindungen,
+de10-158 die auch beim Browser wirksam wird, beispielsweise beim Firefox.
+de10-159 Die Datenpakete müssen über das Internet gesendet werden
+de10-160 und dabei zahlreiche Router passieren.
+de10-161 Im Idealfall passiert jedes einzelne Datenpaket jeden Router,
+de10-162 ohne dabei fragmentiert zu werden.
+de10-163 In einigen Fällen kann die Absenkung der Geschwindigkeit dramatisch sein.
+de10-164 Die Fragmentierung kann minimiert werden,
+de10-165 wenn die Einheit so gering wie möglich gewählt wird.
+de10-166 Bei den meisten Computern wird das durch das Betriebssystem eingestellt.
+de10-167 Unter der Bezeichnung sicherer Hash Algorithmus versteht man
+de10-168 eine Gruppe von kryptografischen Hash Funktionen.
+de10-169 Ein möglichst eindeutiger Wert
+de10-170 für beliebige elektronische Daten wird berechnet.
+de10-171 Als elektronische Daten können E-Mails in Betracht kommen.
+de10-172 Was verstehst du unter Kollisionsfreiheit? Ich weiß nicht.
+de10-173 Diese Gruppe von Funktionen hat eine Kollektivbezeichnung.
+de10-174 Deren kryptografische Sicherheit ist noch nicht so genau überprüft worden.
+de10-175 In den neueren Varianten wurden keine Schwächen gefunden.
+de10-176 Es werden inhaltlich richtige Informationen verbreitet.
+de10-177 Eine inhaltlich richtige Berichterstattung
+de10-178 ist für die Demokratie unverzichtbar.
+de10-179 Ferner dient das dem Schutz des allgemeinen Persönlichkeitsrechts.
+de10-180 Der Gegendarstellungsanspruch ist in verschiedenen Gesetzen geregelt,
+de10-181 häufig in den verschiedenen Pressegesetzen der Bundesländer.
+de10-182 Grundsätzlich kommt das Recht des Veröffentlichungsortes zur Anwendung.
+de11-001 Wer von einer Tatsachenbehauptung in einem Medium betroffen ist,
+de11-002 kann seine eigene Darstellung des Lebenssachverhalts
+de11-003 im gleichen Medium veröffentlichen.
+de11-004 Der Gegendarstellungsanspruch bezieht sich nicht auf Meinungsäußerungen,
+de11-005 sondern auf Tatsachen. Es muss ein enger zeitlicher Zusammenhang
+de11-006 mit der beanstandeten Berichterstattung vorliegen.
+de11-007 Der Umfang der Gegendarstellung darf nicht größer sein.
+de11-008 Der Betroffene muss ein berechtigtes Interesse geltend machen.
+de11-009 Die Gegendarstellung ist offensichtlich
+de11-010 unwahr oder inhaltlich vollkommen belanglos.
+de11-011 Noch weitere Ansprüche neben dem Gegendarstellungsanspruch können bestehen.
+de11-012 Im Rahmen der Schadensminderung ist eine veröffentlichte Gegendarstellung
+de11-013 zu berücksichtigen. Ein solches Netzwerk kann
+de11-014 in kleinere Netzwerke unterteilt werden.
+de11-015 Den Kern des Netzwerks bildet ein besonderer Bereich.
+de11-016 Ein virtueller Link kann diese Verbindung herstellen.
+de11-017 Alle Bereiche müssen miteinander verbunden sein.
+de11-018 Einer der Router besitzt die höchste Priorität.
+de11-019 Was ist, wenn zwei Router keine unterschiedliche Priorität haben?
+de11-020 Dieses Protokoll ermöglicht ein Routing ohne Schleifen.
+de11-021 Es ist für große Netzwerke sehr gut geeignet
+de11-022 und basiert auf einem offenen Standard.
+de11-023 Das gehört zur Gruppe der drahtlosen Kommunikationsmittel.
+de11-024 Diese Technik wurde in den beiden Weltkriegen eingesetzt.
+de11-025 Mittlerweile hat sich die Glasfasertechnik
+de11-026 als vorteilhafter herausgestellt.
+de11-027 Bei Katastrophen kann das Mobilfunknetz sehr schnell überlastet sein.
+de11-028 Auf eine Kabeltrommel passen bis zu 850 Meter Feldkabel.
+de11-029 Man unterscheidet zwei unterschiedliche Bauarten.
+de11-030 Hierbei wird das Feldkabel möglichst hoch verbaut,
+de11-031 wodurch eine Sabotage durch Bösewichte vermieden werden soll.
+de11-032 Beim Tiefbau wird das Kabel einfach auf dem Boden ausgelegt.
+de11-033 Die Willenserklärung eines Geschäftsunfähigen ist nichtig.
+de11-034 Die Wirksamkeit der Willenserklärung ist insgeheim nicht gewollt.
+de11-035 Der Erklärungsempfänger kennt diesen geheimen Vorbehalt.
+de11-036 Die Willenserklärung war gegenüber einer anderen Person abzugeben.
+de11-037 Die Willenserklärung wurde mit Einverständnis der Erklärungsempfängerin
+de11-038 nur zum Schein abgegeben und ist nichtig.
+de11-039 Sie hat eine nicht ernstlich gemeinte Willenserklärung abgegeben.
+de11-040 Der Mangel der Ernstlichkeit wurde von der Empfängerin nicht verkannt.
+de11-041 Das Gesetz schreibt eine bestimmte Form für das Rechtsgeschäft vor.
+de11-042 Durch das Rechtsgeschäft haben die Parteien
+de11-043 gegen eine gesetzliche Verbotsvorschrift verstoßen.
+de11-044 Das Rechtsgeschäft verstößt gegen die guten Sitten.
+de11-045 Audio und Video verlaufen synchron zueinander.
+de11-046 Ein kontinuierlicher Datenfluss soll zur Verfügung gestellt werden.
+de11-047 Die Informationen können von unterschiedlichen Quellen stammen
+de11-048 und miteinander kombiniert werden. Das ist das Ziel der Angelegenheit.
+de11-049 Diese Software kann ein Signal dekodieren.
+de11-050 Bei Videokonferenzen und im Internetradio wird das regelmäßig verwendet.
+de11-051 Das Empfangsgerät verwandelt das Signal zurück,
+de11-052 so dass auf dem analogen Endgerät die Ausgabe erfolgt.
+de11-053 Das Audiosignal wird in ein digitales Signal verwandelt,
+de11-054 so dass es übertragen werden kann,
+de11-055 ohne unnötigen Platz zu verschwenden.
+de11-056 Das Empfangsgerät konvertiert das digitale Signal zurück.
+de11-057 Verlustfreie Codecs sparen keineswegs Platz.
+de11-058 Bei normalen Codecs ist ein Kompromiss
+de11-059 zwischen kleiner Dateigröße und optimaler Qualität zu finden.
+de11-060 Dieses Format wird häufig fälschlicherweise als Codec bezeichnet.
+de11-061 Welche Containerformate gibt es?
+de11-062 Es ist eine Open Source Proxy Server Software.
+de11-063 Sie beinhaltet zahlreiche Anwendungsmöglichkeiten.
+de11-064 Geschwindigkeitsvorteile können erzielt werden.
+de11-065 Internetanbieter verwenden Squid häufig als transparenten Proxy.
+de11-066 Er kann Inhalte aus dem Internet filtern.
+de11-067 Hierzu können Benutzerklassen festgelegt werden.
+de11-068 Der Adressbereich darf lediglich 30 Prozent nutzen.
+de11-069 Ein bestimmter Vorrat an Übertragungskapazität kann zugeordnet werden.
+de11-070 Eine Beschränkung tritt erst bei besonders intensiver Nutzung auf.
+de11-071 Bei der normalen Nutzung gibt es die volle Bandbreite.
+de11-072 Zahlreiche Betriebssysteme werden von Squid unterstützt.
+de11-073 Dadurch wird die Zugriffszeit reduziert.
+de11-074 Der Bandbreitenverbrauch wird erheblich verringert.
+de11-075 Die Geschwindigkeit für die Kunden kann erhöht werden.
+de11-076 Ferner gibt es möglicherweise eine gewisse Anonymität und Sicherheit.
+de11-077 Mehrere Arbeitgeber haben sich zusammengeschlossen,
+de11-078 um ihre Interessen gemeinsam zu vertreten.
+de11-079 Mehrere Arbeitgeberverbände sind zu einem Dachverband zusammengeschlossen.
+de11-080 Die Arbeitgeberverbände führen Tarifverhandlungen durch.
+de11-081 Wenn ein Arbeitgeber aus dem Arbeitgeberverband austritt,
+de11-082 dann gilt der Flächentarifvertrag innerhalb der Nachwirkungszeit fort.
+de11-083 Wann wurden die letzten Änderungen durchgeführt?
+de11-084 Die Seite ist erst kürzlich bearbeitet worden.
+de11-085 Zahlreiche neue Artikel wurden veröffentlicht.
+de11-086 Eine neue Version des Artikels ist in der Vorbereitung.
+de11-087 Hilfe wurde für diesen Vorgang nicht benötigt.
+de11-088 Offiziell sind das wissenschaftliche Berater.
+de11-089 Sie erinnert mich an einen guten Freund von mir.
+de11-090 Der Reiter kommt nicht auf das Pferd.
+de11-091 Diese Ausrede ist langweilig und dumm.
+de11-092 Alles ist gepflegt und jederzeit einsatzbereit.
+de11-093 Er kann mit seinem Werkzeug nicht umgehen.
+de11-094 Das Verhältnis zwischen Völkerrecht und nationalem Recht ist umstritten.
+de11-095 Hierzu gibt es monistische und dualistische Theorien.
+de11-096 Es handelt sich um getrennte Rechtssysteme und nur eines ist anwendbar.
+de11-097 Ein Konflikt zwischen beiden Rechtssystemen ist ausgeschlossen.
+de11-098 Die monistischen Theorien gehen von einer Gesamtrechtsordnung aus.
+de11-099 Der Vorrang des Völkerrechts soll uneingeschränkt durchgesetzt werden.
+de11-100 Die Rechtsnormen des innerstaatlichen Rechts müssen beachtet werden,
+de11-101 selbst wenn diese für völkerrechtswidrig gehalten werden.
+de11-102 Das Völkerrecht wird dann wirksam,
+de11-103 wenn es transformiert wurde.
+de11-104 Das Völkergewohnheitsrecht hat Vorrang.
+de11-105 Ein Zustimmungsgesetz zu den Regelungen wurde veröffentlicht.
+de11-106 Das nicht proprietäre Protokoll wird im Dokument beschrieben.
+de11-107 Die Verfügbarkeit von Gateways im LAN wird erhöht.
+de11-108 Verschiedene Firmen haben es 1998 entwickelt.
+de11-109 Durch Zusammenfassung bilden mehrere physische Router eine Gruppe.
+de11-110 Die Gruppe von Routern ist ein einziger logischer virtueller Router.
+de11-111 Bei Ausfall eines physischen Routers springt ein anderer ein.
+de11-112 Der Masterrouter ergänzt den Backuprouter.
+de11-113 Das Protokoll kann über das Internet verwendet werden.
+de11-114 Implementierungen für IP Version 6 befinden sich in der Entwicklung.
+de11-115 Ein autonomes System ist eine Ansammlung von Netzwerken.
+de11-116 Sie verwenden das gleiche Routing Protokoll.
+de11-117 Hierdurch wird eine eindeutige Identifikation im Internet gewährleistet.
+de11-118 Die Ziffern sind in zwei Bereiche aufgeteilt.
+de11-119 Maximal sind hundert Einträge möglich.
+de11-120 Dieser Bereich kann innerhalb von Organisationen verwendet werden.
+de11-121 Der Standard soll auf 32 Bit erhöht werden.
+de11-122 Es gibt Verbindungen zu mehr als einem einzigen Internetanbieter.
+de11-123 Der Internetanbieter ist leider ausgefallen.
+de11-124 Der Traffic des ersten Anbieters wird zum zweiten Anbieter weitergeleitet.
+de11-125 Hierunter versteht man urheberrechtlich geschützte Software,
+de11-126 die der Allgemeinheit zugänglich gemacht wurde,
+de11-127 ohne für die Nutzung der Software eine Gebühr zu verlangen.
+de11-128 Die Benutzung wird nicht auf einen Zeitraum begrenzt.
+de11-129 Nach Ablauf des Testzeitraums muss bezahlt werden.
+de11-130 Der Ausdruck frei hat unterschiedliche Bedeutungen.
+de11-131 Die Software kann für unbegrenzte Zeit verwendet werden.
+de11-132 Es ist eine staatliche Sanktion, mit der auf die Straftat reagiert wird.
+de11-133 Ein unabhängiges Gericht hat das Urteil ausgesprochen.
+de11-134 Höchststrafe ist die lebenslange Freiheitsstrafe.
+de11-135 Sie wird bei schweren Verbrechen verhängt.
+de11-136 Zeitlich begrenzt sind es höchstens 15 Jahre.
+de11-137 Die Mindestfreiheitsstrafe soll einen Monat betragen.
+de11-138 Es gibt im Strafgesetzbuch einen Strafrahmen.
+de11-139 Der Betrug kann mit einer Geldstrafe bestraft werden.
+de11-140 Der Gedanke der Resozialisierung und der Sühne wurde berücksichtigt.
+de11-141 Die Allgemeinheit wird vor weiteren Straftaten geschützt.
+de11-142 Die Justizvollzugsanstalt bezeichnet man umgangssprachlich als Gefängnis.
+de11-143 Es gab unterschiedlich schwere Formen der Freiheitsstrafe.
+de11-144 Nach zwei dritteln der Strafzeit kann die Freiheitsstrafe
+de11-145 zur Bewährung ausgesetzt werden.
+de11-146 Die Persönlichkeit des Gefangenen und die Tatumstände werden berücksichtigt.
+de11-147 Die Vollstreckung der Freiheitsstrafe wurde zur Bewährung ausgesetzt.
+de11-148 Der Verurteilte musste nicht ins Gefängnis.
+de11-149 Der Verurteilte musste für mindestens zwei Jahre straffrei bleiben.
+de11-150 Bestimmte Auflagen waren zu erfüllen.
+de11-151 Mit einem Bewährungshelfer muss zusammengearbeitet werden.
+de11-152 Die Strafe wurde zur Bewährung ausgesetzt.
+de11-153 Die Vollstreckung der Strafe ist zur Bewährung ausgesetzt worden.
+de11-154 WordPress ist benutzerfreundlich und leicht veränderbar.
+de11-155 Es verwendet eine MySQL Datenbank.
+de11-156 Hierfür gibt es zahlreiche andere Ausdrücke.
+de11-157 Dadurch wird die letzte Meile drahtlos überwunden.
+de11-158 Durch Richtfunk wird eine Verbindung für die Datenübertragung hergestellt.
+de11-159 Eine Basisstation versorgt mehrere Teilnehmer,
+de11-160 wobei ein bestimmtes Gebiet ausgeleuchtet wird.
+de11-161 Die Lizenz für die Funkfrequenz wurde vergeben.
+de11-162 An alle Teilnehmer werden gleichzeitig Daten übertragen.
+de11-163 Die örtlichen Gegebenheiten sind bei der Installation zu berücksichtigen.
+de11-164 Ein bestimmter Sektor innerhalb des Öffnungswinkels wird ausgeleuchtet.
+de11-165 Die Antenne des Teilnehmers kann sehr eng gebündelt sein.
+de11-166 Sie muss auf die Zentralstation gerichtet werden.
+de11-167 Nach der Äquivalenztheorie oder Bedingungstheorie kann Kausalität vorliegen.
+de11-168 Um eine Verletzung zurechnen zu können,
+de11-169 muss mindestens Kausalität vorliegen.
+de11-170 Nach der Äquivalenztheorie sind alle Bedingungen gleichwertig.
