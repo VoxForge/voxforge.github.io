@@ -56,17 +56,21 @@ native_speaker:
 first_language:
   label: First Language
   popup_link: https://en.wikipedia.org/wiki/First_language
-  popup_text: language that a person has been exposed to from birth or within the critical period.
-  other_label: Enter first language
+  popup_text: >
+    language that a person has been exposed to from birth or within the
+    critical period.
+  other_label: Other first language
 
 dialect:
   label: Pronunciation Dialect
   popup_link: https://en.wikipedia.org/wiki/Dialect
-  popup_text: variety of a language that is a characteristic of a particular group of the language's speakers.
+  popup_text: >
+    variety of a language that is a characteristic of a particular group of the
+    language's speakers.
   selection:
 # major geographical region e.g. North American [array containing subdialects e.g. canadian English...]
   - [Other, [Other]]
-  other_label: Enter dialect
+  other_label: Other dialect
 
 # no default required for sub-dialect
 
@@ -82,7 +86,7 @@ microphone:
     - Tablet
     - Microphone Array/Far Field Mic
     - Other
-  other_label: Enter microphone type
+  other_label: Other microphone type
 
 recording_location:
   label: Recording Location
@@ -91,7 +95,7 @@ recording_location:
     - Outdoors
     - Vehicle
     - Other
-  other_label: Enter location
+  other_label: Other location
 
 background_noise:
   label: Is There Background Noise?
@@ -128,7 +132,7 @@ noise_type:
     - Video
     - Weather Related (wind/rain...)
     - Other
-  other_label: Enter noise type
+  other_label: Other noise type
 
 license:
   label: License
@@ -370,6 +374,7 @@ settings:
   resource_intensive_text: Resource intensive functions
   resource_intensive_text_2: >
     (disable these to improve recording quality on low powered devices)
+
   vad_run: Voice Activity Detection (VAD)
   auto_gain: Automatic Volume Adjuster
   audio_visualizer: Audio visualizer
