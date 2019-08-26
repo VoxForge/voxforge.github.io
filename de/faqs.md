@@ -1,7 +1,7 @@
 ---
 layout: faq_list
-title: Preguntas frecuentes
-lang: es
+title: Häufig gestellte Fragen
+lang: de
 ref: faq
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: record
 title: VoxForge Sprachrecorder
-menu: lesen
+menu: Lesen
 ref: read
 lang: de
 weight: 2
@@ -88,8 +88,8 @@ dialect:
     Vielfalt einer Sprache, die ein Merkmal einer bestimmten Gruppe der ist
     Sprecher der Sprache.
   selection:
-    - [Deutschland , [Norddeutschland, Westdeutschland, Berlin, "südl. Ostdeutschland"]]
-    - [andere, [Bayern, Schweiz, sterreich]]
+    - [Deutschland , [Norddeutschland, Westdeutschland, Berlin, "südl. Ostdeutschland", Bayern]]
+    - [andere, [, Schweiz, sterreich]]
     - ["Andere", ["Andere"]]    
   other_label: "Anderer Sprachraum"
 
@@ -155,19 +155,11 @@ noise_type:
 
 license:
   label: Lizenz
-  popup:
-    title: Creative Commons-Lizenzen
-    link: https://creativecommons.org/licenses/?lang=es
-    hover_text: >
-      CC0 1.0 - Dedicación del dominio público de Creative Commons;
-      CC BY 4.0 - Creative Commons Reconocimiento;
-      CC BY-SA 4.0 - Creative Commons Reconocimiento-Compartir por igual;
-      GPLv3 - Licencia pública general de GNU.
-  selection_default: { value: 'CC0',  item: 'CC0 1.0 - Creative Commons - No hay derechos reservados (defecto)' }
+  selection_default: { value: 'CC0',  item: 'CC0 1.0 Universell Public Domain Dedication (Standard)' }
   selection:
-    - { value: 'CC_BY',     option: 'CC BY 4.0 - Creative Commons - Attribution' }
-    - { value: 'CC_BY-SA',  option: 'CC BY-SA 4.0 - Creative Commons Reconocimiento-Compartir por igual' }
-    - { value: 'GPLv3',     option: 'GPLv3 - Licencia pública general de GNU' }
+    - { value: 'CC_BY',     option: 'CC BY 4.0 - Namensnennung 4.0 International' }
+    - { value: 'CC_BY-SA',  option: 'CC BY-SA 4.0 - Namensnennung - Weitergabe unter gleichen Bedingungen 4.0 International ' }
+    - { value: 'GPLv3',     option: 'GPLv3 - GNU General Public License Version 3' }
 
 num_prompts:
   label: Anzahl der zu lesenden Eingabeaufforderungen

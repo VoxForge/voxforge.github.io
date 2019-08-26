@@ -1,7 +1,7 @@
 ---
 layout: default
-menu: startseite
-title: Página de inicio
+menu: Startseite
+title: Startseite
 ref: home
 lang: de
 weight: 1
@@ -31,4 +31,4 @@ und laden Sie Ihre Aufzeichnungen auf den VoxForge-Server hoch.
 [Julius]: http://julius.sourceforge.jp/en_index.php?q=en/index.html
 [HTK]: http://htk.eng.cam.ac.uk/
 
-[Zeichnen Sie auf]: {% link en/read.md %}
+[Zeichnen Sie auf]: {% link de/read.md %}

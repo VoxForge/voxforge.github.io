@@ -1,9 +1,9 @@
 {
   "short_name": "VoxForge",
-  "name": "Aplicación de grabación de voz en español de Voxforge",
-  "description": "Aplicación en español para grabar y cargar voz a VoxForge.org",
+  "name": "Voxforge Englisch Sprachaufnahme App",
+  "description": "App zum Aufzeichnen und Hochladen von Sprache auf VoxForge.org.",
   "dir": "rtl",
-  "lang": "es",
+  "lang": "de",
   "icons": [
     {
       "src": "/voxforge-192.png",
@@ -16,7 +16,8 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/es/read",
+
+  "start_url": "/de/read",
   "background_color" : "#3367D6",
   "display": "standalone",
   "scope": "/",
