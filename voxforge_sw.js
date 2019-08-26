@@ -79,7 +79,8 @@ var urlsToCache = [
   '/voxforge_sw.js',
   '/en/manifest.json',
   '/fr/manifest.json',
-
+  '/de/manifest.json',
+  
   // need one entry for each language, otherwise will not be able to switch
   // language while offline
   // no .html suffix required, but if make updates, need to wait for changes
@@ -88,8 +89,9 @@ var urlsToCache = [
   '/en/read',
   '/fr/read',
   '/es/read',
+  '/de/read',
 
-  // !!!!!! required for offline testing of app
+  // !!!!!! TODO required for offline testing of app; but other languages dont need it... 
   //'/en/read/', // dev - debug with Apache2 and self signed SSL certificate
   // !!!!!
   
@@ -99,13 +101,16 @@ var urlsToCache = [
   '/en/prompts/001.html',
   '/fr/prompts/001.html',
   '/es/prompts/001.html',
-
+  '/de/prompts/001.html',
+  
   // cache language specific front pages so can switch languages
   // Note: caching only occurs after user goes to read page....
   '/',
   '/fr',
   '/es',
-  // supporting files for that language specific home pages work
+  '/de',
+  
+  // supporting files so that language specific home pages work
   '/css/main.css',
   '/images/voxforge-logo-2.png',
   '/images/search.jpg',
