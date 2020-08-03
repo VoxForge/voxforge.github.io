@@ -12,7 +12,8 @@ title:
   en: VoxForge - Free Speech... Recognition
   es: VoxForge - libertad de expresión
   fr: VoxForge - Voix Libre
-  de: VoxForge - Freie Spracherkennung 
+  de: VoxForge - Freie Spracherkennung
+  ht: VoxForge - Libere konesans lapawòl
 
 # word 'language' in local language
 languagesLocal:
@@ -20,6 +21,8 @@ languagesLocal:
   fr: Langues
   es: Idiomas
   de: Sprache
+  ht: Lang
+
 
 # localized language name
 languageName:
@@ -27,15 +30,17 @@ languageName:
   fr: Français
   es: Español
   de: Deutsche
-  
+  ht: Kreyòl
+
 # hover language name translated to English
 languageEnglish:
   en: English
   fr: French
   es: Spanish
   de: German
-  
-email: contact@voxforge.org
+  ht: Haitian Creole
+
+email: pierevans@gmail.com
 
 # home page
 index:
@@ -43,12 +48,13 @@ index:
   fr: accueil
   es: boenosdias
   de: startseite
-  
+  ht: akèy
+
 baseurl: "" # the subpath of your site, e.g. /blog
 
 # redirects use this url:
-url: "https://voxforge.github.io" # prod - the base hostname & protocol for your site
-#url: "https://jekyll_voxforge.org" # dev - (need to also update voxforge_sw.js and _config.yml: permalink)
+#url: "https://voxforge.github.io" # prod - the base hostname & protocol for your site
+url: "https://jekyll_voxforge.org" # dev - (need to also update voxforge_sw.js and _config.yml: permalink)
                                    # use https://jekyll_voxforge.org/en/read/ to directly access read page
 
 # add trailing slash to permalinks:
@@ -64,6 +70,6 @@ collections:
     title: FAQs
 
 # see: https://help.github.com/articles/redirects-on-github-pages/
-plugins:
-  - jekyll-redirect-from
+#plugins:
+#  - jekyll-redirect-from
 

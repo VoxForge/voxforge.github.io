@@ -10,3 +10,5 @@ php.ini
 ssl
 *(copy).*
 .vscode
+
+.vercel

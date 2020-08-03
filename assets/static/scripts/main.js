@@ -28,7 +28,7 @@ if (window.location.origin === 'https://voxforge.github.io') { // prod
   //    # add trailing slash to permalinks for debugging with Apache2 and self signed SSL certificate
   //    permalink: /:lang/:ref/ # debugging
   //    #permalink: /:lang/:ref
-  uploadURL = 'https://jekyll_voxforge.org/index.php'; // test basic workings
+  uploadURL = 'https://voxforge-kreyol-nrwbx72kza-ue.a.run.app/api/telechaje'; // test basic workings
   //var uploadURL = 'https://jekyll2_voxforge.org/index.php'; // test CORS
 }
 if (window.location.origin === 'http://localhost:4000') { 
