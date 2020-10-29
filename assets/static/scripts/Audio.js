@@ -190,7 +190,12 @@ Audio.prototype._setAllAudioNodesToMono = function() {
     this.gainNode.channelCount = 1;
     this.processor.channelCount = 1;
     this.analyser.channelCount = 1;
-    this.mediaStreamOutput.channelCount = 1;
+    try{
+        this.mediaStreamOutput.channelCount = 1;
+    }
+    catch (error){
+        console.error(error);
+    }
 }
 
 Audio.prototype._connectAudioNodes = function() {
